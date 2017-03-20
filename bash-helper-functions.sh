@@ -99,12 +99,16 @@ function mybash-git-create-gitignore() {
   curl -L -s "https://www.gitignore.io/api/$1"
 }
 
-function mybash-git-create-gitignore-editors() {
-  mybash-git-gitignore linux,windows,osx,qt,vimc,make,git,eclipse,notepadpp
+function mybash-git-create-gitignore-essentials() {
+  mybash-git-create-gitignore code,eclipse,executable,git,intellij,linux,notepadpp,osx,sublimetext,vim,windows,xcode
 }
 
-function mybash-git-create-gitignore-editors() {
-  mybash-git-gitignore c,c++,autotools
+function mybash-git-create-gitignore-javascript() {
+  mybash-git-create-gitignore node,bower,grunt
+}
+
+function mybash-git-create-gitignore-cpp() {
+  mybash-git-create-gitignore c,c++,qt,autotools,make,ninja,cmake
 }
 
 function mybash-git-find-folders-reset-clean-uninstall {
