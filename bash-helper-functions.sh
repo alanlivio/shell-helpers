@@ -331,3 +331,11 @@ function mybash-user-send-ssh-keys() {
   : ${1?an argument is required}
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
 }
+
+###############################################################################
+# vscode functions
+###############################################################################
+
+function mybash-vscode-run-as-root() {
+  sudo code --user-data-dir="~/.vscode" "$@"
+}
