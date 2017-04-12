@@ -26,7 +26,7 @@ function mybash-audio-create-empty() {
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
 }
 
-function mybash-audio-compress() {
+function mybash-audio-compress() {  
   : ${1?an argument is required}
   lame -b 32  "$1".mp3 compressed"$1".mp3
 }
@@ -45,6 +45,15 @@ function mybash-video-cut() {
   ${1?an second argument is required}
   # ffmpeg -i saida.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "1.1-vai-antonio.mp4"
   ffmpeg -i "$1"  -vcodec copy -acodec copy -ss "$2"  -t "$3"  -f mp4 cuted-$1
+}
+
+function mybash-video-gst-side-by-side-test() {
+  gst-launch-1.0 compositor name=comp  sink_1::xpos=640 !   videoconvert ! ximagesink   videotestsrc pattern=snow  !   "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" !   timeoverlay ! queue2 ! comp.   videotestsrc pattern=smpte !   "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" !   timeoverlay ! queue2 ! comp.
+}
+
+function mybash-video-gst-side-by-side-args() {
+  : ${2?two arguments are required}
+  gst-launch-1.0 compositor name=comp  sink_1::xpos=640 ! ximagesink  filesrc location=$1 !   "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" !   decodebin ! videoconvert ! comp. filesrc location=$2  !   "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
 
 ###############################################################################
@@ -338,4 +347,11 @@ function mybash-user-send-ssh-keys() {
 
 function mybash-vscode-run-as-root() {
   sudo code --user-data-dir="~/.vscode" "$@"
+}
+
+###############################################################################
+# gnome functions
+###############################################################################
+function mybash-gnome-reset-keybindings() {
+  gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
 }
