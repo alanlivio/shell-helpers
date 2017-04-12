@@ -148,7 +148,6 @@ function mybash-git-list-large-files() {
 # editors functions
 ###############################################################################
 
-
 function mybash-qtcreator-project-from-git() {
   project_name="${PWD##*/}"
   touch "$project_name.config"
@@ -352,6 +351,15 @@ function mybash-vscode-run-as-root() {
 ###############################################################################
 # gnome functions
 ###############################################################################
+
 function mybash-gnome-reset-keybindings() {
   gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
+}
+
+###############################################################################
+# system functions
+###############################################################################
+
+function mybash-system-list-gpu() {
+  lspci -nn | grep -E 'VGA|Display'
 }
