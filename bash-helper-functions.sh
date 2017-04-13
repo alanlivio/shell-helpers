@@ -16,6 +16,12 @@ function log-done()  { aux-print "\033[00;32m---> $1 done\033[00m"; }
 function log-ok()    { aux-print "\033[00;32m---> OK\033[00m"; }
 function TRY()       { "$@"; if test $? -ne 0; then log-error "$1" && exit 1; fi;}
 
+case "$(uname -s)" in
+   Darwin)IS_MAC=1;;
+   Linux)IS_LINUX=1;;
+   CYGWIN*|MINGW32*|MSYS*) IS_WINDOWS=1
+esac
+
 ###############################################################################
 # audio functions
 ###############################################################################
@@ -354,6 +360,10 @@ function mybash-vscode-run-as-root() {
 
 function mybash-gnome-reset-keybindings() {
   gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
+}
+
+function mybash-gnome-update-default-apps() {
+  sudo update-desktop-database /usr/share/gnome/applications  /usr/share/applications /usr/local/share/applications, /var/lib/snapd/desktop/applications
 }
 
 ###############################################################################
