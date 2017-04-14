@@ -10,10 +10,10 @@
 ###############################################################################
 
 function aux-print() { echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'; }
-function log-error() { aux-print "\033[00;31m---> $1 fail\033[00m"; }
-function log-msg()   { aux-print "\033[00;33m---> $1\033[00m"; }
-function log-done()  { aux-print "\033[00;32m---> $1 done\033[00m"; }
-function log-ok()    { aux-print "\033[00;32m---> OK\033[00m"; }
+function log-error() { aux-print "\033[00;31m---> $@ \033[00m"; }
+function log-msg()   { aux-print "\033[00;33m---> $@\033[00m"; }
+function log-done()  { aux-print "\033[00;32m---> done\033[00m"; }
+function log-ok()    { aux-print "\033[00;32m---> ok033[00m"; }
 function TRY()       { "$@"; if test $? -ne 0; then log-error "$1" && exit 1; fi;}
 
 case "$(uname -s)" in
@@ -367,8 +367,8 @@ function mybash-gnome-update-default-apps() {
 }
 
 function mybash-gnome-background-black() {
-  gsettings set org.gnome.desktop.background primary-color "#FFFFFF"
-  gsettings set org.gnome.desktop.background secondary-color "#FFFFFF"
+  gsettings set org.gnome.desktop.background primary-color "#000000"
+  gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background color-shading-type "solid"
 }
 
