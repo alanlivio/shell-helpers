@@ -366,6 +366,12 @@ function mybash-gnome-update-default-apps() {
   sudo update-desktop-database /usr/share/gnome/applications  /usr/share/applications /usr/local/share/applications, /var/lib/snapd/desktop/applications
 }
 
+function mybash-gnome-background-black() {
+  gsettings set org.gnome.desktop.background primary-color "#FFFFFF"
+  gsettings set org.gnome.desktop.background secondary-color "#FFFFFF"
+  gsettings set org.gnome.desktop.background color-shading-type "solid"
+}
+
 ###############################################################################
 # system functions
 ###############################################################################
