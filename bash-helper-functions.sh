@@ -373,6 +373,15 @@ function mybash-gnome-background-black() {
 }
 
 ###############################################################################
+# vlc functions
+###############################################################################
+
+function mybash-vlc-youtube-playlist-extension(){
+  wget https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua  -P /tmp/
+  sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
+}
+
+###############################################################################
 # system functions
 ###############################################################################
 
