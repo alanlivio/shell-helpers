@@ -284,7 +284,7 @@ function mybash-pdf-remove-watermark() {
 
 function mybash-pdf-compress() {
   : ${1?an argument is required}
-  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=compressed$1.pdf  $1
+  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf  $1
 }
 
 
@@ -359,18 +359,28 @@ function mybash-vscode-run-as-root() {
 ###############################################################################
 
 function mybash-gnome-reset-keybindings() {
-  gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
+  # gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
+  gsettings reset-recursively org.gnome.mutter.keybindings
+  gsettings reset-recursively org.gnome.mutter.wayland.keybindings
+  gsettings reset-recursively org.gnome.desktop.wm.keybindings
+  gsettings reset-recursively org.gnome.shell.keybindings
+  gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
 function mybash-gnome-update-default-apps() {
   sudo update-desktop-database /usr/share/gnome/applications  /usr/share/applications /usr/local/share/applications, /var/lib/snapd/desktop/applications
 }
 
-function mybash-gnome-background-black() {
+function mybash-gnome-background-screensaver-black() {
   gsettings set org.gnome.desktop.background primary-color "#000000"
   gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background color-shading-type "solid"
-}
+  gsettings set org.gnome.desktop.background picture-uri ''
+  gsettings set org.gnome.desktop.screensaver primary-color "#000000"
+  gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
+  gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
+  gsettings set org.gnome.desktop.screensaver picture-uri ''
+}       
 
 ###############################################################################
 # vlc functions
