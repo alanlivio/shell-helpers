@@ -354,6 +354,24 @@ function mybash-vscode-run-as-root() {
   sudo code --user-data-dir="~/.vscode" "$@"
 }
 
+function mybash-vscode-install-packages(){
+  PKGS_TO_INSTALL=""
+  INSTALLED_LIST="$(code --list-extensions)"
+  for i in "$@"; do
+    # echo $i
+    echo "$INSTALLED_LIST" | grep "^$i" &> /dev/null
+    if test $? != 0 ; then
+      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+    fi
+  done
+  echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test -n "$PKGS_TO_INSTALL"; then
+    for i in $PKGS_TO_INSTALL; do
+      code --install-extension $i
+    done
+  fi
+}
+
 ###############################################################################
 # gnome functions
 ###############################################################################
