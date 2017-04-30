@@ -418,6 +418,31 @@ function mybash-system-list-gpu() {
 }
 
 ###############################################################################
+# node functions
+###############################################################################
+
+function mybash-node-install-packages() {
+  log-msg "install npm packages"
+  if test ! -f /usr/bin/node; then
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
+  fi
+  NPM_PKGS_TO_INSTALL=""
+  for i in "$@"; do
+    npm list -g $i &> /dev/null
+    if test $? != 0 ; then
+      NPM_PKGS_TO_INSTALL="$NPM_PKGS_TO_INSTALL $i"
+    fi
+  done
+  echo "NPM_PKGS_TO_INSTALL=$NPM_PKGS_TO_INSTALL"
+  if test -n "$NPM_PKGS_TO_INSTALL"; then
+    if test -f pakcage.json;then cd /tmp/; fi 
+      sudo -H npm install -g $NPM_PKGS_TO_INSTALL
+      sudo -H npm update
+    if test -f pakcage.json;then cd -; fi
+  fi  
+}
+
+###############################################################################
 # deb functions
 ###############################################################################
 function mybash-deb-upgrade(){
