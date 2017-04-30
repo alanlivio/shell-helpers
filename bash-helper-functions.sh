@@ -534,3 +534,12 @@ function mybash-deb-remove-orphan-packages(){
     sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
   fi
 }
+
+
+function mybash-deb-fetch-install(){
+  DEB_NAME=$(basename $1)
+  if test ! -f /tmp/$DEB_NAME; then 
+    wget $1 -P /tmp/; 
+  fi
+  sudo dpkg -i /tmp/$DEB_NAME
+}
