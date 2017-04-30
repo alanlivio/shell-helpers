@@ -442,6 +442,28 @@ function mybash-node-install-packages() {
   fi  
 }
 
+
+###############################################################################
+# python functions
+###############################################################################
+
+function mybash-python-install-packages() {
+  log-msg "install pip packages"
+  sudo -H pip install --upgrade pip
+  PIP_PKGS_TO_INSTALL=""
+  for i in "$@"; do
+    pip show $i &> /dev/null
+    if test $? != 0 ; then
+      PIP_PKGS_TO_INSTALL="$PIP_PKGS_TO_INSTALL $i"
+    fi
+  done
+  echo "PIP_PKGS_TO_INSTALL=$PIP_PKGS_TO_INSTALL"
+  if test -n "$PIP_PKGS_TO_INSTALL"; then
+    sudo -H pip install $PIP_PKGS_TO_INSTALL
+  fi
+}
+
+
 ###############################################################################
 # deb functions
 ###############################################################################
