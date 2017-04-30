@@ -398,3 +398,74 @@ function mybash-vlc-youtube-playlist-extension(){
 function mybash-system-list-gpu() {
   lspci -nn | grep -E 'VGA|Display'
 }
+
+###############################################################################
+# deb functions
+###############################################################################
+function mybash-deb-upgrade(){
+  log-msg "upgrade deb packages"
+  sudo apt -y update
+  sudo apt -y dist-upgrade
+}
+
+function mybash-deb-install-packages(){
+  log-msg "install deb packages"
+  PKGS_TO_INSTALL=""
+  for i in "$@"; do
+    dpkg --status "$i" &> /dev/null
+    if test $? != 0 ; then
+      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+    fi
+  done
+  echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test -n "$PKGS_TO_INSTALL"; then
+    sudo apt install -y $PKGS_TO_INSTALL
+  fi
+}
+
+function mybash-deb-clean(){
+  log-msg "apt autoclean autoremove"
+  sudo apt -y remove --purge
+  sudo apt -y -f install
+  sudo apt -y clean
+  sudo apt -y autoclean
+  sudo apt -y autoremove
+}
+
+function mybash-deb-remove-packages(){
+  log-msg "remove deb packages"
+
+  PKGS_TO_REMOVE=""
+  for i in "$@"; do
+    dpkg --status "$i" &> /dev/null
+    if test $? -eq 0 ; then
+      PKGS_TO_REMOVE="$PKGS_TO_REMOVE $i"
+    fi
+  done
+  echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
+  if test -n "$PKGS_TO_REMOVE"; then
+    sudo apt remove -y --purge $PKGS_TO_REMOVE
+  fi
+}
+
+function mybash-deb-remove-orphan-packages(){
+  log-msg "remove orphan deb packages"
+
+  PKGS_ORPHAN_TO_REMOVE=""
+  for i in $(deborphan); do
+    FOUND_EXCEPTION=false
+    for j in "$@"; do
+      if test "$i" = "$j" ;then
+        FOUND_EXCEPTION=true
+        break
+      fi;
+    done;
+    if ! $FOUND_EXCEPTION; then
+      PKGS_ORPHAN_TO_REMOVE="$PKGS_ORPHAN_TO_REMOVE $i"
+    fi
+  done
+  echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
+  if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
+    sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
+  fi
+}
