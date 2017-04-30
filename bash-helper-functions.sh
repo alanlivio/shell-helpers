@@ -463,7 +463,6 @@ function mybash-python-install-packages() {
   fi
 }
 
-
 ###############################################################################
 # deb functions
 ###############################################################################
@@ -535,11 +534,50 @@ function mybash-deb-remove-orphan-packages(){
   fi
 }
 
-
 function mybash-deb-fetch-install(){
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then 
     wget $1 -P /tmp/; 
   fi
   sudo dpkg -i /tmp/$DEB_NAME
+}
+
+###############################################################################
+# wget functions
+###############################################################################
+mybash-wget-extract-to-tmp(){
+  FILE_NAME_ORIG=$(basename $1)
+  FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
+  if test ! -f /tmp/$FILE_NAME; then 
+    log-msg "fetching $FILE_NAME"
+    wget $1 -P /tmp/
+  fi
+  log-msg "extracting $FILE_NAME"
+  case $FILE_EXTENSION in
+    gz) # consider tar.gz
+      tar -xf /tmp/$FILE_NAME -C /tmp/;;
+    bz2) # consider tar.bz2
+      tar -xjf /tmp/$FILE_NAME -C /tmp/;;
+    zip)
+      unzip /tmp/$FILE_NAME -d /tmp/;;
+  esac
+}
+
+mybash-wget-extract-to-opt(){
+  FILE_NAME_ORIG=$(basename $1)
+  FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
+  FILE_EXTENSION=${FILE_NAME##*.}
+  if test ! -f /tmp/$FILE_NAME; then 
+    log-msg "fetching $FILE_NAME"
+    wget $1 -P /tmp/
+  fi
+  log-msg "extracting $FILE_NAME"
+  case $FILE_EXTENSION in
+    gz) # consider tar.gz
+      tar -xf /tmp/$FILE_NAME -C /opt/;;
+    bz2) # consider tar.bz2
+      tar -xjf /tmp/$FILE_NAME -C /opt/;;
+    zip)
+      unzip /tmp/$FILE_NAME -d /opt/;;
+  esac
 }
