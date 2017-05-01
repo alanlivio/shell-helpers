@@ -47,10 +47,11 @@ function mybash-video-create-by-image() {
 }
 
 function mybash-video-cut() {
-  : ${1?an argument is required}
-  ${1?an second argument is required}
-  # ffmpeg -i saida.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "1.1-vai-antonio.mp4"
-  ffmpeg -i "$1"  -vcodec copy -acodec copy -ss "$2"  -t "$3"  -f mp4 cuted-$1
+  : ${1? an argument is required}
+  : ${2? an second argument is required}
+  : ${3? an third argument is required}
+  # ffmpeg -i video-cuted.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "video.mp4"
+  ffmpeg -i $1  -vcodec copy -acodec copy -ss $2  -t $3  -f mp4 cuted-$1
 }
 
 function mybash-video-gst-side-by-side-test() {
