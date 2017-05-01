@@ -546,28 +546,13 @@ function mybash-deb-fetch-install(){
 ###############################################################################
 # wget functions
 ###############################################################################
-mybash-wget-extract-to-tmp(){
-  FILE_NAME_ORIG=$(basename $1)
-  FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
-  if test ! -f /tmp/$FILE_NAME; then 
-    log-msg "fetching $FILE_NAME"
-    wget $1 -P /tmp/
-  fi
-  log-msg "extracting $FILE_NAME"
-  case $FILE_EXTENSION in
-    gz) # consider tar.gz
-      tar -xf /tmp/$FILE_NAME -C /tmp/;;
-    bz2) # consider tar.bz2
-      tar -xjf /tmp/$FILE_NAME -C /tmp/;;
-    zip)
-      unzip /tmp/$FILE_NAME -d /tmp/;;
-  esac
-}
-
-mybash-wget-extract-to-opt(){
+mybash-wget-extract-to(){
+  : ${1?an argument is required}
+  : ${2? an second argument is required}
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
   FILE_EXTENSION=${FILE_NAME##*.}
+
   if test ! -f /tmp/$FILE_NAME; then 
     log-msg "fetching $FILE_NAME"
     wget $1 -P /tmp/
@@ -575,10 +560,10 @@ mybash-wget-extract-to-opt(){
   log-msg "extracting $FILE_NAME"
   case $FILE_EXTENSION in
     gz) # consider tar.gz
-      tar -xf /tmp/$FILE_NAME -C /opt/;;
+      tar -xf /tmp/$FILE_NAME -C $2;;
     bz2) # consider tar.bz2
-      tar -xjf /tmp/$FILE_NAME -C /opt/;;
+      tar -xjf /tmp/$FILE_NAME -C $2;;
     zip)
-      unzip /tmp/$FILE_NAME -d /opt/;;
+      unzip /tmp/$FILE_NAME -d $2/;;
   esac
 }
