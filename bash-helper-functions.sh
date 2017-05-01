@@ -535,7 +535,7 @@ function mybash-deb-remove-orphan-packages(){
   fi
 }
 
-function mybash-deb-fetch-install(){
+function mybash-deb-wget-install(){
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then 
     wget $1 -P /tmp/; 
