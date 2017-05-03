@@ -469,8 +469,8 @@ function mybash-python-install-packages() {
 ###############################################################################
 function mybash-deb-upgrade(){
   log-msg "upgrade deb packages"
-  sudo apt -y update
-  sudo apt -y dist-upgrade
+  sudo apt-get -y update
+  sudo apt-get -y upgrade
 }
 
 function mybash-deb-install-packages(){
@@ -484,17 +484,17 @@ function mybash-deb-install-packages(){
   done
   echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
   if test -n "$PKGS_TO_INSTALL"; then
-    sudo apt install -y $PKGS_TO_INSTALL
+    sudo apt-get install -y $PKGS_TO_INSTALL
   fi
 }
 
 function mybash-deb-clean(){
-  log-msg "apt autoclean autoremove"
-  sudo apt -y remove --purge
-  sudo apt -y -f install
-  sudo apt -y clean
-  sudo apt -y autoclean
-  sudo apt -y autoremove
+  log-msg "apt-get clean autoclean autoremove"
+  sudo apt-get -y remove --purge
+  sudo apt-get -y -f install
+  sudo apt-get -y clean
+  sudo apt-get -y autoclean
+  sudo apt-get -y autoremove
 }
 
 function mybash-deb-remove-packages(){
@@ -509,7 +509,7 @@ function mybash-deb-remove-packages(){
   done
   echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
   if test -n "$PKGS_TO_REMOVE"; then
-    sudo apt remove -y --purge $PKGS_TO_REMOVE
+    sudo apt-get remove -y --purge $PKGS_TO_REMOVE
   fi
 }
 
@@ -531,7 +531,7 @@ function mybash-deb-remove-orphan-packages(){
   done
   echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
   if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
-    sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
+    sudo apt-get remove -y --purge $PKGS_ORPHAN_TO_REMOVE
   fi
 }
 
