@@ -352,7 +352,8 @@ function mybash-user-send-ssh-keys() {
 ###############################################################################
 
 function mybash-vscode-run-as-root() {
-  sudo code --user-data-dir="~/.vscode" "$@"
+  : ${1?an argument is required}
+  sudo code --user-data-dir="~/.vscode" "$1"
 }
 
 function mybash-vscode-install-packages(){
@@ -546,6 +547,7 @@ function mybash-deb-remove-orphan-packages(){
 }
 
 function mybash-deb-wget-install(){
+  : ${1?an argument is required}
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then 
     wget $1 -P /tmp/; 
