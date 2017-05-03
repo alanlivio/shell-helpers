@@ -401,6 +401,12 @@ function mybash-gnome-background-screensaver-black() {
   gsettings set org.gnome.desktop.screensaver picture-uri ''
 }       
 
+function mybash-gnome-version() {
+  gnome-shell --version
+  gnome-terminal --version
+  gnome-text-editor  --version
+}
+
 ###############################################################################
 # vlc functions
 ###############################################################################
