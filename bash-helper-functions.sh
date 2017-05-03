@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ###############################################################################
-# Bash helper functions (github.com/alanlivio/bash_helper_functions)
-# update by: wget raw.githubusercontent.com/alanlivio/bash_helper_functions/master/bash_helper_functions.sh
+# Bash helper functions (github.com/alanlivio/bash-helper-functions)
+# update by: wget https://raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash-helper-functions.sh
 ###############################################################################
 
 ###############################################################################
