@@ -407,6 +407,10 @@ function mybash-gnome-version() {
   gnome-text-editor  --version
 }
 
+function mybash-gnome-restart() {
+  sudo /etc/init.d/gdm3 restart
+}
+
 ###############################################################################
 # vlc functions
 ###############################################################################
