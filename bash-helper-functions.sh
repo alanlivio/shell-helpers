@@ -402,14 +402,41 @@ function mybash-gnome-background-screensaver-black() {
   gsettings set org.gnome.desktop.screensaver picture-uri ''
 }       
 
-function mybash-gnome-version() {
+function mybash-gnome-show-version() {
   gnome-shell --version
   gnome-terminal --version
   gnome-text-editor  --version
 }
 
-function mybash-gnome-restart() {
+function mybash-gnome-gdm-restart() {
   sudo /etc/init.d/gdm3 restart
+}
+
+function mybash-gnome-settings-reset() {
+  : ${1?an argument is required}
+  gsettings reset-recursively $1
+}
+
+function mybash-gnome-settings-save-scheme-to-file() {
+  : ${1?an argument is required}
+  : ${2? an second argument is required}
+  gsettings list-recursively $1| sed -e 's/@as //g' -e 's/, /,/g' > $2
+}
+
+function mybash-gnome-settings-load-from-file() {
+  : ${1?an argument is required}
+  sed -e 's/@as //g' -e 's/, /,/g' $1 | while read -r i
+  do
+    gsettings set $i
+  done
+}
+
+function mybash-gnome-settings-diff-scheme-and-file() {
+  : ${1?an argument is required}
+  : ${2? an second argument is required}
+  TMP_FILE=/tmp/gnome-settings-diff-scheme
+  gsettings list-recursively $1| sed -e 's/@as //g' -e 's/, /,/g' > $TMP_FILE
+  diff $TMP_FILE $2
 }
 
 ###############################################################################
@@ -478,6 +505,7 @@ function mybash-python-install-packages() {
 ###############################################################################
 # deb functions
 ###############################################################################
+
 function mybash-deb-upgrade(){
   log-msg "upgrade deb packages"
   sudo apt-get -y update
@@ -558,6 +586,7 @@ function mybash-deb-wget-install(){
 ###############################################################################
 # wget functions
 ###############################################################################
+
 mybash-wget-extract-to(){
   : ${1?an argument is required}
   : ${2? an second argument is required}
