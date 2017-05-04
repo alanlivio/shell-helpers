@@ -404,6 +404,7 @@ function mybash-gnome-background-screensaver-black() {
 
 function mybash-gnome-show-version() {
   gnome-shell --version
+  mutter --version|head -n 1
   gnome-terminal --version
   gnome-text-editor  --version
 }
