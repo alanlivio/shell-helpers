@@ -609,3 +609,15 @@ mybash-wget-extract-to(){
       unzip /tmp/$FILE_NAME -d $2/;;
   esac
 }
+
+###############################################################################
+# wget functions
+###############################################################################
+
+mybash-list-sorted-by-size(){
+  du -h|sort -h
+}
+
+mybash-list-recursive-sorted-by-size(){
+  du -ah|sort -h
+}
