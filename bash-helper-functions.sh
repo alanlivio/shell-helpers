@@ -418,7 +418,7 @@ function mybash-gnome-settings-reset() {
   gsettings reset-recursively $1
 }
 
-function mybash-gnome-settings-save-scheme-to-file() {
+function mybash-gnome-settings-save-to-file() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   gsettings list-recursively $1| sed -e 's/@as //g' -e 's/, /,/g' > $2
@@ -432,10 +432,10 @@ function mybash-gnome-settings-load-from-file() {
   done
 }
 
-function mybash-gnome-settings-diff-scheme-and-file() {
+function mybash-gnome-settings-diff-and-file() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
-  TMP_FILE=/tmp/gnome-settings-diff-scheme
+  TMP_FILE=/tmp/gnome-settings-diff
   gsettings list-recursively $1| sed -e 's/@as //g' -e 's/, /,/g' > $TMP_FILE
   diff $TMP_FILE $2
 }
@@ -611,7 +611,7 @@ mybash-wget-extract-to(){
 }
 
 ###############################################################################
-# wget functions
+# list functions
 ###############################################################################
 
 mybash-list-sorted-by-size(){
