@@ -307,8 +307,13 @@ function mybash-rename-lowercase-dash() {
 # network functions
 ###############################################################################
 
+function mybash-network-ip() {
+  echo "$(hostname -I | cut -d' ' -f1)"
+}
+
 function mybash-network-arp-scan() {
-  sudo arp-scan 139.82.95.26/24
+  ip=$(mybash-network-ip)
+  sudo nmap --host-timeout 1s --script smb-os-discovery.nse -RsP --version-light --system-dns  $ip/24 | grep -e 'Nmap scan report' -e 'Host is' -e 'MAC Address:'| sed 's/Nmap scan/----------------------------------------\nNmap scan/'
 }
 
 ###############################################################################
