@@ -488,20 +488,17 @@ function hfunc-node-install-packages() {
 # python functions
 ###############################################################################
 
-function hfunc-python-test-version3() {
-  if test "$(python -V 2>&1 | grep -Po '(?<=Python ).{1}')" = 3; then 
-    return 1
-  else 
-    return 0
-  fi
+function hfunc-python-version() {
+  python -V 2>&1 | grep -Po '(?<=Python ).{1}'
 }
 
 function hfunc-python-install-packages() {
   log-msg "install pip packages"
-  if ! hfunc-python-test-version3; then
-    sudo update-alternatives --remove /usr/bin/python python /usr/bin/python3 10
+  if ! type "pip3" &>/dev/null; then
+    log-error "pip3 not found."
+    return 1
   fi
-  sudo -H pip3  install --no-cache-dir --disable-pip-version-check --upgrade pip
+  sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip
   PIP_PKGS_TO_INSTALL=""
   for i in "$@"; do
     pip3 show $i &>/dev/null
@@ -511,7 +508,7 @@ function hfunc-python-install-packages() {
   done
   echo "PIP_PKGS_TO_INSTALL=$PIP_PKGS_TO_INSTALL"
   if test -n "$PIP_PKGS_TO_INSTALL"; then
-    sudo -H pip3  install --no-cache-dir --disable-pip-version-check $PIP_PKGS_TO_INSTALL
+    sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PIP_PKGS_TO_INSTALL
   fi
 }
 
@@ -631,11 +628,11 @@ hfunc-wget-extract-to() {
 
 hfunc-web-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
-		log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
-		return 1
-	fi
- : ${1?an argument is required}
-  youtube-dl "$1" --yes-playlist  -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0 
+    log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
+    return 1
+  fi
+  : ${1?an argument is required}
+  youtube-dl "$1" --yes-playlist -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0
 }
 
 ###############################################################################
