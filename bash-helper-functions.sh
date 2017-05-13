@@ -29,13 +29,13 @@ esac
 # audio functions
 ###############################################################################
 
-function mybash-audio-create-empty() {
+function hfunc-audio-create-empty() {
   # gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
   : ${1?an argument is required}
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
 }
 
-function mybash-audio-compress() {
+function hfunc-audio-compress() {
   : ${1?an argument is required}
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
@@ -44,12 +44,12 @@ function mybash-audio-compress() {
 # video functions
 ###############################################################################
 
-function mybash-video-create-by-image() {
+function hfunc-video-create-by-image() {
   : ${1?an argument is required}
   ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
 }
 
-function mybash-video-cut() {
+function hfunc-video-cut() {
   : ${1? an argument is required}
   : ${2? an second argument is required}
   : ${3? an third argument is required}
@@ -57,11 +57,11 @@ function mybash-video-cut() {
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
 
-function mybash-video-gst-side-by-side-test() {
+function hfunc-video-gst-side-by-side-test() {
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
 }
 
-function mybash-video-gst-side-by-side-args() {
+function hfunc-video-gst-side-by-side-args() {
   : ${2?two arguments are required}
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
@@ -70,14 +70,14 @@ function mybash-video-gst-side-by-side-args() {
 # pygmentize functions
 ###############################################################################
 
-function mybash-pygmentize-files-by-extensions-to-image() {
+function hfunc-pygmentize-files-by-extensions-to-image() {
   : ${1?an argument is required}
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
   done
 }
 
-function mybash-pygmentize-files-by-extensions-to-rtf() {
+function hfunc-pygmentize-files-by-extensions-to-rtf() {
   : ${1?an argument is required}
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
@@ -85,7 +85,7 @@ function mybash-pygmentize-files-by-extensions-to-rtf() {
   done
 }
 
-function mybash-pygmentize-files-by-extensions-to-html() {
+function hfunc-pygmentize-files-by-extensions-to-html() {
   : ${1?an argument is required}
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
@@ -96,12 +96,12 @@ function mybash-pygmentize-files-by-extensions-to-html() {
 # gdb functions
 ###############################################################################
 
-function mybash-gdb-run-bt() {
+function hfunc-gdb-run-bt() {
   : ${1?an argument is required}
   gdb -batch -ex=r -ex=bt --args "$1"
 }
 
-function mybash-gdb-run-bt-all-threads() {
+function hfunc-gdb-run-bt-all-threads() {
   : ${1?an argument is required}
   gdb -batch -ex=r -ex="thread apply all bt" --args "$1"
 }
@@ -110,24 +110,24 @@ function mybash-gdb-run-bt-all-threads() {
 # git functions
 ###############################################################################
 
-function mybash-git-create-gitignore() {
+function hfunc-git-create-gitignore() {
   : ${1?an argument is required}
   curl -L -s "https://www.gitignore.io/api/$1"
 }
 
-function mybash-git-create-gitignore-essentials() {
-  mybash-git-create-gitignore code,eclipse,executable,git,intellij,linux,notepadpp,osx,sublimetext,vim,windows,xcode
+function hfunc-git-create-gitignore-essentials() {
+  hfunc-git-create-gitignore code,eclipse,executable,git,intellij,linux,notepadpp,osx,sublimetext,vim,windows,xcode
 }
 
-function mybash-git-create-gitignore-javascript() {
-  mybash-git-create-gitignore node,bower,grunt
+function hfunc-git-create-gitignore-javascript() {
+  hfunc-git-create-gitignore node,bower,grunt
 }
 
-function mybash-git-create-gitignore-cpp() {
-  mybash-git-create-gitignore c,c++,qt,autotools,make,ninja,cmake
+function hfunc-git-create-gitignore-cpp() {
+  hfunc-git-create-gitignore c,c++,qt,autotools,make,ninja,cmake
 }
 
-function mybash-git-find-folders-reset-clean-uninstall() {
+function hfunc-git-find-folders-reset-clean-uninstall() {
   find -iname .git | while read -r i; do
     cd "$(dirname $i)" || exit
     make clean
@@ -138,7 +138,7 @@ function mybash-git-find-folders-reset-clean-uninstall() {
   done
 }
 
-function mybash-git-commit-formated() {
+function hfunc-git-commit-formated() {
   echo -e "\n" >/tmp/commit.txt
   for i in $(git status -s | cut -c4-); do
     echo -e "* $i: Likewise." >>/tmp/commit.txt
@@ -146,7 +146,7 @@ function mybash-git-commit-formated() {
   git commit -t /tmp/commit.txt
 }
 
-function mybash-git-list-large-files() {
+function hfunc-git-list-large-files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
@@ -154,7 +154,7 @@ function mybash-git-list-large-files() {
 # editors functions
 ###############################################################################
 
-function mybash-qtcreator-project-from-git() {
+function hfunc-qtcreator-project-from-git() {
   project_name="${PWD##*/}"
   touch "$project_name.config"
   echo -e "[General]\n" >"$project_name.creator"
@@ -162,11 +162,11 @@ function mybash-qtcreator-project-from-git() {
   git ls-files >"$project_name.files"
 }
 
-function mybash-atom-copy-tern-project() {
+function hfunc-atom-copy-tern-project() {
   cp ~/gdrive/env/apps/.tern-project .
 }
 
-function mybash-eclipse-list-installed() {
+function hfunc-eclipse-list-installed() {
   /opt/eclipse/eclipse \
     -consolelog -noSplash \
     -application org.eclipse.equinox.p2.director \
@@ -177,44 +177,44 @@ function mybash-eclipse-list-installed() {
 # android functions
 ###############################################################################
 
-function mybash-android-start-activity() {
+function hfunc-android-start-activity() {
   #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
   #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
   : ${1?an argument is required}
   adb shell am start -a android.intent.action.MAIN -n "$1"
 }
-function mybash-android-restart-adb() {
+function hfunc-android-restart-adb() {
   sudo adb kill-server && sudo adb start-server
 }
 
-function mybash-android-get-ip() {
+function hfunc-android-get-ip() {
   adb shell netcfg
   adb shell ifconfig wlan0
 }
 
-function mybash-android-enable-stdout-stderr-output() {
+function hfunc-android-enable-stdout-stderr-output() {
   adb shell stop
   adb shell setprop log.redirect-stdio true
   adb shell start
 }
 
-function mybash-android-get-printscreen() {
+function hfunc-android-get-printscreen() {
   adb shell /system/bin/screencap -p /sdcard/screenshot.png
   adb pull /sdcard/screenshot.png screenshot.png
   adb pull /sdcard/screenshot.png screenshot.png
 }
 
-function mybash-android-installed-package() {
+function hfunc-android-installed-package() {
   : ${1?an argument is required}
   adb shell pm list packages | grep ginga
 }
 
-function mybash-android-uninstall-package() {
+function hfunc-android-uninstall-package() {
   # adb uninstall org.libsdl.app
   : ${1?an argument is required}
   adb uninstall $1
 }
-function mybash-android-install-package() {
+function hfunc-android-install-package() {
   : ${1?an argument is required}
   adb install $1
 }
@@ -223,27 +223,27 @@ function mybash-android-install-package() {
 # folder functions
 ###############################################################################
 
-function mybash-folder-size() {
+function hfunc-folder-size() {
   du -ahd 1 | sort -h
 }
 
-function mybash-folder-delete-latex-files() {
+function hfunc-folder-delete-latex-files() {
   find -print0 -iname "*-converted-to.pdf" -or -iname "*.aux" -or -iname "*.log" -or -iname "*.nav" -or -iname "*.out" -or -iname "*.snm" "*.synctex.gz" -or -iname "*.toc" | xargs rm
 }
 
-function mybash-folder-delete-cmake-files() {
+function hfunc-folder-delete-cmake-files() {
   rm -rf CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
 }
 
-function mybash-folder-delete-binary-files() {
+function hfunc-folder-delete-binary-files() {
   find -print0 -iname "*.a" -or -iname "*.o" -or -iname "*.so" -or -iname "*.Plo" -or -iname "*.la" -or -iname "*.log" -or -iname "*.tmp" | xargs rm
 }
 
-function mybash-folder-find-cpp-files() {
+function hfunc-folder-find-cpp-files() {
   find . -print0 -iname "*.h" -or -iname "*.cc" -or -iname "*.cpp" -or -iname "*.c"
 }
 
-function mybash-folder-find-autotools-files() {
+function hfunc-folder-find-autotools-files() {
   find . -print0 -iname "*.am" -or -iname "*.ac"
 }
 
@@ -251,17 +251,17 @@ function mybash-folder-find-autotools-files() {
 # image functions
 ###############################################################################
 
-function mybash-image-reconize-text() {
+function hfunc-image-reconize-text() {
   : ${1?an argument is required}
   tesseract -l eng "$1" "$1.txt"
 }
 
-function mybash-imagem-compress() {
+function hfunc-imagem-compress() {
   : ${1?an argument is required}
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
-function mybash-imagem-compress2() {
+function hfunc-imagem-compress2() {
   : ${1?an argument is required}
   jpegoptim -d . $1.jpeg
 }
@@ -270,24 +270,24 @@ function mybash-imagem-compress2() {
 # pdf functions
 ###############################################################################
 
-function mybash-pdf-remove-password() {
+function hfunc-pdf-remove-password() {
   : ${1?an argument is required}
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
-function mybash-pdf-remove-watermark() {
+function hfunc-pdf-remove-watermark() {
   : ${1?an argument is required}
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
 }
 
-function mybash-pdf-compress() {
+function hfunc-pdf-compress() {
   : ${1?an argument is required}
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
-function mybash-pdf-convert-to() {
+function hfunc-pdf-convert-to() {
   : ${1?an argument is required}
   soffice --headless --convert-to pdf "$1"
 }
@@ -296,7 +296,7 @@ function mybash-pdf-convert-to() {
 # rename functions
 ###############################################################################
 
-function mybash-rename-lowercase-dash() {
+function hfunc-rename-lowercase-dash() {
   : ${1?an argument is required}
   rename 'y/A-Z/a-z/;s/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
 }
@@ -305,12 +305,12 @@ function mybash-rename-lowercase-dash() {
 # network functions
 ###############################################################################
 
-function mybash-network-ip() {
+function hfunc-network-ip() {
   echo "$(hostname -I | cut -d' ' -f1)"
 }
 
-function mybash-network-arp-scan() {
-  ip=$(mybash-network-ip)
+function hfunc-network-arp-scan() {
+  ip=$(hfunc-network-ip)
   sudo nmap --host-timeout 1s --script smb-os-discovery.nse -RsP --version-light --system-dns $ip/24 | grep -e 'Nmap scan report' -e 'Host is' -e 'MAC Address:' | sed 's/Nmap scan/----------------------------------------\nNmap scan/'
 }
 
@@ -318,13 +318,13 @@ function mybash-network-arp-scan() {
 # virtualbox functions
 ###############################################################################
 
-function mybash-virtualbox-compact() {
+function hfunc-virtualbox-compact() {
   : ${1?an argument is required}
   #VBoxManage modifyhd /opt/win7/win7.vdi compact
   VBoxManage modifyhd "$1" compact
 }
 
-function mybash-virtualbox-resize() {
+function hfunc-virtualbox-resize() {
   : ${1?an argument is required}
   #VBoxManage modifyhd /opt/win7/win7.vdi --resize 200000
   VBoxManage modifyhd "$1" --resize 200000
@@ -334,18 +334,18 @@ function mybash-virtualbox-resize() {
 # user functions
 ###############################################################################
 
-function mybash-user-reload-bashrc() {
+function hfunc-user-reload-bashrc() {
   source ~/.bashrc
 }
 
-function mybash-user-fix-ssh-permissions() {
+function hfunc-user-fix-ssh-permissions() {
   sudo chmod 700 ~/.ssh/ \
     && sudo chmod 755 ~/.ssh/* \
     && sudo chmod 600 ~/.ssh/id_rsa \
     && sudo chmod 644 ~/.ssh/id_rsa.pub
 }
 
-function mybash-user-send-ssh-keys() {
+function hfunc-user-send-ssh-keys() {
   : ${1?an argument is required}
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pub
 }
@@ -354,12 +354,12 @@ function mybash-user-send-ssh-keys() {
 # vscode functions
 ###############################################################################
 
-function mybash-vscode-run-as-root() {
+function hfunc-vscode-run-as-root() {
   : ${1?an argument is required}
   sudo code --user-data-dir="~/.vscode" "$1"
 }
 
-function mybash-vscode-install-packages() {
+function hfunc-vscode-install-packages() {
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
@@ -381,7 +381,7 @@ function mybash-vscode-install-packages() {
 # gnome functions
 ###############################################################################
 
-function mybash-gnome-reset-keybindings() {
+function hfunc-gnome-reset-keybindings() {
   # gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
   gsettings reset-recursively org.gnome.mutter.keybindings
   gsettings reset-recursively org.gnome.mutter.wayland.keybindings
@@ -390,11 +390,11 @@ function mybash-gnome-reset-keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function mybash-gnome-update-default-apps() {
+function hfunc-gnome-update-default-apps() {
   sudo update-desktop-database /usr/share/gnome/applications /usr/share/applications /usr/local/share/applications, /var/lib/snapd/desktop/applications
 }
 
-function mybash-gnome-background-screensaver-black() {
+function hfunc-gnome-background-screensaver-black() {
   gsettings set org.gnome.desktop.background primary-color "#000000"
   gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background color-shading-type "solid"
@@ -405,36 +405,36 @@ function mybash-gnome-background-screensaver-black() {
   gsettings set org.gnome.desktop.screensaver picture-uri ''
 }
 
-function mybash-gnome-show-version() {
+function hfunc-gnome-show-version() {
   gnome-shell --version
   mutter --version | head -n 1
   gnome-terminal --version
   gnome-text-editor --version
 }
 
-function mybash-gnome-gdm-restart() {
+function hfunc-gnome-gdm-restart() {
   sudo /etc/init.d/gdm3 restart
 }
 
-function mybash-gnome-settings-reset() {
+function hfunc-gnome-settings-reset() {
   : ${1?an argument is required}
   gsettings reset-recursively $1
 }
 
-function mybash-gnome-settings-save-to-file() {
+function hfunc-gnome-settings-save-to-file() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   gsettings list-recursively $1 | sed -e 's/@as //g' -e 's/, /,/g' >$2
 }
 
-function mybash-gnome-settings-load-from-file() {
+function hfunc-gnome-settings-load-from-file() {
   : ${1?an argument is required}
   sed -e 's/@as //g' -e 's/, /,/g' $1 | while read -r i; do
     gsettings set $i
   done
 }
 
-function mybash-gnome-settings-diff-and-file() {
+function hfunc-gnome-settings-diff-and-file() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   TMP_FILE=/tmp/gnome-settings-diff
@@ -446,7 +446,7 @@ function mybash-gnome-settings-diff-and-file() {
 # vlc functions
 ###############################################################################
 
-function mybash-vlc-youtube-playlist-extension() {
+function hfunc-vlc-youtube-playlist-extension() {
   wget https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
@@ -455,7 +455,7 @@ function mybash-vlc-youtube-playlist-extension() {
 # system functions
 ###############################################################################
 
-function mybash-system-list-gpu() {
+function hfunc-system-list-gpu() {
   lspci -nn | grep -E 'VGA|Display'
 }
 
@@ -463,7 +463,7 @@ function mybash-system-list-gpu() {
 # node functions
 ###############################################################################
 
-function mybash-node-install-packages() {
+function hfunc-node-install-packages() {
   log-msg "install npm packages"
   if test ! -f /usr/bin/node; then
     sudo ln -s /usr/bin/nodejs /usr/bin/node
@@ -488,7 +488,7 @@ function mybash-node-install-packages() {
 # python functions
 ###############################################################################
 
-function mybash-python-test-version3() {
+function hfunc-python-test-version3() {
   if test "$(python -V 2>&1 | grep -Po '(?<=Python ).{1}')" = 3; then 
     return 1
   else 
@@ -496,9 +496,9 @@ function mybash-python-test-version3() {
   fi
 }
 
-function mybash-python-install-packages() {
+function hfunc-python-install-packages() {
   log-msg "install pip packages"
-  if ! mybash-python-test-version3; then
+  if ! hfunc-python-test-version3; then
     sudo update-alternatives --remove /usr/bin/python python /usr/bin/python3 10
   fi
   sudo -H pip3  install --no-cache-dir --disable-pip-version-check --upgrade pip
@@ -519,13 +519,13 @@ function mybash-python-install-packages() {
 # deb functions
 ###############################################################################
 
-function mybash-deb-upgrade() {
+function hfunc-deb-upgrade() {
   log-msg "upgrade deb packages"
   sudo apt-get -y update
   sudo apt-get -y upgrade
 }
 
-function mybash-deb-install-packages() {
+function hfunc-deb-install-packages() {
   log-msg "install deb packages"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -540,7 +540,7 @@ function mybash-deb-install-packages() {
   fi
 }
 
-function mybash-deb-clean() {
+function hfunc-deb-clean() {
   log-msg "apt-get clean autoclean autoremove"
   sudo apt-get -y remove --purge
   sudo apt-get -y -f install
@@ -549,7 +549,7 @@ function mybash-deb-clean() {
   sudo apt-get -y autoremove
 }
 
-function mybash-deb-remove-packages() {
+function hfunc-deb-remove-packages() {
   log-msg "remove deb packages"
 
   PKGS_TO_REMOVE=""
@@ -565,7 +565,7 @@ function mybash-deb-remove-packages() {
   fi
 }
 
-function mybash-deb-remove-orphan-packages() {
+function hfunc-deb-remove-orphan-packages() {
   log-msg "remove orphan deb packages"
 
   PKGS_ORPHAN_TO_REMOVE=""
@@ -587,7 +587,7 @@ function mybash-deb-remove-orphan-packages() {
   fi
 }
 
-function mybash-deb-wget-install() {
+function hfunc-deb-wget-install() {
   : ${1?an argument is required}
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
@@ -600,7 +600,7 @@ function mybash-deb-wget-install() {
 # wget functions
 ###############################################################################
 
-mybash-wget-extract-to() {
+hfunc-wget-extract-to() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   FILE_NAME_ORIG=$(basename $1)
@@ -629,7 +629,7 @@ mybash-wget-extract-to() {
 # web fetch functions
 ###############################################################################
 
-mybash-web-fetch-youtube-playlist() {
+hfunc-web-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
 		log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
 		return 1
@@ -642,10 +642,10 @@ mybash-web-fetch-youtube-playlist() {
 # list functions
 ###############################################################################
 
-mybash-list-sorted-by-size() {
+hfunc-list-sorted-by-size() {
   du -h | sort -h
 }
 
-mybash-list-recursive-sorted-by-size() {
+hfunc-list-recursive-sorted-by-size() {
   du -ah | sort -h
 }
