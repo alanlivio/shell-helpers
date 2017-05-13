@@ -488,19 +488,30 @@ function mybash-node-install-packages() {
 # python functions
 ###############################################################################
 
+function mybash-python-test-version3() {
+  if test "$(python -V 2>&1 | grep -Po '(?<=Python ).{1}')" = 3; then 
+    return 1
+  else 
+    return 0
+  fi
+}
+
 function mybash-python-install-packages() {
   log-msg "install pip packages"
-  sudo -H pip install --upgrade pip
+  if ! mybash-python-test-version3; then
+    sudo update-alternatives --remove /usr/bin/python python /usr/bin/python3 10
+  fi
+  sudo -H pip3  install --no-cache-dir --disable-pip-version-check --upgrade pip
   PIP_PKGS_TO_INSTALL=""
   for i in "$@"; do
-    pip show $i &>/dev/null
+    pip3 show $i &>/dev/null
     if test $? != 0; then
       PIP_PKGS_TO_INSTALL="$PIP_PKGS_TO_INSTALL $i"
     fi
   done
   echo "PIP_PKGS_TO_INSTALL=$PIP_PKGS_TO_INSTALL"
   if test -n "$PIP_PKGS_TO_INSTALL"; then
-    sudo -H pip install $PIP_PKGS_TO_INSTALL
+    sudo -H pip3  install --no-cache-dir --disable-pip-version-check $PIP_PKGS_TO_INSTALL
   fi
 }
 
