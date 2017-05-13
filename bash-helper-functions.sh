@@ -584,7 +584,7 @@ function hfunc-deb-remove-orphan-packages() {
   fi
 }
 
-function hfunc-deb-wget-install() {
+function hfunc-deb-fetch-install() {
   : ${1?an argument is required}
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
@@ -594,10 +594,10 @@ function hfunc-deb-wget-install() {
 }
 
 ###############################################################################
-# wget functions
+# fetch functions
 ###############################################################################
 
-hfunc-wget-extract-to() {
+hfunc-fetch-extract-to() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   FILE_NAME_ORIG=$(basename $1)
@@ -622,11 +622,7 @@ hfunc-wget-extract-to() {
   esac
 }
 
-###############################################################################
-# web fetch functions
-###############################################################################
-
-hfunc-web-fetch-youtube-playlist() {
+hfunc-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
     log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
     return 1
