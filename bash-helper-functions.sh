@@ -6,24 +6,38 @@
 ###############################################################################
 
 ###############################################################################
-# log functions 
+# variables
 ###############################################################################
-
-function aux-print() { echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'; }
-function log-error() { aux-print "\033[00;31m---> $* \033[00m"; }
-function log-msg() { aux-print "\033[00;33m---> $* \033[00m"; }
-function log-done() { aux-print "\033[00;32m---> done\033[00m"; }
-function log-ok() { aux-print "\033[00;32m---> ok033[00m"; }
-function TRY() {
-  "$@"
-  if test $? -ne 0; then log-error "$1" && exit 1; fi
-}
 
 case "$(uname -s)" in
   Darwin) IS_MAC=1 ;;
   Linux) IS_LINUX=1 ;;
   CYGWIN* | MINGW32* | MSYS*) IS_WINDOWS=1 ;;
 esac
+
+###############################################################################
+# log functions 
+###############################################################################
+
+function hfunc-log-print() {
+  echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'
+}
+function hfunc-log-error() {
+  hfunc-log-print "\033[00;31m---> $* \033[00m"
+}
+function hfunc-log-msg() {
+  hfunc-log-print "\033[00;33m---> $* \033[00m"
+}
+function hfunc-log-done() {
+  hfunc-log-print "\033[00;32m---> done\033[00m"
+}
+function hfunc-log-ok() {
+  hfunc-log-print "\033[00;32m---> ok\033[00m"
+}
+function TRY() {
+  "$@"
+  if test $? -ne 0; then hfunc-log-error "$1" && exit 1; fi
+}
 
 ###############################################################################
 # audio functions
@@ -464,7 +478,7 @@ function hfunc-system-list-gpu() {
 ###############################################################################
 
 function hfunc-node-install-packages() {
-  log-msg "install npm packages"
+  hfunc-log-msg "install npm packages"
   if test ! -f /usr/bin/node; then
     sudo ln -s /usr/bin/nodejs /usr/bin/node
   fi
@@ -493,9 +507,9 @@ function hfunc-python-version() {
 }
 
 function hfunc-python-install-packages() {
-  log-msg "install pip packages"
+  hfunc-log-msg "install pip packages"
   if ! type "pip3" &>/dev/null; then
-    log-error "pip3 not found."
+    hfunc-log-error "pip3 not found."
     return 1
   fi
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip
@@ -517,13 +531,13 @@ function hfunc-python-install-packages() {
 ###############################################################################
 
 function hfunc-deb-upgrade() {
-  log-msg "upgrade deb packages"
+  hfunc-log-msg "upgrade deb packages"
   sudo apt-get -y update
   sudo apt-get -y upgrade
 }
 
 function hfunc-deb-install-packages() {
-  log-msg "install deb packages"
+  hfunc-log-msg "install deb packages"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
@@ -538,7 +552,7 @@ function hfunc-deb-install-packages() {
 }
 
 function hfunc-deb-clean() {
-  log-msg "apt-get clean autoclean autoremove"
+  hfunc-log-msg "apt-get clean autoclean autoremove"
   sudo apt-get -y remove --purge
   sudo apt-get -y -f install
   sudo apt-get -y clean
@@ -547,7 +561,7 @@ function hfunc-deb-clean() {
 }
 
 function hfunc-deb-remove-packages() {
-  log-msg "remove deb packages"
+  hfunc-log-msg "remove deb packages"
 
   PKGS_TO_REMOVE=""
   for i in "$@"; do
@@ -563,7 +577,7 @@ function hfunc-deb-remove-packages() {
 }
 
 function hfunc-deb-remove-orphan-packages() {
-  log-msg "remove orphan deb packages"
+  hfunc-log-msg "remove orphan deb packages"
 
   PKGS_ORPHAN_TO_REMOVE=""
   for i in $(deborphan); do
@@ -605,10 +619,10 @@ hfunc-fetch-extract-to() {
   FILE_EXTENSION=${FILE_NAME##*.}
 
   if test ! -f /tmp/$FILE_NAME; then
-    log-msg "fetching $FILE_NAME"
+    hfunc-log-msg "fetching $FILE_NAME"
     wget $1 -P /tmp/
   fi
-  log-msg "extracting $FILE_NAME"
+  hfunc-log-msg "extracting $FILE_NAME"
   case $FILE_EXTENSION in
     gz) # consider tar.gz
       tar -xf /tmp/$FILE_NAME -C $2
@@ -624,7 +638,7 @@ hfunc-fetch-extract-to() {
 
 hfunc-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
-    log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
+    hfunc-log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
     return 1
   fi
   : ${1?an argument is required}
