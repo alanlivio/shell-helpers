@@ -626,6 +626,19 @@ mybash-wget-extract-to() {
 }
 
 ###############################################################################
+# web fetch functions
+###############################################################################
+
+mybash-web-fetch-youtube-playlist() {
+  if ! type "youtube-dl" &>/dev/null; then
+		log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
+		return 1
+	fi
+ : ${1?an argument is required}
+  youtube-dl "$1" --yes-playlist  -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0 
+}
+
+###############################################################################
 # list functions
 ###############################################################################
 
