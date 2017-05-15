@@ -669,3 +669,11 @@ function hfunc-list-sorted-by-size() {
 function hfunc-list-recursive-sorted-by-size() {
   du -ah | sort -h
 }
+
+###############################################################################
+# x11 functions
+###############################################################################
+
+function hfunc-x11-properties-of-window() {
+  xprop | grep "^WM_"
+}
