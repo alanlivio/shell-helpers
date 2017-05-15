@@ -417,8 +417,9 @@ function hfunc-gnome-reset-keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hfunc-gnome-update-default-apps() {
-  sudo update-desktop-database /usr/share/gnome/applications /usr/share/applications /usr/local/share/applications, /var/lib/snapd/desktop/applications
+function hfunc-gnome-update-database() {
+  sudo update-desktop-database -v /usr/share/applications  ~/.local/share/applications ~/.gnome/apps/
+  sudo update-icon-caches -v /usr/share/icons/ ~/.local/share/icons/
 }
 
 function hfunc-gnome-background-screensaver-black() {
