@@ -105,6 +105,13 @@ function hfunc-pygmentize-files-by-extensions-to-html() {
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
 }
+###############################################################################
+# gcc functions
+###############################################################################
+
+function hfunc-gcc-headers() {
+  echo | gcc -Wp,-v -x c++ - -fsyntax-only
+}
 
 ###############################################################################
 # gdb functions
