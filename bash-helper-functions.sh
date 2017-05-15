@@ -22,18 +22,23 @@ esac
 function hfunc-log-print() {
   echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'
 }
+
 function hfunc-log-error() {
   hfunc-log-print "\033[00;31m---> $* \033[00m"
 }
+
 function hfunc-log-msg() {
   hfunc-log-print "\033[00;33m---> $* \033[00m"
 }
+
 function hfunc-log-done() {
   hfunc-log-print "\033[00;32m---> done\033[00m"
 }
+
 function hfunc-log-ok() {
   hfunc-log-print "\033[00;32m---> ok\033[00m"
 }
+
 function TRY() {
   "$@"
   if test $? -ne 0; then hfunc-log-error "$1" && exit 1; fi
@@ -105,6 +110,7 @@ function hfunc-pygmentize-files-by-extensions-to-html() {
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
 }
+
 ###############################################################################
 # gcc functions
 ###############################################################################
