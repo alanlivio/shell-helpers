@@ -611,7 +611,7 @@ function hfunc-deb-fetch-install() {
 # fetch functions
 ###############################################################################
 
-hfunc-fetch-extract-to() {
+function hfunc-fetch-extract-to() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
   FILE_NAME_ORIG=$(basename $1)
@@ -636,7 +636,7 @@ hfunc-fetch-extract-to() {
   esac
 }
 
-hfunc-fetch-youtube-playlist() {
+function hfunc-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
     hfunc-log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
     return 1
@@ -649,10 +649,10 @@ hfunc-fetch-youtube-playlist() {
 # list functions
 ###############################################################################
 
-hfunc-list-sorted-by-size() {
+function hfunc-list-sorted-by-size() {
   du -h | sort -h
 }
 
-hfunc-list-recursive-sorted-by-size() {
+function hfunc-list-recursive-sorted-by-size() {
   du -ah | sort -h
 }
