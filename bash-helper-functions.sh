@@ -39,7 +39,7 @@ function hfunc-log-ok() {
   hfunc-log-print "\033[00;32m---> ok\033[00m"
 }
 
-function TRY() {
+function hfunc-log-try() {
   "$@"
   if test $? -ne 0; then hfunc-log-error "$1" && exit 1; fi
 }
