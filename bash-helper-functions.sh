@@ -45,6 +45,19 @@ function hfunc-log-try() {
 }
 
 ###############################################################################
+# test functions
+###############################################################################
+
+function hfunc-test-exist-command() {
+  if ! type "$1" &>/dev/null; then
+    hfunc-log-error "$1 not found."
+    return 1
+  else
+    return 0
+  fi
+}
+
+###############################################################################
 # audio functions
 ###############################################################################
 
@@ -387,6 +400,7 @@ function hfunc-vscode-run-as-root() {
 }
 
 function hfunc-vscode-install-packages() {
+  if ! hfunc-test-exist-command code; then return 1; fi
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
@@ -493,10 +507,7 @@ function hfunc-system-list-gpu() {
 
 function hfunc-node-install-packages() {
   hfunc-log-msg "install npm packages"
-  if ! type "npm" &>/dev/null; then
-    hfunc-log-error "npm not found."
-    return 1
-  fi
+  if ! hfunc-test-exist-command npm; then return 1; fi
   NPM_PKGS_TO_INSTALL=""
   for i in "$@"; do
     npm list -g $i &>/dev/null
@@ -523,10 +534,7 @@ function hfunc-python-version() {
 
 function hfunc-python-install-packages() {
   hfunc-log-msg "install pip packages"
-  if ! type "pip3" &>/dev/null; then
-    hfunc-log-error "pip3 not found."
-    return 1
-  fi
+  if ! hfunc-test-exist-command pip3; then return 1; fi
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip
   PIP_PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -615,10 +623,7 @@ function hfunc-deb-remove-orphan-packages() {
 
 function hfunc-deb-fetch-install() {
   : ${1?an argument is required}
-  if ! type "wget" &>/dev/null; then
-    hfunc-log-error "wget not found."
-    return 1
-  fi
+  if ! hfunc-test-exist-command wget; then return 1; fi
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
     wget $1 -P /tmp/
@@ -633,10 +638,7 @@ function hfunc-deb-fetch-install() {
 function hfunc-fetch-extract-to() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
-  if ! type "wget" &>/dev/null; then
-    hfunc-log-error "wget not found."
-    return 1
-  fi
+  if ! hfunc-test-exist-command wget; then return 1; fi
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
   FILE_EXTENSION=${FILE_NAME##*.}
@@ -660,11 +662,8 @@ function hfunc-fetch-extract-to() {
 }
 
 function hfunc-fetch-youtube-playlist() {
-  if ! type "youtube-dl" &>/dev/null; then
-    hfunc-log-error "youtube-dl not found."
-    return 1
-  fi
   : ${1?an argument is required}
+  if ! hfunc-test-exist-command youtube-dl; then return 1; fi
   youtube-dl "$1" --yes-playlist -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0
 }
 
@@ -685,9 +684,6 @@ function hfunc-list-recursive-sorted-by-size() {
 ###############################################################################
 
 function hfunc-x11-properties-of-window() {
-  if ! type "xprop" &>/dev/null; then
-    hfunc-log-error "xprop not found."
-    return 1
-  fi
+  if ! hfunc-test-exist-command xprop; then return 1; fi
   xprop | grep "^WM_"
 }
