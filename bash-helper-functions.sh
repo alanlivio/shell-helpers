@@ -418,7 +418,7 @@ function hfunc-gnome-reset-keybindings() {
 }
 
 function hfunc-gnome-update-database() {
-  sudo update-desktop-database -v /usr/share/applications  ~/.local/share/applications ~/.gnome/apps/
+  sudo update-desktop-database -v /usr/share/applications ~/.local/share/applications ~/.gnome/apps/
   sudo update-icon-caches -v /usr/share/icons/ ~/.local/share/icons/
 }
 
@@ -493,8 +493,9 @@ function hfunc-system-list-gpu() {
 
 function hfunc-node-install-packages() {
   hfunc-log-msg "install npm packages"
-  if test ! -f /usr/bin/node; then
-    sudo ln -s /usr/bin/nodejs /usr/bin/node
+  if ! type "npm" &>/dev/null; then
+    hfunc-log-error "npm not found."
+    return 1
   fi
   NPM_PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -614,6 +615,10 @@ function hfunc-deb-remove-orphan-packages() {
 
 function hfunc-deb-fetch-install() {
   : ${1?an argument is required}
+  if ! type "wget" &>/dev/null; then
+    hfunc-log-error "wget not found."
+    return 1
+  fi
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
     wget $1 -P /tmp/
@@ -628,6 +633,10 @@ function hfunc-deb-fetch-install() {
 function hfunc-fetch-extract-to() {
   : ${1?an argument is required}
   : ${2? an second argument is required}
+  if ! type "wget" &>/dev/null; then
+    hfunc-log-error "wget not found."
+    return 1
+  fi
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
   FILE_EXTENSION=${FILE_NAME##*.}
@@ -652,7 +661,7 @@ function hfunc-fetch-extract-to() {
 
 function hfunc-fetch-youtube-playlist() {
   if ! type "youtube-dl" &>/dev/null; then
-    hfunc-log-error "youtube-dl not found. install by sudo -H pip3 install youtube-dl"
+    hfunc-log-error "youtube-dl not found."
     return 1
   fi
   : ${1?an argument is required}
@@ -676,5 +685,9 @@ function hfunc-list-recursive-sorted-by-size() {
 ###############################################################################
 
 function hfunc-x11-properties-of-window() {
+  if ! type "xprop" &>/dev/null; then
+    hfunc-log-error "xprop not found."
+    return 1
+  fi
   xprop | grep "^WM_"
 }
