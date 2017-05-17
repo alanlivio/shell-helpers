@@ -211,10 +211,6 @@ function hfunc-qtcreator-project-from-git() {
   git ls-files >"$project_name.files"
 }
 
-function hfunc-atom-copy-tern-project() {
-  cp ~/gdrive/env/apps/.tern-project .
-}
-
 function hfunc-eclipse-list-installed() {
   /opt/eclipse/eclipse \
     -consolelog -noSplash \
@@ -505,7 +501,7 @@ function hfunc-gnome-settings-load-from-file() {
   done
 }
 
-function hfunc-gnome-settings-diff-and-file() {
+function hfunc-gnome-settings-diff-scheme-and-file() {
   : ${2?"Usage: ${FUNCNAME[0]} [scheme] [file]"}
 
   TMP_FILE=/tmp/gnome-settings-diff
