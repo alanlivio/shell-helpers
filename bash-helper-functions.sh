@@ -63,12 +63,14 @@ function hfunc-test-exist-command() {
 
 function hfunc-audio-create-empty() {
   # gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [audio_output]"}
+
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
 }
 
 function hfunc-audio-compress() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
 
@@ -77,15 +79,15 @@ function hfunc-audio-compress() {
 ###############################################################################
 
 function hfunc-video-create-by-image() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+
   ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
 }
 
 function hfunc-video-cut() {
-  : ${1? an argument is required}
-  : ${2? an second argument is required}
-  : ${3? an third argument is required}
-  # ffmpeg -i video-cuted.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "video.mp4"
+  # e.g. ffmpeg -i video-cuted.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "video.mp4"
+  : ${3?"Usage: ${FUNCNAME[0]} [video] [begin_time] [end_time]"}
+
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
 
@@ -94,7 +96,8 @@ function hfunc-video-gst-side-by-side-test() {
 }
 
 function hfunc-video-gst-side-by-side-args() {
-  : ${2?two arguments are required}
+  : ${2?"Usage: ${FUNCNAME[0]} [video1] [video2]"}
+
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
 
@@ -102,23 +105,27 @@ function hfunc-video-gst-side-by-side-args() {
 # pygmentize functions
 ###############################################################################
 
-function hfunc-pygmentize-files-by-extensions-to-image() {
-  : ${1?an argument is required}
+function hfunc-pygmentize-folder-xml-files-by-extensions-to-jpeg() {
+  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
   done
 }
 
-function hfunc-pygmentize-files-by-extensions-to-rtf() {
-  : ${1?an argument is required}
+function hfunc-pygmentize-folder-xml-files-by-extensions-to-rtf() {
+  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
     pygmentize -P fontsize=16 -P fontface=consolas -l -o $i.rtf $i
   done
 }
 
-function hfunc-pygmentize-files-by-extensions-to-html() {
-  : ${1?an argument is required}
+function hfunc-pygmentize-folder-xml-files-by-extensions-to-html() {
+  : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
+  hfunc-test-exist-command pygmentize
+
   find . -maxdepth 1 -name "*.$1" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
@@ -137,12 +144,14 @@ function hfunc-gcc-headers() {
 ###############################################################################
 
 function hfunc-gdb-run-bt() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [program]"}
+
   gdb -batch -ex=r -ex=bt --args "$1"
 }
 
 function hfunc-gdb-run-bt-all-threads() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [program]"}
+
   gdb -batch -ex=r -ex="thread apply all bt" --args "$1"
 }
 
@@ -151,7 +160,8 @@ function hfunc-gdb-run-bt-all-threads() {
 ###############################################################################
 
 function hfunc-git-create-gitignore() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [contexts,..]"}
+
   curl -L -s "https://www.gitignore.io/api/$1"
 }
 
@@ -167,10 +177,9 @@ function hfunc-git-create-gitignore-cpp() {
   hfunc-git-create-gitignore c,c++,qt,autotools,make,ninja,cmake
 }
 
-function hfunc-git-find-folders-reset-clean-uninstall() {
+function hfunc-git-uninstall-reset-clean() {
   find -iname .git | while read -r i; do
     cd "$(dirname $i)" || exit
-    make clean
     make uninstall
     git reset --hard
     git clean -df
@@ -220,9 +229,11 @@ function hfunc-eclipse-list-installed() {
 function hfunc-android-start-activity() {
   #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
   #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [activity]"}
+
   adb shell am start -a android.intent.action.MAIN -n "$1"
 }
+
 function hfunc-android-restart-adb() {
   sudo adb kill-server && sudo adb start-server
 }
@@ -245,17 +256,20 @@ function hfunc-android-get-printscreen() {
 }
 
 function hfunc-android-installed-package() {
-  : ${1?an argument is required}
-  adb shell pm list packages | grep ginga
+  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+
+  adb shell pm list packages | grep $1
 }
 
 function hfunc-android-uninstall-package() {
   # adb uninstall org.libsdl.app
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+
   adb uninstall $1
 }
 function hfunc-android-install-package() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+
   adb install $1
 }
 
@@ -292,17 +306,22 @@ function hfunc-folder-find-autotools-files() {
 ###############################################################################
 
 function hfunc-image-reconize-text() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hfunc-imagem-compress() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  hfunc-test-exist-command pngquant
+
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hfunc-imagem-compress2() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  hfunc-test-exist-command jpegoptim
+
   jpegoptim -d . $1.jpeg
 }
 
@@ -311,24 +330,29 @@ function hfunc-imagem-compress2() {
 ###############################################################################
 
 function hfunc-pdf-remove-password() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  hfunc-test-exist-command qpdf
+
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
 function hfunc-pdf-remove-watermark() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
 }
 
 function hfunc-pdf-compress() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
 function hfunc-pdf-convert-to() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+
   soffice --headless --convert-to pdf "$1"
 }
 
@@ -337,7 +361,8 @@ function hfunc-pdf-convert-to() {
 ###############################################################################
 
 function hfunc-rename-lowercase-dash() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+
   rename 'y/A-Z/a-z/;s/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
 }
 
@@ -359,14 +384,14 @@ function hfunc-network-arp-scan() {
 ###############################################################################
 
 function hfunc-virtualbox-compact() {
-  : ${1?an argument is required}
-  #VBoxManage modifyhd /opt/win7/win7.vdi compact
+  : ${1?"Usage: ${FUNCNAME[0]} [vdi_file]"}
+
   VBoxManage modifyhd "$1" compact
 }
 
-function hfunc-virtualbox-resize() {
-  : ${1?an argument is required}
-  #VBoxManage modifyhd /opt/win7/win7.vdi --resize 200000
+function hfunc-virtualbox-resize-to-2gb() {
+  : ${1?"Usage: ${FUNCNAME[0]} [vdi_file"}
+
   VBoxManage modifyhd "$1" --resize 200000
 }
 
@@ -386,7 +411,8 @@ function hfunc-user-fix-ssh-permissions() {
 }
 
 function hfunc-user-send-ssh-keys() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [user]"}
+
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pub
 }
 
@@ -395,12 +421,14 @@ function hfunc-user-send-ssh-keys() {
 ###############################################################################
 
 function hfunc-vscode-run-as-root() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+
   sudo code --user-data-dir="~/.vscode" "$1"
 }
 
 function hfunc-vscode-install-packages() {
-  if ! hfunc-test-exist-command code; then return 1; fi
+  : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
+
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
@@ -423,7 +451,6 @@ function hfunc-vscode-install-packages() {
 ###############################################################################
 
 function hfunc-gnome-reset-keybindings() {
-  # gsettings list-schemas | grep keybindings | sort | xargs -L 1 echo gsettings reset-recursively
   gsettings reset-recursively org.gnome.mutter.keybindings
   gsettings reset-recursively org.gnome.mutter.wayland.keybindings
   gsettings reset-recursively org.gnome.desktop.wm.keybindings
@@ -459,26 +486,28 @@ function hfunc-gnome-gdm-restart() {
 }
 
 function hfunc-gnome-settings-reset() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [scheme]"}
+
   gsettings reset-recursively $1
 }
 
 function hfunc-gnome-settings-save-to-file() {
-  : ${1?an argument is required}
-  : ${2? an second argument is required}
+  : ${2?"Usage: ${FUNCNAME[0]} [scheme] [file]"}
+
   gsettings list-recursively $1 | sed -e 's/@as //g' -e 's/, /,/g' >$2
 }
 
 function hfunc-gnome-settings-load-from-file() {
-  : ${1?an argument is required}
+  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+
   sed -e 's/@as //g' -e 's/, /,/g' $1 | while read -r i; do
     gsettings set $i
   done
 }
 
 function hfunc-gnome-settings-diff-and-file() {
-  : ${1?an argument is required}
-  : ${2? an second argument is required}
+  : ${2?"Usage: ${FUNCNAME[0]} [scheme] [file]"}
+
   TMP_FILE=/tmp/gnome-settings-diff
   gsettings list-recursively $1 | sed -e 's/@as //g' -e 's/, /,/g' >$TMP_FILE
   diff $TMP_FILE $2
@@ -507,7 +536,8 @@ function hfunc-system-list-gpu() {
 
 function hfunc-node-install-packages() {
   hfunc-log-msg "install npm packages"
-  if ! hfunc-test-exist-command npm; then return 1; fi
+  : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
+
   NPM_PKGS_TO_INSTALL=""
   for i in "$@"; do
     npm list -g $i &>/dev/null
@@ -534,7 +564,8 @@ function hfunc-python-version() {
 
 function hfunc-python-install-packages() {
   hfunc-log-msg "install pip packages"
-  if ! hfunc-test-exist-command pip3; then return 1; fi
+  : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
+
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip
   PIP_PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -555,12 +586,15 @@ function hfunc-python-install-packages() {
 
 function hfunc-deb-upgrade() {
   hfunc-log-msg "upgrade deb packages"
+
   sudo apt-get -y update
   sudo apt-get -y upgrade
 }
 
 function hfunc-deb-install-packages() {
   hfunc-log-msg "install deb packages"
+  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
+
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
@@ -576,6 +610,7 @@ function hfunc-deb-install-packages() {
 
 function hfunc-deb-clean() {
   hfunc-log-msg "apt-get clean autoclean autoremove"
+
   sudo apt-get -y remove --purge
   sudo apt-get -y -f install
   sudo apt-get -y clean
@@ -585,6 +620,7 @@ function hfunc-deb-clean() {
 
 function hfunc-deb-remove-packages() {
   hfunc-log-msg "remove deb packages"
+  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_REMOVE=""
   for i in "$@"; do
@@ -601,6 +637,7 @@ function hfunc-deb-remove-packages() {
 
 function hfunc-deb-remove-orphan-packages() {
   hfunc-log-msg "remove orphan deb packages"
+  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
   for i in $(deborphan); do
@@ -622,8 +659,8 @@ function hfunc-deb-remove-orphan-packages() {
 }
 
 function hfunc-deb-fetch-install() {
-  : ${1?an argument is required}
-  if ! hfunc-test-exist-command wget; then return 1; fi
+  : ${1?"Usage: ${FUNCNAME[0]} [url]"}
+
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
     wget $1 -P /tmp/
@@ -636,9 +673,8 @@ function hfunc-deb-fetch-install() {
 ###############################################################################
 
 function hfunc-fetch-extract-to() {
-  : ${1?an argument is required}
-  : ${2? an second argument is required}
-  if ! hfunc-test-exist-command wget; then return 1; fi
+  : ${2?"Usage: ${FUNCNAME[0]} [url] [folder]"}
+
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
   FILE_EXTENSION=${FILE_NAME##*.}
@@ -662,8 +698,8 @@ function hfunc-fetch-extract-to() {
 }
 
 function hfunc-fetch-youtube-playlist() {
-  : ${1?an argument is required}
-  if ! hfunc-test-exist-command youtube-dl; then return 1; fi
+  : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
+
   youtube-dl "$1" --yes-playlist -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0
 }
 
@@ -684,6 +720,5 @@ function hfunc-list-recursive-sorted-by-size() {
 ###############################################################################
 
 function hfunc-x11-properties-of-window() {
-  if ! hfunc-test-exist-command xprop; then return 1; fi
   xprop | grep "^WM_"
 }
