@@ -696,7 +696,7 @@ function hfunc-fetch-extract-to() {
 function hfunc-fetch-youtube-playlist() {
   : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
 
-  youtube-dl "$1" --yes-playlist -x --embed-thumbnail -o "%(title)s.%(ext)s" -i --metadata-from-title "%(artist)s - %(title)s" --add-metadata --audio-format "mp3" --audio-quality 0
+  youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata 
 }
 
 ###############################################################################
