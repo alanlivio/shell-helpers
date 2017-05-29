@@ -562,8 +562,8 @@ function hfunc-python-install-packages() {
   hfunc-log-msg "install pip packages"
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
 
-  sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip
-  PIP_PKGS_TO_INSTALL=""
+  sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
+  PIP_PKGS_TO_INSTALL="" 
   for i in "$@"; do
     pip3 show $i &>/dev/null
     if test $? != 0; then
@@ -574,6 +574,7 @@ function hfunc-python-install-packages() {
   if test -n "$PIP_PKGS_TO_INSTALL"; then
     sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PIP_PKGS_TO_INSTALL
   fi
+  sudo -H pip3 install -U "$@" &>/dev/null
 }
 
 ###############################################################################
