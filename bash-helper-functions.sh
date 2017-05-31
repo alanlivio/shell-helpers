@@ -346,10 +346,18 @@ function hfunc-pdf-compress() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
-function hfunc-pdf-convert-to() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+###############################################################################
+# convert functions
+###############################################################################
 
-  soffice --headless --convert-to pdf "$1"
+function hfunc-convert-to-markdown() {
+  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  pandoc -s $1 -t markdown -o ${1%.*}.md
+}
+
+function hfunc-convert-to-pdf() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
 ###############################################################################
@@ -563,7 +571,7 @@ function hfunc-python-install-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
 
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
-  PIP_PKGS_TO_INSTALL="" 
+  PIP_PKGS_TO_INSTALL=""
   for i in "$@"; do
     pip3 show $i &>/dev/null
     if test $? != 0; then
@@ -697,7 +705,7 @@ function hfunc-fetch-extract-to() {
 function hfunc-fetch-youtube-playlist() {
   : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
 
-  youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata 
+  youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 ###############################################################################
