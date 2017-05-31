@@ -24,19 +24,19 @@ function hfunc-log-print() {
 }
 
 function hfunc-log-error() {
-  hfunc-log-print "\033[00;31m---> $* \033[00m"
+  hfunc-log-print "\033[00;31m-- $* \033[00m"
 }
 
 function hfunc-log-msg() {
-  hfunc-log-print "\033[00;33m---> $* \033[00m"
+  hfunc-log-print "\033[00;33m-- $* \033[00m"
 }
 
 function hfunc-log-done() {
-  hfunc-log-print "\033[00;32m---> done\033[00m"
+  hfunc-log-print "\033[00;32m-- done\033[00m"
 }
 
 function hfunc-log-ok() {
-  hfunc-log-print "\033[00;32m---> ok\033[00m"
+  hfunc-log-print "\033[00;32m-- ok\033[00m"
 }
 
 function hfunc-log-try() {
