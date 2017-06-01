@@ -441,6 +441,7 @@ function hfunc-vscode-run-as-root() {
 }
 
 function hfunc-vscode-install-packages() {
+  hfunc-log-msg "vs code - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
 
   PKGS_TO_INSTALL=""
@@ -549,7 +550,7 @@ function hfunc-system-list-gpu() {
 ###############################################################################
 
 function hfunc-node-install-packages() {
-  hfunc-log-msg "install npm packages"
+  hfunc-log-msg "node - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
 
   NPM_PKGS_TO_INSTALL=""
@@ -577,7 +578,7 @@ function hfunc-python-version() {
 }
 
 function hfunc-python-install-packages() {
-  hfunc-log-msg "install pip packages"
+  hfunc-log-msg "python - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
 
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
@@ -600,14 +601,14 @@ function hfunc-python-install-packages() {
 ###############################################################################
 
 function hfunc-deb-upgrade() {
-  hfunc-log-msg "upgrade deb packages"
+  hfunc-log-msg "deb - upgrade packages"
 
   sudo apt-get -y update
   sudo apt-get -y upgrade
 }
 
 function hfunc-deb-install-packages() {
-  hfunc-log-msg "install deb packages"
+  hfunc-log-msg "deb - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_INSTALL=""
@@ -624,7 +625,7 @@ function hfunc-deb-install-packages() {
 }
 
 function hfunc-deb-clean() {
-  hfunc-log-msg "apt-get clean autoclean autoremove"
+  hfunc-log-msg "deb - clean autoclean autoremove"
 
   sudo apt-get -y remove --purge
   sudo apt-get -y -f install
@@ -634,7 +635,7 @@ function hfunc-deb-clean() {
 }
 
 function hfunc-deb-remove-packages() {
-  hfunc-log-msg "remove deb packages"
+  hfunc-log-msg "deb - remove packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_REMOVE=""
@@ -651,7 +652,7 @@ function hfunc-deb-remove-packages() {
 }
 
 function hfunc-deb-remove-orphan-packages() {
-  hfunc-log-msg "remove orphan deb packages"
+  hfunc-log-msg "deb - remove orphan packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
