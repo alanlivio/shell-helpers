@@ -31,6 +31,10 @@ function hfunc-log-msg() {
   hfunc-log-print "\033[00;33m-- $* \033[00m"
 }
 
+function hfunc-log-msg-2nd() {
+  hfunc-log-print "\033[00;33m--   $* \033[00m"
+}
+
 function hfunc-log-done() {
   hfunc-log-print "\033[00;32m-- done\033[00m"
 }
@@ -372,7 +376,7 @@ function hfunc-rename-to-lowercase-dash() {
   rename 's/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
   hfunc-log-msg "remove (.*) and [.*]"
   for i in "$@"; do
-    mv $i $(echo $i| sed 's/([^][]*)//g'| sed 's/\[[^][]*\]//g'| sed 's/^-//g' | sed 's/-$//g') &>/dev/null
+    mv $i "$(echo $i| sed 's/([^][]*)//g'| sed 's/\[[^][]*\]//g'| sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
   done
 }
 
