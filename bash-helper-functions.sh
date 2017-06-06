@@ -1,13 +1,15 @@
 #!/bin/bash
 
-###############################################################################
-# Bash helper functions (github.com/alanlivio/bash-helper-functions)
-# update by: wget https://raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash-helper-functions.sh
-###############################################################################
+# ---------------------------------------
+# Bash helper functions.
+# site: github.com/alanlivio/bash-helper-functions
+# simple get:
+# wget raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash-helper-functions.sh
+# ---------------------------------------
 
-###############################################################################
+# ---------------------------------------
 # variables
-###############################################################################
+# ---------------------------------------
 
 case "$(uname -s)" in
   Darwin) IS_MAC=1 ;;
@@ -15,9 +17,9 @@ case "$(uname -s)" in
   CYGWIN* | MINGW32* | MSYS*) IS_WINDOWS=1 ;;
 esac
 
-###############################################################################
+# ---------------------------------------
 # log functions 
-###############################################################################
+# ---------------------------------------
 
 function hfunc-log-print() {
   echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'
@@ -48,9 +50,9 @@ function hfunc-log-try() {
   if test $? -ne 0; then hfunc-log-error "$1" && exit 1; fi
 }
 
-###############################################################################
+# ---------------------------------------
 # test functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-test-exist-command() {
   if ! type "$1" &>/dev/null; then
@@ -61,9 +63,9 @@ function hfunc-test-exist-command() {
   fi
 }
 
-###############################################################################
+# ---------------------------------------
 # audio functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-audio-create-empty() {
   # gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
@@ -78,9 +80,9 @@ function hfunc-audio-compress() {
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
 
-###############################################################################
+# ---------------------------------------
 # video functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-video-create-by-image() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
@@ -105,9 +107,9 @@ function hfunc-video-gst-side-by-side-args() {
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
 
-###############################################################################
+# ---------------------------------------
 # pygmentize functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-pygmentize-folder-xml-files-by-extensions-to-jpeg() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
@@ -135,17 +137,17 @@ function hfunc-pygmentize-folder-xml-files-by-extensions-to-html() {
   done
 }
 
-###############################################################################
+# ---------------------------------------
 # gcc functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-gcc-headers() {
   echo | gcc -Wp,-v -x c++ - -fsyntax-only
 }
 
-###############################################################################
+# ---------------------------------------
 # gdb functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-gdb-run-bt() {
   : ${1?"Usage: ${FUNCNAME[0]} [program]"}
@@ -159,9 +161,9 @@ function hfunc-gdb-run-bt-all-threads() {
   gdb -batch -ex=r -ex="thread apply all bt" --args "$1"
 }
 
-###############################################################################
+# ---------------------------------------
 # git functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-git-create-gitignore() {
   : ${1?"Usage: ${FUNCNAME[0]} [contexts,..]"}
@@ -203,9 +205,9 @@ function hfunc-git-list-large-files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
-###############################################################################
+# ---------------------------------------
 # editors functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-qtcreator-project-from-git() {
   project_name="${PWD##*/}"
@@ -222,9 +224,9 @@ function hfunc-eclipse-list-installed() {
     -listInstalledRoots
 }
 
-###############################################################################
+# ---------------------------------------
 # android functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-android-start-activity() {
   #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
@@ -273,9 +275,9 @@ function hfunc-android-install-package() {
   adb install $1
 }
 
-###############################################################################
+# ---------------------------------------
 # folder functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-folder-size() {
   du -ahd 1 | sort -h
@@ -301,9 +303,9 @@ function hfunc-folder-find-autotools-files() {
   find . -print0 -iname "*.am" -or -iname "*.ac"
 }
 
-###############################################################################
+# ---------------------------------------
 # image functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-image-reconize-text() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
@@ -325,9 +327,9 @@ function hfunc-imagem-compress2() {
   jpegoptim -d . $1.jpeg
 }
 
-###############################################################################
+# ---------------------------------------
 # pdf functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-pdf-remove-password() {
   : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
@@ -350,9 +352,9 @@ function hfunc-pdf-compress() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
-###############################################################################
+# ---------------------------------------
 # convert functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-convert-to-markdown() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
@@ -364,9 +366,9 @@ function hfunc-convert-to-pdf() {
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
-###############################################################################
+# ---------------------------------------
 # rename functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-rename-to-lowercase-dash() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
@@ -380,9 +382,9 @@ function hfunc-rename-to-lowercase-dash() {
   done
 }
 
-###############################################################################
+# ---------------------------------------
 # network functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-network-ip() {
   echo "$(hostname -I | cut -d' ' -f1)"
@@ -393,9 +395,9 @@ function hfunc-network-arp-scan() {
   sudo nmap --host-timeout 1s --script smb-os-discovery.nse -RsP --version-light --system-dns $ip/24 | grep -e 'Nmap scan report' -e 'Host is' -e 'MAC Address:' | sed 's/Nmap scan/----------------------------------------\nNmap scan/'
 }
 
-###############################################################################
+# ---------------------------------------
 # virtualbox functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-virtualbox-compact() {
   : ${1?"Usage: ${FUNCNAME[0]} [vdi_file]"}
@@ -409,9 +411,9 @@ function hfunc-virtualbox-resize-to-2gb() {
   VBoxManage modifyhd "$1" --resize 200000
 }
 
-###############################################################################
+# ---------------------------------------
 # user functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-user-reload-bashrc() {
   source ~/.bashrc
@@ -430,9 +432,9 @@ function hfunc-user-send-ssh-keys() {
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pub
 }
 
-###############################################################################
+# ---------------------------------------
 # vscode functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-vscode-run-as-root() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
@@ -461,9 +463,9 @@ function hfunc-vscode-install-packages() {
   fi
 }
 
-###############################################################################
+# ---------------------------------------
 # gnome functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-gnome-reset-keybindings() {
   gsettings reset-recursively org.gnome.mutter.keybindings
@@ -528,26 +530,26 @@ function hfunc-gnome-settings-diff-scheme-and-file() {
   diff $TMP_FILE $2
 }
 
-###############################################################################
+# ---------------------------------------
 # vlc functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-vlc-youtube-playlist-extension() {
   wget https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
 
-###############################################################################
+# ---------------------------------------
 # system functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-system-list-gpu() {
   lspci -nn | grep -E 'VGA|Display'
 }
 
-###############################################################################
+# ---------------------------------------
 # node functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-node-install-packages() {
   hfunc-log-msg "node - install packages"
@@ -569,9 +571,9 @@ function hfunc-node-install-packages() {
   fi
 }
 
-###############################################################################
+# ---------------------------------------
 # python functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-python-version() {
   python -V 2>&1 | grep -Po '(?<=Python ).{1}'
@@ -596,9 +598,9 @@ function hfunc-python-install-packages() {
   sudo -H pip3 install -U "$@" &>/dev/null
 }
 
-###############################################################################
+# ---------------------------------------
 # deb functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-deb-upgrade() {
   hfunc-log-msg "deb - upgrade packages"
@@ -684,9 +686,9 @@ function hfunc-deb-fetch-install() {
   sudo dpkg -i /tmp/$DEB_NAME
 }
 
-###############################################################################
+# ---------------------------------------
 # fetch functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-fetch-extract-to() {
   : ${2?"Usage: ${FUNCNAME[0]} [url] [folder]"}
@@ -719,9 +721,9 @@ function hfunc-fetch-youtube-playlist() {
   youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
-###############################################################################
+# ---------------------------------------
 # list functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-list-sorted-by-size() {
   du -h | sort -h
@@ -731,9 +733,9 @@ function hfunc-list-recursive-sorted-by-size() {
   du -ah | sort -h
 }
 
-###############################################################################
+# ---------------------------------------
 # x11 functions
-###############################################################################
+# ---------------------------------------
 
 function hfunc-x11-properties-of-window() {
   xprop | grep "^WM_"
