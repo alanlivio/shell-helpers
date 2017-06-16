@@ -373,7 +373,7 @@ function hfunc-convert-to-pdf() {
 function hfunc-rename-to-lowercase-dash() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
   hfunc-log-msg "change to lowercase"
-  rename 'y/A-Z//g' "$@" &>/dev/null
+  rename 'y/A-Z/a-z/' "$@" &>/dev/null
   hfunc-log-msg "replace '.' and '_' by '-''"
   rename 's/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
   hfunc-log-msg "remove (.*) and [.*]"
