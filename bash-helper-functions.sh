@@ -378,7 +378,7 @@ function hfunc-rename-to-lowercase-dash() {
   rename 's/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
   hfunc-log-msg "remove (.*) and [.*]"
   for i in "$@"; do
-    mv $i "$(echo $i| sed 's/([^][]*)//g'| sed 's/\[[^][]*\]//g'| sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
+    mv $i "$(echo $i | sed 's/([^][]*)//g' | sed 's/\[[^][]*\]//g' | sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
   done
 }
 
@@ -461,6 +461,11 @@ function hfunc-vscode-install-packages() {
       code --install-extension $i
     done
   fi
+}
+
+function hfunc-vscode-uninstall-all-packages() {
+  INSTALLED_LIST="$(code --list-extensions)"
+  for i in $INSTALLED_LIST; do code --uninstall-extension $i; done
 }
 
 # ---------------------------------------
