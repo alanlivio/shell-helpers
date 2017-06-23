@@ -562,7 +562,7 @@ function hfunc-node-install-packages() {
 
   NPM_PKGS_TO_INSTALL=""
   for i in "$@"; do
-    npm list -g $i &>/dev/null
+    npm list -g --depth=0 2>/dev/null | grep " $i@" &>/dev/null
     if test $? != 0; then
       NPM_PKGS_TO_INSTALL="$NPM_PKGS_TO_INSTALL $i"
     fi
