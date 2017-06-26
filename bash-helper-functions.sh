@@ -570,8 +570,13 @@ function hfunc-node-install-packages() {
   echo "NPM_PKGS_TO_INSTALL=$NPM_PKGS_TO_INSTALL"
   if test -n "$NPM_PKGS_TO_INSTALL"; then
     if test -f pakcage.json; then cd /tmp/; fi
-    sudo -H npm install -g $NPM_PKGS_TO_INSTALL
-    sudo -H npm update
+    if test $IS_WINDOWS; then 
+      npm install -g $NPM_PKGS_TO_INSTALL
+      npm update
+    else
+      sudo -H npm install -g $NPM_PKGS_TO_INSTALL
+      sudo -H npm update
+     fi
     if test -f pakcage.json; then cd -; fi
   fi
 }
