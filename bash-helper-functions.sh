@@ -375,7 +375,7 @@ function hfunc-rename-to-lowercase-dash() {
   hfunc-log-msg "change to lowercase"
   rename 'y/A-Z/a-z/' "$@" &>/dev/null
   hfunc-log-msg "replace '.' and '_' by '-''"
-  rename 's/_/-/g;s/\./-/g;s/ /-/g;s/---/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
+  rename 's/_/-/g;s/\./-/g;s/ /-/g;s/--+/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
   hfunc-log-msg "remove (.*) and [.*]"
   for i in "$@"; do
     mv $i "$(echo $i | sed 's/([^][]*)//g' | sed 's/\[[^][]*\]//g' | sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
