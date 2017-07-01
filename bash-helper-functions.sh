@@ -165,6 +165,11 @@ function hfunc-gdb-run-bt-all-threads() {
 # git functions
 # ---------------------------------------
 
+function hfunc-git-ammend-push-force() {
+  git commit -a --amend --no-edit
+  git push --force
+}
+
 function hfunc-git-create-gitignore() {
   : ${1?"Usage: ${FUNCNAME[0]} [contexts,..]"}
 
