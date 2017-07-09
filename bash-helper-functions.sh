@@ -620,8 +620,8 @@ function hfunc-python-install-packages() {
 function hfunc-deb-upgrade() {
   hfunc-log-msg "deb - upgrade packages"
 
-  sudo apt-get -y update
-  sudo apt-get -y upgrade
+  sudo apt -y update
+  sudo apt -y upgrade
 }
 
 function hfunc-deb-install-packages() {
@@ -637,18 +637,18 @@ function hfunc-deb-install-packages() {
   done
   echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
   if test -n "$PKGS_TO_INSTALL"; then
-    sudo apt-get install -y $PKGS_TO_INSTALL
+    sudo apt install -y $PKGS_TO_INSTALL
   fi
 }
 
 function hfunc-deb-clean() {
   hfunc-log-msg "deb - clean autoclean autoremove"
 
-  sudo apt-get -y remove --purge
-  sudo apt-get -y -f install
-  sudo apt-get -y clean
-  sudo apt-get -y autoclean
-  sudo apt-get -y autoremove
+  sudo apt -y remove --purge
+  sudo apt -y -f install
+  sudo apt -y clean
+  sudo apt -y autoclean
+  sudo apt -y autoremove
 }
 
 function hfunc-deb-remove-packages() {
@@ -664,7 +664,7 @@ function hfunc-deb-remove-packages() {
   done
   echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
   if test -n "$PKGS_TO_REMOVE"; then
-    sudo apt-get remove -y --purge $PKGS_TO_REMOVE
+    sudo apt remove -y --purge $PKGS_TO_REMOVE
   fi
 }
 
@@ -687,7 +687,7 @@ function hfunc-deb-remove-orphan-packages() {
   done
   echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
   if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
-    sudo apt-get remove -y --purge $PKGS_ORPHAN_TO_REMOVE
+    sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
   fi
 }
 
@@ -727,6 +727,12 @@ function hfunc-fetch-extract-to() {
     zip)
       unzip /tmp/$FILE_NAME -d $2/
       ;;
+    xz)
+      tar -xJf /tmp/$FILE_NAME -C $2
+      ;;
+    *)
+      hfunc-log-error "$FILE_EXTENSION is not supported compression."
+      return
   esac
 }
 
