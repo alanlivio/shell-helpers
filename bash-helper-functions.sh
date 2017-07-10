@@ -12,9 +12,9 @@
 # ---------------------------------------
 
 case "$(uname -s)" in
-  Darwin) IS_MAC=1 ;;
-  Linux) IS_LINUX=1 ;;
-  CYGWIN* | MINGW32* | MSYS*) IS_WINDOWS=1 ;;
+Darwin) IS_MAC=1 ;;
+Linux) IS_LINUX=1 ;;
+CYGWIN* | MINGW32* | MSYS*) IS_WINDOWS=1 ;;
 esac
 
 # ---------------------------------------
@@ -575,13 +575,13 @@ function hfunc-node-install-packages() {
   echo "NPM_PKGS_TO_INSTALL=$NPM_PKGS_TO_INSTALL"
   if test -n "$NPM_PKGS_TO_INSTALL"; then
     if test -f pakcage.json; then cd /tmp/; fi
-    if test $IS_WINDOWS; then 
+    if test $IS_WINDOWS; then
       npm install -g $NPM_PKGS_TO_INSTALL
       npm update
     else
       sudo -H npm install -g $NPM_PKGS_TO_INSTALL
       sudo -H npm update
-     fi
+    fi
     if test -f pakcage.json; then cd -; fi
   fi
 }
@@ -718,21 +718,22 @@ function hfunc-fetch-extract-to() {
   fi
   hfunc-log-msg "extracting $FILE_NAME"
   case $FILE_EXTENSION in
-    gz) # consider tar.gz
-      tar -xf /tmp/$FILE_NAME -C $2
-      ;;
-    bz2) # consider tar.bz2
-      tar -xjf /tmp/$FILE_NAME -C $2
-      ;;
-    zip)
-      unzip /tmp/$FILE_NAME -d $2/
-      ;;
-    xz)
-      tar -xJf /tmp/$FILE_NAME -C $2
-      ;;
-    *)
-      hfunc-log-error "$FILE_EXTENSION is not supported compression."
-      return
+  gz) # consider tar.gz
+    tar -xf /tmp/$FILE_NAME -C $2
+    ;;
+  bz2) # consider tar.bz2
+    tar -xjf /tmp/$FILE_NAME -C $2
+    ;;
+  zip)
+    unzip /tmp/$FILE_NAME -d $2/
+    ;;
+  xz)
+    tar -xJf /tmp/$FILE_NAME -C $2
+    ;;
+  *)
+    hfunc-log-error "$FILE_EXTENSION is not supported compression."
+    return
+    ;;
   esac
 }
 
