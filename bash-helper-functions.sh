@@ -189,7 +189,7 @@ function hfunc-git-create-gitignore-cpp() {
 }
 
 function hfunc-git-uninstall-reset-clean() {
-  find -iname .git | while read -r i; do
+  find -name .git | while read -r i; do
     cd "$(dirname $i)" || exit
     make uninstall
     git reset --hard
@@ -302,24 +302,32 @@ function hfunc-folder-size() {
   du -ahd 1 | sort -h
 }
 
-function hfunc-folder-delete-latex-files() {
-  find -print0 -iname "*-converted-to.pdf" -or -iname "*.aux" -or -iname "*.log" -or -iname "*.nav" -or -iname "*.out" -or -iname "*.snm" "*.synctex.gz" -or -iname "*.toc" | xargs rm
+# ---------------------------------------
+# delete functions
+# ---------------------------------------
+
+function hfunc-delete-latex-files() {
+  find . -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
 }
 
-function hfunc-folder-delete-cmake-files() {
+function hfunc-delete-cmake-files() {
   rm -rf CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
 }
 
-function hfunc-folder-delete-binary-files() {
-  find -print0 -iname "*.a" -or -iname "*.o" -or -iname "*.so" -or -iname "*.Plo" -or -iname "*.la" -or -iname "*.log" -or -iname "*.tmp" | xargs rm
+function hfunc-delete-binary-files() {
+  find . -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
 }
 
-function hfunc-folder-find-cpp-files() {
-  find . -print0 -iname "*.h" -or -iname "*.cc" -or -iname "*.cpp" -or -iname "*.c"
+# ---------------------------------------
+# find functions
+# ---------------------------------------
+
+function hfunc-find-cpp-files() {
+  find . -print0 -name "*.h" -o -name "*.cc" -o -name "*.cpp" -o -name "*.c"
 }
 
-function hfunc-folder-find-autotools-files() {
-  find . -print0 -iname "*.am" -or -iname "*.ac"
+function hfunc-find-autotools-files() {
+  find . -print0 -name "*.am" -o -name "*.ac"
 }
 
 # ---------------------------------------
@@ -682,7 +690,7 @@ function hfunc-deb-remove-packages() {
   fi
 }
 
-function hfunc-deb-remove-orphan-packages() {
+function hfunc-deb-remove-ophan-packages() {
   hfunc-log-msg "deb - remove orphan packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
