@@ -507,8 +507,16 @@ function hfunc-gnome-reset-keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hfunc-gnome-update-database() {
+function hfunc-gnome-reset-tracker() {
+  sudo tracker reset --hard
+  sudo tracker daemon -s
+}
+
+function hfunc-gnome-update-desktop-database() {
   sudo update-desktop-database -v /usr/share/applications ~/.local/share/applications ~/.gnome/apps/
+}
+
+function hfunc-gnome-update-icons() {
   sudo update-icon-caches -v /usr/share/icons/ ~/.local/share/icons/
 }
 
@@ -690,7 +698,7 @@ function hfunc-deb-remove-packages() {
   fi
 }
 
-function hfunc-deb-remove-ophan-packages() {
+function hfunc-deb-remove-orphan-packages() {
   hfunc-log-msg "deb - remove orphan packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
