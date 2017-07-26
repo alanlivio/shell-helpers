@@ -410,8 +410,24 @@ function hfunc-rename-to-lowercase-dash() {
 }
 
 # ---------------------------------------
+# partitions functions
+# ---------------------------------------
+
+function hfunc-partitions-list() {
+  df -h
+}
+
+# ---------------------------------------
 # network functions
 # ---------------------------------------
+
+function hfunc-network-open-ports() {
+  netstat -tulpn
+}
+
+function hfunc-network-open-connections() {
+  lsof -i
+}
 
 function hfunc-network-ip() {
   echo "$(hostname -I | cut -d' ' -f1)"
