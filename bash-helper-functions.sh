@@ -114,7 +114,7 @@ function hfunc-video-gst-side-by-side-args() {
 function hfunc-pygmentize-folder-xml-files-by-extensions-to-jpeg() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
 
-  find . -maxdepth 1 -name "*.$1" | while read -r i; do
+  find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
   done
 }
@@ -122,9 +122,9 @@ function hfunc-pygmentize-folder-xml-files-by-extensions-to-jpeg() {
 function hfunc-pygmentize-folder-xml-files-by-extensions-to-rtf() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
 
-  find . -maxdepth 1 -name "*.$1" | while read -r i; do
+  find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
-    pygmentize -P fontsize=16 -P fontface=consolas -l -o $i.rtf $i
+    pygmentize -P fontsize=16 -P fontface=consolas -l xml -o $i.rtf $i
   done
 }
 
@@ -132,7 +132,7 @@ function hfunc-pygmentize-folder-xml-files-by-extensions-to-html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
   hfunc-test-exist-command pygmentize
 
-  find . -maxdepth 1 -name "*.$1" | while read -r i; do
+  find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
 }
