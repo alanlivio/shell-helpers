@@ -303,31 +303,31 @@ function hfunc-folder-size() {
 }
 
 # ---------------------------------------
-# delete functions
+# latex functions
 # ---------------------------------------
 
-function hfunc-delete-latex-files() {
-  find . -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
-}
-
-function hfunc-delete-cmake-files() {
-  rm -rf CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
-}
-
-function hfunc-delete-binary-files() {
-  find . -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
+function hfunc-latex-clean() {
+  find . -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
 }
 
 # ---------------------------------------
-# find functions
+# cpp functions
 # ---------------------------------------
 
-function hfunc-find-cpp-files() {
+function hfunc-cpp-find-code-files() {
   find . -print0 -name "*.h" -o -name "*.cc" -o -name "*.cpp" -o -name "*.c"
 }
 
-function hfunc-find-autotools-files() {
+function hfunc-cpp-find-autotools-files() {
   find . -print0 -name "*.am" -o -name "*.ac"
+}
+
+function hfunc-cpp-delete-binary-files() {
+  find . -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
+}
+
+function hfunc-cpp-delete-cmake-files() {
+  rm -rf CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
 }
 
 # ---------------------------------------
