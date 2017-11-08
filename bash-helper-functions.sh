@@ -399,11 +399,11 @@ function hfunc-convert-to-pdf() {
 
 function hfunc-rename-to-lowercase-dash() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
-  hfunc-log-msg "change to lowercase"
+  echo "change to lowercase"
   rename 'y/A-Z/a-z/' "$@" &>/dev/null
-  hfunc-log-msg "replace '.' and '_' by '-''"
+  echo "replace '.' and '_' by '-''"
   rename 's/_/-/g;s/\./-/g;s/ /-/g;s/--+/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
-  hfunc-log-msg "remove (.*) and [.*]"
+  echo "remove (.*) and [.*]"
   for i in "$@"; do
     mv $i "$(echo $i | sed 's/([^][]*)//g' | sed 's/\[[^][]*\]//g' | sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
   done
@@ -486,7 +486,6 @@ function hfunc-vscode-run-as-root() {
 }
 
 function hfunc-vscode-install-packages() {
-  hfunc-log-msg "vs code - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
 
   PKGS_TO_INSTALL=""
@@ -498,7 +497,7 @@ function hfunc-vscode-install-packages() {
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
   if test -n "$PKGS_TO_INSTALL"; then
     for i in $PKGS_TO_INSTALL; do
       code --install-extension $i
@@ -612,24 +611,23 @@ function hfunc-system-list-gpu() {
 # ---------------------------------------
 
 function hfunc-node-install-packages() {
-  hfunc-log-msg "node - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
 
-  NPM_PKGS_TO_INSTALL=""
+  PKGS_TO_INSTALL=""
   for i in "$@"; do
     npm list -g --depth=0 2>/dev/null | grep " $i@" &>/dev/null
     if test $? != 0; then
-      NPM_PKGS_TO_INSTALL="$NPM_PKGS_TO_INSTALL $i"
+      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  echo "NPM_PKGS_TO_INSTALL=$NPM_PKGS_TO_INSTALL"
-  if test -n "$NPM_PKGS_TO_INSTALL"; then
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
+  if test -n "$PKGS_TO_INSTALL"; then
     if test -f pakcage.json; then cd /tmp/; fi
     if test $IS_WINDOWS; then
-      npm install -g $NPM_PKGS_TO_INSTALL
+      npm install -g $PKGS_TO_INSTALL
       npm update
     else
-      sudo -H npm install -g $NPM_PKGS_TO_INSTALL
+      sudo -H npm install -g $PKGS_TO_INSTALL
       sudo -H npm update
     fi
     if test -f pakcage.json; then cd -; fi
@@ -645,20 +643,19 @@ function hfunc-python-version() {
 }
 
 function hfunc-python-install-packages() {
-  hfunc-log-msg "python - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
 
   sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
-  PIP_PKGS_TO_INSTALL=""
+  PKGS_TO_INSTALL=""
   for i in "$@"; do
     pip3 show $i &>/dev/null
     if test $? != 0; then
-      PIP_PKGS_TO_INSTALL="$PIP_PKGS_TO_INSTALL $i"
+      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  echo "PIP_PKGS_TO_INSTALL=$PIP_PKGS_TO_INSTALL"
-  if test -n "$PIP_PKGS_TO_INSTALL"; then
-    sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PIP_PKGS_TO_INSTALL
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
+  if test -n "$PKGS_TO_INSTALL"; then
+    sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
   fi
   sudo -H pip3 install -U "$@" &>/dev/null
 }
@@ -668,14 +665,12 @@ function hfunc-python-install-packages() {
 # ---------------------------------------
 
 function hfunc-deb-upgrade() {
-  hfunc-log-msg "deb - upgrade packages"
-
+  echo "deb - upgrade packages"
   sudo apt -y update
   sudo apt -y upgrade
 }
 
 function hfunc-deb-install-packages() {
-  hfunc-log-msg "deb - install packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_INSTALL=""
@@ -685,14 +680,14 @@ function hfunc-deb-install-packages() {
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
   if test -n "$PKGS_TO_INSTALL"; then
     sudo apt install -y $PKGS_TO_INSTALL
   fi
 }
 
 function hfunc-deb-clean() {
-  hfunc-log-msg "deb - clean autoclean autoremove"
+  echo "deb - clean autoclean autoremove"
 
   sudo apt -y remove --purge
   sudo apt -y -f install
@@ -702,7 +697,7 @@ function hfunc-deb-clean() {
 }
 
 function hfunc-deb-remove-packages() {
-  hfunc-log-msg "deb - remove packages"
+  echo "deb - remove packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_REMOVE=""
@@ -719,7 +714,7 @@ function hfunc-deb-remove-packages() {
 }
 
 function hfunc-deb-remove-orphan-packages() {
-  hfunc-log-msg "deb - remove orphan packages"
+  echo "deb - remove orphan packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
@@ -763,10 +758,10 @@ function hfunc-fetch-extract-to() {
   FILE_EXTENSION=${FILE_NAME##*.}
 
   if test ! -f /tmp/$FILE_NAME; then
-    hfunc-log-msg "fetching $FILE_NAME"
+    echo "fetching $FILE_NAME"
     wget $1 -P /tmp/
   fi
-  hfunc-log-msg "extracting $FILE_NAME"
+  echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
   gz) # consider tar.gz
     tar -xf /tmp/$FILE_NAME -C $2
