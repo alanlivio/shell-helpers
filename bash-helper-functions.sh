@@ -528,6 +528,10 @@ function hfunc-gnome-reset-tracker() {
   sudo tracker daemon -s
 }
 
+function hfunc-gnome-reset-shotwell() {
+  rm -rf ~/.cache/shotwell  ~/.local/share/shotwell
+}
+
 function hfunc-gnome-update-desktop-database() {
   sudo update-desktop-database -v /usr/share/applications ~/.local/share/applications ~/.gnome/apps/
 }
