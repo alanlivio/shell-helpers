@@ -665,8 +665,6 @@ function hfunc-python-install-packages() {
 # ---------------------------------------
 
 function hfunc-deb-upgrade() {
-  echo "deb - upgrade packages"
-  sudo apt -y update
   sudo apt -y upgrade
 }
 
@@ -686,18 +684,11 @@ function hfunc-deb-install-packages() {
   fi
 }
 
-function hfunc-deb-clean() {
-  echo "deb - clean autoclean autoremove"
-
-  sudo apt -y remove --purge
-  sudo apt -y -f install
-  sudo apt -y clean
-  sudo apt -y autoclean
+function hfunc-deb-autoremove() {
   sudo apt -y autoremove
 }
 
 function hfunc-deb-remove-packages() {
-  echo "deb - remove packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_TO_REMOVE=""
@@ -714,7 +705,6 @@ function hfunc-deb-remove-packages() {
 }
 
 function hfunc-deb-remove-orphan-packages() {
-  echo "deb - remove orphan packages"
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
