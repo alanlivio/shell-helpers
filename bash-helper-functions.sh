@@ -97,14 +97,36 @@ function hfunc-video-cut() {
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
 
-function hfunc-video-gst-side-by-side-test() {
+# ---------------------------------------
+# gst functions
+# ---------------------------------------
+
+function hfunc-gst-side-by-side-test() {
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
 }
 
-function hfunc-video-gst-side-by-side-args() {
+function hfunc-gst-side-by-side-args() {
   : ${2?"Usage: ${FUNCNAME[0]} [video1] [video2]"}
 
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
+}
+
+# ---------------------------------------
+# pkg-config functions
+# ---------------------------------------
+
+hfunc-pkg-config-find () 
+{ 
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"};
+  pkg-config --list-all | grep --color=auto $1
+}
+
+function hfunc-pkg-config-show(){
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  PKG=`pkg-config --list-all |grep -w $1| awk '{print $1;exit}'`; 
+  echo 'version:    '`pkg-config --modversion $PKG`
+  echo 'provides:   '`pkg-config  --print-provides $PKG`
+  echo 'requireds:  '`pkg-config  --print-requires $PKG| awk '{print}'  ORS=' '`
 }
 
 # ---------------------------------------
