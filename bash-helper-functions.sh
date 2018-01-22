@@ -12,13 +12,20 @@
 # ---------------------------------------
 
 case "$(uname -s)" in
-Darwin) IS_MAC=1 ;;
-Linux) IS_LINUX=1 ;;
-CYGWIN* | MINGW32* | MSYS*) IS_WINDOWS=1 ;;
+  Darwin) IS_MAC=1 ;;
+  Linux) IS_LINUX=1 ;;
+  CYGWIN* | MINGW*| MSYS*) IS_WINDOWS=1 ;;
 esac
 
+if test $IS_LINUX; then
+  case "$(uname -r)" in
+    *43-Microsoft) IS_LINUX=0; IS_WINDOWS=1 ;;
+    *) IS_LINUX=1 ;;
+  esac
+fi
+
 # ---------------------------------------
-# log functions 
+# log functions
 # ---------------------------------------
 
 function hfunc-log-print() {
@@ -115,15 +122,15 @@ function hfunc-gst-side-by-side-args() {
 # pkg-config functions
 # ---------------------------------------
 
-hfunc-pkg-config-find () 
-{ 
+hfunc-pkg-config-find ()
+{
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"};
   pkg-config --list-all | grep --color=auto $1
 }
 
 function hfunc-pkg-config-show(){
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
-  PKG=`pkg-config --list-all |grep -w $1| awk '{print $1;exit}'`; 
+  PKG=`pkg-config --list-all |grep -w $1| awk '{print $1;exit}'`;
   echo 'version:    '`pkg-config --modversion $PKG`
   echo 'provides:   '`pkg-config  --print-provides $PKG`
   echo 'requireds:  '`pkg-config  --print-requires $PKG| awk '{print}'  ORS=' '`
