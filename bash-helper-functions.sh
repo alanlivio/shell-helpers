@@ -181,13 +181,13 @@ function hfunc-gcc-headers() {
 function hfunc-gdb-run-bt() {
   : ${1?"Usage: ${FUNCNAME[0]} [program]"}
 
-  gdb -batch -ex=r -ex=bt --args "$1"
+  gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
 }
 
 function hfunc-gdb-run-bt-all-threads() {
   : ${1?"Usage: ${FUNCNAME[0]} [program]"}
 
-  gdb -batch -ex=r -ex="thread apply all bt" --args "$1"
+  gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
 }
 
 # ---------------------------------------
