@@ -132,8 +132,8 @@ function hfunc-pkg-config-show(){
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
   PKG=`pkg-config --list-all |grep -w $1| awk '{print $1;exit}'`;
   echo 'version:    '`pkg-config --modversion $PKG`
-  echo 'provides:   '`pkg-config  --print-provides $PKG`
-  echo 'requireds:  '`pkg-config  --print-requires $PKG| awk '{print}'  ORS=' '`
+  echo 'provides:   '`pkg-config --print-provides $PKG`
+  echo 'requireds:  '`pkg-config --print-requires $PKG| awk '{print}' ORS=' '`
 }
 
 # ---------------------------------------
@@ -622,7 +622,7 @@ function hfunc-gnome-settings-diff-actual-and-file() {
 # ---------------------------------------
 
 function hfunc-vlc-youtube-playlist-extension() {
-  wget https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
+  wget --continue https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
 
@@ -761,7 +761,7 @@ function hfunc-deb-fetch-install() {
 
   DEB_NAME=$(basename $1)
   if test ! -f /tmp/$DEB_NAME; then
-    wget $1 -P /tmp/
+    wget --continue $1 -P /tmp/
   fi
   sudo dpkg -i /tmp/$DEB_NAME
 }
@@ -779,7 +779,7 @@ function hfunc-fetch-extract-to() {
 
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
-    wget $1 -P /tmp/
+    wget --continue $1 -P /tmp/
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
