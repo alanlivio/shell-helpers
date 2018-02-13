@@ -495,7 +495,7 @@ function hfunc-user-fix-ssh-permissions() {
   sudo chmod 700 ~/.ssh/ \
     && sudo chmod 755 ~/.ssh/* \
     && sudo chmod 600 ~/.ssh/id_rsa \
-    && sudo chmod 644 ~/.ssh/id_rsa.pub
+    && sudo chmod 644 ~/.ssh/id_rsa.pubssh-rsa
 }
 
 function hfunc-user-send-ssh-keys() {
