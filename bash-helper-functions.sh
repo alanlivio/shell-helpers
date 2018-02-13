@@ -642,14 +642,19 @@ function hfunc-npm-install-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
 
   PKGS_TO_INSTALL=""
+  PKGS_INSTALLED=$(npm ls -g --depth 0 2> /dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
   for i in "$@"; do
-    npm list -g $i &>/dev/null
-    if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
-    fi
+    FOUND=false
+    for j in $PKGS_INSTALLED; do
+      if test $i == $j; then
+        FOUND=true
+        break
+      fi
+    done
+    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
-  if test -n "$PKGS_TO_INSTALL"; then
+  if test ! -z "$PKGS_TO_INSTALL"; then
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";
     if test -f pakcage.json; then cd /tmp/; fi
     if test $IS_WINDOWS; then
       npm install -g $PKGS_TO_INSTALL
@@ -658,7 +663,7 @@ function hfunc-npm-install-packages() {
       sudo -H npm install -g $PKGS_TO_INSTALL
       sudo -H npm update
     fi
-    if test -f pakcage.json; then cd -; fi
+    if test "$(pwd)" == "/tmp" ; then cd -; fi
   fi
 }
 
