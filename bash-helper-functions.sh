@@ -715,7 +715,9 @@ function hfunc-deb-install-packages() {
 }
 
 function hfunc-deb-autoremove() {
-  sudo apt -y autoremove
+  if [ $(apt-get --dry-run autoremove | grep -Po 'Remv \K[^ ]+' | wc -l) -gt 0 ]; then
+    sudo apt -y autoremove
+  fi
 }
 
 function hfunc-deb-remove-packages() {
