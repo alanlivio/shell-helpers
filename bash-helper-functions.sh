@@ -596,25 +596,24 @@ function hfunc-gnome-settings-reset() {
   gsettings reset-recursively $1
 }
 
-function hfunc-gnome-settings-save-to-file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [scheme] [file]"}
 
-  gsettings list-recursively $1 | sed -e 's/@as //g' -e 's/, /,/g' >$2
+function hfunc-gnome-settings-save-to-file() {
+  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
+
+  dconf dump $1 > $2
 }
 
 function hfunc-gnome-settings-load-from-file() {
-  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
 
-  sed -e 's/@as //g' -e 's/, /,/g' $1 | while read -r i; do
-    gsettings set $i
-  done
+  dconf load $1 < $2
 }
 
-function hfunc-gnome-settings-diff-scheme-and-file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [scheme] [file]"}
+function hfunc-gnome-settings-diff-actual-and-file() {
+  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
 
   TMP_FILE=/tmp/gnome-settings-diff
-  gsettings list-recursively $1 | sed -e 's/@as //g' -e 's/, /,/g' >$TMP_FILE
+  hfunc-gnome-settings-save-to-file $1 $TMP_FILE
   diff $TMP_FILE $2
 }
 
