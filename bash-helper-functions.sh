@@ -736,22 +736,24 @@ function hfunc-deb-remove-orphan-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
-  for i in $(deborphan); do
-    FOUND_EXCEPTION=false
-    for j in "$@"; do
-      if test "$i" = "$j"; then
-        FOUND_EXCEPTION=true
-        break
+  while [ $(deborphan | wc -l) -gt 0 ]; do
+    for i in $(deborphan); do
+      FOUND_EXCEPTION=false
+      for j in "$@"; do
+        if test "$i" = "$j"; then
+          FOUND_EXCEPTION=true
+          break
+        fi
+      done
+      if ! $FOUND_EXCEPTION; then
+        PKGS_ORPHAN_TO_REMOVE="$PKGS_ORPHAN_TO_REMOVE $i"
       fi
     done
-    if ! $FOUND_EXCEPTION; then
-      PKGS_ORPHAN_TO_REMOVE="$PKGS_ORPHAN_TO_REMOVE $i"
+    echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
+    if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
+      sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
     fi
   done
-  echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
-  if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
-    sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
-  fi
 }
 
 function hfunc-deb-fetch-install() {
