@@ -693,7 +693,9 @@ function hfunc-python-install-packages() {
 # ---------------------------------------
 
 function hfunc-deb-upgrade() {
-  sudo apt -y upgrade
+  if [ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]; then
+    sudo apt -y upgrade
+  fi
 }
 
 function hfunc-deb-install-packages() {
@@ -726,8 +728,8 @@ function hfunc-deb-remove-packages() {
       PKGS_TO_REMOVE="$PKGS_TO_REMOVE $i"
     fi
   done
-  echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
   if test -n "$PKGS_TO_REMOVE"; then
+    echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
     sudo apt remove -y --purge $PKGS_TO_REMOVE
   fi
 }
