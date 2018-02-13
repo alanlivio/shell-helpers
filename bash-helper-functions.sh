@@ -678,16 +678,25 @@ function hfunc-python-version() {
 function hfunc-python-install-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
 
-  sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
+  if ! type pip3 &>/dev/null; then
+    hfunc-log-error "pip3 not found."
+    sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
+  fi
+
   PKGS_TO_INSTALL=""
+  PKGS_INSTALLED=$(pip3 list --format=columns | cut -d' ' -f1| grep -v Package | sed '1d'| tr '\n' ' ')
   for i in "$@"; do
-    pip3 show $i &>/dev/null
-    if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
-    fi
+    FOUND=false
+    for j in $PKGS_INSTALLED; do
+      if test $i == $j; then
+        FOUND=true
+        break
+      fi
+    done
+    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
-  if test -n "$PKGS_TO_INSTALL"; then
+  if test ! -z "$PKGS_TO_INSTALL"; then
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
   fi
   sudo -H pip3 install -U "$@" &>/dev/null
