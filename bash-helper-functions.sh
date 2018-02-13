@@ -635,15 +635,15 @@ function hfunc-system-list-gpu() {
 }
 
 # ---------------------------------------
-# node functions
+# npm functions
 # ---------------------------------------
 
-function hfunc-node-install-packages() {
+function hfunc-npm-install-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
 
   PKGS_TO_INSTALL=""
   for i in "$@"; do
-    npm list -g --depth=0 2>/dev/null | grep " $i@" &>/dev/null
+    npm list -g $i &>/dev/null
     if test $? != 0; then
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
