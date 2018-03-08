@@ -130,10 +130,10 @@ hfunc-pkg-config-find ()
 
 function hfunc-pkg-config-show(){
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
-  PKG=`pkg-config --list-all |grep -w $1| awk '{print $1;exit}'`;
-  echo 'version:    '`pkg-config --modversion $PKG`
-  echo 'provides:   '`pkg-config --print-provides $PKG`
-  echo 'requireds:  '`pkg-config --print-requires $PKG| awk '{print}' ORS=' '`
+  PKG=$(pkg-config --list-all |grep -w $1| awk '{print $1;exit}')
+  echo 'version:    '"$(pkg-config --modversion $PKG)"
+  echo 'provides:   '"$(pkg-config --print-provides $PKG)"
+  echo 'requireds:  '"$(pkg-config --print-requires $PKG| awk '{print}' ORS=' ')"
 }
 
 # ---------------------------------------
@@ -336,7 +336,7 @@ function hfunc-folder-size() {
 # ---------------------------------------
 
 function hfunc-latex-clean() {
-  find . -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
+  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
 }
 
 # ---------------------------------------
@@ -352,7 +352,7 @@ function hfunc-cpp-find-autotools-files() {
 }
 
 function hfunc-cpp-delete-binary-files() {
-  find . -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
+  find . -print0 -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
 }
 
 function hfunc-cpp-delete-cmake-files() {
@@ -707,7 +707,7 @@ function hfunc-python-install-packages() {
 # ---------------------------------------
 
 function hfunc-deb-upgrade() {
-  if [ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]; then
+  if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
 }
@@ -729,7 +729,7 @@ function hfunc-deb-install-packages() {
 }
 
 function hfunc-deb-autoremove() {
-  if [ $(apt-get --dry-run autoremove | grep -Po 'Remv \K[^ ]+' | wc -l) -gt 0 ]; then
+  if [ "$(apt-get --dry-run autoremove | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
     sudo apt -y autoremove
   fi
 }
@@ -754,7 +754,7 @@ function hfunc-deb-remove-orphan-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
-  while [ $(deborphan | wc -l) -gt 0 ]; do
+  while [ "$(deborphan | wc -l)" -gt 0 ]; do
     for i in $(deborphan); do
       FOUND_EXCEPTION=false
       for j in "$@"; do
