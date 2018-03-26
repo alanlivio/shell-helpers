@@ -328,11 +328,13 @@ function hfunc-android-install-package() {
 # ---------------------------------------
 
 function hfunc-folder-size() {
-  du -ahd 1 | sort -h
+  echo "size="$(du -sh|awk '{print $1;exit}')
+  echo "dirs="$(find . -mindepth 1 -maxdepth 1 -type d | wc -l)
+  echo "files="$(find . -type f | wc -l)
 }
 
-function hfunc-folder-count-files() {
-  find . -type f | wc -l
+function hfunc-files-size() {
+  du -ahd 1 | sort -h
 }
 
 # ---------------------------------------
