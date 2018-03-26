@@ -12,15 +12,18 @@
 # ---------------------------------------
 
 case "$(uname -s)" in
-  Darwin) IS_MAC=1 ;;
-  Linux) IS_LINUX=1 ;;
-  CYGWIN* | MINGW*| MSYS*) IS_WINDOWS=1 ;;
+Darwin) IS_MAC=1 ;;
+Linux) IS_LINUX=1 ;;
+CYGWIN* | MINGW* | MSYS*) IS_WINDOWS=1 ;;
 esac
 
 if test $IS_LINUX; then
   case "$(uname -r)" in
-    *43-Microsoft) IS_LINUX=0; IS_WINDOWS=1 ;;
-    *) IS_LINUX=1 ;;
+  *43-Microsoft)
+    IS_LINUX=0
+    IS_WINDOWS=1
+    ;;
+  *) IS_LINUX=1 ;;
   esac
 fi
 
@@ -122,18 +125,17 @@ function hfunc-gst-side-by-side-args() {
 # pkg-config functions
 # ---------------------------------------
 
-hfunc-pkg-config-find ()
-{
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"};
+hfunc-pkg-config-find() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
   pkg-config --list-all | grep --color=auto $1
 }
 
-function hfunc-pkg-config-show(){
+function hfunc-pkg-config-show() {
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
-  PKG=$(pkg-config --list-all |grep -w $1| awk '{print $1;exit}')
+  PKG=$(pkg-config --list-all | grep -w $1 | awk '{print $1;exit}')
   echo 'version:    '"$(pkg-config --modversion $PKG)"
   echo 'provides:   '"$(pkg-config --print-provides $PKG)"
-  echo 'requireds:  '"$(pkg-config --print-requires $PKG| awk '{print}' ORS=' ')"
+  echo 'requireds:  '"$(pkg-config --print-requires $PKG | awk '{print}' ORS=' ')"
 }
 
 # ---------------------------------------
@@ -328,7 +330,7 @@ function hfunc-android-install-package() {
 # ---------------------------------------
 
 function hfunc-folder-size() {
-  echo "size="$(du -sh|awk '{print $1;exit}')
+  echo "size="$(du -sh | awk '{print $1;exit}')
   echo "dirs="$(find . -mindepth 1 -maxdepth 1 -type d | wc -l)
   echo "files="$(find . -type f | wc -l)
 }
@@ -342,7 +344,7 @@ function hfunc-files-size() {
 # ---------------------------------------
 
 function hfunc-latex-clean() {
-  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name  "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
+  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
 }
 
 # ---------------------------------------
@@ -358,7 +360,7 @@ function hfunc-cpp-find-autotools-files() {
 }
 
 function hfunc-cpp-delete-binary-files() {
-  find . -print0 -type -f  -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
+  find . -print0 -type -f -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
 }
 
 function hfunc-cpp-delete-cmake-files() {
@@ -532,7 +534,7 @@ function hfunc-vscode-install-packages() {
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
   if test -n "$PKGS_TO_INSTALL"; then
     for i in $PKGS_TO_INSTALL; do
       code --install-extension $i
@@ -563,7 +565,7 @@ function hfunc-gnome-reset-tracker() {
 }
 
 function hfunc-gnome-reset-shotwell() {
-  rm -rf ~/.cache/shotwell  ~/.local/share/shotwell
+  rm -rf ~/.cache/shotwell ~/.local/share/shotwell
 }
 
 function hfunc-gnome-update-desktop-database() {
@@ -602,17 +604,16 @@ function hfunc-gnome-settings-reset() {
   gsettings reset-recursively $1
 }
 
-
 function hfunc-gnome-settings-save-to-file() {
   : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
 
-  dconf dump $1 > $2
+  dconf dump $1 >$2
 }
 
 function hfunc-gnome-settings-load-from-file() {
   : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
 
-  dconf load $1 < $2
+  dconf load $1 <$2
 }
 
 function hfunc-gnome-settings-diff-actual-and-file() {
@@ -648,7 +649,7 @@ function hfunc-npm-install-packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
 
   PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(npm ls -g --depth 0 2> /dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
+  PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
   for i in "$@"; do
     FOUND=false
     for j in $PKGS_INSTALLED; do
@@ -660,7 +661,7 @@ function hfunc-npm-install-packages() {
     if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
   done
   if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     if test -f pakcage.json; then cd /tmp/; fi
     if test $IS_WINDOWS; then
       npm install -g $PKGS_TO_INSTALL
@@ -669,7 +670,7 @@ function hfunc-npm-install-packages() {
       sudo -H npm install -g $PKGS_TO_INSTALL
       sudo -H npm update
     fi
-    if test "$(pwd)" == "/tmp" ; then cd -; fi
+    if test "$(pwd)" == "/tmp"; then cd -; fi
   fi
 }
 
@@ -693,9 +694,9 @@ function hfunc-ruby-install-packages() {
     if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
   done
   if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     sudo gem install $PKGS_TO_INSTALL
-    if test "$(pwd)" == "/tmp" ; then cd -; fi
+    if test "$(pwd)" == "/tmp"; then cd -; fi
   fi
 }
 
@@ -716,7 +717,7 @@ function hfunc-python-install-packages() {
   fi
 
   PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(pip3 list --format=columns | cut -d' ' -f1| grep -v Package | sed '1d'| tr '\n' ' ')
+  PKGS_INSTALLED=$(pip3 list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
   for i in "$@"; do
     FOUND=false
     for j in $PKGS_INSTALLED; do
@@ -754,7 +755,7 @@ function hfunc-deb-install-packages() {
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";fi
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
   if test -n "$PKGS_TO_INSTALL"; then
     sudo apt install -y $PKGS_TO_INSTALL
   fi
