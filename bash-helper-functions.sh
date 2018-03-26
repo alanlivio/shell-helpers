@@ -331,6 +331,10 @@ function hfunc-folder-size() {
   du -ahd 1 | sort -h
 }
 
+function hfunc-folder-count-files() {
+  find . -type f | wc -l
+}
+
 # ---------------------------------------
 # latex functions
 # ---------------------------------------
