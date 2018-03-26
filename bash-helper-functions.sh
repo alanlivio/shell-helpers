@@ -668,6 +668,32 @@ function hfunc-npm-install-packages() {
 }
 
 # ---------------------------------------
+# ruby functions
+# ---------------------------------------
+
+function hfunc-ruby-install-packages() {
+  : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
+
+  PKGS_TO_INSTALL=""
+  PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
+  for i in "$@"; do
+    FOUND=false
+    for j in $PKGS_INSTALLED; do
+      if test $i == $j; then
+        FOUND=true
+        break
+      fi
+    done
+    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
+  done
+  if test ! -z "$PKGS_TO_INSTALL"; then
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL";
+    sudo gem install $PKGS_TO_INSTALL
+    if test "$(pwd)" == "/tmp" ; then cd -; fi
+  fi
+}
+
+# ---------------------------------------
 # python functions
 # ---------------------------------------
 
