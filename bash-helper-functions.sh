@@ -329,13 +329,18 @@ function hfunc-android-install-package() {
 # folder functions
 # ---------------------------------------
 
-function hfunc-folder-size() {
+function hfunc-folder-info() {
+  EXTENSIONS=$(for f in *.*; do printf "%s\n" "${f##*.}"; done | sort -u)
   echo "size="$(du -sh | awk '{print $1;exit}')
   echo "dirs="$(find . -mindepth 1 -maxdepth 1 -type d | wc -l)
-  echo "files="$(find . -type f | wc -l)
+  echo -n "files="$(find . -mindepth 1 -maxdepth 1 -type f | wc -l)"("
+  for i in $EXTENSIONS; do
+    echo -n ".$i="$(find . -mindepth 1 -maxdepth 1 -type f -iname \*\.$i | wc -l)","
+  done
+  echo ")"
 }
 
-function hfunc-files-size() {
+function hfunc-folder-files-sizes() {
   du -ahd 1 | sort -h
 }
 
