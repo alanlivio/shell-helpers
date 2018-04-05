@@ -741,17 +741,17 @@ function hfunc-python-install-packages() {
 }
 
 # ---------------------------------------
-# deb functions
+# apt functions
 # ---------------------------------------
 
-function hfunc-deb-upgrade() {
+function hfunc-apt-upgrade() {
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
 }
 
-function hfunc-deb-install-packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
+function hfunc-apt-install-packages() {
+  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
 
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -766,14 +766,14 @@ function hfunc-deb-install-packages() {
   fi
 }
 
-function hfunc-deb-autoremove() {
+function hfunc-apt-autoremove() {
   if [ "$(apt-get --dry-run autoremove | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
     sudo apt -y autoremove
   fi
 }
 
-function hfunc-deb-remove-packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
+function hfunc-apt-remove-packages() {
+  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
 
   PKGS_TO_REMOVE=""
   for i in "$@"; do
@@ -788,8 +788,8 @@ function hfunc-deb-remove-packages() {
   fi
 }
 
-function hfunc-deb-remove-orphan-packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [deb_packages_list]"}
+function hfunc-apt-remove-orphan-packages() {
+  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
 
   PKGS_ORPHAN_TO_REMOVE=""
   while [ "$(deborphan | wc -l)" -gt 0 ]; do
@@ -812,14 +812,14 @@ function hfunc-deb-remove-orphan-packages() {
   done
 }
 
-function hfunc-deb-fetch-install() {
+function hfunc-apt-fetch-install() {
   : ${1?"Usage: ${FUNCNAME[0]} [url]"}
 
-  DEB_NAME=$(basename $1)
-  if test ! -f /tmp/$DEB_NAME; then
+  apt_NAME=$(basename $1)
+  if test ! -f /tmp/$apt_NAME; then
     wget --continue $1 -P /tmp/
   fi
-  sudo dpkg -i /tmp/$DEB_NAME
+  sudo dpkg -i /tmp/$apt_NAME
 }
 
 # ---------------------------------------
