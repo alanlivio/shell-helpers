@@ -433,6 +433,12 @@ function hfunc-pdf-compress() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
+function hfunc-pdf-count-words() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+
+  pdftotext "$1" | wc -w -
+}
+
 # ---------------------------------------
 # convert functions
 # ---------------------------------------
