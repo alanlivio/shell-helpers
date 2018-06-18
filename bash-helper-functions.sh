@@ -3,8 +3,6 @@
 # ---------------------------------------
 # Bash helper functions.
 # site: github.com/alanlivio/bash-helper-functions
-# simple get:
-# wget raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash-helper-functions.sh
 # ---------------------------------------
 
 # ---------------------------------------
@@ -26,6 +24,20 @@ if test $IS_LINUX; then
   *) IS_LINUX=1 ;;
   esac
 fi
+
+SCRIPT_NAME=bash-helper-functions.sh
+SCRIPT_URL="raw.githubusercontent.com/alanlivio/bash-helper-functions/master/$SCRIPT_NAME"
+
+# ---------------------------------------
+# script functions
+# ---------------------------------------
+
+function hfunc-script-update() {
+  if test -f $SCRIPT_NAME; then
+      rm $SCRIPT_NAME;
+  fi;
+  wget $SCRIPT_URL -O $SCRIPT_NAME
+}
 
 # ---------------------------------------
 # log functions
