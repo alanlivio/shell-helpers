@@ -26,7 +26,7 @@ if test $IS_LINUX; then
 fi
 
 SCRIPT_NAME=bash-helper-functions.sh
-SCRIPT_URL="raw.githubusercontent.com/alanlivio/bash-helper-functions/master/$SCRIPT_NAME"
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/$SCRIPT_NAME
 
 # ---------------------------------------
 # script functions
@@ -36,7 +36,7 @@ function hfunc-script-update() {
   if test -f $SCRIPT_NAME; then
       rm $SCRIPT_NAME;
   fi;
-  wget $SCRIPT_URL -O $SCRIPT_NAME
+  wget $SCRIPT_URL $SCRIPT_NAME
 }
 
 # ---------------------------------------
@@ -433,12 +433,6 @@ function hfunc-pdf-compress() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
-function hfunc-pdf-count-words() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
-
-  pdftotext "$1" | wc -w -
-}
-
 # ---------------------------------------
 # convert functions
 # ---------------------------------------
@@ -778,7 +772,9 @@ function hfunc-apt-install-packages() {
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
+  if test ! -z "$PKGS_TO_INSTALL"; then
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  fi
   if test -n "$PKGS_TO_INSTALL"; then
     sudo apt install -y $PKGS_TO_INSTALL
   fi
@@ -807,8 +803,6 @@ function hfunc-apt-remove-packages() {
 }
 
 function hfunc-apt-remove-orphan-packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
-
   PKGS_ORPHAN_TO_REMOVE=""
   while [ "$(deborphan | wc -l)" -gt 0 ]; do
     for i in $(deborphan); do
