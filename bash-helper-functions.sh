@@ -516,11 +516,11 @@ function bhf-user-reload-bashrc() {
   source ~/.bashrc
 }
 
-function alan-permissions-sudo() {
+function bhf-user-permissions-sudo() {
   sudo sh -c 'echo "$USER  ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/sudoers-user'
 }
 
-function alan-permissions-opt() {
+function bhf-user-permissions-opt() {
     sudo chown root:root /opt
     sudo adduser $USER root
     newgrp root # update group for user
@@ -585,6 +585,16 @@ function bhf-gnome-reset-keybindings() {
   gsettings reset-recursively org.gnome.desktop.wm.keybindings
   gsettings reset-recursively org.gnome.shell.keybindings
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
+}
+
+function bhf-gnome-disble-super-console-key() {
+  # remove super+arrow virtual terminal change
+  sudo sh -c 'dumpkeys |grep -v cr_Console |loadkeys'
+}
+
+function bhf-gnome-disble-super-console-key() {
+  # disable tiling
+  dconf write /org/gnome/mutter/edge-tiling false
 }
 
 function bhf-gnome-reset-tracker() {
