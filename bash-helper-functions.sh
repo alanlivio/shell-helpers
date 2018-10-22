@@ -516,7 +516,18 @@ function bhf-user-reload-bashrc() {
   source ~/.bashrc
 }
 
-function bhf-user-fix-ssh-permissions() {
+function alan-permissions-sudo() {
+  sudo sh -c 'echo "$USER  ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/sudoers-user'
+}
+
+function alan-permissions-opt() {
+    sudo chown root:root /opt
+    sudo adduser $USER root
+    newgrp root # update group for user
+    sudo chmod -R +775 /opt/
+}
+
+function bhf-user-permissions-ssh() {
   sudo chmod 700 ~/.ssh/ \
     && sudo chmod 755 ~/.ssh/* \
     && sudo chmod 600 ~/.ssh/id_rsa \
