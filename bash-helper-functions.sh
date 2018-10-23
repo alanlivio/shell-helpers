@@ -37,6 +37,7 @@ function bhf-script-update() {
       rm $SCRIPT_NAME;
   fi;
   wget $SCRIPT_URL $SCRIPT_NAME
+  test -n $? && bhf-log-error "wget failed." && return 1
 }
 
 # ---------------------------------------
@@ -668,6 +669,7 @@ function bhf-gnome-settings-diff-actual-and-file() {
 
 function bhf-vlc-youtube-playlist-extension() {
   wget --continue https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
+  test -n $? && bhf-log-error "wget failed." && return 1
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
 
@@ -851,6 +853,7 @@ function bhf-apt-fetch-install() {
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
     wget --continue $1 -P /tmp/
+    test -n $? && bhf-log-error "wget failed." && return 1
   fi
   sudo dpkg -i /tmp/$apt_NAME
 }
@@ -869,6 +872,7 @@ function bhf-fetch-extract-to() {
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
     wget --continue $1 -P /tmp/
+    test -n $? && bhf-log-error "wget failed." && return 1
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
@@ -885,8 +889,7 @@ function bhf-fetch-extract-to() {
     tar -xJf /tmp/$FILE_NAME -C $2
     ;;
   *)
-    bhf-log-error "$FILE_EXTENSION is not supported compression."
-    return
+    bhf-log-error "$FILE_EXTENSION is not supported compression." && exit
     ;;
   esac
 }
