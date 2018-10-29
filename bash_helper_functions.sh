@@ -25,7 +25,7 @@ if test $IS_LINUX; then
   esac
 fi
 
-SCRIPT_NAME=bash-helper-functions.sh
+SCRIPT_NAME=bash_helper_functions.sh
 SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/$SCRIPT_NAME
 
 # ---------------------------------------
