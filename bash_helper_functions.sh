@@ -933,7 +933,6 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
-
   cd ~ || exit
   FOLDERS=("Documents/" " Favorites/" "Pictures/" "Public/" "Templates/" "Videos/" "Music/" "Links/" ".adobe/" ".debug/" ".nv/" ".gnugpg" ".stremio-server/" ".gimp-*"
       ".designer/" ".android/" ".AndroidStudio2.3/" ".apport-ignore.xml "
@@ -956,4 +955,16 @@ function hf_clean_unused_folders() {
     fi
   done
   cd - &>/dev/null || exit
+}
+function hf_clean_app_search() {
+  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' \
+    -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or \
+    -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or \
+    -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or \
+    -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or \
+    -iname '*brasero*')
+  for i in $APPS_TO_HIDE; do
+    sudo sh -c " echo 'NoDisplay=true' >> $i"
+  done
+  sudo updatedb
 }
