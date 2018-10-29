@@ -593,6 +593,16 @@ function hf_gnome_disble_animations() {
   gsettings set org.gnome.desktop.interface enable-animations false
 }
 
+function hf_gnome_nautilus_sanity() {
+  gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
+  gsettings set org.gnome.nautilus.list-view use-tree-view true
+}
+
+function hf_gnome_dash_sanity() {
+  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+}
+
 function hf_gnome_disble_super_console_key() {
   # remove super+arrow virtual terminal change
   sudo sh -c 'dumpkeys |grep -v cr_Console |loadkeys'
