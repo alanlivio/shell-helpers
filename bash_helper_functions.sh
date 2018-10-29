@@ -792,6 +792,65 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
+# installer functions
+# ---------------------------------------
+
+function hf_installer_foxit() {
+  hf_log_msg "run installer foxit"
+  if test -d /opt/foxitsoftware; then return; fi
+  URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader2.4.1.0609_Server_x64_enu_Setup.run.tar.gz
+  hf_fetch_extract_to $URL /tmp/
+  sudo /tmp/FoxitReader.enu.setup.2.4.1.0609\(r08f07f8\).x64.run
+}
+
+function hf_installer_stremio() {
+  hf_log_msg "run installer stremio"
+  if test -d /opt/stremio; then return; fi
+  mkdir /opt/stremio/
+
+  EXE=Stremio+4.0.10.appimage
+  URL=https://dl.strem.io/linux/v4.0.10/$EXE
+  wget --continue $URL -P /tmp/
+  chmod +x /tmp/$EXE
+  mv /tmp/$EXE /opt/stremio/
+  sudo chown alan:alan /opt/stremio/
+
+  sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O /opt/stremio/stremio.png
+  echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
+  sudo updatedb
+}
+
+function hf_installer_tor() {
+  hf_log_msg "run installer tor"
+  if test -d /opt/tor; then return; fi
+  URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
+  hf_fetch_extract_to $URL /opt/
+  ret=$?; echo $ret
+  if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+  mv /opt/tor-browser_en-US /opt/tor/
+  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g' /opt/tor/start-tor-browser.desktop
+  sudo desktop-file-install /opt/tor/start-tor-browser.desktop
+}
+
+function hf_installer_zotero() {
+  hf_log_msg "run installer zotero"
+  if test -d /opt/zotero; then return; fi
+  URL=https://download.zotero.org/client/release/5.0.57/Zotero-5.0.57_linux-x86_64.tar.bz2
+  hf_fetch_extract_to $URL /tmp/
+  mv /tmp/Zotero_linux-x86_64 /opt/zotero
+  {
+    echo '[Desktop Entry]'
+    echo 'Version=1.0'
+    echo 'Name=Zotero'
+    echo 'Type=Application'
+    echo 'Exec=/opt/zotero/zotero'
+    echo 'Icon=/opt/zotero/chrome/icons/default/default48.png'
+  } > /opt/zotero/zotero.desktop
+  sudo desktop-file-install /opt/zotero/zotero.desktop
+  sudo updatedb
+}
+
+# ---------------------------------------
 # apt functions
 # ---------------------------------------
 
