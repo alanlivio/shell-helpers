@@ -927,3 +927,33 @@ function hf_list_recursive_sorted_by_size() {
 function hf_x11_properties_of_window() {
   xprop | grep "^WM_"
 }
+
+# ---------------------------------------
+# clean functions
+# ---------------------------------------
+
+function hf_clean_unused_folders() {
+
+  cd ~ || exit
+  FOLDERS=("Documents/" " Favorites/" "Pictures/" "Public/" "Templates/" "Videos/" "Music/" "Links/" ".adobe/" ".debug/" ".nv/" ".gnugpg" ".stremio-server/" ".gimp-*"
+      ".designer/" ".android/" ".AndroidStudio2.3/" ".apport-ignore.xml "
+      ".bash_history" ".bash_history" ".bash_logout" ".eclipse/" ".emacs.d/"
+      ".emulator_console_auth_token" ".gconf/" ".gnome2_private/" ".gnome2/"
+      ".gphoto/" ".gradle/" ".gstreamer-0.10/" ".gtk-recordmydesktop"
+      ".IdeaIC2017.1/" ".install4j_jre" ".install4j" ".installjammerinfo/"
+      ".java/" ".kde" ".lesshst" ".macromedia/" ".mozilla/" ".nano/"
+      ".oracle_jre_usage/" ".p2/" ".pam_environment" ".pdfsam/" ".pki/"
+      ".pylint.d/" ".pyrenamer/" ".python_history" ".Skype/" ".ssr/" ".swt"
+      ".thumbnails/" ".tooling/" ".tsd-cache/" ".twinkle/" ".v8flags*" '.viminfo' ".visualvm/" ".wget-hsts" ".winff/")
+
+  for i in "${FOLDERS[@]}"; do
+    if test -d "$i"; then
+      echo remove $i
+      rm -r "$i" &>/dev/null
+    elif test -f "$i"; then
+      echo remove $i
+      rm - "$i" &>/dev/null
+    fi
+  done
+  cd - &>/dev/null || exit
+}
