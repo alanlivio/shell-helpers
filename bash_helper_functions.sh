@@ -519,7 +519,7 @@ function hf_user_reload_bashrc() {
 }
 
 function hf_user_permissions_sudo() {
-  sudo sh -c 'echo "$USER  ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/sudoers-user'
+  SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
 }
 
 function hf_user_permissions_opt() {
