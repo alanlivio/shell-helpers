@@ -825,7 +825,6 @@ function hf_installer_tor() {
   if test -d /opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
-  ret=$?; echo $ret
   if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
   mv /opt/tor-browser_en-US /opt/tor/
   sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g' /opt/tor/start-tor-browser.desktop
