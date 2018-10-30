@@ -1,4 +1,3 @@
-
 function hf_powershell_profile(){
   New-Item $PROFILE -Type File -Force
   echo "Import-Module -Force -Global \Users\alan\gdrive\env\scripts\powershell_helper_functions.ps1" > $PROFILE
