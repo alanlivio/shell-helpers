@@ -849,6 +849,15 @@ function hf_installer_zotero() {
   sudo updatedb
 }
 
+function alan_installer_shellcheck() {
+  hf_log_msg "run installer shellsheck"
+  if test -f /usr/local/bin/shellcheck; then return; fi
+  URL=https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+  hf_fetch_extract_to $URL /tmp/
+  sudo install /tmp/shellcheck-stable/shellcheck /usr/local/bin/
+}
+
+
 # ---------------------------------------
 # apt functions
 # ---------------------------------------
