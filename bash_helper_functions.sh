@@ -801,6 +801,43 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
+# eclipse functions
+# ---------------------------------------
+
+function hf_eclipse_install_packages() {
+  # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, \
+  #   org.eclipse.dltk.sh.feature.group
+  /opt/eclipse/eclipse \
+    -consolelog -noSplash -profile SDKProfile \
+    -repository \
+    download.eclipse.org/releases/neon, \
+    https://dl.google.com/eclipse/plugin/4.6, \
+    pydev.org/updates \
+    -application org.eclipse.equinox.p2.director \
+    -installIU \
+    "$@"
+}
+
+
+function hf_eclipse_uninstall_packages() {
+  # usage: hf_eclipse_install_packages org.eclipse.egit.feature.group, \
+  #   org.eclipse.mylyn.ide_feature.feature.group, \
+  #   org.eclipse.mylyn_feature.feature.group, \
+  #   org.eclipse.help.feature.group, \
+  #   org.eclipse.tm.terminal.feature.feature.group, \
+  #   org.eclipse.wst.server_adapters.feature.feature.group
+  /opt/eclipse/eclipse \
+    -consolelog -noSplash \
+    -application org.eclipse.equinox.p2.director \
+    -uninstallIU \
+    "$@"
+  /opt/eclipse/eclipse \
+    -consolelog -noSplash \
+    -application org.eclipse.equinox.p2.garbagecollector.application
+}
+
+
+# ---------------------------------------
 # install functions
 # ---------------------------------------
 
