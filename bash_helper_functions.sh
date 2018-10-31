@@ -805,11 +805,70 @@ function hf_python_install_packages() {
 # ---------------------------------------
 
 function hf_install_grub_customizer(){
-  hf_log_msg "install grub-customizer"
-  sudo rm /etc/apt/sources.list.d/danielrichter2007*
-  sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
-  sudo apt update
-  sudo apt install -y grub-customizer
+  hf_log_msg "apt install grub-customizer"
+  dpkg --status grub-customizer &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/danielrichter2007*
+    sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
+    sudo apt update
+    sudo apt install -y grub-customizer
+  fi
+}
+
+function hf_install_java(){
+  hf_log_msg "apt install java"
+  dpkg --status oracle-java11-set-default &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/linuxuprising*
+    sudo add-apt-repository -y ppa:linuxuprising/java
+    sudo apt update
+    sudo apt install -y oracle-java11-set-default
+  fi
+}
+
+function hf_install_simplescreenrercoder(){
+  hf_log_msg "apt install simplescreenrercoder"
+  dpkg --status oracle-java11-set-default &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
+    sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
+    sudo apt update
+    sudo apt install -y simplescreenrecorder
+  fi
+}
+
+function hf_install_vscode(){
+  hf_log_msg "apt install vscode"
+  dpkg --status code &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/vscode*
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
+    sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
+    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+    sudo apt update
+    sudo apt install -y code
+  fi
+}
+
+function hf_install_android_studio(){
+  hf_log_msg "apt install android-studio"
+  dpkg --status android-studio &>/dev/null
+  if test $? != 0; then
+    sudo apt-add-repository -y ppa:maarten-fonville/android-studio
+    sudo apt update
+    sudo apt install -y android-studio
+  fi
+}
+
+function hf_install_insync(){
+  hf_log_msg "apt install insync"
+  dpkg --status insync &>/dev/null
+  if test $? != 0; then
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
+    echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
+    sudo apt update
+    sudo apt install -y insync insync-nautilus
+  fi
 }
 
 function hf_install_foxit() {
