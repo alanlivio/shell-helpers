@@ -889,7 +889,7 @@ function hf_install_stremio() {
   wget --continue $URL -P /tmp/
   chmod +x /tmp/$EXE
   mv /tmp/$EXE /opt/stremio/
-  sudo chown alan:alan /opt/stremio/
+  sudo chown $USER:$USER /opt/stremio/
 
   sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O /opt/stremio/stremio.png
   echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
@@ -925,7 +925,7 @@ function hf_install_zotero() {
   sudo updatedb
 }
 
-function alan_installer_shellcheck() {
+function hf_install_shellcheck() {
   hf_log_msg "install shellsheck"
   if test -f /usr/local/bin/shellcheck; then return; fi
   URL=https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
@@ -933,6 +933,32 @@ function alan_installer_shellcheck() {
   sudo install /tmp/shellcheck-stable/shellcheck /usr/local/bin/
 }
 
+function hf_install_tizen_studio() {
+  hf_log_msg "install tizen studio"
+  if test -d /opt/tizen-studio; then return; fi
+  URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+  wget $URL -P /tmp/
+  chmod +x /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+  /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+}
+
+function hf_install_vp() {
+  hf_log_msg "installer visual-paradigm"
+  if test -d /opt/vp; then return; fi
+  URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
+  hf_fetch_extract_to $URL /tmp/
+  sudo bash "/tmp/$(basename $URL)"
+  sudo chown $USER:$USER /opt/vp/
+  sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
+}
+
+function hf_install_shfmt() {
+  hf_log_msg "install shfmt"
+  if test -f /opt/go/bin/shfmt; then return; fi
+  echo "exist"
+  if ! test -d /opt/go/; then echo "create dir" && mkdir /opt/go/; fi
+  sudo -E go get -u mvdan.cc/sh/cmd/shfmt
+}
 
 # ---------------------------------------
 # apt functions
