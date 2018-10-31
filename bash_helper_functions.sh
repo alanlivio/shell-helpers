@@ -210,6 +210,15 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
+function hf_git_init() {
+  echo "#" $(basename "$1" ".${1##*.}") > README.md
+  git init
+  git add README.md
+  git commit -m "first commit"
+  git remote add origin $1
+  git push -u origin master
+}
+
 function hf_git_ammend_push_force() {
   git commit -a --amend --no-edit
   git push --force
@@ -792,19 +801,27 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
-# installer functions
+# install functions
 # ---------------------------------------
 
-function hf_installer_foxit() {
-  hf_log_msg "run installer foxit"
+function hf_install_grub_customizer(){
+  hf_log_msg "install grub-customizer"
+  sudo rm /etc/apt/sources.list.d/danielrichter2007*
+  sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
+  sudo apt update
+  sudo apt install -y grub-customizer
+}
+
+function hf_install_foxit() {
+  hf_log_msg "install foxit"
   if test -d /opt/foxitsoftware; then return; fi
   URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader2.4.1.0609_Server_x64_enu_Setup.run.tar.gz
   hf_fetch_extract_to $URL /tmp/
   sudo /tmp/FoxitReader.enu.setup.2.4.1.0609\(r08f07f8\).x64.run
 }
 
-function hf_installer_stremio() {
-  hf_log_msg "run installer stremio"
+function hf_install_stremio() {
+  hf_log_msg "install stremio"
   if test -d /opt/stremio; then return; fi
   mkdir /opt/stremio/
 
@@ -820,8 +837,8 @@ function hf_installer_stremio() {
   sudo updatedb
 }
 
-function hf_installer_tor() {
-  hf_log_msg "run installer tor"
+function hf_install_tor() {
+  hf_log_msg "install tor"
   if test -d /opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
@@ -831,8 +848,8 @@ function hf_installer_tor() {
   sudo desktop-file-install /opt/tor/start-tor-browser.desktop
 }
 
-function hf_installer_zotero() {
-  hf_log_msg "run installer zotero"
+function hf_install_zotero() {
+  hf_log_msg "install zotero"
   if test -d /opt/zotero; then return; fi
   URL=https://download.zotero.org/client/release/5.0.57/Zotero-5.0.57_linux-x86_64.tar.bz2
   hf_fetch_extract_to $URL /tmp/
@@ -850,7 +867,7 @@ function hf_installer_zotero() {
 }
 
 function alan_installer_shellcheck() {
-  hf_log_msg "run installer shellsheck"
+  hf_log_msg "install shellsheck"
   if test -f /usr/local/bin/shellcheck; then return; fi
   URL=https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
   hf_fetch_extract_to $URL /tmp/
