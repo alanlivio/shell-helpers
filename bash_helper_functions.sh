@@ -264,6 +264,44 @@ function hf_git_list_large_files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
+function hf_git_folder_three() {
+  DEV_FOLDER=$1
+  REPOS=$2
+  hf_log_msg "hf_git_folder_three for $DEV_FOLDER"
+
+  if test ! -d $DEV_FOLDER; then
+    hf_log_msg "creating $DEV_FOLDER"
+    mkdir $DEV_FOLDER
+  fi
+  CWD=$(pwd)
+  cd $DEV_FOLDER
+
+  for i in "${!REPOS[@]}"; do
+    hf_log_msg "repositories for $DEV_FOLDER/$i folder"
+    if ! test -d $DEV_FOLDER/$i; then
+      hf_log_msg_2nd "creating $DEV_FOLDER/$i folder"
+      mkdir $DEV_FOLDER/$i
+    fi
+    cd $DEV_FOLDER/$i
+    for j in ${REPOS[$i]}; do
+      hf_log_msg_2nd "configuring $(basename $j)"
+      if ! test -d "$(basename -s .git $j)"; then
+        hf_log_msg_2nd "clone $j"
+        git clone $j
+      else
+        # elif test "$1" = "pull"; then
+        hf_log_msg_2nd "pull $j"
+        cd "$(basename -s .git $j)"
+        git pull -r &>/dev/null
+        cd ..
+      fi
+    done
+  done
+
+  cd $CWD || exit
+}
+
+
 # ---------------------------------------
 # editors functions
 # ---------------------------------------
@@ -1139,6 +1177,10 @@ function hf_list_recursive_sorted_by_size() {
 # ---------------------------------------
 # x11 functions
 # ---------------------------------------
+
+function hf_x11_properties_of_window() {
+  xprop | grep "^WM_"
+}
 
 function hf_x11_properties_of_window() {
   xprop | grep "^WM_"
