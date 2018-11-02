@@ -3,21 +3,21 @@
 # user functions
 # ---------------------------------------
 
-function hf_user_reload(){
+function hf_user_reload() {
   Import-Module -Force -Global \Users\alan\gdrive\env\scripts\powershell_helper_functions.ps1
 }
 
-function hf_user_profile_init(){
+function hf_user_profile_init() {
   New-Item $PROFILE -Type File -Force
-  echo "Import-Module -Force -Global \Users\alan\gdrive\env\scripts\powershell_helper_functions.ps1" > $PROFILE
-  echo "cd ~" >> $PROFILE
+  Write-Output "Import-Module -Force -Global \Users\alan\gdrive\env\scripts\powershell_helper_functions.ps1" > $PROFILE
+  Write-Output "cd ~" >> $PROFILE
 }
 
 # ---------------------------------------
 # powershell functions
 # ---------------------------------------
 
-function hf_powershell_enable_script(){
+function hf_powershell_enable_script() {
   Set-ExecutionPolicy unrestricted
 }
 
@@ -25,28 +25,28 @@ function hf_powershell_enable_script(){
 # clean functions
 # ---------------------------------------
 
-function hf_clean(){
-    echo "hf_clean"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Favorites/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "OneDrive/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Pictures/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Public/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Templates/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Videos/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Music/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Links/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Start Menu/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Saved Games/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Searches/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "SendTo/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "PrintHood"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "MicrosoftEdgeBackups/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "IntelGraphicsProfiles/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Contacts/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "3D Objects/"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "Recent"
-    Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood"
-    Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings'
+function hf_clean() {
+  Write-Output "hf_clean"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Favorites/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "OneDrive/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Pictures/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Public/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Templates/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Videos/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Music/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Links/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Start Menu/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Saved Games/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Searches/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "SendTo/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "PrintHood"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "MicrosoftEdgeBackups/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "IntelGraphicsProfiles/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Contacts/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "3D Objects/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Recent"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood"
+  Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings'
 }
 
 # ---------------------------------------
@@ -54,65 +54,65 @@ function hf_clean(){
 # ---------------------------------------
 
 function hf_install_vscode_packages() {
-  echo "vscode packages"
-  $PKGS=""
+  Write-Output "vscode packages"
+  $PKGS = ""
   # text edit
-  $PKGS+="mkloubert.vscode-remote-workspace henriiik.vscode-sort stkb.rewrap formulahendry.auto-close-tag "
+  $PKGS += "mkloubert.vscode-remote-workspace henriiik.vscode-sort stkb.rewrap formulahendry.auto-close-tag "
   # docker
   # $PKGS+="peterjausovec.vscode-docker "
-  # cpp
-  $PKGS+="ms-vscode.cpptools twxs.cmake matthewferreira.cppcheck "
+  # Copy-Itemp
+  $PKGS += "ms-vscode.Copy-Itemptools twxs.cmake matthewferreira.Copy-Itempcheck "
   # python
-  $PKGS+="ms-python.python "
+  $PKGS += "ms-python.python "
   # html-css
-  $PKGS+="techer.open-in-browser mkaufman.HTMLHint "
+  $PKGS += "techer.open-in-browser mkaufman.HTMLHint "
   # xml
-  $PKGS+="DotJoshJohnson.xml "
+  $PKGS += "DotJoshJohnson.xml "
   # javascript
-  $PKGS+="dbaeumer.vscode-eslint msjsdiag.debugger-for-chrome "
+  $PKGS += "dbaeumer.vscode-eslint msjsdiag.debugger-for-chrome "
   # python
-  $PKGS+="ms-python.python "
+  $PKGS += "ms-python.python "
   # typescript
-  $PKGS+="eg2.tslint "
+  $PKGS += "eg2.tslint "
   # dart
-  $PKGS+="Dart-Code.dart-code "
+  $PKGS += "Dart-Code.dart-code "
   # lua
-  $PKGS+="trixnz.vscode-lua satoren.lualint "
+  $PKGS += "trixnz.vscode-lua satoren.lualint "
   # java
   # $PKGS+="redhat.java vscjava.vscode-java-pack "
-  $PKGS+="vscjava.vscode-java-pack "
+  $PKGS += "vscjava.vscode-java-pack "
   # markdown
-  $PKGS+="mrmlnc.vscode-remark davidanson.vscode-markdownlint "
+  $PKGS += "mrmlnc.vscode-remark davidanson.vscode-markdownlint "
   # latex
-  $PKGS+="James-Yu.latex-workshop "
+  $PKGS += "James-Yu.latex-workshop "
   # bash
-  $PKGS+="timonwong.shellcheck "
+  $PKGS += "timonwong.shellcheck "
   # powershell
-  $PKGS+="ms-vscode.powershell "
+  $PKGS += "ms-vscode.powershell "
 
   hf_vscode_install_packages $PKGS
 }
 
 function hf_choco_boostrap() {
-    echo "boostrap windows env"
-    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-    cmd /c 'setx ChocolateyToolsLocation C:\opt\'
+  Write-Output "boostrap windows env"
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+  cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
-    choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
-    choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
-    choco -y --acceptlicense --no-progress disable -n showDownloadProgress
-    choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
-    choco install -y --acceptlicense --no-progress google-backup-and-sync visualstudiocode
-  }
+  choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
+  choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
+  choco -y --acceptlicense --no-progress disable -n showDownloadProgress
+  choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
+  choco install -y --acceptlicense --no-progress google-backup-and-sync visualstudiocode
+}
 
 function hf_packages_store() {
-  echo "packages store remove unused"
-  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D".Split(" ") | Foreach{Get-AppxPackage -allusers $_ |remove-AppxPackage}
+  Write-Output "packages store remove unused"
+  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
 }
 
 function hf_store_list_installed() {
-  Get-AppxPackage -AllUsers | Select Name, PackageFullName
+  Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
 # ---------------------------------------
@@ -120,18 +120,18 @@ function hf_store_list_installed() {
 # ---------------------------------------
 
 function hf_choco_install_packages_essentials() {
-  echo "packages choco"
+  Write-Output "packages choco"
   choco install -y --acceptlicense --no-progress firefox google-backup-and-sync visualstudiocode FoxitReader 7zip vlc ccleaner shellcheck git zotero-standalone libreoffice pdfsam
   choco upgrade -y --acceptlicense --no-progress all
 }
 
 function hf_choco_install_packages_dev() {
-  echo "packages choco dev"
-  choco install -y --acceptlicense --no-progress unity-android msys2 cppcheck cmake nsis nodejs rufus git gitg dependencywalker
+  Write-Output "packages choco dev"
+  choco install -y --acceptlicense --no-progress unity-android msys2 Copy-Itempcheck cmake nsis nodejs rufus git gitg dependencywalker
 }
 
 function hf_choco_install_packages_user() {
-  echo "packages choco user"
+  Write-Output "packages choco user"
   choco install -y --acceptlicense --no-progress battle.net steam deluge stremio
 }
 
@@ -155,21 +155,20 @@ function hf_explorer_open_start_menu() {
 # windows functions
 # ---------------------------------------
 
-
 function hf_windows_update() {
   control update
   wuauclt /detectnow /updatenow
 }
 
 function hf_windows_remove_ondrive() {
-  echo "remove onedrive"
+  Write-Output "remove onedrive"
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" REG Delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f'
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" REG Delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f'
   cmd /c 'REG ADD "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v System.IsPinnedToNameSpaceTree /d "0" /t REG_DWORD /f'
 }
 
 function hf_windows_disable_unused_menu() {
-  echo "remove context menu unused"
+  Write-Output "remove context menu unused"
   # * Sharing
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" REG Delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" REG Delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f'
@@ -186,26 +185,26 @@ function hf_windows_disable_unused_menu() {
 # ---------------------------------------
 
 function hf_config_install() {
-  cp ~/gdrive/env/home/.bashrc ~/
-  cp ~/gdrive/env/home/.vimrc ~/
-  cp ~/gdrive/env/home/.gitconfig ~/
-  cp ~/gdrive/env/home/.profile ~/
-  if( -Not (Test-Path -Path ~/AppData/Roaming/Code/User/ ) ){
+  Copy-Item ~/gdrive/env/home/.bashrc ~/
+  Copy-Item ~/gdrive/env/home/.vimrc ~/
+  Copy-Item ~/gdrive/env/home/.gitconfig ~/
+  Copy-Item ~/gdrive/env/home/.profile ~/
+  if ( -Not (Test-Path -Path ~/AppData/Roaming/Code/User/ ) ) {
     mkdir -p ~/AppData/Roaming/Code/User/
   }
-  cp ~/gdrive/env/home/.config/Code/User/settings.json ~/AppData/Roaming/Code/User/settings.json
-  cp ~/gdrive/env/home/.config/Code/keybindings.json ~/AppData/Roaming/Code/User/keybindings.json
-  cp ~/gdrive/env/home/.inputrc ~/.inputrc
+  Copy-Item ~/gdrive/env/home/.config/Code/User/settings.json ~/AppData/Roaming/Code/User/settings.json
+  Copy-Item ~/gdrive/env/home/.config/Code/keybindings.json ~/AppData/Roaming/Code/User/keybindings.json
+  Copy-Item ~/gdrive/env/home/.inputrc ~/.inputrc
 }
 
 function hf_config_backup() {
-  cp ~/.bashrc ~/gdrive/env/home/
-  cp ~/.vimrc ~/gdrive/env/home/
-  cp ~/.gitconfig ~/gdrive/env/home/
-  cp ~/.profile ~/gdrive/env/home/
-  cp ~/AppData/Roaming/Code/User/settings.json ~/gdrive/env/home/.config/Code/User/settings.json
-  cp ~/AppData/Roaming/Code/User/keybindings.json ~/gdrive/env/home/.config/Code/keybindings.json
-  cp ~/.inputrc ~/gdrive/env/home/.inputrc
+  Copy-Item ~/.bashrc ~/gdrive/env/home/
+  Copy-Item ~/.vimrc ~/gdrive/env/home/
+  Copy-Item ~/.gitconfig ~/gdrive/env/home/
+  Copy-Item ~/.profile ~/gdrive/env/home/
+  Copy-Item ~/AppData/Roaming/Code/User/settings.json ~/gdrive/env/home/.config/Code/User/settings.json
+  Copy-Item ~/AppData/Roaming/Code/User/keybindings.json ~/gdrive/env/home/.config/Code/keybindings.json
+  Copy-Item ~/.inputrc ~/gdrive/env/home/.inputrc
 }
 
 function hf_config_diff() {
