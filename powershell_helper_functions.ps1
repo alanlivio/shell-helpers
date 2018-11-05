@@ -121,13 +121,13 @@ function hf_store_list_installed() {
 
 function hf_choco_install_packages_essentials() {
   Write-Output "packages choco"
-  choco install -y --acceptlicense --no-progress firefox google-backup-and-sync visualstudiocode FoxitReader 7zip vlc ccleaner shellcheck git zotero-standalone libreoffice pdfsam
+  choco install -y --acceptlicense --no-progress firefox google-backup-and-sync visualstudiocode FoxitReader 7zip vlc ccleaner zotero-standalone libreoffice pdfsam
   choco upgrade -y --acceptlicense --no-progress all
 }
 
 function hf_choco_install_packages_dev() {
   Write-Output "packages choco dev"
-  choco install -y --acceptlicense --no-progress unity-android msys2 Copy-Itempcheck cmake nsis nodejs rufus git gitg dependencywalker
+  choco install -y --acceptlicense --no-progress shellcheck git gitg jdk8 unity-android android-studio android-sdk msys2 shellcheck cmake nsis nodejs rufus dependencywalker
 }
 
 function hf_choco_install_packages_user() {
