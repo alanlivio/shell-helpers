@@ -14,6 +14,17 @@ function hf_user_profile_init() {
 }
 
 # ---------------------------------------
+# wsl functions
+# ---------------------------------------
+
+function hf_wsl_ubuntu() {
+  Enable-WindowsOptionalFeature -NoRestart -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+  Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-1804 -OutFile Ubuntu.appx -UseBasicParsing
+#    Get-AppxPackage CanonicalGroupLimited.Ubuntu18.04onWindows| Foreach {Add-AppxPackage -DisableDevelopme
+# ntMode -Register “$($_.InstallLocation)\AppXManifest.xml”}
+}
+
+# ---------------------------------------
 # powershell functions
 # ---------------------------------------
 
