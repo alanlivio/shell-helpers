@@ -219,6 +219,12 @@ function hf_git_init() {
   git push -u origin master
 }
 
+function hf_git_remove_from_tree() {
+  git filter-branch --force --index-filter \
+'git rm --cached --ignore-unmatch $1' \
+--prune-empty --tag-name-filter cat -- --all
+}
+
 function hf_git_ammend_push_force() {
   git commit -a --amend --no-edit
   git push --force
