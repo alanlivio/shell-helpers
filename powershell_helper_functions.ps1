@@ -6,9 +6,13 @@
 # ---------------------------------------
 # powershell functions
 # ---------------------------------------
-
 function hf_powershell_enable_script(){
   Set-ExecutionPolicy unrestricted
+}
+
+function hf_powershell_show_profiles()
+{
+  $profile | Select-Object -Property *
 }
 
 # ---------------------------------------
