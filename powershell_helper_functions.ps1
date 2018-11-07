@@ -18,8 +18,8 @@ function hf_powershell_show_profiles()
 # ---------------------------------------
 # install functions
 # ---------------------------------------
-function hf_install_choco() {
-    echo "boostrap windows env"
+function hf_install_chocolatey() {
+    echo "install chocolatey"
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -59,8 +59,8 @@ function hf_store_list_installed() {
 # remove functions
 # ---------------------------------------
 
-function hf_remove(_unused_folders){
-  echo "hf_remove"
+function hf_remove_unused_folders(){
+  echo "remove unused folders"
   Remove-Item -Force -Recurse -ErrorAction Ignore "Favorites/"
   Remove-Item -Force -Recurse -ErrorAction Ignore "OneDrive/"
   Remove-Item -Force -Recurse -ErrorAction Ignore "Pictures/"
