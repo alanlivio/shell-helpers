@@ -589,8 +589,10 @@ function hf_user_permissions_sudo() {
 
 function hf_user_permissions_opt() {
     sudo chown root:root /opt
-    sudo adduser $USER root
-    newgrp root # update group for user
+    if ! (id -nG "$USER" | grep -qw root); then
+      sudo adduser $USER root
+      newgrp root # update group for user
+    fi
     sudo chmod -R +775 /opt/
 }
 
