@@ -619,6 +619,7 @@ function hf_vscode_run_as_root() {
 
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
+  hf_log_msg "vscode install packages"
 
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
@@ -768,6 +769,7 @@ function hf_system_list_gpu() {
 
 function hf_npm_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
+  hf_log_msg "npm install packages"
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
@@ -831,6 +833,7 @@ function hf_python_version() {
 
 function hf_python_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
+  hf_log_msg "python install packages"
 
   if ! type pip3 &>/dev/null; then
     hf_log_error "pip3 not found."
@@ -898,7 +901,7 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 
 function hf_install_grub_customizer(){
-  hf_log_msg "apt install grub-customizer"
+  hf_log_msg "install grub-customizer"
   dpkg --status grub-customizer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
@@ -909,7 +912,7 @@ function hf_install_grub_customizer(){
 }
 
 function hf_install_java(){
-  hf_log_msg "apt install java"
+  hf_log_msg "install java"
   dpkg --status oracle-java11-set-default &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
@@ -920,8 +923,8 @@ function hf_install_java(){
 }
 
 function hf_install_simplescreenrercoder(){
-  hf_log_msg "apt install simplescreenrercoder"
-  dpkg --status oracle-java11-set-default &>/dev/null
+  hf_log_msg "install simplescreenrecorder"
+  dpkg --status simplescreenrecorder &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
     sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
@@ -931,7 +934,7 @@ function hf_install_simplescreenrercoder(){
 }
 
 function hf_install_vscode(){
-  hf_log_msg "apt install vscode"
+  hf_log_msg "install vscode"
   dpkg --status code &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/vscode*
@@ -944,7 +947,7 @@ function hf_install_vscode(){
 }
 
 function hf_install_android_studio(){
-  hf_log_msg "apt install android-studio"
+  hf_log_msg "install android-studio"
   dpkg --status android-studio &>/dev/null
   if test $? != 0; then
     sudo apt-add-repository -y ppa:maarten-fonville/android-studio
@@ -954,7 +957,7 @@ function hf_install_android_studio(){
 }
 
 function hf_install_insync(){
-  hf_log_msg "apt install insync"
+  hf_log_msg "install insync"
   dpkg --status insync &>/dev/null
   if test $? != 0; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
@@ -1058,6 +1061,8 @@ function hf_install_shfmt() {
 # ---------------------------------------
 
 function hf_apt_upgrade() {
+  hf_log_msg "apt upgrade"
+
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
@@ -1065,6 +1070,7 @@ function hf_apt_upgrade() {
 
 function hf_apt_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
+  hf_log_msg "install apt packages"
 
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1082,6 +1088,7 @@ function hf_apt_install_packages() {
 }
 
 function hf_apt_autoremove() {
+  hf_log_msg "apt autoremove"
   if [ "$(apt-get --dry-run autoremove | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
     sudo apt -y autoremove
   fi
@@ -1089,6 +1096,7 @@ function hf_apt_autoremove() {
 
 function hf_apt_remove_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
+  hf_log_msg "remove packages"
 
   PKGS_TO_REMOVE=""
   for i in "$@"; do
