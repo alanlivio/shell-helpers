@@ -1,17 +1,17 @@
-# **_Bash helpers functions_**
+# bash_profile
 
 ![terminal](https://upload.wikimedia.org/wikipedia/commons/8/82/Gnu-bash-logo.svg)
 
-This project have helper functions to be used in bash scripts.
+This project made easy bash profile configuration and have helper functions to be used in bash.
 
 ## How to use
 
-Fetch the  `bash_helper_functions.sh`:
+Fetch the  `bash_profile.sh`:
 ```bash
-wget raw.githubusercontent.com/alanlivio/bash_helper_functions/master/bash_helper_functions.sh
+wget raw.githubusercontent.com/alanlivio/bash_profile/master/bash_profile.sh
 ```
 
-Load the `bash_helper_functions.sh` in the beginning of your bash script:
+Load the `bash_profile.sh` at your .bashrc:
 ```bash
-source bash_helper_functions.sh
+source bash_profile.sh
 ```
