@@ -597,10 +597,13 @@ function hf_user_permissions_opt() {
 }
 
 function hf_user_permissions_ssh() {
-  sudo chmod 700 ~/.ssh/ \
-    && sudo chmod 755 ~/.ssh/* \
-    && sudo chmod 600 ~/.ssh/id_rsa \
-    && sudo chmod 644 ~/.ssh/id_rsa.pubssh-rsa
+  if ! test -d ~/.ssh/; then mkdir ~/.ssh/; fi
+  sudo chmod 700 ~/.ssh/
+  if test -f ~/.ssh/id_rsa; then
+    sudo chmod 755 ~/.ssh/*
+    sudo chmod 600 ~/.ssh/id_rsa
+    sudo chmod 644 ~/.ssh/id_rsa.pubssh-rsa
+  fi
 }
 
 function hf_user_send_ssh_keys() {
