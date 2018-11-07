@@ -7,15 +7,29 @@
 # load powershell_profile_cfg
 # ---------------------------------------
 
+$SCRIPT_NAME = "$PSScriptRoot\powershell_profile.ps1"
 $SCRIPT_DIR = Split-Path $script:MyInvocation.MyCommand.Path
-$SCRIPT_CFG="$SCRIPT_DIR/powershell_profile_cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\powershell_profile_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
 
 # ---------------------------------------
+# profile functions
+# ---------------------------------------
+
+function hf_profile_init(){
+  echo "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+}
+
+function hf_profile_reload(){
+  Import-Module -Force -Global $SCRIPT_NAME
+}
+
+# ---------------------------------------
 # go home
 # ---------------------------------------
+echo ~
 cd ~
 
 # ---------------------------------------
