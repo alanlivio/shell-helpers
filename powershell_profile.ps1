@@ -4,6 +4,21 @@
 # ---------------------------------------
 
 # ---------------------------------------
+# load powershell_profile_cfg
+# ---------------------------------------
+
+$SCRIPT_DIR = Split-Path $script:MyInvocation.MyCommand.Path
+$SCRIPT_CFG="$SCRIPT_DIR/powershell_profile_cfg.ps1"
+if (Test-Path $SCRIPT_CFG) {
+  Import-Module -Force -Global $SCRIPT_CFG
+}
+
+# ---------------------------------------
+# go home
+# ---------------------------------------
+cd ~
+
+# ---------------------------------------
 # powershell functions
 # ---------------------------------------
 function hf_powershell_enable_script(){
