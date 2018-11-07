@@ -6,6 +6,16 @@
 # ---------------------------------------
 
 # ---------------------------------------
+# load bash_profile_cfg
+# ---------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
+if test -f $SCRIPT_CFG; then
+    source $SCRIPT_CFG
+fi;
+
+# ---------------------------------------
 # variables
 # ---------------------------------------
 
