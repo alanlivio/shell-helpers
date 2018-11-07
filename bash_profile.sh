@@ -10,6 +10,8 @@
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
+SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
 SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
 if test -f $SCRIPT_CFG; then
     source $SCRIPT_CFG
@@ -35,20 +37,24 @@ if test $IS_LINUX; then
   esac
 fi
 
-SCRIPT_NAME=bash_helper_functions.sh
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/$SCRIPT_NAME
-
 # ---------------------------------------
-# script functions
+# profile functions
 # ---------------------------------------
 
-function hf_script_update() {
+function hf_profile_install() {
+  echo -e "\nsource $SCRIPT_NAME" >> ~/.bashrc
+}
+
+function hf_profile_reload() {
+  source ~/.bashrc
+}
+
+function hf_profile_download() {
   if test -f $SCRIPT_NAME; then
       rm $SCRIPT_NAME;
   fi;
   wget $SCRIPT_URL $SCRIPT_NAME
   if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
-
 }
 
 # ---------------------------------------
@@ -576,10 +582,6 @@ function hf_virtualbox_resize_to_2gb() {
 # ---------------------------------------
 # user functions
 # ---------------------------------------
-
-function hf_user_reload_bashrc() {
-  source ~/.bashrc
-}
 
 function hf_user_permissions_sudo() {
   SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
