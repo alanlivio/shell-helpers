@@ -8,7 +8,7 @@
 # ---------------------------------------
 
 $SCRIPT_NAME = "$PSScriptRoot\powershell_profile.ps1"
-$SCRIPT_DIR = Split-Path $script:MyInvocation.MyCommand.Path
+$SCRIPT_DIR = $PSScriptRoot
 $SCRIPT_CFG = "$SCRIPT_DIR\powershell_profile_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
@@ -18,7 +18,7 @@ if (Test-Path $SCRIPT_CFG) {
 # profile functions
 # ---------------------------------------
 
-function hf_profile_init(){
+function hf_profile_install(){
   echo "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
 }
 
@@ -29,7 +29,6 @@ function hf_profile_reload(){
 # ---------------------------------------
 # go home
 # ---------------------------------------
-echo ~
 cd ~
 
 # ---------------------------------------
@@ -111,8 +110,6 @@ function hf_remove_unused_folders(){
   Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood"
   Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings'
 }
-
-
 
 function hf_remove_unused_this_pc_folders() {
   echo "remove this pc folders"
