@@ -668,8 +668,29 @@ function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hf_gnome_disble_animations() {
+function hf_gnome_desktop_dark() {
+  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
   gsettings set org.gnome.desktop.interface enable-animations false
+  gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+  gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
+  gsettings set org.gnome.desktop.background primary-color "#000000"
+  gsettings set org.gnome.desktop.background secondary-color "#000000"
+  gsettings set org.gnome.desktop.background color-shading-type "solid"
+  gsettings set org.gnome.desktop.background picture-uri ''
+  gsettings set org.gnome.desktop.screensaver primary-color "#000000"
+  gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
+  gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
+  gsettings set org.gnome.desktop.screensaver picture-uri ''
+}
+
+function hf_gnome_desktop_sanity() {
+  gsettings set org.gnome.desktop.interface enable-animations false
+  gsettings set org.gnome.desktop.background show-desktop-icons false
+  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.mutter dynamic-workspaces false
+  gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.desktop.sound event-sounds false
 }
 
 function hf_gnome_nautilus_sanity() {
@@ -679,7 +700,11 @@ function hf_gnome_nautilus_sanity() {
 
 function hf_gnome_dash_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
+  gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+  gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
+  gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
 }
 
 function hf_gnome_disble_super_console_key() {
@@ -707,17 +732,6 @@ function hf_gnome_update_desktop_database() {
 
 function hf_gnome_update_icons() {
   sudo update-icon-caches -v /usr/share/icons/ ~/.local/share/icons/
-}
-
-function hf_gnome_background_screensaver_black() {
-  gsettings set org.gnome.desktop.background primary-color "#000000"
-  gsettings set org.gnome.desktop.background secondary-color "#000000"
-  gsettings set org.gnome.desktop.background color-shading-type "solid"
-  gsettings set org.gnome.desktop.background picture-uri ''
-  gsettings set org.gnome.desktop.screensaver primary-color "#000000"
-  gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
-  gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
-  gsettings set org.gnome.desktop.screensaver picture-uri ''
 }
 
 function hf_gnome_show_version() {
