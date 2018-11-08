@@ -104,6 +104,14 @@ function hf_test_exist_command() {
 }
 
 # ---------------------------------------
+# mac functions
+# ---------------------------------------
+
+function hf_mac_enable_wifi() {
+  sudo apt-get install bcmwl-kernel-source
+}
+
+# ---------------------------------------
 # audio functions
 # ---------------------------------------
 
