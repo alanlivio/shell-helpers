@@ -707,12 +707,25 @@ function hf_gnome_dash_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
 }
 
-function hf_gnome_disble_super_console_key() {
+function hf_gnome_disable_unused_apps_in_search() {
+  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' \
+    -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or \
+    -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or \
+    -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or \
+    -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or \
+    -iname '*brasero*')
+  for i in $APPS_TO_HIDE; do
+    sudo sh -c " echo 'NoDisplay=true' >> $i"
+  done
+  sudo updatedb
+}
+
+function hf_gnome_disable_super_workspace_change() {
   # remove super+arrow virtual terminal change
   sudo sh -c 'dumpkeys |grep -v cr_Console |loadkeys'
 }
 
-function hf_gnome_disble_tiling() {
+function hf_gnome_disable_tiling() {
   # disable tiling
   gsettings set org.gnome.mutter edge-tiling false
 }
@@ -926,6 +939,14 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 # install functions
 # ---------------------------------------
+
+function hf_install_chrome(){
+  hf_log_msg "install chrome"
+  dpkg --status google-chrome-stable &> /dev/null
+  if test $? != 0; then
+    hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  fi
+}
 
 function hf_install_grub_customizer(){
   hf_log_msg "install grub-customizer"
@@ -1266,16 +1287,4 @@ function hf_clean_unused_folders() {
     fi
   done
   cd - &>/dev/null || exit
-}
-function hf_clean_app_search() {
-  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' \
-    -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or \
-    -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or \
-    -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or \
-    -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or \
-    -iname '*brasero*')
-  for i in $APPS_TO_HIDE; do
-    sudo sh -c " echo 'NoDisplay=true' >> $i"
-  done
-  sudo updatedb
 }
