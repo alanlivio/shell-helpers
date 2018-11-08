@@ -199,7 +199,7 @@ function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
 
 function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
-  hf_test-exist-command pygmentize
+  hf_test_exist_command pygmentize
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
@@ -475,14 +475,14 @@ function hf_image_reconize_text() {
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
-  hf_test-exist-command pngquant
+  hf_test_exist_command pngquant
 
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hf_imagem_compress2() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
-  hf_test-exist-command jpegoptim
+  hf_test_exist_command jpegoptim
 
   jpegoptim -d . $1.jpeg
 }
@@ -493,7 +493,7 @@ function hf_imagem_compress2() {
 
 function hf_pdf_remove_password() {
   : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
-  hf_test-exist-command qpdf
+  hf_test_exist_command qpdf
 
   qpdf --decrypt "$1" "unlocked-$1"
 }
@@ -780,7 +780,7 @@ function hf_gnome_settings_diff_actual_and_file() {
   : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
 
   TMP_FILE=/tmp/gnome_settings_diff
-  hf_gnome_settings_save-to-file $1 $TMP_FILE
+  hf_gnome_settings_save_to_file $1 $TMP_FILE
   diff $TMP_FILE $2
 }
 
