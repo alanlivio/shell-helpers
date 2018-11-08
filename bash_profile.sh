@@ -273,7 +273,7 @@ function hf_git_create_gitignore_cpp() {
 }
 
 function hf_git_uninstall_reset_clean() {
-  find -name .git | while read -r i; do
+  find .-name .git | while read -r i; do
     cd "$(dirname $i)" || exit
     make uninstall
     git reset --hard
