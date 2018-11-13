@@ -595,6 +595,10 @@ function hf_user_permissions_sudo() {
   SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
 }
 
+function hf_user_passwd_disable_len_restriction() {
+  sudo sed 's/sha512/minlen=1 sha512/g' /etc/pam.d/common-password
+}
+
 function hf_user_permissions_opt() {
     sudo chown root:root /opt
     if ! (id -nG "$USER" | grep -qw root); then
