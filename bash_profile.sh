@@ -628,6 +628,19 @@ function hf_user_send_ssh_keys() {
 # vscode functions
 # ---------------------------------------
 
+function hf_snap_install() {
+  : ${1?"Usage: ${FUNCNAME[0]} [PACKAGE]"}
+  sudo snap install "$1"
+}
+
+function hf_snap_hide_home_folder() {
+  echo snap >> ~/.hidden
+}
+
+# ---------------------------------------
+# vscode functions
+# ---------------------------------------
+
 function hf_vscode_run_as_root() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
 
@@ -975,7 +988,7 @@ function hf_install_grub_customizer(){
   fi
 }
 
-function hf_install_java(){
+function hf_install_oracle_jdk(){
   hf_log_msg "install java"
   dpkg --status oracle-java11-set-default &>/dev/null
   if test $? != 0; then
@@ -1115,7 +1128,6 @@ function hf_install_vp() {
 function hf_install_shfmt() {
   hf_log_msg "install shfmt"
   if test -f /opt/go/bin/shfmt; then return; fi
-  echo "exist"
   if ! test -d /opt/go/; then echo "create dir" && mkdir /opt/go/; fi
   sudo -E go get -u mvdan.cc/sh/cmd/shfmt
 }
