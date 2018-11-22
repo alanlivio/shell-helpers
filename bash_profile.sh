@@ -530,16 +530,13 @@ function hf_convert_to_pdf() {
 # rename functions
 # ---------------------------------------
 
-function hf_rename_to_lowercase_dash() {
+function hf_rename_to_lowercase_with_underscore() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
-  echo "change to lowercase"
-  rename 'y/A-Z/a-z/' "$@" &>/dev/null
-  echo "replace '.' and '_' by '-''"
-  rename 's/\./_/g;s/ /_/g;s/--+/-/g;s/-pdf/.pdf/g' "$@" &>/dev/null
-  echo "remove (.*) and [.*]"
-  for i in "$@"; do
-    mv $i "$(echo $i | sed 's/([^][]*)//g' | sed 's/\[[^][]*\]//g' | sed 's/^-//g' | sed 's/-$//g')" &>/dev/null
-  done
+  hf_test_exist_command rename || return
+  echo "rename to lowercase with underscore"
+  rename 'y/A-Z/a-z/' "$@"
+  echo "replace '.', ' ', and '-' by '_''"
+  rename 's/-+/_/g;s/\.+/_/g;s/ +/_/g;s/-+/_/g' "$@"
 }
 
 # ---------------------------------------
