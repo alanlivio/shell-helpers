@@ -536,7 +536,16 @@ function hf_rename_to_lowercase_with_underscore() {
   echo "rename to lowercase with underscore"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
-  rename 's/-+/_/g;s/\.+/_/g;s/ +/_/g;s/-+/_/g' "$@"
+  rename 's/-+/_/g;s/\.+/_/g;s/ +/_/g' "$@"
+}
+
+function hf_rename_to_lowercase_with_dash() {
+  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  hf_test_exist_command rename || return
+  echo "rename to lowercase with dash"
+  rename 'y/A-Z/a-z/' "$@"
+  echo "replace '.', ' ', and '-' by '_''"
+  rename 's/_+/-/g;s/\.+/-/g;s/ +/-/g' "$@"
 }
 
 # ---------------------------------------
