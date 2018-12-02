@@ -1001,14 +1001,24 @@ function hf_install_grub_customizer(){
   fi
 }
 
-function hf_install_oracle_jdk(){
+function hf_install_java_oraclejdk11(){
   hf_log_msg "install java"
-  dpkg --status oracle-java11-set-default &>/dev/null
+  dpkg --status oracle-java11-installer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
     sudo add-apt-repository -y ppa:linuxuprising/java
     sudo apt update
-    sudo apt install -y oracle-java11-set-default
+    sudo apt install -y oracle-java11-installer
+  fi
+}
+
+function hf_install_java_openjdk11(){
+  hf_log_msg "install java"
+  dpkg --status openjdk-11-jdk &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-*
+    sudo add-apt-repository -y ppa:openjdk-r/ppa
+    sudo apt install -y openjdk-11-jdk
   fi
 }
 
