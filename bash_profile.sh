@@ -108,7 +108,7 @@ function hf_test_exist_command() {
 # ---------------------------------------
 
 function hf_mac_enable_wifi() {
-  sudo apt-get install bcmwl-kernel-source
+  sudo apt install bcmwl-kernel-source
 }
 
 # ---------------------------------------
@@ -985,8 +985,7 @@ function hf_install_spotify(){
     sudo rm /etc/apt/sources.list.d/spotify.list
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
     echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
-    sudo apt-get update
-    sudo apt-get install spotify-client
+    sudo apt install spotify-client
   fi
 }
 
@@ -1155,7 +1154,8 @@ function hf_install_shfmt() {
 
 function hf_apt_upgrade() {
   hf_log_msg "apt upgrade"
-  sudo apt update
+  sudo apt update &>/dev/null
+  if test $? != 0; then test hf_log_error "apt update failed." && return 1 ; fi
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
@@ -1182,7 +1182,7 @@ function hf_apt_install_packages() {
 
 function hf_apt_autoremove() {
   hf_log_msg "apt autoremove"
-  if [ "$(apt-get --dry-run autoremove | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
+  if [ "$(apt --dry-run autoremove 2>/dev/null | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
     sudo apt -y autoremove
   fi
 }
