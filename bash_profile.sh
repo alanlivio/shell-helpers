@@ -996,7 +996,6 @@ function hf_install_grub_customizer(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
     sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
-    sudo apt update
     sudo apt install -y grub-customizer
   fi
 }
@@ -1007,7 +1006,6 @@ function hf_install_java_oraclejdk11(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
     sudo add-apt-repository -y ppa:linuxuprising/java
-    sudo apt update
     sudo apt install -y oracle-java11-installer
   fi
 }
@@ -1028,7 +1026,6 @@ function hf_install_simplescreenrercoder(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
     sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
-    sudo apt update
     sudo apt install -y simplescreenrecorder
   fi
 }
@@ -1041,7 +1038,6 @@ function hf_install_vscode(){
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
     sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
     sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-    sudo apt update
     sudo apt install -y code
   fi
 }
@@ -1051,7 +1047,6 @@ function hf_install_android_studio(){
   dpkg --status android-studio &>/dev/null
   if test $? != 0; then
     sudo apt-add-repository -y ppa:maarten-fonville/android-studio
-    sudo apt update
     sudo apt install -y android-studio
   fi
 }
@@ -1062,7 +1057,6 @@ function hf_install_insync(){
   if test $? != 0; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
     echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
-    sudo apt update
     sudo apt install -y insync insync-nautilus
   fi
 }
@@ -1161,7 +1155,7 @@ function hf_install_shfmt() {
 
 function hf_apt_upgrade() {
   hf_log_msg "apt upgrade"
-
+  sudo apt update
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
