@@ -6,18 +6,6 @@
 # ---------------------------------------
 
 # ---------------------------------------
-# load bash_profile_cfg
-# ---------------------------------------
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
-SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
-if test -f $SCRIPT_CFG; then
-    source $SCRIPT_CFG
-fi;
-
-# ---------------------------------------
 # variables
 # ---------------------------------------
 
@@ -36,6 +24,19 @@ if test $IS_LINUX; then
   *) IS_LINUX=1 ;;
   esac
 fi
+
+# ---------------------------------------
+# load bash_profile_cfg
+# ---------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
+SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
+SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
+if test -f $SCRIPT_CFG; then
+    source $SCRIPT_CFG
+fi;
+
 
 # ---------------------------------------
 # profile functions
