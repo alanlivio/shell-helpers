@@ -63,7 +63,7 @@ function hf_profile_download() {
 # ---------------------------------------
 
 function hf_log_print() {
-  echo -e "$1" | fold -w100 -s | sed '2~1s/^/  /'
+  echo -e "$1" | fold -w100 -s
 }
 
 function hf_log_error() {
