@@ -733,8 +733,9 @@ function hf_gnome_init() {
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
-  hf_install_insync
   hf_install_spotify
+  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop','org.gnome.Terminal.desktop', 'spotify.desktop']"
+  hf_install_insync
   hf_clean_unused_folders
   hf_user_permissions_opt
 }
