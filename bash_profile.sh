@@ -105,8 +105,28 @@ function hf_test_exist_command() {
 }
 
 # ---------------------------------------
+# windows functions
+# ---------------------------------------
+
+function hf_windows_init() {
+  hf_clean_unused_folders
+  hf_windows_install_choco
+}
+
+function hf_windows_install_choco() {
+  powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+}
+
+# ---------------------------------------
 # mac functions
 # ---------------------------------------
+
+function hf_mac_init() {
+  hf_clean_unused_folders
+  hf_mac_install_homebrew
+  hf_mac_install_bash4
+  hf_user_permissions_opt
+}
 
 function hf_mac_enable_wifi() {
   sudo apt install bcmwl-kernel-source
@@ -702,6 +722,21 @@ function hf_vscode_uninstall_all_packages() {
 # ---------------------------------------
 # gnome functions
 # ---------------------------------------
+
+function hf_gnome_init() {
+  hf_gnome_desktop_dark
+  hf_gnome_desktop_sanity
+  hf_gnome_nautilus_sanity
+  hf_gnome_dash_sanity
+  hf_gnome_disable_unused_apps_in_search
+  hf_gnome_disable_super_workspace_change
+  hf_install_chrome
+  hf_install_vscode
+  hf_install_insync
+  hf_install_spotify
+  hf_clean_unused_folders
+  hf_user_permissions_opt
+}
 
 function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.mutter.keybindings
