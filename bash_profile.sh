@@ -112,6 +112,18 @@ function hf_mac_enable_wifi() {
   sudo apt install bcmwl-kernel-source
 }
 
+function hf_mac_install_homebrew(){
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
+function hf_mac_install_bash4(){
+  brew install bash
+  sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
+  sudo chsh -s /usr/local/bin/bash
+  echo $BASH && echo $BASH_VERSION
+}
+
+
 # ---------------------------------------
 # audio functions
 # ---------------------------------------
@@ -996,6 +1008,7 @@ function hf_install_grub_customizer(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
     sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
+    sudo apt update
     sudo apt install -y grub-customizer
   fi
 }
@@ -1006,6 +1019,7 @@ function hf_install_java_oraclejdk11(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
     sudo add-apt-repository -y ppa:linuxuprising/java
+    sudo apt update
     sudo apt install -y oracle-java11-installer
   fi
 }
@@ -1016,6 +1030,7 @@ function hf_install_java_openjdk11(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-*
     sudo add-apt-repository -y ppa:openjdk-r/ppa
+    sudo apt update
     sudo apt install -y openjdk-11-jdk
   fi
 }
@@ -1026,6 +1041,7 @@ function hf_install_simplescreenrercoder(){
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
     sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
+    sudo apt update
     sudo apt install -y simplescreenrecorder
   fi
 }
