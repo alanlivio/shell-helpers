@@ -642,10 +642,10 @@ function hf_user_passwd_disable_len_restriction() {
 
 function hf_user_permissions_opt() {
     sudo chown root:root /opt
-    if ! (id -nG "$USER" | grep -qw root); then
-      sudo adduser $USER root
-      newgrp root # update group for user
-    fi
+    # if ! (id -nG "$USER" | grep -qw root); then
+    sudo adduser $USER root
+    newgrp root # update group for user
+    # fi
     sudo chmod -R +775 /opt/
 }
 
