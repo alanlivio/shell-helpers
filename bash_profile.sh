@@ -277,9 +277,7 @@ function hf_git_init() {
 }
 
 function hf_git_remove_from_tree() {
-  git filter-branch --force --index-filter \
-'git rm --cached --ignore-unmatch $1' \
---prune-empty --tag-name-filter cat -- --all
+  git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
 function hf_git_ammend_push_force() {
@@ -378,10 +376,7 @@ function hf_qtcreator_project_from_git() {
 }
 
 function hf_eclipse_list_installed() {
-  /opt/eclipse/eclipse \
-    -consolelog -noSplash \
-    -application org.eclipse.equinox.p2.director \
-    -listInstalledRoots
+  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
 }
 
 # ---------------------------------------
@@ -788,12 +783,7 @@ function hf_gnome_dash_sanity() {
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
-  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' \
-    -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or \
-    -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or \
-    -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or \
-    -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or \
-    -iname '*brasero*')
+  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or -iname '*brasero*')
   for i in $APPS_TO_HIDE; do
     sudo sh -c " echo 'NoDisplay=true' >> $i"
   done
@@ -986,15 +976,7 @@ function hf_python_install_packages() {
 function hf_eclipse_install_packages() {
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, \
   #   org.eclipse.dltk.sh.feature.group
-  /opt/eclipse/eclipse \
-    -consolelog -noSplash -profile SDKProfile \
-    -repository \
-    download.eclipse.org/releases/neon, \
-    https://dl.google.com/eclipse/plugin/4.6, \
-    pydev.org/updates \
-    -application org.eclipse.equinox.p2.director \
-    -installIU \
-    "$@"
+  /opt/eclipse/eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
 
 
@@ -1005,14 +987,8 @@ function hf_eclipse_uninstall_packages() {
   #   org.eclipse.help.feature.group, \
   #   org.eclipse.tm.terminal.feature.feature.group, \
   #   org.eclipse.wst.server_adapters.feature.feature.group
-  /opt/eclipse/eclipse \
-    -consolelog -noSplash \
-    -application org.eclipse.equinox.p2.director \
-    -uninstallIU \
-    "$@"
-  /opt/eclipse/eclipse \
-    -consolelog -noSplash \
-    -application org.eclipse.equinox.p2.garbagecollector.application
+  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
+  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
 }
 
 
