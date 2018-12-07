@@ -730,6 +730,7 @@ function hf_gnome_init() {
   hf_gnome_dash_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
+  hf_install_curl
   hf_install_chrome
   hf_install_vscode
   hf_install_insync
@@ -1017,6 +1018,11 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 # install functions
 # ---------------------------------------
+
+function hf_install_curl(){
+  hf_log_msg "install curl"
+  sudo apt install curl
+}
 
 function hf_install_chrome(){
   hf_log_msg "install chrome"
