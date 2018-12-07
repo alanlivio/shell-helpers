@@ -1315,8 +1315,7 @@ function hf_fetch_extract_to() {
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
     wget --continue $1 -P /tmp/
-    ret=$?; echo $ret
-    test -n $ret && hf_log_error "wget failed." && return 1
+    if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
