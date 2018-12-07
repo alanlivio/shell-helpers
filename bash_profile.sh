@@ -1039,6 +1039,7 @@ function hf_install_spotify(){
     sudo rm /etc/apt/sources.list.d/spotify.list
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
     echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
+    sudo apt update
     sudo apt install spotify-client
   fi
 }
@@ -1095,6 +1096,7 @@ function hf_install_vscode(){
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
     sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
     sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+    sudo apt update
     sudo apt install -y code
   fi
 }
@@ -1104,6 +1106,7 @@ function hf_install_android_studio(){
   dpkg --status android-studio &>/dev/null
   if test $? != 0; then
     sudo apt-add-repository -y ppa:maarten-fonville/android-studio
+    sudo apt update
     sudo apt install -y android-studio
   fi
 }
@@ -1114,6 +1117,7 @@ function hf_install_insync(){
   if test $? != 0; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
     echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
+    sudo apt update
     sudo apt install -y insync insync-nautilus
   fi
 }
