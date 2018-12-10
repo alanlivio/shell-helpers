@@ -43,6 +43,13 @@ function hf_powershell_profiles_list()
   $profile | Select-Object -Property *
 }
 
+function hf_powershell_profiles_reset(){
+  $profile.AllUsersAllHosts="\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
+  $profile.AllUsersCurrentHost="\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
+  $profile.CurrentUserAllHosts="WindowsPowerShell\profile.ps1"
+  $profile.CurrentUserCurrentHost="WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+}
+
 # ---------------------------------------
 # install functions
 # ---------------------------------------
