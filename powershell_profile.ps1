@@ -54,17 +54,16 @@ function hf_powershell_profiles_reset(){
 # install functions
 # ---------------------------------------
 function hf_install_chocolatey() {
-    echo "install chocolatey"
-    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-    cmd /c 'setx ChocolateyToolsLocation C:\opt\'
+  echo "install chocolatey"
+  iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+  cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
-    choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
-    choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
-    choco -y --acceptlicense --no-progress disable -n showDownloadProgress
-    choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
-    choco install -y --acceptlicense --no-progress google-backup-and-sync visualstudiocode
-  }
+  choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
+  choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
+  choco -y --acceptlicense --no-progress disable -n showDownloadProgress
+  choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
+}
 
 # ---------------------------------------
 # info functions
@@ -167,14 +166,14 @@ function hf_remove_unused_store_packages() {
 function hf_remove_context_menu_unused() {
   echo "remove context menu unused"
   # * Sharing
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" REG Delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" REG Delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" REG Delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" /f'
   # AllFilesystemObjects
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" REG Delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" REG Delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" /f'
   # Directory
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" REG Delete "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" /f'
+  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" reg delete "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" /f'
 }
 
 # ---------------------------------------
