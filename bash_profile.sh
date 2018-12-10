@@ -730,7 +730,7 @@ function hf_gnome_init() {
   hf_install_chrome
   hf_install_vscode
   hf_install_spotify
-  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop','org.gnome.Terminal.desktop', 'spotify.desktop']"
+  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'spotify.desktop', 'org.gnome.Nautilus.desktop']"
   hf_install_insync
   hf_clean_unused_folders
   hf_user_permissions_opt
@@ -767,11 +767,13 @@ function hf_gnome_desktop_sanity() {
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
   gsettings set org.gnome.desktop.interface clock-show-date true
   gsettings set org.gnome.desktop.sound event-sounds false
+  gsettings set org.gnome.desktop.privacy remember-recent-files false
 }
 
 function hf_gnome_nautilus_sanity() {
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
+  gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
 }
 
 function hf_gnome_dash_sanity() {
