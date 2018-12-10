@@ -118,6 +118,10 @@ function hf_remove_unused_folders(){
   Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings/'
   Remove-Item -Force -Recurse -ErrorAction Ignore 'ntuser.ini'
 }
+
+function hf_enable_dark_mode() {
+  echo "enable dark mode"
+  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
 
 function hf_remove_unused_this_pc_folders() {
