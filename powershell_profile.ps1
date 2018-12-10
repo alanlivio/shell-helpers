@@ -113,9 +113,11 @@ function hf_remove_unused_folders(){
   Remove-Item -Force -Recurse -ErrorAction Ignore "IntelGraphicsProfiles/"
   Remove-Item -Force -Recurse -ErrorAction Ignore "Contacts/"
   Remove-Item -Force -Recurse -ErrorAction Ignore "3D Objects/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Recent"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood"
-  Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings'
+  Remove-Item -Force -Recurse -ErrorAction Ignore "Recent/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood/"
+  Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings/'
+  Remove-Item -Force -Recurse -ErrorAction Ignore 'ntuser.ini'
+}
 }
 
 function hf_remove_unused_this_pc_folders() {
