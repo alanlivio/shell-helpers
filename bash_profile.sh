@@ -876,6 +876,22 @@ function hf_system_list_gpu() {
   lspci -nn | grep -E 'VGA|Display'
 }
 
+function hf_system_create_startup_script_initd() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  echo "creating /etc/init.d/$1"
+  sudo touch /etc/init.d/$1
+  sudo chmod 755 /etc/init.d/$1
+  sudo update-rc.d $1 defaults
+}
+
+function hf_system_create_startup_script_systemd() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  echo "creating /etc/init.d/$1"
+  echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
+  systemctl daemon-reload
+  systemctl enable yourservice.service
+}
+
 # ---------------------------------------
 # npm functions
 # ---------------------------------------
