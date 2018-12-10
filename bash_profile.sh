@@ -523,7 +523,7 @@ function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
   hf_test_exist_command pdfgrep
 
-  pdfgrep -rin  "$1" | while read i; do basename  "${i%%:*}"; done|sort -u
+  pdfgrep -rin  "$1" | while read -r i; do basename  "${i%%:*}"; done|sort -u
 }
 
 function hf_pdf_remove_password() {
