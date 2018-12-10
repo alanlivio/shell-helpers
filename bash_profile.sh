@@ -143,6 +143,9 @@ function hf_mac_install_bash4(){
   echo $BASH && echo $BASH_VERSION
 }
 
+function hf_mac_install_refind(){
+  sudo apt install refind
+}
 
 # ---------------------------------------
 # audio functions
