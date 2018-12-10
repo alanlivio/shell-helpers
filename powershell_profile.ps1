@@ -34,11 +34,11 @@ cd ~
 # ---------------------------------------
 # powershell functions
 # ---------------------------------------
-function hf_powershell_enable_script(){
+function hf_powershell_enable_scripts(){
   Set-ExecutionPolicy unrestricted
 }
 
-function hf_powershell_show_profiles()
+function hf_powershell_profiles_list()
 {
   $profile | Select-Object -Property *
 }
