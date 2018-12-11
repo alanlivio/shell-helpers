@@ -192,3 +192,17 @@ function hf_windows_update() {
   control update
   wuauclt /detectnow /updatenow
 }
+
+# ---------------------------------------
+# windows function
+# ---------------------------------------
+
+function hf_windows_init() {
+  hf_remove_unused_folders
+  hf_remove_unused_this_pc_folders
+  hf_remove_unused_ondrive
+  hf_remove_unused_store_packages
+  hf_remove_context_menu_unused
+  hf_install_chocolatey
+  choco install -y --acceptlicense --no-progress GoogleChrome vscode spotify google-backup-and-sync msys2
+}
