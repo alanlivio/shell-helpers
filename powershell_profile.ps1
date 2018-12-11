@@ -66,11 +66,19 @@ function hf_install_chocolatey() {
 }
 
 # ---------------------------------------
-# info functions
+# network functions
 # ---------------------------------------
 
-function hf_get_wifi_SSIDs() {
+function hf_network_list_wifi_SSIDs() {
     return (netsh wlan show net mode=bssid)
+}
+
+# ---------------------------------------
+# network functions
+# ---------------------------------------
+
+function hf_link_create($desntination, $source) {
+  cmd /c mklink /D $desntination $source
 }
 
 # ---------------------------------------
