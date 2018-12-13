@@ -279,6 +279,13 @@ function hf_git_init() {
   git push -u origin master
 }
 
+function hf_git_github_check_ssh() {
+  ssh -T git@github.com
+}
+function hf_git_github_fix() {
+  echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee ~/.ssh/config
+}
+
 function hf_git_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
@@ -652,7 +659,7 @@ function hf_user_permissions_opt() {
 
 function hf_user_permissions_ssh() {
   if ! test -d ~/.ssh/; then mkdir ~/.ssh/; fi
-  sudo chmod 700 ~/.ssh/
+  chmod 700 ~/.ssh/
   if test -f ~/.ssh/id_rsa; then
     sudo chmod 755 ~/.ssh/*
     sudo chmod 600 ~/.ssh/id_rsa
