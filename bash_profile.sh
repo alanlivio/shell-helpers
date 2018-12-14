@@ -1137,6 +1137,9 @@ function hf_install_foxit() {
   URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader2.4.1.0609_Server_x64_enu_Setup.run.tar.gz
   hf_fetch_extract_to $URL /tmp/
   sudo /tmp/FoxitReader.enu.setup.2.4.1.0609\(r08f07f8\).x64.run
+  sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' /opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  sudo desktop-file-install /opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  sudo updatedb
 }
 
 function hf_install_stremio() {
@@ -1163,7 +1166,8 @@ function hf_install_tor() {
   hf_fetch_extract_to $URL /opt/
   if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
   mv /opt/tor-browser_en-US /opt/tor/
-  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g' /opt/tor/start-tor-browser.desktop
+  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g'
+  /opt/tor/start-tor-browser.desktop
   sudo desktop-file-install /opt/tor/start-tor-browser.desktop
 }
 
