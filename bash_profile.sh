@@ -674,12 +674,18 @@ function hf_user_send_ssh_keys() {
 }
 
 # ---------------------------------------
-# vscode functions
+# snap functions
 # ---------------------------------------
 
-function hf_snap_install() {
+function hf_snap_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [PACKAGE]"}
+  hf_log_msg "snap install packages"
   sudo snap install "$1"
+}
+
+function hf_snap_upgrade() {
+  hf_log_msg "snap upgrade"
+  sudo snap refresh
 }
 
 function hf_snap_hide_home_folder() {
