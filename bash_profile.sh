@@ -279,6 +279,11 @@ function hf_git_init() {
   git push -u origin master
 }
 
+function hf_git_partial_commit() {
+  git stash
+  git difftool -y stash
+}
+
 function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
