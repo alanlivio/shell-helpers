@@ -34,16 +34,15 @@ SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash
 SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
 SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
 if test -f $SCRIPT_CFG; then
-    source $SCRIPT_CFG
-fi;
-
+  source $SCRIPT_CFG
+fi
 
 # ---------------------------------------
 # profile functions
 # ---------------------------------------
 
 function hf_profile_install() {
-  echo -e "\nsource $SCRIPT_NAME" >> ~/.bashrc
+  echo -e "\nsource $SCRIPT_NAME" >>~/.bashrc
 }
 
 function hf_profile_reload() {
@@ -52,10 +51,10 @@ function hf_profile_reload() {
 
 function hf_profile_download() {
   if test -f $SCRIPT_NAME; then
-      rm $SCRIPT_NAME;
-  fi;
+    rm $SCRIPT_NAME
+  fi
   wget $SCRIPT_URL $SCRIPT_NAME
-  if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
 }
 
 # ---------------------------------------
@@ -132,18 +131,18 @@ function hf_mac_enable_wifi() {
   sudo apt install -y bcmwl-kernel-source
 }
 
-function hf_mac_install_homebrew(){
+function hf_mac_install_homebrew() {
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
 
-function hf_mac_install_bash4(){
+function hf_mac_install_bash4() {
   brew install bash
   sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
   sudo chsh -s /usr/local/bin/bash
   echo $BASH && echo $BASH_VERSION
 }
 
-function hf_mac_install_refind(){
+function hf_mac_install_refind() {
   sudo apt install refind
 }
 
@@ -271,7 +270,7 @@ function hf_gdb_run_bt_all_threads() {
 # ---------------------------------------
 
 function hf_git_init() {
-  echo "#" $(basename "$1" ".${1##*.}") > README.md
+  echo "#" $(basename "$1" ".${1##*.}") >README.md
   git init
   git add README.md
   git commit -m "first commit"
@@ -376,7 +375,6 @@ function hf_git_folder_three() {
 
   cd $CWD || exit
 }
-
 
 # ---------------------------------------
 # editors functions
@@ -538,7 +536,7 @@ function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
   hf_test_exist_command pdfgrep
 
-  pdfgrep -rin  "$1" | while read -r i; do basename  "${i%%:*}"; done|sort -u
+  pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
 function hf_pdf_remove_password() {
@@ -656,10 +654,10 @@ function hf_user_passwd_disable_len_restriction() {
 }
 
 function hf_user_permissions_opt() {
-    sudo chown root:root /opt
-    sudo adduser $USER root
-    newgrp root # update group for user
-    sudo chmod -R +775 /opt/
+  sudo chown root:root /opt
+  sudo adduser $USER root
+  newgrp root # update group for user
+  sudo chmod -R +775 /opt/
 }
 
 function hf_user_permissions_ssh() {
@@ -709,7 +707,7 @@ function hf_snap_upgrade() {
 }
 
 function hf_snap_hide_home_folder() {
-  echo snap >> ~/.hidden
+  echo snap >>~/.hidden
 }
 
 # ---------------------------------------
@@ -729,7 +727,6 @@ function hf_vscode_install_packages() {
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
-    # echo $i
     echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
     if test $? != 0; then
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
@@ -896,7 +893,7 @@ function hf_gnome_settings_diff_actual_and_file() {
 
 function hf_vlc_youtube_playlist_extension() {
   wget --continue https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
-  if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
 
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
@@ -1031,7 +1028,6 @@ function hf_eclipse_install_packages() {
   /opt/eclipse/eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
 
-
 function hf_eclipse_uninstall_packages() {
   # usage: hf_eclipse_install_packages org.eclipse.egit.feature.group, \
   #   org.eclipse.mylyn.ide_feature.feature.group, \
@@ -1043,27 +1039,26 @@ function hf_eclipse_uninstall_packages() {
   /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
 }
 
-
 # ---------------------------------------
 # install functions
 # ---------------------------------------
 
-function hf_install_curl(){
+function hf_install_curl() {
   hf_log_msg "install curl"
   sudo apt install curl
 }
 
-function hf_install_chrome(){
+function hf_install_chrome() {
   hf_log_msg "install chrome"
-  dpkg --status google-chrome-stable &> /dev/null
+  dpkg --status google-chrome-stable &>/dev/null
   if test $? != 0; then
     hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   fi
 }
 
-function hf_install_spotify(){
+function hf_install_spotify() {
   hf_log_msg "install spotify"
-  dpkg --status spotify-client &> /dev/null
+  dpkg --status spotify-client &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/spotify.list
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
@@ -1073,7 +1068,7 @@ function hf_install_spotify(){
   fi
 }
 
-function hf_install_grub_customizer(){
+function hf_install_grub_customizer() {
   hf_log_msg "install grub-customizer"
   dpkg --status grub-customizer &>/dev/null
   if test $? != 0; then
@@ -1084,7 +1079,7 @@ function hf_install_grub_customizer(){
   fi
 }
 
-function hf_install_java_oraclejdk11(){
+function hf_install_java_oraclejdk11() {
   hf_log_msg "install java"
   dpkg --status oracle-java11-installer &>/dev/null
   if test $? != 0; then
@@ -1095,7 +1090,7 @@ function hf_install_java_oraclejdk11(){
   fi
 }
 
-function hf_install_java_openjdk11(){
+function hf_install_java_openjdk11() {
   hf_log_msg "install java"
   dpkg --status openjdk-11-jdk &>/dev/null
   if test $? != 0; then
@@ -1106,7 +1101,7 @@ function hf_install_java_openjdk11(){
   fi
 }
 
-function hf_install_simplescreenrercoder(){
+function hf_install_simplescreenrercoder() {
   hf_log_msg "install simplescreenrecorder"
   dpkg --status simplescreenrecorder &>/dev/null
   if test $? != 0; then
@@ -1117,12 +1112,12 @@ function hf_install_simplescreenrercoder(){
   fi
 }
 
-function hf_install_vscode(){
+function hf_install_vscode() {
   hf_log_msg "install vscode"
   dpkg --status code &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/vscode*
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/tmp/microsoft.gpg
     sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
     sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
     sudo apt update
@@ -1130,7 +1125,7 @@ function hf_install_vscode(){
   fi
 }
 
-function hf_install_android_studio(){
+function hf_install_android_studio() {
   hf_log_msg "install android-studio"
   dpkg --status android-studio &>/dev/null
   if test $? != 0; then
@@ -1140,7 +1135,7 @@ function hf_install_android_studio(){
   fi
 }
 
-function hf_install_insync(){
+function hf_install_insync() {
   hf_log_msg "install insync"
   dpkg --status insync &>/dev/null
   if test $? != 0; then
@@ -1184,7 +1179,7 @@ function hf_install_tor() {
   if test -d /opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
-  if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
   mv /opt/tor-browser_en-US /opt/tor/
   sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g'
   /opt/tor/start-tor-browser.desktop
@@ -1204,7 +1199,7 @@ function hf_install_zotero() {
     echo 'Type=Application'
     echo 'Exec=/opt/zotero/zotero'
     echo 'Icon=/opt/zotero/chrome/icons/default/default48.png'
-  } > /opt/zotero/zotero.desktop
+  } >/opt/zotero/zotero.desktop
   sudo desktop-file-install /opt/zotero/zotero.desktop
   sudo updatedb
 }
@@ -1250,7 +1245,7 @@ function hf_install_shfmt() {
 function hf_apt_upgrade() {
   hf_log_msg "apt upgrade"
   sudo apt update &>/dev/null
-  if test $? != 0; then test hf_log_error "apt update failed." && return 1 ; fi
+  if test $? != 0; then test hf_log_error "apt update failed." && return 1; fi
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
@@ -1327,7 +1322,7 @@ function hf_apt_fetch_install() {
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
     wget --continue $1 -P /tmp/
-    if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+    if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
 
   fi
   sudo dpkg -i /tmp/$apt_NAME
@@ -1347,7 +1342,7 @@ function hf_fetch_extract_to() {
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
     wget --continue $1 -P /tmp/
-    if test $? != 0; then test hf_log_error "wget failed." && return 1 ; fi
+    if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
@@ -1405,7 +1400,7 @@ function hf_x11_properties_of_window() {
 
 function hf_clean_unused_folders() {
   cd ~ || exit
-  FOLDERS=("Documents" " Favorites" "Pictures"  "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "SendTo" ".adobe" ".debug" ".nv" ".gnugpg" ".stremio-server" ".gimp-*" ".designer" ".android" ".AndroidStudio2.3" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".emacs.d" ".emulator_console_auth_token" ".gconf" ".gnome2_private" ".gnome2" ".gphoto" ".gradle" ".gstreamer-0.10" ".gtk-recordmydesktop" ".IdeaIC2017.1" ".install4j_jre" ".install4j" ".installjammerinfo" ".java" ".kde" ".lesshst" ".macromedia" ".mozilla" ".nano" ".oracle_jre_usage" ".p2" ".pam_environment" ".pdfsam" ".pki" ".pylint.d" ".pyrenamer" ".python_history" ".Skype" ".ssr" ".swt" ".thumbnails" ".tooling" ".tsd-cache" ".twinkle" ".v8flags*"".visualvm" ".wget-hsts" ".winff")
+  FOLDERS=("Documents" " Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "SendTo" ".adobe" ".debug" ".nv" ".gnugpg" ".stremio-server" ".gimp-*" ".designer" ".android" ".AndroidStudio2.3" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".emacs.d" ".emulator_console_auth_token" ".gconf" ".gnome2_private" ".gnome2" ".gphoto" ".gradle" ".gstreamer-0.10" ".gtk-recordmydesktop" ".IdeaIC2017.1" ".install4j_jre" ".install4j" ".installjammerinfo" ".java" ".kde" ".lesshst" ".macromedia" ".mozilla" ".nano" ".oracle_jre_usage" ".p2" ".pam_environment" ".pdfsam" ".pki" ".pylint.d" ".pyrenamer" ".python_history" ".Skype" ".ssr" ".swt" ".thumbnails" ".tooling" ".tsd-cache" ".twinkle" ".v8flags*"".visualvm" ".wget-hsts" ".winff")
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
@@ -1418,7 +1413,7 @@ function hf_clean_unused_folders() {
     elif test -f "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -f "$HOME/$i" &>/dev/null;
+        sudo rm -f "$HOME/$i" &>/dev/null
       else
         rm -f "$HOME/$i" &>/dev/null
       fi
