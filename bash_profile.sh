@@ -560,6 +560,12 @@ function hf_pdf_compress() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
+function hf_pdf_count_words() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+
+  pdftotext $1 - | wc -w
+}
+
 # ---------------------------------------
 # convert functions
 # ---------------------------------------
