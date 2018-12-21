@@ -269,15 +269,6 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
-function hf_git_init() {
-  echo "#" $(basename "$1" ".${1##*.}") >README.md
-  git init
-  git add README.md
-  git commit -m "first commit"
-  git remote add origin $1
-  git push -u origin master
-}
-
 function hf_git_partial_commit() {
   git stash
   git difftool -y stash
@@ -286,6 +277,20 @@ function hf_git_partial_commit() {
 function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
+
+function hf_git_github_init() {
+  : ${1?"Usage: ${FUNCNAME[0]} [github name]"}
+  NAME=$(basename "$1" ".${1##*.}")
+  echo "init github repo $NAME "
+
+  echo "#" $NAME >README.md
+  git init
+  git add README.md
+  git commit -m "first commit"
+  git remote add origin $1
+  git push -u origin master
+}
+
 function hf_git_github_fix() {
   echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee ~/.ssh/config
 }
