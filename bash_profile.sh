@@ -1417,16 +1417,16 @@ function hf_clean_unused_folders() {
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -rf "$HOME/$i" &>/dev/null
+        sudo rm -rf "$HOME/${i:?}" &>/dev/null
       else
-        rm -rf "$HOME/$i" &>/dev/null
+        rm -rf "$HOME/${i:?}" &>/dev/null
       fi
     elif test -f "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
         sudo rm -f "$HOME/$i" &>/dev/null
       else
-        rm -f "$HOME/$i" &>/dev/null
+        rm -f "$HOME/${i:?}" &>/dev/null
       fi
     fi
   done
