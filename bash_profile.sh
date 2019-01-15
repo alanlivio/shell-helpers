@@ -135,6 +135,10 @@ function hf_mac_keyboard_pt_br() {
   setxkbmap -model abnt -layout us -variant intl
 }
 
+function hf_mac_keyboard_fn_mode() {
+  sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
+}
+
 function hf_mac_install_homebrew() {
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
