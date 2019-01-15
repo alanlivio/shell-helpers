@@ -131,6 +131,10 @@ function hf_mac_enable_wifi() {
   sudo apt install -y bcmwl-kernel-source
 }
 
+function hf_mac_keyboard_pt_br() {
+  setxkbmap -model abnt -layout us -variant intl
+}
+
 function hf_mac_install_homebrew() {
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
@@ -268,6 +272,7 @@ function hf_gdb_run_bt_all_threads() {
 # ---------------------------------------
 # git functions
 # ---------------------------------------
+
 
 function hf_git_partial_commit() {
   git stash
