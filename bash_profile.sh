@@ -771,10 +771,7 @@ function hf_vscode_uninstall_all_packages() {
 # ---------------------------------------
 
 function hf_gnome_init() {
-  hf_gnome_desktop_dark
-  hf_gnome_desktop_sanity
-  hf_gnome_nautilus_sanity
-  hf_gnome_dash_sanity
+  hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
   hf_install_curl
@@ -795,45 +792,43 @@ function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hf_gnome_desktop_dark() {
+function hf_gnome_sanity() {
+  gsettings set org.gnome.desktop.background color-shading-type "solid"
+  gsettings set org.gnome.desktop.background picture-uri ''
+  gsettings set org.gnome.desktop.background primary-color "#000000"
+  gsettings set org.gnome.desktop.background secondary-color "#000000"
+  gsettings set org.gnome.desktop.background show-desktop-icons false
+  gsettings set org.gnome.desktop.background show-desktop-icons false
+  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.desktop.interface clock-show-date true
   gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
+  gsettings set org.gnome.desktop.interface enable-animations false
   gsettings set org.gnome.desktop.interface enable-animations false
   gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
   gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
-  gsettings set org.gnome.desktop.background primary-color "#000000"
-  gsettings set org.gnome.desktop.background secondary-color "#000000"
-  gsettings set org.gnome.desktop.background color-shading-type "solid"
-  gsettings set org.gnome.desktop.background picture-uri ''
+  gsettings set org.gnome.desktop.notifications show-banners false
+  gsettings set org.gnome.desktop.notifications show-in-lock-screen false
+  gsettings set org.gnome.desktop.privacy remember-recent-files false
+  gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
+  gsettings set org.gnome.desktop.screensaver lock-enabled false
+  gsettings set org.gnome.desktop.screensaver picture-uri ''
   gsettings set org.gnome.desktop.screensaver primary-color "#000000"
   gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
-  gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
-  gsettings set org.gnome.desktop.screensaver picture-uri ''
-}
-
-function hf_gnome_desktop_sanity() {
-  gsettings set org.gnome.desktop.interface enable-animations false
-  gsettings set org.gnome.desktop.background show-desktop-icons false
-  gsettings set org.gnome.desktop.interface clock-show-date true
-  gsettings set org.gnome.mutter dynamic-workspaces false
-  gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
-  gsettings set org.gnome.desktop.interface clock-show-date true
+  gsettings set org.gnome.desktop.search-providers sort-order "['org.gnome.Nautilus.desktop']"
   gsettings set org.gnome.desktop.sound event-sounds false
-  gsettings set org.gnome.desktop.privacy remember-recent-files false
-}
-
-function hf_gnome_nautilus_sanity() {
+  gsettings set org.gnome.desktop.sound event-sounds false
+  gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+  gsettings set org.gnome.mutter dynamic-workspaces false
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
-}
-
-function hf_gnome_dash_sanity() {
-  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
   gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
+  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-  gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
+  gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
@@ -1228,9 +1223,9 @@ function hf_install_zotero() {
 function hf_install_shellcheck() {
   hf_log_msg "install shellsheck"
   if test -f /usr/local/bin/shellcheck; then return; fi
-  URL=https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz
+  URL=https://github.com/koalaman/shellcheck/archive/v0.6.0.tar.gz
   hf_fetch_extract_to $URL /tmp/
-  sudo install /tmp/shellcheck-stable/shellcheck /usr/local/bin/
+  sudo install /tmp/shellcheck-0.6.0/shellcheck /usr/local/bin/
 }
 
 function hf_install_tizen_studio() {
