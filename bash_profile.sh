@@ -353,10 +353,10 @@ function hf_git_list_large_files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
-function hf_git_folder_three() {
+function hf_git_folder_tree() {
   DEV_FOLDER=$1
   REPOS=$2
-  hf_log_msg "hf_git_folder_three for $DEV_FOLDER"
+  hf_log_msg "hf_git_folder_tree for $DEV_FOLDER"
 
   if test ! -d $DEV_FOLDER; then
     hf_log_msg "creating $DEV_FOLDER"
@@ -366,6 +366,7 @@ function hf_git_folder_three() {
   cd $DEV_FOLDER
 
   for i in "${!REPOS[@]}"; do
+    if [ "$i" == "0" ]; then continue; fi
     hf_log_msg "repositories for $DEV_FOLDER/$i folder"
     if ! test -d $DEV_FOLDER/$i; then
       hf_log_msg_2nd "creating $DEV_FOLDER/$i folder"
