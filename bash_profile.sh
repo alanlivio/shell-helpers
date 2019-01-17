@@ -135,7 +135,7 @@ function hf_mac_keyboard_pt_br() {
   setxkbmap -model abnt -layout us -variant intl
 }
 
-function hf_mac_keyboard_fn_mode() {
+function hf_mac_keyboard_fnmode() {
   sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
 }
 
@@ -276,7 +276,6 @@ function hf_gdb_run_bt_all_threads() {
 # ---------------------------------------
 # git functions
 # ---------------------------------------
-
 
 function hf_git_partial_commit() {
   git stash
@@ -829,6 +828,8 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
+  org.gnome.desktop.search-providers disable-external true
+  org.gnome.desktop.search-providers disabled ['org.gnome.Terminal.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
