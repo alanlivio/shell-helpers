@@ -1029,16 +1029,16 @@ function hf_python_version() {
 }
 
 function hf_python_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pip3_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} [pip_packages_list]"}
   hf_log_msg "python install packages"
 
-  if ! type pip3 &>/dev/null; then
-    hf_log_error "pip3 not found."
-    sudo -H pip3 install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
+  if ! type pip &>/dev/null; then
+    hf_log_error "pip not found."
+    sudo -H pip install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
   fi
 
   PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(pip3 list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
+  PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
   for i in "$@"; do
     FOUND=false
     for j in $PKGS_INSTALLED; do
@@ -1051,9 +1051,9 @@ function hf_python_install_packages() {
   done
   if test ! -z "$PKGS_TO_INSTALL"; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
-    sudo -H pip3 install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
+    sudo -H pip install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
   fi
-  sudo -H pip3 install -U "$@" &>/dev/null
+  sudo -H pip install -U "$@" &>/dev/null
 }
 
 # ---------------------------------------
