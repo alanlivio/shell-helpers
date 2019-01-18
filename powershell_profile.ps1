@@ -1,6 +1,6 @@
 # ---------------------------------------
-# Powershell helper functions.
-# site: github.com/alanlivio/powershell_helper_functions
+# powershell_profile helper functions.
+# site: github.com/alanlivio/powershell_profile
 # ---------------------------------------
 
 # ---------------------------------------
