@@ -721,6 +721,27 @@ function hf_snap_install_packages() {
   fi
 }
 
+function hf_snap_install_packages_classic() {
+  : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
+  hf_log_msg "install snap packages classic"
+
+  INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
+
+  PKGS_TO_INSTALL=""
+  for i in "$@"; do
+    echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
+    if test $? != 0; then
+      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+    fi
+  done
+  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
+  if test -n "$PKGS_TO_INSTALL"; then
+    for i in $PKGS_TO_INSTALL; do
+      sudo snap install --classic "$i"
+    done
+  fi
+}
+
 function hf_snap_upgrade() {
   hf_log_msg "snap upgrade"
   sudo snap refresh
