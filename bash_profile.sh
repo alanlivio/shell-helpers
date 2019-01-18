@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ---------------------------------------
-# Bash helper functions.
-# site: github.com/alanlivio/bash-helper-functions
+# bash_profile helper functions.
+# site: github.com/alanlivio/bash_profile
 # ---------------------------------------
 
 # ---------------------------------------
