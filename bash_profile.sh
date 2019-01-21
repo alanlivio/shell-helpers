@@ -522,11 +522,24 @@ function hf_cpp_delete_cmake_files() {
 # image functions
 # ---------------------------------------
 
-function hf_image_reconize_text() {
+function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
 
   tesseract -l eng "$1" "$1.txt"
 }
+
+function hf_image_reconize_text_pt() {
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+
+  tesseract -l por "$1" "$1.txt"
+}
+
+function hf_image_reconize_stdout() {
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+
+  tesseract "$1" stdout
+}
+
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
