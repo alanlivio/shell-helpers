@@ -807,6 +807,7 @@ function hf_gnome_init() {
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
+  hf_gnome_disable_automatic_update
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
@@ -848,7 +849,6 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.desktop.screensaver picture-uri ''
   gsettings set org.gnome.desktop.screensaver primary-color "#000000"
   gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
-  gsettings set org.gnome.desktop.search-providers sort-order "['org.gnome.Nautilus.desktop']"
   gsettings set org.gnome.desktop.sound event-sounds false
   gsettings set org.gnome.desktop.sound event-sounds false
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
@@ -862,8 +862,12 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
-  org.gnome.desktop.search-providers disable-external true
-  org.gnome.desktop.search-providers disabled ['org.gnome.Terminal.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']
+  gsettings set org.gnome.desktop.search-providers disable-external true
+  gsettings set org.gnome.desktop.search-providers disabled ['org.gnome.Terminal.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']
+}
+
+function hf_gnome_disable_unused_apps_in_search() {
+  gsettings set org.gnome.software download-updates false
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
