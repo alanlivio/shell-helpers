@@ -1111,6 +1111,15 @@ function hf_install_chrome() {
   fi
 }
 
+function hf_install_slack() {
+  hf_log_msg "install slack"
+  dpkg --status slack-desktop &>/dev/null
+  if test $? != 0; then
+    hf_apt_fetch_install https://downloads.slack-edge.com/linux_releases/slack-desktop-3.3.7-amd64.deb
+
+  fi
+}
+
 function hf_install_spotify() {
   hf_log_msg "install spotify"
   dpkg --status spotify-client &>/dev/null
@@ -1228,6 +1237,15 @@ function hf_install_stremio() {
   echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
   sudo updatedb
 }
+
+function hf_install_pycharm() {
+  hf_log_msg "install tor"
+  if test -d /opt/tor; then return; fi
+  URL=https://download-cf.jetbrains.com/python/pycharm-professional-2018.3.3.tar.gz
+  hf_fetch_extract_to $URL /opt/
+  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+}
+
 
 function hf_install_tor() {
   hf_log_msg "install tor"
