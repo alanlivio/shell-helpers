@@ -286,6 +286,10 @@ function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
 
+function hf_git_reset_author() {
+  : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
+  git rebase -i HEAD~$1 -x "git commit --amend --reset-author"
+}
 function hf_git_github_init() {
   : ${1?"Usage: ${FUNCNAME[0]} [github name]"}
   NAME=$(basename "$1" ".${1##*.}")
@@ -539,7 +543,6 @@ function hf_image_reconize_stdout() {
 
   tesseract "$1" stdout
 }
-
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
