@@ -806,6 +806,14 @@ function hf_vscode_uninstall_all_packages() {
 # gnome functions
 # ---------------------------------------
 
+function hf_service_add_to_rc_d(){
+  sudo update-rc.d $1 enable
+}
+
+# ---------------------------------------
+# gnome functions
+# ---------------------------------------
+
 function hf_gnome_init() {
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
@@ -815,7 +823,7 @@ function hf_gnome_init() {
   hf_install_chrome
   hf_install_vscode
   hf_install_spotify
-  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'spotify.desktop', 'org.gnome.Nautilus.desktop']"
+  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Nautilus.desktop']"
   hf_install_insync
   hf_clean_unused_folders
   hf_user_permissions_opt
@@ -1327,6 +1335,10 @@ function hf_apt_upgrade() {
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
+}
+
+function hf_apt_disable_autoupdate() {
+  sudo sed -i  "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_apt_install_packages() {
