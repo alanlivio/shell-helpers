@@ -1144,14 +1144,12 @@ function hf_install_slack() {
 
 function hf_install_spotify() {
   hf_log_msg "install spotify"
-  dpkg --status spotify-client &>/dev/null
-  if test $? != 0; then
-    sudo rm /etc/apt/sources.list.d/spotify.list
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
-    echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
-    sudo apt update
-    sudo apt install -y spotify-client
-  fi
+  hf_snap_install_packages spotify
+}
+
+function hf_install_android_studio() {
+  hf_log_msg "install android-studio"
+  hf_snap_install_packages android-studio
 }
 
 function hf_install_grub_customizer() {
@@ -1208,16 +1206,6 @@ function hf_install_vscode() {
     sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
     sudo apt update
     sudo apt install -y code
-  fi
-}
-
-function hf_install_android_studio() {
-  hf_log_msg "install android-studio"
-  dpkg --status android-studio &>/dev/null
-  if test $? != 0; then
-    sudo apt-add-repository -y ppa:maarten-fonville/android-studio
-    sudo apt update
-    sudo apt install -y android-studio
   fi
 }
 
