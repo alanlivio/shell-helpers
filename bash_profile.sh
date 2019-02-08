@@ -54,7 +54,7 @@ function hf_profile_download() {
     rm $SCRIPT_NAME
   fi
   wget $SCRIPT_URL $SCRIPT_NAME
-  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
 
 # ---------------------------------------
@@ -959,7 +959,7 @@ function hf_gnome_settings_diff_actual_and_file() {
 
 function hf_vlc_youtube_playlist_extension() {
   wget --continue https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
-  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
@@ -1253,7 +1253,7 @@ function hf_install_tor() {
   if test -d /opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
-  if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   mv /opt/tor-browser_en-US /opt/tor/
   sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g'
   /opt/tor/start-tor-browser.desktop
@@ -1310,8 +1310,6 @@ function hf_install_shfmt() {
 
 function hf_apt_upgrade() {
   hf_log_msg "apt upgrade"
-  sudo apt update &>/dev/null
-  if test $? != 0; then test hf_log_error "apt update failed." && return 1; fi
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
@@ -1392,7 +1390,7 @@ function hf_apt_fetch_install() {
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
     wget --continue $1 -P /tmp/
-    if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 
   fi
   sudo dpkg -i /tmp/$apt_NAME
@@ -1412,7 +1410,7 @@ function hf_fetch_extract_to() {
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
     wget --continue $1 -P /tmp/
-    if test $? != 0; then test hf_log_error "wget failed." && return 1; fi
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
