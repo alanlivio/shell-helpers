@@ -1122,9 +1122,17 @@ function hf_install_chrome() {
   fi
 }
 
+function hf_install_gitkraken_from_snap() {
+  hf_log_msg "install gitkraken"
+  hf_snap_install_packages gitkrake
+}
+
 function hf_install_gitkraken() {
   hf_log_msg "install gitkraken"
-  hf_snap_install_packages gitkraken
+  dpkg --status google-chrome-stable &>/dev/null
+  if test $? != 0; then
+    hf_apt_fetch_install https://release.gitkraken.com/linux/gitkraken-amd64.deb
+  fi
 }
 
 function hf_install_pycharm() {
@@ -1137,6 +1145,11 @@ function hf_install_clion() {
   hf_snap_install_packages_classic clion
 }
 
+function hf_install_android_studio() {
+  hf_log_msg "install android-studio"
+  hf_snap_install_packages android-studio
+}
+
 function hf_install_slack() {
   hf_log_msg "install slack"
   hf_snap_install_packages_classic slack
@@ -1145,11 +1158,6 @@ function hf_install_slack() {
 function hf_install_spotify() {
   hf_log_msg "install spotify"
   hf_snap_install_packages spotify
-}
-
-function hf_install_android_studio() {
-  hf_log_msg "install android-studio"
-  hf_snap_install_packages android-studio
 }
 
 function hf_install_grub_customizer() {
