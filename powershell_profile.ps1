@@ -19,7 +19,7 @@ if (Test-Path $SCRIPT_CFG) {
 # ---------------------------------------
 
 function hf_profile_install(){
-  echo "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+  Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
 }
 
 function hf_profile_reload(){
@@ -29,7 +29,7 @@ function hf_profile_reload(){
 # ---------------------------------------
 # go home
 # ---------------------------------------
-cd ~
+Set-Location ~
 
 # ---------------------------------------
 # powershell functions
@@ -54,9 +54,9 @@ function hf_powershell_profiles_reset(){
 # install functions
 # ---------------------------------------
 function hf_install_chocolatey() {
-  echo "install chocolatey"
-  iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-  SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+  Write-Output "install chocolatey"
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
   cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
   choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
@@ -94,7 +94,7 @@ function hf_explorer_open_start_menu() {
 # ---------------------------------------
 
 function hf_store_list_installed() {
-  Get-AppxPackage -AllUsers | Select Name, PackageFullName
+  Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
 # ---------------------------------------
@@ -102,19 +102,19 @@ function hf_store_list_installed() {
 # ---------------------------------------
 
 function hf_remove_unused_folders(){
-  echo "remove unused folders"
+  Write-Output "remove unused folders"
   $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
   "Local Settings/")
-  $folders | Foreach {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
+  $folders | ForEach-Object {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
 }
 
 function hf_enable_dark_mode() {
-  echo "enable dark mode"
+  Write-Output "enable dark mode"
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
 
 function hf_remove_unused_this_pc_folders() {
-  echo "remove this pc folders"
+  Write-Output "remove this pc folders"
   reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" /f
   reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" /f
   reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" /f
@@ -142,19 +142,19 @@ function hf_remove_unused_this_pc_folders() {
 }
 
 function hf_remove_unused_ondrive() {
-  echo "remove onedrive"
+  Write-Output "remove onedrive"
   reg delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg add "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v System.IsPinnedToNameSpaceTree /d "0" /t REG_DWORD /f
 }
 
 function hf_remove_unused_store_packages() {
-  echo "packages store remove unused"
-  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint".Split(" ") | Foreach{Get-AppxPackage -allusers $_ |remove-AppxPackage}
+  Write-Output "packages store remove unused"
+  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint".Split(" ") | ForEach-Object{Get-AppxPackage -allusers $_ |remove-AppxPackage}
 }
 
 function hf_remove_context_menu_unused() {
-  echo "remove context menu unused"
+  Write-Output "remove context menu unused"
   # * Sharing
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f'
