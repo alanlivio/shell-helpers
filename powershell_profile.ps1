@@ -103,27 +103,9 @@ function hf_store_list_installed() {
 
 function hf_remove_unused_folders(){
   echo "remove unused folders"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Favorites/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "OneDrive/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Pictures/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Public/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Templates/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Videos/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Music/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Links/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Start Menu/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Saved Games/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Searches/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "SendTo/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "PrintHood"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "MicrosoftEdgeBackups/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "IntelGraphicsProfiles/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Contacts/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "3D Objects/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "Recent/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore "NetHood/"
-  Remove-Item -Force -Recurse -ErrorAction Ignore 'Local Settings/'
-  Remove-Item -Force -Recurse -ErrorAction Ignore 'ntuser.ini'
+  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
+  "Local Settings/")
+  $folders | Foreach {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
 }
 
 function hf_enable_dark_mode() {
