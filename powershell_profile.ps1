@@ -18,11 +18,11 @@ if (Test-Path $SCRIPT_CFG) {
 # profile functions
 # ---------------------------------------
 
-function hf_profile_install(){
+function hf_profile_install() {
   Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
 }
 
-function hf_profile_reload(){
+function hf_profile_reload() {
   Import-Module -Force -Global $SCRIPT_NAME
 }
 
@@ -34,20 +34,19 @@ Set-Location ~
 # ---------------------------------------
 # powershell functions
 # ---------------------------------------
-function hf_powershell_enable_scripts(){
+function hf_powershell_enable_scripts() {
   Set-ExecutionPolicy unrestricted
 }
 
-function hf_powershell_profiles_list()
-{
+function hf_powershell_profiles_list() {
   $profile | Select-Object -Property *
 }
 
-function hf_powershell_profiles_reset(){
-  $profile.AllUsersAllHosts="\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
-  $profile.AllUsersCurrentHost="\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
-  $profile.CurrentUserAllHosts="WindowsPowerShell\profile.ps1"
-  $profile.CurrentUserCurrentHost="WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+function hf_powershell_profiles_reset() {
+  $profile.AllUsersAllHosts = "\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
+  $profile.AllUsersCurrentHost = "\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
+  $profile.CurrentUserAllHosts = "WindowsPowerShell\profile.ps1"
+  $profile.CurrentUserCurrentHost = "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 }
 
 # ---------------------------------------
@@ -70,7 +69,7 @@ function hf_install_chocolatey() {
 # ---------------------------------------
 
 function hf_network_list_wifi_SSIDs() {
-    return (netsh wlan show net mode=bssid)
+  return (netsh wlan show net mode=bssid)
 }
 
 # ---------------------------------------
@@ -101,20 +100,20 @@ function hf_store_list_installed() {
 # remove functions
 # ---------------------------------------
 
-function hf_remove_unused_folders(){
+function hf_remove_unused_folders() {
   Write-Output "remove unused folders"
   $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
-  "Local Settings/")
+    "Local Settings/")
   $folders | ForEach-Object {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
 }
 
-function hf_remove_tiles_from_start_menu(){
-(New-Object -Com Shell.Application).
-    NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
-    Items() |
-  %{ $_.Verbs() } |
-  ?{$_.Name -match 'Un.*pin from Start'} |
-  %{$_.DoIt()}
+function hf_remove_tiles_from_start_menu() {
+  (New-Object -Com Shell.Application).
+  NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
+  Items() |
+    % { $_.Verbs() } |
+    ? {$_.Name -match 'Un.*pin from Start'} |
+    % {$_.DoIt()}
 }
 
 function hf_enable_dark_mode() {
@@ -159,7 +158,7 @@ function hf_remove_unused_ondrive() {
 
 function hf_remove_unused_store_packages() {
   Write-Output "packages store remove unused"
-  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint".Split(" ") | ForEach-Object{Get-AppxPackage -allusers $_ |remove-AppxPackage}
+  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
 }
 
 function hf_remove_context_menu_unused() {
