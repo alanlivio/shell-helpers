@@ -111,9 +111,9 @@ function hf_remove_tiles_from_start_menu() {
   (New-Object -Com Shell.Application).
   NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
   Items() |
-    % { $_.Verbs() } |
-    ? {$_.Name -match 'Un.*pin from Start'} |
-    % {$_.DoIt()}
+    ForEach-Object { $_.Verbs() } |
+    Where-Object {$_.Name -match 'Un.*pin from Start'} |
+    ForEach-Object {$_.DoIt()}
 }
 
 function hf_enable_dark_mode() {
