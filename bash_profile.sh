@@ -690,6 +690,7 @@ function hf_user_passwd_disable_len_restriction() {
 }
 
 function hf_user_permissions_opt() {
+  hf_log_msg "hf_user_permissions_opt"
   sudo chown -R root:root /opt
   sudo chmod -R 775 /opt/
   sudo adduser $USER root
@@ -816,9 +817,9 @@ function hf_service_add_to_rc_d(){
 
 function hf_gnome_init() {
   hf_gnome_sanity
+  hf_gnome_disable_update
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
-  hf_gnome_disable_automatic_update
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
@@ -829,6 +830,7 @@ function hf_gnome_init() {
 }
 
 function hf_gnome_reset_keybindings() {
+  hf_log_msg "hf_gnome_reset_keybindings"
   gsettings reset-recursively org.gnome.mutter.keybindings
   gsettings reset-recursively org.gnome.mutter.wayland.keybindings
   gsettings reset-recursively org.gnome.desktop.wm.keybindings
@@ -836,7 +838,8 @@ function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hf_gnome_sanity_ui() {
+function hf_gnome_sanity() {
+  hf_log_msg "hf_gnome_sanity"
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
   gsettings set org.gnome.desktop.background primary-color "#000000"
@@ -873,15 +876,17 @@ function hf_gnome_sanity_ui() {
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
   gsettings set org.gnome.desktop.search-providers disable-external true
-  gsettings set org.gnome.desktop.search-providers disabled ['org.gnome.Terminal.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']
   gsettings set org.gnome.desktop.search-providers sort-order []
 }
 
-function hf_gnome_disable_unused_apps_in_search() {
+function hf_gnome_disable_update() {
+  hf_log_msg "hf_gnome_disable_update"
   gsettings set org.gnome.software download-updates false
+  sudo sed -i  "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
+  hf_log_msg "hf_gnome_disable_unused_apps_in_search"
   APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or -iname '*brasero*')
   for i in $APPS_TO_HIDE; do
     sudo sh -c " echo 'NoDisplay=true' >> $i"
@@ -890,6 +895,7 @@ function hf_gnome_disable_unused_apps_in_search() {
 }
 
 function hf_gnome_disable_super_workspace_change() {
+  hf_log_msg "hf_gnome_disable_super_workspace_change"
   # remove super+arrow virtual terminal change
   sudo sh -c 'dumpkeys |grep -v cr_Console |loadkeys'
 }
@@ -1111,7 +1117,10 @@ function hf_eclipse_uninstall_packages() {
 
 function hf_install_curl() {
   hf_log_msg "install curl"
-  sudo apt install -y curl
+  dpkg --status curl &>/dev/null
+  if test $? != 0; then
+    sudo apt install -y curl
+  fi
 }
 
 function hf_install_chrome() {
@@ -1321,10 +1330,6 @@ function hf_apt_upgrade() {
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
-}
-
-function hf_apt_disable_autoupdate() {
-  sudo sed -i  "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_apt_install_packages() {
