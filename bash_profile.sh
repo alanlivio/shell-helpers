@@ -151,7 +151,7 @@ function hf_mac_install_bash4() {
 }
 
 function hf_mac_install_refind() {
-  sudo apt install refind
+  sudo apt install -y refind
 }
 
 # ---------------------------------------
@@ -1111,7 +1111,7 @@ function hf_eclipse_uninstall_packages() {
 
 function hf_install_curl() {
   hf_log_msg "install curl"
-  sudo apt install curl
+  sudo apt install -y curl
 }
 
 function hf_install_chrome() {
