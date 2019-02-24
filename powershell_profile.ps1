@@ -108,6 +108,15 @@ function hf_remove_unused_folders(){
   $folders | ForEach-Object {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
 }
 
+function hf_remove_tiles_from_start_menu(){
+(New-Object -Com Shell.Application).
+    NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
+    Items() |
+  %{ $_.Verbs() } |
+  ?{$_.Name -match 'Un.*pin from Start'} |
+  %{$_.DoIt()}
+}
+
 function hf_enable_dark_mode() {
   Write-Output "enable dark mode"
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
@@ -182,6 +191,7 @@ function hf_windows_update() {
 function hf_windows_init() {
   hf_remove_unused_folders
   hf_remove_unused_this_pc_folders
+  hf_remove_tiles_from_start_menu
   hf_remove_unused_ondrive
   hf_remove_unused_store_packages
   hf_remove_context_menu_unused
