@@ -187,14 +187,16 @@ function hf_windows_update() {
 # ---------------------------------------
 # windows function
 # ---------------------------------------
-
-function hf_windows_init() {
+function hf_windows_sanity() {
   hf_remove_unused_folders
   hf_remove_unused_this_pc_folders
-  hf_remove_tiles_from_start_menu
+  hf_remove_all_from_start_menu
   hf_remove_unused_ondrive
   hf_remove_unused_store_packages
   hf_remove_context_menu_unused
+}
+function hf_windows_init() {
+  hf_windows_sanity
   hf_install_chocolatey
   choco install -y --acceptlicense --no-progress GoogleChrome vscode spotify google-backup-and-sync msys2
 }
