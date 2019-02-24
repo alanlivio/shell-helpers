@@ -1279,9 +1279,9 @@ function hf_install_tor() {
 
 function hf_install_zotero() {
   hf_log_msg "install zotero"
-  dpkg --status insync &>/dev/null
+  dpkg --status zotero &>/dev/null
   if test $? != 0; then
-    sudo add-apt-repository ppa:retorquere/zotero
+    sudo add-apt-repository -y ppa:retorquere/zotero
     sudo updatedb
     sudo apt-get install zotero
   fi
