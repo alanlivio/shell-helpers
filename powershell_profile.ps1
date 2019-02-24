@@ -121,7 +121,7 @@ function hf_enable_dark_mode() {
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
 
-function hf_remove_unused_this_pc_folders() {
+function hf_remove_this_pc_folders() {
   Write-Output "remove this pc folders"
   $folders = @(
   "{088e3905-0323-4b02-9826-5d99428e115f}",
@@ -142,19 +142,19 @@ function hf_remove_unused_this_pc_folders() {
   $folders | ForEach-Object {reg delete $path2$_ /f}
 }
 
-function hf_remove_unused_ondrive() {
+function hf_remove_ondrive() {
   Write-Output "remove onedrive"
   reg delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg add "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v System.IsPinnedToNameSpaceTree /d "0" /t REG_DWORD /f
 }
 
-function hf_remove_unused_store_packages() {
+function hf_remove_not_essential_store_packages() {
   Write-Output "packages store remove unused"
   "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Facebook.Facebook 9E2F88E3.Twitter Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive 89006A2E.AutodeskSketchBook A278AB0D.DisneyMagicKingdoms king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
 }
 
-function hf_remove_context_menu_unused() {
+function hf_remove_not_essential_context_menu() {
   Write-Output "remove context menu unused"
   # * Sharing
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
@@ -181,11 +181,11 @@ function hf_windows_update() {
 # ---------------------------------------
 function hf_windows_sanity() {
   hf_remove_unused_folders
-  hf_remove_unused_this_pc_folders
+  hf_remove_this_pc_folders
   hf_remove_all_from_start_menu
-  hf_remove_unused_ondrive
-  hf_remove_unused_store_packages
-  hf_remove_context_menu_unused
+  hf_remove_ondrive
+  hf_remove_not_essential_store_packages
+  hf_remove_not_essential_context_menu
 }
 function hf_windows_init() {
   hf_windows_sanity
