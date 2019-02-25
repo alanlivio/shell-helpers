@@ -690,10 +690,10 @@ function hf_user_passwd_disable_len_restriction() {
 }
 
 function hf_user_permissions_opt() {
-  sudo chown root:root /opt
+  sudo chown -R root:root /opt
+  sudo chmod -R 775 /opt/
   sudo adduser $USER root
   newgrp root # update group for user
-  sudo chmod -R +775 /opt/
 }
 
 function hf_user_permissions_ssh() {
