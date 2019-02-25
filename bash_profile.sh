@@ -822,7 +822,6 @@ function hf_gnome_init() {
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
-  hf_install_spotify
   gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Nautilus.desktop']"
   hf_install_insync
   hf_clean_unused_folders
@@ -837,7 +836,7 @@ function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
-function hf_gnome_sanity() {
+function hf_gnome_sanity_ui() {
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
   gsettings set org.gnome.desktop.background primary-color "#000000"
@@ -875,6 +874,7 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
   gsettings set org.gnome.desktop.search-providers disable-external true
   gsettings set org.gnome.desktop.search-providers disabled ['org.gnome.Terminal.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop']
+  gsettings set org.gnome.desktop.search-providers sort-order []
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
