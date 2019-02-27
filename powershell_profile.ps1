@@ -142,6 +142,13 @@ function hf_remove_this_pc_folders() {
   $folders | ForEach-Object {reg delete $path2$_ /f}
 }
 
+function hf_remove_start_menu_bing() {
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f
+}
+
 function hf_remove_ondrive() {
   Write-Output "remove onedrive"
   reg delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
@@ -181,8 +188,9 @@ function hf_windows_update() {
 # ---------------------------------------
 function hf_windows_sanity() {
   hf_remove_unused_folders
+  hf_remove_start_menu_bing
   hf_remove_this_pc_folders
-  hf_remove_all_from_start_menu
+  hf_remove_tiles_from_start_menu
   hf_remove_ondrive
   hf_remove_not_essential_store_packages
   hf_remove_not_essential_context_menu
@@ -190,5 +198,5 @@ function hf_windows_sanity() {
 function hf_windows_init() {
   hf_windows_sanity
   hf_install_chocolatey
-  choco install -y --acceptlicense --no-progress GoogleChrome vscode spotify google-backup-and-sync msys2
+  choco install -y --acceptlicense --no-progress GoogleChrome vscode google-backup-and-sync msys2
 }
