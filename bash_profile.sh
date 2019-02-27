@@ -761,7 +761,7 @@ function hf_snap_install_packages_classic() {
 
 function hf_snap_upgrade() {
   hf_log_msg "snap upgrade"
-  sudo snap refresh 2> /dev/null/
+  sudo snap refresh 2> /dev/null
 }
 
 function hf_snap_hide_home_folder() {
