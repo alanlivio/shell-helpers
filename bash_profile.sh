@@ -693,8 +693,9 @@ function hf_user_permissions_opt() {
   hf_log_msg "hf_user_permissions_opt"
   sudo chown -R root:root /opt
   sudo chmod -R 775 /opt/
-  sudo adduser $USER root
-  newgrp root # update group for user
+  grep root /etc/group | grep $USER > /dev/null
+  if test $? = 1; then sudo adduser $USER root > /dev/null ; fi
+  newgrp root
 }
 
 function hf_user_permissions_ssh() {
@@ -761,7 +762,7 @@ function hf_snap_install_packages_classic() {
 
 function hf_snap_upgrade() {
   hf_log_msg "snap upgrade"
-  sudo snap refresh 2> /dev/null
+  sudo snap refresh 2>/dev/null
 }
 
 function hf_snap_hide_home_folder() {
@@ -807,7 +808,7 @@ function hf_vscode_uninstall_all_packages() {
 # gnome functions
 # ---------------------------------------
 
-function hf_service_add_to_rc_d(){
+function hf_service_add_to_rc_d() {
   sudo update-rc.d $1 enable
 }
 
@@ -816,6 +817,7 @@ function hf_service_add_to_rc_d(){
 # ---------------------------------------
 
 function hf_gnome_init() {
+  hf_log_msg "hf_gnome_init"
   hf_gnome_sanity
   hf_gnome_disable_update
   hf_gnome_disable_unused_apps_in_search
@@ -882,7 +884,7 @@ function hf_gnome_sanity() {
 function hf_gnome_disable_update() {
   hf_log_msg "hf_gnome_disable_update"
   gsettings set org.gnome.software download-updates false
-  sudo sed -i  "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
+  sudo sed -i "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
