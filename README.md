@@ -7,11 +7,13 @@ This project made easy bash profile configuration and have helper functions to b
 ## How to use
 
 Fetch the  `bash_profile.sh`:
+
 ```bash
 wget raw.githubusercontent.com/alanlivio/bash_profile/master/bash_profile.sh
 ```
 
 Load the `bash_profile.sh` at your .bashrc:
+
 ```bash
 source bash_profile.sh
 ```
