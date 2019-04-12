@@ -648,6 +648,10 @@ function hf_network_open_ports() {
   netstat -tulpn
 }
 
+function hf_network_domain_info() {
+   whois $1
+}
+
 function hf_network_open_connections() {
   lsof -i
 }
