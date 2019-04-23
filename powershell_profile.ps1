@@ -62,6 +62,8 @@ function hf_install_chocolatey() {
   choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
   choco -y --acceptlicense --no-progress disable -n showDownloadProgress
   choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
+  choco -y --acceptlicense feature enable -name=exitOnRebootDetected
+
 }
 
 function hf_install_bash() {
