@@ -198,5 +198,5 @@ function hf_windows_sanity() {
 function hf_windows_init() {
   hf_windows_sanity
   hf_install_chocolatey
-  choco install -y --acceptlicense --no-progress GoogleChrome vscode google-backup-and-sync msys2
+  choco install -y --acceptlicense --no-progress GoogleChrome vscode google-backup-and-sync msys2 vlc
 }
