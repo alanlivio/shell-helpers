@@ -19,7 +19,7 @@ if (Test-Path $SCRIPT_CFG) {
 # ---------------------------------------
 
 function hf_profile_install() {
-  Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+  Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
 }
 
 function hf_profile_reload() {
