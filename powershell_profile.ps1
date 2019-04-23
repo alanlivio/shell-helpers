@@ -66,13 +66,17 @@ function hf_install_chocolatey() {
 
 }
 
+function hf_test_install_chocolatey() {
+  if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)){ Write-Output "install chocolatey"}
+}
+
 function hf_install_bash() {
-  hf_install_chocolatey
+  hf_test_install_chocolatey
   choco install -y --acceptlicense --no-progress msys2
 }
 
 function hf_install_gdrive() {
-  hf_install_chocolatey
+  hf_test_install_chocolatey
   choco install -y --acceptlicense --no-progress google-backup-and-sync
 }
 
