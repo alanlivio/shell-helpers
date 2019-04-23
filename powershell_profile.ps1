@@ -64,6 +64,16 @@ function hf_install_chocolatey() {
   choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
 }
 
+function hf_install_bash() {
+  hf_install_chocolatey
+  choco install -y --acceptlicense --no-progress msys2
+}
+
+function hf_install_gdrive() {
+  hf_install_chocolatey
+  choco install -y --acceptlicense --no-progress google-backup-and-sync
+}
+
 # ---------------------------------------
 # network functions
 # ---------------------------------------
@@ -194,9 +204,4 @@ function hf_windows_sanity() {
   hf_remove_ondrive
   hf_remove_not_essential_store_packages
   hf_remove_not_essential_context_menu
-}
-function hf_windows_init() {
-  hf_windows_sanity
-  hf_install_chocolatey
-  choco install -y --acceptlicense --no-progress GoogleChrome vscode google-backup-and-sync msys2 vlc
 }
