@@ -282,6 +282,10 @@ function hf_git_partial_commit() {
   git difftool -y stash
 }
 
+function hf_git_partial_commit_continue() {
+  git stash apply
+}
+
 function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
