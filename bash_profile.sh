@@ -1285,6 +1285,24 @@ function hf_install_tor() {
 
 function hf_install_zotero() {
   hf_log_msg "install zotero"
+  if test -d /opt/zotero; then return; fi
+  URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
+  hf_fetch_extract_to $URL /tmp/
+  mv /tmp/Zotero_linux-x86_64 /opt/zotero
+  {
+    echo '[Desktop Entry]'
+    echo 'Version=1.0'
+    echo 'Name=Zotero'
+    echo 'Type=Application'
+    echo 'Exec=/opt/zotero/zotero'
+    echo 'Icon=/opt/zotero/chrome/icons/default/default48.png'
+  } >/opt/zotero/zotero.desktop
+  sudo desktop-file-install /opt/zotero/zotero.desktop
+  sudo updatedb
+}
+
+function hf_install_zotero_ppa() {
+  hf_log_msg "install zotero"
   dpkg --status zotero &>/dev/null
   if test $? != 0; then
     sudo add-apt-repository -y ppa:retorquere/zotero
