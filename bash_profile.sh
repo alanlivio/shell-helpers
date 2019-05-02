@@ -790,7 +790,7 @@ function hf_vscode_install_packages() {
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
-    echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
+    echo "$INSTALLED_LIST" | grep -i "^$i" &>/dev/null
     if test $? != 0; then
       PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
     fi
