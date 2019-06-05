@@ -1001,6 +1001,18 @@ function hf_vlc_youtube_playlist_extension() {
 # system functions
 # ---------------------------------------
 
+function hf_system_product_name() {
+  sudo dmidecode -s system-product-name
+}
+
+function hf_system_product_is_macbook() {
+  if [[ $(sudo dmidecode -s system-product-name) == MacBookPro* ]]; then
+    echo TRUE
+  else
+    echo FALSE
+  fi
+}
+
 function hf_system_list_gpu() {
   lspci -nn | grep -E 'VGA|Display'
 }
