@@ -277,13 +277,13 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
-function hf_git_partial_commit() {
+function hf_git_add_partial() {
   git stash
   git difftool -y stash
 }
 
-function hf_git_partial_commit_continue() {
-  git stash apply
+function hf_git_add_partial_continue() {
+  git difftool -y stash
 }
 
 function hf_git_github_check_ssh() {
