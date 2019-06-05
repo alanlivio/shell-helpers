@@ -1377,6 +1377,13 @@ function hf_apt_upgrade() {
   fi
 }
 
+function hf_apt_fixes() {
+  hf_log_msg "apt fixes"
+  sudo dpkg --configure -a
+  sudo apt-get install -f
+  sudo apt-get dist-upgrade
+}
+
 function hf_apt_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
   hf_log_msg "install apt packages"
