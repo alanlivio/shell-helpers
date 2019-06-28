@@ -1307,12 +1307,11 @@ function hf_install_stremio() {
 function hf_install_tor() {
   hf_log_msg "install tor"
   if test -d /opt/tor; then return; fi
-  URL=https://dist.torproject.org/torbrowser/8.0.3/tor-browser-linux64-8.0.3_en-US.tar.xz
+  URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   mv /opt/tor-browser_en-US /opt/tor/
-  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g'
-  /opt/tor/start-tor-browser.desktop
+  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g' /opt/tor/start-tor-browser.desktop
   sudo desktop-file-install /opt/tor/start-tor-browser.desktop
 }
 
