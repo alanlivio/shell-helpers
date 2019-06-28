@@ -123,7 +123,7 @@ function hf_remove_unused_folders() {
   $folders | ForEach-Object {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
 }
 
-function hf_remove_tiles_from_start_menu() {
+function hf_disable_tiles_from_start_menu() {
   (New-Object -Com Shell.Application).
   NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
   Items() |
@@ -137,8 +137,8 @@ function hf_enable_dark_mode() {
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
 
-function hf_remove_this_pc_folders() {
-  Write-Output "remove this pc folders"
+function hf_disable_this_pc_folders() {
+  Write-Output "disable this pc folders"
   $folders = @(
   "{088e3905-0323-4b02-9826-5d99428e115f}",
   "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}",
@@ -158,21 +158,21 @@ function hf_remove_this_pc_folders() {
   $folders | ForEach-Object {reg delete $path2$_ /f}
 }
 
-function hf_remove_start_menu_bing() {
+function hf_disable_start_menu_bing() {
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f
   reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f
 }
 
-function hf_remove_ondrive() {
-  Write-Output "remove onedrive"
+function hf_uninstall_ondrive() {
+  Write-Output "uninstall onedrive"
   reg delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg add "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v System.IsPinnedToNameSpaceTree /d "0" /t REG_DWORD /f
 }
 
-function hf_remove_not_essential_store_packages() {
+function hf_uninstall_not_essential_store_packages() {
   # windows
   Write-Output "packages store remove unused from Microsoft"
   "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint Microsoft.Office.Desktop Microsoft.MicrosoftSolitaireCollection".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
@@ -181,7 +181,7 @@ function hf_remove_not_essential_store_packages() {
   "Facebook.Facebook SpotifyAB.SpotifyMusic 9E2F88E3.Twitter A278AB0D.DisneyMagicKingdoms king.com.CandyCrushFriends king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga 7EE7776C.LinkedInforWindows king.com.CandyCrushSaga NORDCURRENT.COOKINGFEVER".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
 }
 
-function hf_remove_not_essential_context_menu() {
+function hf_disable_not_essential_context_menu() {
   Write-Output "remove context menu unused"
   # * Sharing
   cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
@@ -208,10 +208,10 @@ function hf_windows_update() {
 # ---------------------------------------
 function hf_windows_sanity() {
   hf_remove_unused_folders
-  hf_remove_start_menu_bing
-  hf_remove_this_pc_folders
-  hf_remove_tiles_from_start_menu
-  hf_remove_ondrive
-  hf_remove_not_essential_store_packages
-  hf_remove_not_essential_context_menu
+  hf_disable_start_menu_bing
+  hf_disable_this_pc_folders
+  hf_disable_tiles_from_start_menu
+  hf_disable_not_essential_context_menu
+  hf_uninstall_not_essential_store_packages
+  hf_uninstall_ondrive
 }
