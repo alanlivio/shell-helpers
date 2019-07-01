@@ -571,6 +571,14 @@ function hf_pdf_find_duplicates() {
  find . -iname *.pdf -not -empty -type f -printf "%s\n" | sort -rn | uniq -d |xargs -I{} -n1 find . -type f -size {}c -print0 | xargs -0 md5sum |sort | uniq -w32 --all-repeated=separate
 }
 
+function hf_pdf_remove_annotations() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  # libcam-pdf-perl
+  hf_test_exist_command rewritepdf
+
+  rewritepdf "$1" "-no-annotations-$1"
+}
+
 function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
   hf_test_exist_command pdfgrep
