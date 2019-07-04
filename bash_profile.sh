@@ -1105,6 +1105,10 @@ function hf_ruby_install_packages() {
 # python functions
 # ---------------------------------------
 
+function hf_python_virtualenv {
+  if test -d ./venv/bin/; then source ./venv/bin/activate; fi
+}
+
 function hf_python_version() {
   python -V 2>&1 | grep -Po '(?<=Python ).{1}'
 }
