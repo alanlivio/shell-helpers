@@ -223,7 +223,7 @@ function hf_pkg_config_show() {
 # pygmentize functions
 # ---------------------------------------
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
+function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
@@ -231,7 +231,7 @@ function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
   done
 }
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
+function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
   : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
@@ -240,7 +240,7 @@ function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
   done
 }
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
+function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
   hf_test_exist_command pygmentize
 
