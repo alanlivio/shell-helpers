@@ -1556,9 +1556,34 @@ function hf_x11_properties_of_window() {
 
 function hf_clean_unused_folders() {
   cd ~ || exit
-  FOLDERS=("Documents" " Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo" ".adobe" ".debug" ".nv" ".gnugpg" ".stremio-server" ".gimp-*" ".designer" ".android" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".emacs.d" ".emulator_console_auth_token" ".gconf" ".gnome2_private" ".gnome2" ".gphoto" ".gradle" ".gstreamer-0.10" ".gtk-recordmydesktop" ".IdeaIC2017.1" ".install4j_jre" ".install4j" ".installjammerinfo" ".java" ".kde" ".lesshst" ".macromedia" ".nano" ".oracle_jre_usage" ".p2" ".pam_environment" ".pdfsam" ".pylint.d" ".pyrenamer" ".python_history" ".Skype" ".ssr" ".swt" ".thumbnails" ".tooling" ".tsd-cache" ".twinkle" ".v8flags*"".visualvm" ".wget-hsts" ".winff")
+  FOLDERS=("Documents" " Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo")
 
   for i in "${FOLDERS[@]}"; do
+    if test -d "$HOME/$i"; then
+      echo remove $i
+      if test -n "$IS_MAC"; then
+        sudo rm -rf "$HOME/${i:?}" &>/dev/null
+      else
+        rm -rf "$HOME/${i:?}" &>/dev/null
+      fi
+    elif test -f "$HOME/$i"; then
+      echo remove $i
+      if test -n "$IS_MAC"; then
+        sudo rm -f "$HOME/$i" &>/dev/null
+      else
+        rm -f "$HOME/${i:?}" &>/dev/null
+      fi
+    fi
+  done
+  cd - &>/dev/null || exit
+}
+
+
+function hf_clean_unused_folders_config() {
+  cd ~ || exit
+  FOLDERS=(".adobe" ".debug" ".nv" ".gnugpg" ".stremio-server" ".gimp-*" ".designer" ".android" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".emacs.d" ".emulator_console_auth_token" ".gconf" ".gnome2_private" ".gnome2" ".gphoto" ".gradle" ".gstreamer-0.10" ".gtk-recordmydesktop" ".IdeaIC2017.1" ".install4j_jre" ".install4j" ".installjammerinfo" ".java" ".kde" ".lesshst" ".macromedia" ".nano" ".oracle_jre_usage" ".p2" ".pam_environment" ".pdfsam" ".pylint.d" ".pyrenamer" ".python_history" ".Skype" ".ssr" ".swt" ".thumbnails" ".tooling" ".tsd-cache" ".twinkle" ".v8flags*"".visualvm" ".wget-hsts" ".winff")
+
+    for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
