@@ -74,7 +74,7 @@ function hf_log_msg() {
 }
 
 function hf_log_msg_2nd() {
-  hf_log_print "\033[00;33m--   $* \033[00m"
+  hf_log_print "\033[00;33m-- > $* \033[00m"
 }
 
 function hf_log_done() {
@@ -389,7 +389,7 @@ function hf_git_folder_tree() {
         # elif test "$1" = "pull"; then
         hf_log_msg_2nd "pull $j"
         cd "$(basename -s .git $j)"
-        git pull -r &>/dev/null
+        git pull -r
         cd ..
       fi
     done
