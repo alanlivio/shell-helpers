@@ -1013,6 +1013,10 @@ function hf_system_product_name() {
   sudo dmidecode -s system-product-name
 }
 
+function hf_system_distro() {
+  lsb_release -a
+}
+
 function hf_system_product_is_macbook() {
   if [[ $(sudo dmidecode -s system-product-name) == MacBookPro* ]]; then
     echo TRUE
