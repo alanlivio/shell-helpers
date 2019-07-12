@@ -389,7 +389,7 @@ function hf_git_folder_tree() {
         # elif test "$1" = "pull"; then
         hf_log_msg_2nd "pull $j"
         cd "$(basename -s .git $j)"
-        git pull -r
+        git pull
         cd ..
       fi
     done
