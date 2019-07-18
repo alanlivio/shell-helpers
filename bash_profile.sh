@@ -1209,7 +1209,15 @@ function hf_install_android_studio() {
   hf_snap_install_packages android-studio
 }
 
-function hf_install_slack() {
+function hf_install_slack_deb() {
+  hf_log_msg "install slack"
+  dpkg --status slack-desktop &>/dev/null
+  if test $? != 0; then
+    curl -s https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh | sudo bash
+  fi
+}
+
+function hf_install_slack_snap() {
   hf_log_msg "install slack"
   hf_snap_install_packages_classic slack
 }
