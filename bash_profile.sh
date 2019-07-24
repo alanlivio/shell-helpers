@@ -344,7 +344,7 @@ function hf_git_uninstall_reset_clean() {
     make uninstall
     git reset --hard
     git clean -df
-    cd -
+    cd - > /dev/null
   done
 }
 
@@ -1075,7 +1075,7 @@ function hf_npm_install_packages() {
       sudo -H npm install -g $PKGS_TO_INSTALL
       sudo -H npm update
     fi
-    if test "$(pwd)" == "/tmp"; then cd -; fi
+    if test "$(pwd)" == "/tmp"; then cd - > /dev/null; fi
   fi
 }
 
@@ -1101,7 +1101,7 @@ function hf_ruby_install_packages() {
   if test ! -z "$PKGS_TO_INSTALL"; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     sudo gem install $PKGS_TO_INSTALL
-    if test "$(pwd)" == "/tmp"; then cd -; fi
+    if test "$(pwd)" == "/tmp"; then cd - > /dev/null; fi
   fi
 }
 
@@ -1605,5 +1605,5 @@ function hf_clean_unused_folders_config() {
       fi
     fi
   done
-  cd - &>/dev/null || exit
+  cd - > /dev/null || exit
 }
