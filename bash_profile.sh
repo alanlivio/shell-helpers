@@ -1562,7 +1562,6 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
-  cd ~ || exit
   FOLDERS=("Documents" " Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo")
 
   for i in "${FOLDERS[@]}"; do
@@ -1582,7 +1581,6 @@ function hf_clean_unused_folders() {
       fi
     fi
   done
-  cd - &>/dev/null || exit
 }
 
 
