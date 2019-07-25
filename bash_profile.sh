@@ -1562,7 +1562,7 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
-  FOLDERS=("Documents" " Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo")
+  FOLDERS=("Documents" "Images" "Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo")
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
