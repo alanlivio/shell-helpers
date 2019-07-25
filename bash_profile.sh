@@ -346,7 +346,7 @@ function hf_git_uninstall_reset_clean() {
     make uninstall
     git reset --hard
     git clean -df
-    cd - > /dev/null
+    cd - >/dev/null
   done
 }
 
@@ -568,9 +568,8 @@ function hf_imagem_compress2() {
 # pdf functions
 # ---------------------------------------
 
-
 function hf_pdf_find_duplicates() {
- find . -iname *.pdf -not -empty -type f -printf "%s\n" | sort -rn | uniq -d |xargs -I{} -n1 find . -type f -size {}c -print0 | xargs -0 md5sum |sort | uniq -w32 --all-repeated=separate
+  find . -iname *.pdf -not -empty -type f -printf "%s\n" | sort -rn | uniq -d | xargs -I{} -n1 find . -type f -size {}c -print0 | xargs -0 md5sum | sort | uniq -w32 --all-repeated=separate
 }
 
 function hf_pdf_remove_annotations() {
@@ -680,7 +679,7 @@ function hf_network_open_ports() {
 }
 
 function hf_network_domain_info() {
-   whois $1
+  whois $1
 }
 
 function hf_network_open_connections() {
@@ -728,8 +727,8 @@ function hf_user_permissions_opt() {
   hf_log_func
   sudo chown -R root:root /opt
   sudo chmod -R 775 /opt/
-  grep root /etc/group | grep $USER > /dev/null
-  if test $? = 1; then sudo adduser $USER root > /dev/null ; fi
+  grep root /etc/group | grep $USER >/dev/null
+  if test $? = 1; then sudo adduser $USER root >/dev/null; fi
   newgrp root
 }
 
@@ -1077,7 +1076,7 @@ function hf_npm_install_packages() {
       sudo -H npm install -g $PKGS_TO_INSTALL
       sudo -H npm update
     fi
-    if test "$(pwd)" == "/tmp"; then cd - > /dev/null; fi
+    if test "$(pwd)" == "/tmp"; then cd - >/dev/null; fi
   fi
 }
 
@@ -1103,7 +1102,7 @@ function hf_ruby_install_packages() {
   if test ! -z "$PKGS_TO_INSTALL"; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     sudo gem install $PKGS_TO_INSTALL
-    if test "$(pwd)" == "/tmp"; then cd - > /dev/null; fi
+    if test "$(pwd)" == "/tmp"; then cd - >/dev/null; fi
   fi
 }
 
@@ -1111,7 +1110,7 @@ function hf_ruby_install_packages() {
 # python functions
 # ---------------------------------------
 
-function hf_python_virtualenv {
+function hf_python_virtualenv() {
   if test -d ./venv/bin/; then source ./venv/bin/activate; fi
 }
 
@@ -1394,7 +1393,7 @@ function hf_install_vp() {
 function hf_install_shfmt() {
   hf_log_func
   if test -f /opt/go/bin/shfmt; then return; fi
-  if ! test -d /opt/go/; then echo "create dir" && mkdir /opt/go/; fi
+  if ! test -d /opt/go/; then echo "create dir /opt/go/" && mkdir /opt/go/; fi
   sudo -E go get -u mvdan.cc/sh/cmd/shfmt
 }
 
@@ -1585,12 +1584,11 @@ function hf_clean_unused_folders() {
   done
 }
 
-
 function hf_clean_unused_folders_config() {
   cd ~ || exit
   FOLDERS=(".adobe" ".debug" ".nv" ".gnugpg" ".stremio-server" ".gimp-*" ".designer" ".android" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".emacs.d" ".emulator_console_auth_token" ".gconf" ".gnome2_private" ".gnome2" ".gphoto" ".gradle" ".gstreamer-0.10" ".gtk-recordmydesktop" ".IdeaIC2017.1" ".install4j_jre" ".install4j" ".installjammerinfo" ".java" ".kde" ".lesshst" ".macromedia" ".nano" ".oracle_jre_usage" ".p2" ".pam_environment" ".pdfsam" ".pylint.d" ".pyrenamer" ".python_history" ".Skype" ".ssr" ".swt" ".thumbnails" ".tooling" ".tsd-cache" ".twinkle" ".v8flags*"".visualvm" ".wget-hsts" ".winff")
 
-    for i in "${FOLDERS[@]}"; do
+  for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
@@ -1607,5 +1605,5 @@ function hf_clean_unused_folders_config() {
       fi
     fi
   done
-  cd - > /dev/null || exit
+  cd - >/dev/null || exit
 }
