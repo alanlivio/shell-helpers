@@ -744,7 +744,7 @@ function hf_user_permissions_ssh() {
 function hf_user_send_ssh_keys() {
   : ${1?"Usage: ${FUNCNAME[0]} [user]"}
 
-  ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pub
+  ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pubssh-rsa
 }
 
 # ---------------------------------------
