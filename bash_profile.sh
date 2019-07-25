@@ -73,6 +73,8 @@ function hf_log_msg() {
   hf_log_print "\033[00;33m-- $* \033[00m"
 }
 
+alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+
 function hf_log_msg_2nd() {
   hf_log_print "\033[00;33m-- > $* \033[00m"
 }
@@ -723,7 +725,7 @@ function hf_user_passwd_disable_len_restriction() {
 }
 
 function hf_user_permissions_opt() {
-  hf_log_msg "hf_user_permissions_opt"
+  hf_log_func
   sudo chown -R root:root /opt
   sudo chmod -R 775 /opt/
   grep root /etc/group | grep $USER > /dev/null
@@ -753,7 +755,7 @@ function hf_user_send_ssh_keys() {
 
 function hf_snap_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
-  hf_log_msg "install snap packages"
+  hf_log_func
 
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
@@ -774,7 +776,7 @@ function hf_snap_install_packages() {
 
 function hf_snap_install_packages_classic() {
   : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
-  hf_log_msg "install snap packages classic"
+  hf_log_func
 
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
@@ -794,7 +796,7 @@ function hf_snap_install_packages_classic() {
 }
 
 function hf_snap_upgrade() {
-  hf_log_msg "snap upgrade"
+  hf_log_func
   sudo snap refresh 2>/dev/null
 }
 
@@ -814,7 +816,7 @@ function hf_vscode_run_as_root() {
 
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
-  hf_log_msg "vscode install packages"
+  hf_log_func
 
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
@@ -850,7 +852,7 @@ function hf_service_add_to_rc_d() {
 # ---------------------------------------
 
 function hf_gnome_init() {
-  hf_log_msg "hf_gnome_init"
+  hf_log_func
   hf_gnome_sanity
   hf_gnome_disable_update
   hf_gnome_disable_unused_apps_in_search
@@ -865,7 +867,7 @@ function hf_gnome_init() {
 }
 
 function hf_gnome_reset_keybindings() {
-  hf_log_msg "hf_gnome_reset_keybindings"
+  hf_log_func
   gsettings reset-recursively org.gnome.mutter.keybindings
   gsettings reset-recursively org.gnome.mutter.wayland.keybindings
   gsettings reset-recursively org.gnome.desktop.wm.keybindings
@@ -874,7 +876,7 @@ function hf_gnome_reset_keybindings() {
 }
 
 function hf_gnome_sanity() {
-  hf_log_msg "hf_gnome_sanity"
+  hf_log_func
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
   gsettings set org.gnome.desktop.background primary-color "#000000"
@@ -915,13 +917,13 @@ function hf_gnome_sanity() {
 }
 
 function hf_gnome_disable_update() {
-  hf_log_msg "hf_gnome_disable_update"
+  hf_log_func
   gsettings set org.gnome.software download-updates false
   sudo sed -i "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
-  hf_log_msg "hf_gnome_disable_unused_apps_in_search"
+  hf_log_func
   APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or -iname '*brasero*')
   for i in $APPS_TO_HIDE; do
     sudo sh -c " echo 'NoDisplay=true' >> $i"
@@ -930,7 +932,7 @@ function hf_gnome_disable_unused_apps_in_search() {
 }
 
 function hf_gnome_disable_super_workspace_change() {
-  hf_log_msg "hf_gnome_disable_super_workspace_change"
+  hf_log_func
   # remove super+arrow virtual terminal change
   sudo sh -c 'dumpkeys |grep -v cr_Console |loadkeys'
 }
@@ -1051,7 +1053,7 @@ function hf_system_create_startup_script_systemd() {
 
 function hf_npm_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
-  hf_log_msg "npm install packages"
+  hf_log_func
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
@@ -1119,7 +1121,7 @@ function hf_python_version() {
 
 function hf_python_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [pip_packages_list]"}
-  hf_log_msg "python install packages"
+  hf_log_func
 
   if ! type pip &>/dev/null; then
     hf_log_error "pip not found."
@@ -1171,7 +1173,7 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 
 function hf_install_curl() {
-  hf_log_msg "install curl"
+  hf_log_func
   dpkg --status curl &>/dev/null
   if test $? != 0; then
     sudo apt install -y curl
@@ -1179,7 +1181,7 @@ function hf_install_curl() {
 }
 
 function hf_install_gitkraken() {
-  hf_log_msg "install gitkraken"
+  hf_log_func
   dpkg --status gitkraken &>/dev/null
   if test $? != 0; then
     hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
@@ -1187,7 +1189,7 @@ function hf_install_gitkraken() {
 }
 
 function hf_install_chrome() {
-  hf_log_msg "install chrome"
+  hf_log_func
   dpkg --status google-chrome-stable &>/dev/null
   if test $? != 0; then
     hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -1195,22 +1197,22 @@ function hf_install_chrome() {
 }
 
 function hf_install_pycharm() {
-  hf_log_msg "install pycharm"
+  hf_log_func
   hf_snap_install_packages_classic pycharm-professional
 }
 
 function hf_install_clion() {
-  hf_log_msg "install clion("
+  hf_log_func
   hf_snap_install_packages_classic clion
 }
 
 function hf_install_android_studio() {
-  hf_log_msg "install android-studio"
+  hf_log_func
   hf_snap_install_packages android-studio
 }
 
 function hf_install_slack_deb() {
-  hf_log_msg "install slack"
+  hf_log_func
   dpkg --status slack-desktop &>/dev/null
   if test $? != 0; then
     curl -s https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh | sudo bash
@@ -1218,17 +1220,17 @@ function hf_install_slack_deb() {
 }
 
 function hf_install_slack_snap() {
-  hf_log_msg "install slack"
+  hf_log_func
   hf_snap_install_packages_classic slack
 }
 
 function hf_install_spotify() {
-  hf_log_msg "install spotify"
+  hf_log_func
   hf_snap_install_packages spotify
 }
 
 function hf_install_grub_customizer() {
-  hf_log_msg "install grub-customizer"
+  hf_log_func
   dpkg --status grub-customizer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
@@ -1239,7 +1241,7 @@ function hf_install_grub_customizer() {
 }
 
 function hf_install_java_oraclejdk11() {
-  hf_log_msg "install java"
+  hf_log_func
   dpkg --status oracle-java11-installer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
@@ -1250,7 +1252,7 @@ function hf_install_java_oraclejdk11() {
 }
 
 function hf_install_java_openjdk11() {
-  hf_log_msg "install java"
+  hf_log_func
   dpkg --status openjdk-11-jdk &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-*
@@ -1261,7 +1263,7 @@ function hf_install_java_openjdk11() {
 }
 
 function hf_install_simplescreenrercoder() {
-  hf_log_msg "install simplescreenrecorder"
+  hf_log_func
   dpkg --status simplescreenrecorder &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
@@ -1272,7 +1274,7 @@ function hf_install_simplescreenrercoder() {
 }
 
 function hf_install_vscode() {
-  hf_log_msg "install vscode"
+  hf_log_func
   dpkg --status code &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/vscode*
@@ -1285,7 +1287,7 @@ function hf_install_vscode() {
 }
 
 function hf_install_insync() {
-  hf_log_msg "install insync"
+  hf_log_func
   dpkg --status insync &>/dev/null
   if test $? != 0; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
@@ -1296,7 +1298,7 @@ function hf_install_insync() {
 }
 
 function hf_install_foxit() {
-  hf_log_msg "install foxit"
+  hf_log_func
   if test -d /opt/foxitsoftware; then return; fi
   URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader2.4.1.0609_Server_x64_enu_Setup.run.tar.gz
   hf_fetch_extract_to $URL /tmp/
@@ -1307,7 +1309,7 @@ function hf_install_foxit() {
 }
 
 function hf_install_stremio() {
-  hf_log_msg "install stremio"
+  hf_log_func
   if test -d /opt/stremio; then return; fi
   mkdir /opt/stremio/
 
@@ -1324,7 +1326,7 @@ function hf_install_stremio() {
 }
 
 function hf_install_tor() {
-  hf_log_msg "install tor"
+  hf_log_func
   if test -d /opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
   hf_fetch_extract_to $URL /opt/
@@ -1335,7 +1337,7 @@ function hf_install_tor() {
 }
 
 function hf_install_zotero() {
-  hf_log_msg "install zotero"
+  hf_log_func
   if test -d /opt/zotero; then return; fi
   URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
   hf_fetch_extract_to $URL /tmp/
@@ -1353,7 +1355,7 @@ function hf_install_zotero() {
 }
 
 function hf_install_zotero_ppa() {
-  hf_log_msg "install zotero"
+  hf_log_func
   dpkg --status zotero &>/dev/null
   if test $? != 0; then
     sudo add-apt-repository -y ppa:retorquere/zotero
@@ -1363,7 +1365,7 @@ function hf_install_zotero_ppa() {
 }
 
 function hf_install_shellcheck() {
-  hf_log_msg "install shellsheck"
+  hf_log_func
   if test -f /usr/local/bin/shellcheck; then return; fi
   URL=https://github.com/koalaman/shellcheck/archive/v0.6.0.tar.gz
   hf_fetch_extract_to $URL /tmp/
@@ -1371,7 +1373,7 @@ function hf_install_shellcheck() {
 }
 
 function hf_install_tizen_studio() {
-  hf_log_msg "install tizen studio"
+  hf_log_func
   if test -d /opt/tizen-studio; then return; fi
   URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
   wget $URL -P /tmp/
@@ -1380,7 +1382,7 @@ function hf_install_tizen_studio() {
 }
 
 function hf_install_vp() {
-  hf_log_msg "installer visual-paradigm"
+  hf_log_func
   if test -d /opt/vp; then return; fi
   URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
   hf_fetch_extract_to $URL /tmp/
@@ -1390,7 +1392,7 @@ function hf_install_vp() {
 }
 
 function hf_install_shfmt() {
-  hf_log_msg "install shfmt"
+  hf_log_func
   if test -f /opt/go/bin/shfmt; then return; fi
   if ! test -d /opt/go/; then echo "create dir" && mkdir /opt/go/; fi
   sudo -E go get -u mvdan.cc/sh/cmd/shfmt
@@ -1401,14 +1403,14 @@ function hf_install_shfmt() {
 # ---------------------------------------
 
 function hf_apt_upgrade() {
-  hf_log_msg "apt upgrade"
+  hf_log_func
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
 }
 
 function hf_apt_fixes() {
-  hf_log_msg "apt fixes"
+  hf_log_func
   sudo dpkg --configure -a
   sudo apt-get install -f
   sudo apt-get dist-upgrade
@@ -1416,7 +1418,7 @@ function hf_apt_fixes() {
 
 function hf_apt_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
-  hf_log_msg "install apt packages"
+  hf_log_func
 
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1434,7 +1436,7 @@ function hf_apt_install_packages() {
 }
 
 function hf_apt_autoremove() {
-  hf_log_msg "apt autoremove"
+  hf_log_func
   if [ "$(apt --dry-run autoremove 2>/dev/null | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
     sudo apt -y autoremove
   fi
@@ -1442,7 +1444,7 @@ function hf_apt_autoremove() {
 
 function hf_apt_remove_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
-  hf_log_msg "remove packages"
+  hf_log_func
 
   PKGS_TO_REMOVE=""
   for i in "$@"; do
