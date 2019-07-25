@@ -397,7 +397,7 @@ function hf_git_folder_tree() {
     done
   done
 
-  cd $CWD || exit
+  cd $CWD
 }
 
 # ---------------------------------------
@@ -1605,5 +1605,5 @@ function hf_clean_unused_folders_config() {
       fi
     fi
   done
-  cd - >/dev/null || exit
+  cd - >/dev/null
 }
