@@ -50,37 +50,6 @@ function hf_powershell_profiles_reset() {
 }
 
 # ---------------------------------------
-# install functions
-# ---------------------------------------
-function hf_install_chocolatey() {
-  Write-Output "install chocolatey"
-  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-  Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-  cmd /c 'setx ChocolateyToolsLocation C:\opt\'
-
-  choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
-  choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
-  choco -y --acceptlicense --no-progress disable -n showDownloadProgress
-  choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
-  choco -y --acceptlicense feature enable -name=exitOnRebootDetected
-
-}
-
-function hf_test_install_chocolatey() {
-  if (-Not (Get-Command "choco" -ErrorAction SilentlyContinue)){ Write-Output "install chocolatey"}
-}
-
-function hf_install_bash() {
-  hf_test_install_chocolatey
-  choco install -y --acceptlicense --no-progress msys2
-}
-
-function hf_install_gdrive() {
-  hf_test_install_chocolatey
-  choco install -y --acceptlicense --no-progress google-backup-and-sync
-}
-
-# ---------------------------------------
 # network functions
 # ---------------------------------------
 
@@ -204,8 +173,27 @@ function hf_windows_update() {
 }
 
 # ---------------------------------------
-# windows function
+# init function
 # ---------------------------------------
+
+function hf_install_chocolatey() {
+  Write-Output "install chocolatey"
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+  cmd /c 'setx ChocolateyToolsLocation C:\opt\'
+
+  choco -y --acceptlicense --no-progress enable -n allowGlobalConfirmation
+  choco -y --acceptlicense --no-progress disable -n showNonElevatedWarnings
+  choco -y --acceptlicense --no-progress disable -n showDownloadProgress
+  choco -y --acceptlicense --no-progress enable -n removePackageInformationOnUninstall
+  choco -y --acceptlicense feature enable -name=exitOnRebootDetected
+}
+
+function hf_install_bash() {
+  hf_test_install_chocolatey
+  choco install -y --acceptlicense --no-progress msys2
+}
+
 function hf_windows_sanity() {
   hf_remove_unused_folders
   hf_disable_start_menu_bing
