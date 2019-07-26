@@ -322,6 +322,11 @@ function hf_git_ammend_push_force() {
   git push --force
 }
 
+function hf_git_check_if_need_pull() {
+  [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} \
+    | sed 's/\// /g') | cut -f1) ] && echo FALSE || echo TRUE
+}
+
 function hf_git_create_gitignore() {
   : ${1?"Usage: ${FUNCNAME[0]} [contexts,..]"}
 
