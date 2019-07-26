@@ -324,7 +324,7 @@ function hf_git_ammend_push_force() {
 
 function hf_git_check_if_need_pull() {
   [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} \
-    | sed 's/\// /g') | cut -f1) ] && echo FALSE || echo TRUE
+    | sed 's/\// /g') | cut -f1) ] && printf FALSE || printf TRUE
 }
 
 function hf_git_create_gitignore() {
@@ -1025,9 +1025,9 @@ function hf_system_distro() {
 
 function hf_system_product_is_macbook() {
   if [[ $(sudo dmidecode -s system-product-name) == MacBookPro* ]]; then
-    echo TRUE
+    printf TRUE
   else
-    echo FALSE
+    printf FALSE
   fi
 }
 
