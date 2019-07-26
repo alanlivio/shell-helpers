@@ -164,6 +164,18 @@ function hf_disable_not_essential_context_menu() {
 }
 
 # ---------------------------------------
+# permissions functions
+# ---------------------------------------
+
+function hf_adminstrator_user_enable() {
+  net user administrator /active:yes
+}
+
+function hf_adminstrator_user_disable() {
+  net user administrator /active:no
+}
+
+# ---------------------------------------
 # update functions
 # ---------------------------------------
 
