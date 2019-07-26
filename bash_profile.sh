@@ -1239,14 +1239,14 @@ function hf_install_grub_customizer() {
   fi
 }
 
-function hf_install_java_oraclejdk11() {
+function hf_install_java_oraclejdk() {
   hf_log_func
-  dpkg --status oracle-java11-installer &>/dev/null
+  dpkg --status oracle-java12-installer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
     sudo add-apt-repository -y ppa:linuxuprising/java
     sudo apt update
-    sudo apt install -y oracle-java11-installer
+    sudo apt install -y oracle-java12-installer
   fi
 }
 
