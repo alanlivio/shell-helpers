@@ -153,14 +153,14 @@ function hf_uninstall_not_essential_store_packages() {
 function hf_disable_not_essential_context_menu() {
   Write-Output "remove context menu unused"
   # * Sharing
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" /f'
+  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f }
+  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f }
+  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" /f }
   # AllFilesystemObjects
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" /f'
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" /f'
+  if (Test-Path "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") { reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" /f }
+  if (Test-Path "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu") { reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" /f }
   # Directory
-  cmd /c 'IF EXIST "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" reg delete "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" /f'
+  if (Test-Path "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing") { reg delete "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" /f }
 }
 
 # ---------------------------------------
