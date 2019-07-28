@@ -212,7 +212,6 @@ function hf_install_chocolatey() {
 }
 
 function hf_install_bash() {
-  hf_test_install_chocolatey
   choco install -y --acceptlicense --no-progress msys2
 }
 
