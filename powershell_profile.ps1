@@ -188,6 +188,16 @@ function hf_windows_update() {
 # init function
 # ---------------------------------------
 
+function hf_windows_sanity() {
+  hf_remove_unused_folders
+  hf_disable_start_menu_bing
+  hf_disable_this_pc_folders
+  hf_disable_tiles_from_start_menu
+  hf_disable_not_essential_context_menu
+  hf_uninstall_not_essential_store_packages
+  hf_uninstall_ondrive
+}
+
 function hf_install_chocolatey() {
   Write-Output "install chocolatey"
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -206,12 +216,8 @@ function hf_install_bash() {
   choco install -y --acceptlicense --no-progress msys2
 }
 
-function hf_windows_sanity() {
-  hf_remove_unused_folders
-  hf_disable_start_menu_bing
-  hf_disable_this_pc_folders
-  hf_disable_tiles_from_start_menu
-  hf_disable_not_essential_context_menu
-  hf_uninstall_not_essential_store_packages
-  hf_uninstall_ondrive
+function hf_windows_init() {
+  hf_windows_sanity
+  hf_install_chocolatey
+  hf_install_bash
 }
