@@ -89,16 +89,16 @@ function hf_remove_unused_folders() {
   Write-Output "remove unused folders"
   $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
     "Local Settings/")
-  $folders | ForEach-Object {Remove-Item -Force -Recurse -ErrorAction Ignore $_}
+  $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
 function hf_disable_tiles_from_start_menu() {
   (New-Object -Com Shell.Application).
   NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
   Items() |
-    ForEach-Object { $_.Verbs() } |
-    Where-Object {$_.Name -match 'Un.*pin from Start'} |
-    ForEach-Object {$_.DoIt()}
+  ForEach-Object { $_.Verbs() } |
+  Where-Object { $_.Name -match 'Un.*pin from Start' } |
+  ForEach-Object { $_.DoIt() }
 }
 
 function hf_enable_dark_mode() {
@@ -109,22 +109,22 @@ function hf_enable_dark_mode() {
 function hf_disable_this_pc_folders() {
   Write-Output "disable this pc folders"
   $folders = @(
-  "{088e3905-0323-4b02-9826-5d99428e115f}",
-  "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}",
-  "{1CF1260C-4DD0-4ebb-811F-33C572699FDE}",
-  "{24ad3ad4-a569-4530-98e1-ab02f9417aa8}",
-  "{374DE290-123F-4565-9164-39C4925E467B}",
-  "{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}",
-  "{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}",
-  "{A0953C92-50DC-43bf-BE83-3742FED03C9C}",
-  "{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}",
-  "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}",
-  "{d3162b92-9365-467a-956b-92703aca08af}",
-  "{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}")
+    "{088e3905-0323-4b02-9826-5d99428e115f}",
+    "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}",
+    "{1CF1260C-4DD0-4ebb-811F-33C572699FDE}",
+    "{24ad3ad4-a569-4530-98e1-ab02f9417aa8}",
+    "{374DE290-123F-4565-9164-39C4925E467B}",
+    "{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}",
+    "{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}",
+    "{A0953C92-50DC-43bf-BE83-3742FED03C9C}",
+    "{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}",
+    "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}",
+    "{d3162b92-9365-467a-956b-92703aca08af}",
+    "{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}")
   $path1 = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
   $path2 = "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
-  $folders | ForEach-Object {reg delete $path1$_ /f}
-  $folders | ForEach-Object {reg delete $path2$_ /f}
+  $folders | ForEach-Object { reg delete $path1$_ /f }
+  $folders | ForEach-Object { reg delete $path2$_ /f }
 }
 
 function hf_disable_start_menu_bing() {
@@ -144,10 +144,10 @@ function hf_uninstall_ondrive() {
 function hf_uninstall_not_essential_store_packages() {
   # windows
   Write-Output "packages store remove unused from Microsoft"
-  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint Microsoft.Office.Desktop Microsoft.MicrosoftSolitaireCollection Microsoft.MixedReality.Portal".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
+  "Microsoft.XboxGameOverlay Microsoft.GetHelp Microsoft.XboxApp Microsoft.Xbox.TCUI Microsoft.XboxSpeechToTextOverlay Microsoft.Wallet Microsoft.MinecraftUWP A278AB0D.MarchofEmpires Microsoft.Messaging Microsoft.Appconnector Microsoft.BingNews Microsoft.SkypeApp Microsoft.BingSports Microsoft.CommsPhone Microsoft.ConnectivityStore Microsoft.Office.Sway Microsoft.WindowsPhone Microsoft.XboxIdentityProvider Microsoft.StorePurchaseApp Microsoft.DesktopAppInstaller Microsoft.BingWeather Microsoft.MicrosoftStickyNotes Microsoft.MicrosoftSolitaireCollection Microsoft.OneConnect Microsoft.People Microsoft.ZuneMusic Microsoft.ZuneVideo Microsoft.Getstarted Microsoft.XboxApp microsoft.windowscommunicationsapps Microsoft.WindowsCamera Microsoft.WindowsSoundRecorder Microsoft.WindowsMaps Microsoft.3DBuilder Microsoft.WindowsFeedbackHub Microsoft.MicrosoftOfficeHub Microsoft.WindowsAlarms Microsoft.3DBuilder Microsoft.OneDrive Microsoft.Print3D Microsoft.Office.OneNote Microsoft.Microsoft3DViewer Microsoft.XboxGamingOverlay Microsoft.MSPaint Microsoft.Office.Desktop Microsoft.MicrosoftSolitaireCollection Microsoft.MixedReality.Portal".Split(" ") | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
   # others
   Write-Output "packages store remove unused from others"
-  "Facebook.Facebook SpotifyAB.SpotifyMusic 9E2F88E3.Twitter A278AB0D.DisneyMagicKingdoms king.com.CandyCrushFriends king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga 7EE7776C.LinkedInforWindows king.com.CandyCrushSaga NORDCURRENT.COOKINGFEVER".Split(" ") | ForEach-Object {Get-AppxPackage -allusers $_ |remove-AppxPackage}
+  "Facebook.Facebook SpotifyAB.SpotifyMusic 9E2F88E3.Twitter A278AB0D.DisneyMagicKingdoms king.com.CandyCrushFriends king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga 7EE7776C.LinkedInforWindows king.com.CandyCrushSaga NORDCURRENT.COOKINGFEVER".Split(" ") | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
 }
 
 function hf_disable_not_essential_context_menu() {
