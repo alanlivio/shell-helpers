@@ -109,14 +109,37 @@ function hf_test_exist_command() {
 # windows functions
 # ---------------------------------------
 
-function hf_windows_init() {
-  hf_clean_unused_folders
-  hf_windows_install_choco
-}
+if test -n "$IS_WINDOWS"; then
 
-function hf_windows_install_choco() {
-  powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-}
+  function hf_choco_install() {
+    hf_log_msg "${FUNCNAME[0]}"
+    choco install -y --acceptlicense --no-progress "$@"
+  }
+
+  function hf_choco_upgrade() {
+    hf_log_msg "${FUNCNAME[0]}"
+    choco upgrade -y --acceptlicense --no-progress all
+  }
+
+  function hf_msys_search() {
+    hf_log_msg "${FUNCNAME[0]}"
+    pacman -Ss "$@"
+  }
+
+  function hf_msys_install() {
+    hf_log_msg "${FUNCNAME[0]}"
+    pacman -Su --needed "$@"
+  }
+
+  function hf_msys_upgrade() {
+    hf_log_msg "${FUNCNAME[0]}"
+    pacman -Su
+  }
+
+  function hf_windows_install_choco() {
+    powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+  }
+fi
 
 # ---------------------------------------
 # mac functions
