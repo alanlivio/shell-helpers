@@ -172,6 +172,12 @@ if test -n "$IS_MAC"; then
   function hf_mac_install_refind() {
     sudo apt install -y refind
   }
+
+  function hf_mac_init(){
+    hf_mac_install_homebrew
+    hf_mac_install_bash4
+  }
+
 fi
 
 # ---------------------------------------
