@@ -145,39 +145,34 @@ fi
 # mac functions
 # ---------------------------------------
 
-function hf_mac_init() {
-  hf_clean_unused_folders
-  hf_mac_install_homebrew
-  hf_mac_install_bash4
-  hf_user_permissions_opt
-}
+if test -n "$IS_MAC"; then
+  function hf_mac_enable_wifi() {
+    sudo apt install -y bcmwl-kernel-source
+  }
 
-function hf_mac_enable_wifi() {
-  sudo apt install -y bcmwl-kernel-source
-}
+  function hf_mac_keyboard_pt_br() {
+    setxkbmap -model abnt -layout us -variant intl
+  }
 
-function hf_mac_keyboard_pt_br() {
-  setxkbmap -model abnt -layout us -variant intl
-}
+  function hf_mac_keyboard_fnmode() {
+    sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
+  }
 
-function hf_mac_keyboard_fnmode() {
-  sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
-}
+  function hf_mac_install_homebrew() {
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  }
 
-function hf_mac_install_homebrew() {
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-}
+  function hf_mac_install_bash4() {
+    brew install bash
+    sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
+    sudo chsh -s /usr/local/bin/bash
+    echo $BASH && echo $BASH_VERSION
+  }
 
-function hf_mac_install_bash4() {
-  brew install bash
-  sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
-  sudo chsh -s /usr/local/bin/bash
-  echo $BASH && echo $BASH_VERSION
-}
-
-function hf_mac_install_refind() {
-  sudo apt install -y refind
-}
+  function hf_mac_install_refind() {
+    sudo apt install -y refind
+  }
+fi
 
 # ---------------------------------------
 # audio functions
