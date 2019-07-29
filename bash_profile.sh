@@ -142,22 +142,30 @@ if test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# mac functions
+# ubuntu-on-mac functions
+# ---------------------------------------
+
+function hf_mac_enable_wifi() {
+  sudo apt install -y bcmwl-kernel-source
+}
+
+function hf_mac_keyboard_pt_br() {
+  setxkbmap -model abnt -layout us -variant intl
+}
+
+function hf_mac_keyboard_fnmode() {
+  sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
+}
+
+function hf_mac_install_refind() {
+  sudo apt install -y refind
+}
+
+# ---------------------------------------
+# macos-only functions
 # ---------------------------------------
 
 if test -n "$IS_MAC"; then
-  function hf_mac_enable_wifi() {
-    sudo apt install -y bcmwl-kernel-source
-  }
-
-  function hf_mac_keyboard_pt_br() {
-    setxkbmap -model abnt -layout us -variant intl
-  }
-
-  function hf_mac_keyboard_fnmode() {
-    sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
-  }
-
   function hf_mac_install_homebrew() {
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   }
@@ -169,15 +177,10 @@ if test -n "$IS_MAC"; then
     echo $BASH && echo $BASH_VERSION
   }
 
-  function hf_mac_install_refind() {
-    sudo apt install -y refind
-  }
-
-  function hf_mac_init(){
+  function hf_mac_init() {
     hf_mac_install_homebrew
     hf_mac_install_bash4
   }
-
 fi
 
 # ---------------------------------------
