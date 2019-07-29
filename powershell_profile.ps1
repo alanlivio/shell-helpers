@@ -13,7 +13,6 @@ $SCRIPT_CFG = "$SCRIPT_DIR\powershell_profile_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
-
 # ---------------------------------------
 # go home
 # ---------------------------------------
@@ -78,6 +77,7 @@ function hf_explorer_open_start_menu() {
 # ---------------------------------------
 
 function hf_store_list_installed() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
@@ -86,13 +86,14 @@ function hf_store_list_installed() {
 # ---------------------------------------
 
 function hf_remove_unused_folders() {
-  Write-Output "remove unused folders"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
     "Local Settings/")
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
 function hf_disable_tiles_from_start_menu() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   (New-Object -Com Shell.Application).
   NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
   Items() |
@@ -102,12 +103,12 @@ function hf_disable_tiles_from_start_menu() {
 }
 
 function hf_enable_dark_mode() {
-  Write-Output "enable dark mode"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
 
 function hf_disable_this_pc_folders() {
-  Write-Output "disable this pc folders"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   $folders = @(
     "{088e3905-0323-4b02-9826-5d99428e115f}",
     "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}",
@@ -123,11 +124,13 @@ function hf_disable_this_pc_folders() {
     "{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}")
   $path1 = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
   $path2 = "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
-  $folders | ForEach-Object { reg delete $path1$_ /f }
-  $folders | ForEach-Object { reg delete $path2$_ /f }
+  $folders | ForEach-Object { if ( Test-Path $path1$_) { reg delete $path1$_ /f } }
+  $folders | ForEach-Object { if (Test-Path $path2$_) { reg delete $path2$_ /f }
+  }
 }
 
 function hf_disable_start_menu_bing() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f
@@ -135,16 +138,15 @@ function hf_disable_start_menu_bing() {
 }
 
 function hf_uninstall_ondrive() {
-  Write-Output "uninstall onedrive"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
   reg add "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v System.IsPinnedToNameSpaceTree /d "0" /t REG_DWORD /f
 }
 
 function hf_uninstall_not_essential_store_packages() {
-  # windows
-  Write-Output "packages store remove unused from Microsoft"
-  $pkgs='Microsoft.XboxGameOverlay
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  $pkgs = 'Microsoft.XboxGameOverlay
   Microsoft.GetHelp
   Microsoft.XboxApp
   Microsoft.Xbox.TCUI
@@ -198,7 +200,7 @@ function hf_uninstall_not_essential_store_packages() {
 }
 
 function hf_disable_not_essential_context_menu() {
-  Write-Output "remove context menu unused"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # * Sharing
   if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f }
   if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f }
@@ -215,10 +217,12 @@ function hf_disable_not_essential_context_menu() {
 # ---------------------------------------
 
 function hf_adminstrator_user_enable() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   net user administrator /active:yes
 }
 
 function hf_adminstrator_user_disable() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   net user administrator /active:no
 }
 
@@ -227,6 +231,7 @@ function hf_adminstrator_user_disable() {
 # ---------------------------------------
 
 function hf_windows_update() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   control update
   wuauclt /detectnow /updatenow
 }
@@ -236,6 +241,7 @@ function hf_windows_update() {
 # ---------------------------------------
 
 function hf_windows_sanity() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_remove_unused_folders
   hf_disable_start_menu_bing
   hf_disable_this_pc_folders
@@ -246,7 +252,7 @@ function hf_windows_sanity() {
 }
 
 function hf_install_chocolatey() {
-  Write-Output "install chocolatey"
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
   Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
   cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -259,10 +265,12 @@ function hf_install_chocolatey() {
 }
 
 function hf_install_bash() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   choco install -y --acceptlicense --no-progress msys2
 }
 
 function hf_windows_init() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
   hf_install_chocolatey
   hf_install_bash
