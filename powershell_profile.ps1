@@ -151,6 +151,8 @@ function hf_uninstall_ondrive() {
 
 function hf_uninstall_not_essential_store_packages() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+
+  # windows
   $pkgs = 'Microsoft.XboxGameOverlay
   Microsoft.GetHelp
   Microsoft.XboxApp
@@ -199,9 +201,19 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.MicrosoftSolitaireCollection
   Microsoft.MixedReality.Portal'
   $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
+
   # others
-  Write-Output "packages store remove unused from others"
-  "Facebook.Facebook SpotifyAB.SpotifyMusic 9E2F88E3.Twitter A278AB0D.DisneyMagicKingdoms king.com.CandyCrushFriends king.com.BubbleWitch3Saga king.com.CandyCrushSodaSaga 7EE7776C.LinkedInforWindows king.com.CandyCrushSaga NORDCURRENT.COOKINGFEVER".Split(" ") | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
+  $pkgs = 'Facebook.Facebook
+  SpotifyAB.SpotifyMusic
+  9E2F88E3.Twitter
+  A278AB0D.DisneyMagicKingdoms
+  king.com.CandyCrushFriends
+  king.com.BubbleWitch3Saga
+  king.com.CandyCrushSodaSaga
+  7EE7776C.LinkedInforWindows
+  king.com.CandyCrushSaga
+  NORDCURRENT.COOKINGFEVER'
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
 }
 
 function hf_disable_not_essential_context_menu() {
