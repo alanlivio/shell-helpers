@@ -15,6 +15,11 @@ if (Test-Path $SCRIPT_CFG) {
 }
 
 # ---------------------------------------
+# go home
+# ---------------------------------------
+Set-Location ~
+
+# ---------------------------------------
 # profile functions
 # ---------------------------------------
 
@@ -25,11 +30,6 @@ function hf_profile_install() {
 function hf_profile_reload() {
   Import-Module -Force -Global $SCRIPT_NAME
 }
-
-# ---------------------------------------
-# go home
-# ---------------------------------------
-Set-Location ~
 
 # ---------------------------------------
 # powershell functions
@@ -173,7 +173,7 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.ZuneVideo
   Microsoft.Getstarted
   Microsoft.XboxApp
-  microsoft.windowscommunicationsapps
+  Microsoft.windowscommunicationsapps
   Microsoft.WindowsCamera
   Microsoft.WindowsSoundRecorder
   Microsoft.WindowsMaps
