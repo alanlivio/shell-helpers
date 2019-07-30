@@ -26,18 +26,6 @@ if test $IS_LINUX; then
 fi
 
 # ---------------------------------------
-# load bash_profile_cfg
-# ---------------------------------------
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
-SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
-if test -f $SCRIPT_CFG; then
-  source $SCRIPT_CFG
-fi
-
-# ---------------------------------------
 # profile functions
 # ---------------------------------------
 
@@ -1639,3 +1627,15 @@ function hf_clean_unused_folders_config() {
   done
   cd - >/dev/null
 }
+
+# ---------------------------------------
+# load bash_profile_cfg
+# ---------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
+SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
+SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
+if test -f $SCRIPT_CFG; then
+  source $SCRIPT_CFG
+fi
