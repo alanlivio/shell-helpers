@@ -859,7 +859,17 @@ function hf_vscode_uninstall_all_packages() {
 }
 
 # ---------------------------------------
-# gnome functions
+# ubuntu functions
+# ---------------------------------------
+
+function hf_ubuntu_upgrade() {
+  sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
+  sudo apt update && sudo apt dist-upgrade
+  do-release-upgrade
+}
+
+# ---------------------------------------
+# service functions
 # ---------------------------------------
 
 function hf_service_add_to_rc_d() {
