@@ -1140,6 +1140,13 @@ function hf_ruby_install_packages() {
 # python functions
 # ---------------------------------------
 
+function hf_python_reinstall() {
+  sudo update-alternatives --remove-all python
+  sudo apt-get install --reinstall python
+  sudo update-alternatives --remove-all python3
+  sudo apt-get install --reinstall python3
+}
+
 function hf_python_venv() {
   if test -d ./venv/bin/; then source ./venv/bin/activate; fi
 }
