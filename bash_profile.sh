@@ -1103,8 +1103,8 @@ function hf_npm_install_packages() {
       npm install -g $PKGS_TO_INSTALL
       npm update
     else
-      sudo -H npm install -g $PKGS_TO_INSTALL
-      sudo -H npm update
+      sudo npm install -g $PKGS_TO_INSTALL
+      sudo npm update
     fi
     if test "$(pwd)" == "/tmp"; then cd - >/dev/null; fi
   fi
@@ -1165,7 +1165,7 @@ function hf_python_install_packages() {
 
   if ! type pip &>/dev/null; then
     hf_log_error "pip not found."
-    sudo -H pip install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
+    sudo pip install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
   fi
 
   PKGS_TO_INSTALL=""
@@ -1182,9 +1182,9 @@ function hf_python_install_packages() {
   done
   if test ! -z "$PKGS_TO_INSTALL"; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
-    sudo -H pip install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
+    sudo pip install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
   fi
-  sudo -H pip install -U "$@" &>/dev/null
+  sudo pip install -U "$@" &>/dev/null
 }
 
 # ---------------------------------------
