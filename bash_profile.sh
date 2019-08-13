@@ -736,7 +736,7 @@ function hf_virtualbox_resize_to_2gb() {
 # ---------------------------------------
 
 function hf_user_permissions_sudo() {
-  SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
+  SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:SETENV:ALL' >> /etc/sudoers.d/sudoers-user"
 }
 
 function hf_user_passwd_disable_len_restriction() {
