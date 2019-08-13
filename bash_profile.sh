@@ -1551,6 +1551,9 @@ function hf_fetch_extract_to() {
   fi
   echo "extracting $FILE_NAME"
   case $FILE_EXTENSION in
+  tgz)
+    tar -xzf /tmp/$FILE_NAME -C $2
+    ;;
   gz) # consider tar.gz
     tar -xf /tmp/$FILE_NAME -C $2
     ;;
