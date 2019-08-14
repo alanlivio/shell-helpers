@@ -1607,7 +1607,25 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
-  FOLDERS=("Documents" "Images" "Favorites" "Pictures" "Public" "Templates" "Videos" "Music" "Links" "Movies" "Searches" "Contacts" "OneDrive" "Saved Games" "Favorites" "3D Objects" "SendTo")
+  FOLDERS=(
+    "Documents"
+    "Images"
+    "Favorites"
+    "Pictures"
+    "Public"
+    "Templates"
+    "Videos"
+    "Music"
+    "Links"
+    "Movies"
+    "Searches"
+    "Contacts"
+    "OneDrive"
+    "Saved Games"
+    "Favorites"
+    "3D Objects"
+    "SendTo"
+  )
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
@@ -1630,7 +1648,19 @@ function hf_clean_unused_folders() {
 
 function hf_clean_unused_folders_config() {
   cd ~ || exit
-  FOLDERS=(".mozilla/" ".cache/" ".nv" ".gimp-*" ".java/" ".android" ".apport-ignore.xml " ".bash_logout" ".eclipse" ".gconf" ".p2"  ".thumbnails")
+  FOLDERS=(
+    ".mozilla/"
+    ".nv"
+    ".gimp-*"
+    ".java/"
+    ".android"
+    ".apport-ignore.xml "
+    ".bash_logout"
+    ".eclipse"
+    ".gconf"
+    ".p2"
+    ".thumbnails"
+  )
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
