@@ -1159,7 +1159,7 @@ function hf_python_reinstall() {
   sudo apt-get install --reinstall python3
 }
 
-function hf_python_venv() {
+function hf_venv_activate() {
   if test -d ./venv/bin/; then source ./venv/bin/activate; fi
 }
 
