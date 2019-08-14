@@ -872,8 +872,34 @@ function hf_ubuntu_upgrade() {
 # service functions
 # ---------------------------------------
 
-function hf_service_add_to_rc_d() {
+function hf_service_status_all() {
+  sudo service --status-all
+}
+
+function hf_service_rcd_enable() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
   sudo update-rc.d $1 enable
+}
+
+function hf_service_rcd_disable() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
+  update-rc.d -f $1 disable
+}
+
+function hf_system_rcd_add_script() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  echo "creating /etc/init.d/$1"
+  sudo touch /etc/init.d/$1
+  sudo chmod 755 /etc/init.d/$1
+  sudo update-rc.d $1 defaults
+}
+
+function hf_system_rcd_create_startup_script() {
+  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  echo "creating /etc/init.d/$1"
+  echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
+  systemctl daemon-reload
+  systemctl enable yourservice.service
 }
 
 # ---------------------------------------
@@ -1058,22 +1084,6 @@ function hf_system_product_is_macbook() {
 
 function hf_system_list_gpu() {
   lspci -nn | grep -E 'VGA|Display'
-}
-
-function hf_system_create_startup_script_initd() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
-  echo "creating /etc/init.d/$1"
-  sudo touch /etc/init.d/$1
-  sudo chmod 755 /etc/init.d/$1
-  sudo update-rc.d $1 defaults
-}
-
-function hf_system_create_startup_script_systemd() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
-  echo "creating /etc/init.d/$1"
-  echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
-  systemctl daemon-reload
-  systemctl enable yourservice.service
 }
 
 # ---------------------------------------
