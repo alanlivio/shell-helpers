@@ -1658,20 +1658,23 @@ function hf_clean_unused_folders() {
   done
 }
 
-function hf_clean_unused_folders_config() {
+function hf_clean_unused_config() {
   cd ~ || exit
   FOLDERS=(
-    ".mozilla/"
-    ".nv"
-    ".gimp-*"
-    ".java/"
     ".android"
     ".apport-ignore.xml "
+    ".bash_history"
     ".bash_logout"
     ".eclipse"
-    ".gconf"
+    ".gimp-*"
+    ".gradle/"
+    ".java/"
+    ".mozilla/"
+    ".mysql_history"
     ".p2"
+    ".python_history"
     ".thumbnails"
+    ".viminfo"
   )
 
   for i in "${FOLDERS[@]}"; do
