@@ -2,7 +2,7 @@
 
 ![terminal](https://upload.wikimedia.org/wikipedia/commons/8/82/Gnu-bash-logo.svg)
 
-This project made easy bash profile configuration and have helper functions to be used in bash.
+This project provide a set of helper functions to be used in bash.
 
 ## How to use
 
