@@ -1352,9 +1352,9 @@ function hf_install_insync() {
 function hf_install_foxit() {
   hf_log_func
   if test -d /opt/foxitsoftware; then return; fi
-  URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader2.4.1.0609_Server_x64_enu_Setup.run.tar.gz
+  URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
   hf_fetch_extract_to $URL /tmp/
-  sudo /tmp/FoxitReader.enu.setup.2.4.1.0609\(r08f07f8\).x64.run
+  sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
   sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' /opt/foxitsoftware/foxitreader/FoxitReader.desktop
   sudo desktop-file-install /opt/foxitsoftware/foxitreader/FoxitReader.desktop
   sudo updatedb
