@@ -338,7 +338,7 @@ function hf_git_ammend_push_force() {
 }
 
 function hf_git_check_if_need_pull() {
-  [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} \
+  [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref "@{u}" \
     | sed 's/\// /g') | cut -f1) ] && printf FALSE || printf TRUE
 }
 
