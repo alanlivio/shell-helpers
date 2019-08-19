@@ -1200,6 +1200,19 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
+# juoyter functions
+# ---------------------------------------
+
+function hf_jupyter_notebook() {
+  jupyter notebook
+}
+
+function hf_jupyter_dark_theme() {
+  pip install jupyterthemes
+  jt -t monokai
+}
+
+# ---------------------------------------
 # eclipse functions
 # ---------------------------------------
 
