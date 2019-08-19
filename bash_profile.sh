@@ -1578,6 +1578,9 @@ function hf_fetch_extract_to() {
   xz)
     tar -xJf /tmp/$FILE_NAME -C $2
     ;;
+  rar)
+    unrar x /tmp/$FILE_NAME -C $2
+    ;;
   *)
     hf_log_error "$FILE_EXTENSION is not supported compression." && exit
     ;;
