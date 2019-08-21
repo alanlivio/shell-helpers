@@ -433,7 +433,7 @@ function hf_qtcreator_project_from_git() {
 }
 
 function hf_eclipse_list_installed() {
-  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
+  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
 }
 
 # ---------------------------------------
@@ -1240,7 +1240,7 @@ function hf_jupyter_dark_theme() {
 function hf_eclipse_install_packages() {
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, \
   #   org.eclipse.dltk.sh.feature.group
-  /opt/eclipse/eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
+  $HOME/opt/eclipse/eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
 
 function hf_eclipse_uninstall_packages() {
@@ -1250,8 +1250,8 @@ function hf_eclipse_uninstall_packages() {
   #   org.eclipse.help.feature.group, \
   #   org.eclipse.tm.terminal.feature.feature.group, \
   #   org.eclipse.wst.server_adapters.feature.feature.group
-  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
-  /opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
+  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
+  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
 }
 
 # ---------------------------------------
@@ -1369,7 +1369,6 @@ function hf_install_java_oraclejdk() {
   fi
 }
 
-
 function hf_install_simplescreenrercoder() {
   hf_log_func
   if ! type simplescreenrecorder &>/dev/null; then
@@ -1404,58 +1403,58 @@ function hf_install_insync() {
 
 function hf_install_foxit() {
   hf_log_func
-  if test -d /opt/foxitsoftware; then return; fi
+  if test -d $HOME/opt/foxitsoftware; then return; fi
   URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
   hf_fetch_extract_to $URL /tmp/
   sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
-  sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' /opt/foxitsoftware/foxitreader/FoxitReader.desktop
-  sudo desktop-file-install /opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
   sudo updatedb
 }
 
 function hf_install_stremio() {
   hf_log_func
-  if test -d /opt/stremio; then return; fi
-  mkdir /opt/stremio/
+  if test -d $HOME/opt/stremio; then return; fi
+  mkdir $HOME/opt/stremio/
 
   EXE=Stremio+4.0.10.appimage
   URL=https://dl.strem.io/linux/v4.0.10/$EXE
   wget --continue $URL -P /tmp/
   chmod +x /tmp/$EXE
-  mv /tmp/$EXE /opt/stremio/
-  sudo chown $USER:$USER /opt/stremio/
+  mv /tmp/$EXE $HOME/opt/stremio/
+  sudo chown $USER:$USER $HOME/opt/stremio/
 
-  sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O /opt/stremio/stremio.png
+  sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
   echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
   sudo updatedb
 }
 
 function hf_install_tor() {
   hf_log_func
-  if test -d /opt/tor; then return; fi
+  if test -d $HOME/opt/tor; then return; fi
   URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
-  hf_fetch_extract_to $URL /opt/
+  hf_fetch_extract_to $URL $HOME/opt/
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-  mv /opt/tor-browser_en-US /opt/tor/
-  sed -i 's/^Exec=.*/Exec=\/opt\/tor\/Browser\/start-tor-browser/g' /opt/tor/start-tor-browser.desktop
-  sudo desktop-file-install /opt/tor/start-tor-browser.desktop
+  mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
+  sed -i 's/^Exec=.*/Exec=$HOME\/opt\/tor\/Browser\/start-tor-browser/g' $HOME/opt/tor/start-tor-browser.desktop
+  sudo desktop-file-install $HOME/opt/tor/start-tor-browser.desktop
 }
 
 function hf_install_zotero() {
   hf_log_func
-  if test -d /opt/zotero; then return; fi
+  if test -d $HOME/opt/zotero; then return; fi
   URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
   hf_fetch_extract_to $URL /tmp/
-  mv /tmp/Zotero_linux-x86_64 /opt/zotero
+  mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
   {
     echo '[Desktop Entry]'
     echo 'Version=1.0'
     echo 'Name=Zotero'
     echo 'Type=Application'
-    echo 'Exec=/opt/zotero/zotero'
-    echo 'Icon=/opt/zotero/chrome/icons/default/default48.png'
-  } >/opt/zotero/zotero.desktop
-  sudo desktop-file-install /opt/zotero/zotero.desktop
+    echo 'Exec=$HOME/opt/zotero/zotero'
+    echo 'Icon=$HOME/opt/zotero/chrome/icons/default/default48.png'
+  } >$HOME/opt/zotero/zotero.desktop
+  sudo desktop-file-install $HOME/opt/zotero/zotero.desktop
   sudo updatedb
 }
 
@@ -1479,7 +1478,7 @@ function hf_install_shellcheck() {
 
 function hf_install_tizen_studio() {
   hf_log_func
-  if test -d /opt/tizen-studio; then return; fi
+  if test -d $HOME/opt/tizen-studio; then return; fi
   URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
   wget $URL -P /tmp/
   chmod +x /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
@@ -1488,18 +1487,18 @@ function hf_install_tizen_studio() {
 
 function hf_install_vp() {
   hf_log_func
-  if test -d /opt/vp; then return; fi
+  if test -d $HOME/opt/vp; then return; fi
   URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
   hf_fetch_extract_to $URL /tmp/
   sudo bash "/tmp/$(basename $URL)"
-  sudo chown $USER:$USER /opt/vp/
+  sudo chown $USER:$USER $HOME/opt/vp/
   sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
 }
 
 function hf_install_shfmt() {
   hf_log_func
-  if test -f /opt/go/bin/shfmt; then return; fi
-  if ! test -d /opt/go/; then echo "create dir /opt/go/" && mkdir /opt/go/; fi
+  if test -f $HOME/opt/go/bin/shfmt; then return; fi
+  if ! test -d $HOME/opt/go/; then echo "create dir $HOME/opt/go/" && mkdir $HOME/opt/go/; fi
   sudo -E go get -u mvdan.cc/sh/cmd/shfmt
 }
 
