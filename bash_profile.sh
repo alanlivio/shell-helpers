@@ -1261,6 +1261,42 @@ function hf_install_chrome() {
   fi
 }
 
+function hf_install_python35() {
+  hf_log_func
+  if ! type python3.5 &>/dev/null; then
+    # required to full python3.5.7
+    sudo apt-get install libssl-dev zlib1g-dev  libsqlite3-dev
+    CWD=$(pwd)
+    cd /tmp
+    hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
+    cd /tmp/Python-3.5.7
+    ./configure
+    make
+    sudo make install
+    cd $CWD
+  fi
+}
+
+function hf_install_neo4j() {
+  hf_log_func
+  dpkg --status neo4j &>/dev/null
+  if test $? != 0; then
+    wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+    echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
+    sudo apt-get update
+    sudo apt install neo4j
+  fi
+}
+
+function hf_install_sqlworkbench() {
+  hf_log_func
+  dpkg --status mysql-workbench-community &>/dev/null
+  if test $? != 0; then
+    sudo apt install libzip5
+    hf_apt_fetch_install https://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community_8.0.17-1ubuntu19.04_amd64.deb
+  fi
+}
+
 function hf_install_pycharm() {
   hf_log_func
   hf_snap_install_packages_classic pycharm-professional
