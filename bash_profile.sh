@@ -1365,20 +1365,10 @@ function hf_install_java_oraclejdk() {
     sudo rm /etc/apt/sources.list.d/linuxuprising*
     sudo add-apt-repository -y ppa:linuxuprising/java
     sudo apt update
-    sudo apt install -y oracle-java12-installer
+    sudo apt install -y oracle-java12-installer oracle-java12-set-default
   fi
 }
 
-function hf_install_java_openjdk11() {
-  hf_log_func
-  dpkg --status openjdk-11-jdk &>/dev/null
-  if test $? != 0; then
-    sudo rm /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-*
-    sudo add-apt-repository -y ppa:openjdk-r/ppa
-    sudo apt update
-    sudo apt install -y openjdk-11-jdk
-  fi
-}
 
 function hf_install_simplescreenrercoder() {
   hf_log_func
