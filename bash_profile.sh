@@ -1260,24 +1260,22 @@ function hf_eclipse_uninstall_packages() {
 
 function hf_install_curl() {
   hf_log_func
-  dpkg --status curl &>/dev/null
-  if test $? != 0; then
+  if ! type curl &>/dev/null; then
     sudo apt install -y curl
   fi
 }
 
 function hf_install_gitkraken() {
   hf_log_func
-  dpkg --status gitkraken &>/dev/null
-  if test $? != 0; then
+  dpkg --status  &>/dev/null
+  if ! type gitkraken &>/dev/null; then
     hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
   fi
 }
 
 function hf_install_chrome() {
   hf_log_func
-  dpkg --status google-chrome-stable &>/dev/null
-  if test $? != 0; then
+  if ! type google-chrome-stable &>/dev/null; then
     hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   fi
 }
@@ -1300,8 +1298,7 @@ function hf_install_python35() {
 
 function hf_install_neo4j() {
   hf_log_func
-  dpkg --status neo4j &>/dev/null
-  if test $? != 0; then
+  if ! type neo4j &>/dev/null; then
     wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
     echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
     sudo apt-get update
@@ -1353,8 +1350,7 @@ function hf_install_spotify() {
 
 function hf_install_grub_customizer() {
   hf_log_func
-  dpkg --status grub-customizer &>/dev/null
-  if test $? != 0; then
+  if ! type customizer &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
     sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
     sudo apt update
@@ -1386,8 +1382,7 @@ function hf_install_java_openjdk11() {
 
 function hf_install_simplescreenrercoder() {
   hf_log_func
-  dpkg --status simplescreenrecorder &>/dev/null
-  if test $? != 0; then
+  if ! type simplescreenrecorder &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
     sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
     sudo apt update
@@ -1397,8 +1392,7 @@ function hf_install_simplescreenrercoder() {
 
 function hf_install_vscode() {
   hf_log_func
-  dpkg --status code &>/dev/null
-  if test $? != 0; then
+  if ! type code &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/vscode*
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/tmp/microsoft.gpg
     sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
@@ -1410,8 +1404,7 @@ function hf_install_vscode() {
 
 function hf_install_insync() {
   hf_log_func
-  dpkg --status insync &>/dev/null
-  if test $? != 0; then
+  if ! type insync &>/dev/null; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
     echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
     sudo apt update
