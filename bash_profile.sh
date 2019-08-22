@@ -386,6 +386,18 @@ function hf_git_list_large_files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
+function hf_git_reset_subfolders() {
+  CWD=$(pwd)
+  FOLDER=$(pwd $1)
+  cd $FOLDER
+  for i in `find  -maxdepth 1 -type d`; do
+    cd "$FOLDER/$i"
+    if test -d .git; then git reset --hard; fi
+    cd ..
+  done
+  cd $CWD
+}
+
 function hf_git_folder_tree() {
   DEV_FOLDER=$1
   REPOS=$2
