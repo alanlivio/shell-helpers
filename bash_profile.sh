@@ -449,7 +449,7 @@ function hf_qtcreator_project_from_git() {
 }
 
 function hf_eclipse_list_installed() {
-  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
+  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
 }
 
 # ---------------------------------------
@@ -1256,7 +1256,7 @@ function hf_jupyter_dark_theme() {
 function hf_eclipse_install_packages() {
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, \
   #   org.eclipse.dltk.sh.feature.group
-  $HOME/opt/eclipse/eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
+  eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
 
 function hf_eclipse_uninstall_packages() {
@@ -1266,8 +1266,8 @@ function hf_eclipse_uninstall_packages() {
   #   org.eclipse.help.feature.group, \
   #   org.eclipse.tm.terminal.feature.feature.group, \
   #   org.eclipse.wst.server_adapters.feature.feature.group
-  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
-  $HOME/opt/eclipse/eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
+  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
+  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
 }
 
 # ---------------------------------------
