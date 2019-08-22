@@ -1269,6 +1269,7 @@ function hf_install_gitkraken() {
   hf_log_func
   dpkg --status  &>/dev/null
   if ! type gitkraken &>/dev/null; then
+  sudo apt install gconf2 gconf-service libgtk2.0-0
     hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
   fi
 }
