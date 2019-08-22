@@ -1452,8 +1452,8 @@ function hf_install_zotero() {
     echo 'Version=1.0'
     echo 'Name=Zotero'
     echo 'Type=Application'
-    echo 'Exec=$HOME/opt/zotero/zotero'
-    echo 'Icon=$HOME/opt/zotero/chrome/icons/default/default48.png'
+    echo "Exec=$HOME/opt/zotero/zotero"
+    echo "Icon=$HOME/opt/zotero/chrome/icons/default/default48.png"
   } >$HOME/opt/zotero/zotero.desktop
   sudo desktop-file-install $HOME/opt/zotero/zotero.desktop
   sudo updatedb
