@@ -969,22 +969,13 @@ function hf_gnome_reset_keybindings() {
 
 function hf_gnome_sanity() {
   hf_log_func
-  gsettings set org.gnome.shell.extensions.desktop-icons show-home false
-  gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
   gsettings set org.gnome.desktop.background primary-color "#000000"
   gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background show-desktop-icons false
-  gsettings set org.gnome.desktop.background show-desktop-icons false
   gsettings set org.gnome.desktop.interface clock-show-date true
-  gsettings set org.gnome.desktop.interface clock-show-date true
-  gsettings set org.gnome.desktop.interface clock-show-date true
-  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
   gsettings set org.gnome.desktop.interface enable-animations false
-  gsettings set org.gnome.desktop.interface enable-animations false
-  gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
-  gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
   gsettings set org.gnome.desktop.notifications show-banners false
   gsettings set org.gnome.desktop.notifications show-in-lock-screen false
   gsettings set org.gnome.desktop.privacy remember-recent-files false
@@ -993,21 +984,26 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.desktop.screensaver picture-uri ''
   gsettings set org.gnome.desktop.screensaver primary-color "#000000"
   gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
-  gsettings set org.gnome.desktop.sound event-sounds false
+  gsettings set org.gnome.desktop.search-providers disable-external true
+  gsettings set org.gnome.desktop.search-providers sort-order []
   gsettings set org.gnome.desktop.sound event-sounds false
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
   gsettings set org.gnome.mutter dynamic-workspaces false
+  gsettings set org.gnome.nautilus.list-view default-visible-columns ['name', 'size', 'date_modified']
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
+  gsettings set org.gnome.nautilus.window-state initial-size '(890, 544)'
+  gsettings set org.gnome.nautilus.window-state maximized false
+  gsettings set org.gnome.nautilus.window-state sidebar-width 180
   gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
   gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
-  gsettings set org.gnome.desktop.search-providers disable-external true
-  gsettings set org.gnome.desktop.search-providers sort-order []
+  gsettings set org.gnome.shell.extensions.desktop-icons show-home false
+  gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
 }
 
 function hf_gnome_disable_update() {
