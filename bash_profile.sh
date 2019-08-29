@@ -390,7 +390,7 @@ function hf_git_reset_subfolders() {
   CWD=$(pwd)
   FOLDER=$(pwd $1)
   cd $FOLDER
-  for i in `find  -maxdepth 1 -type d`; do
+  for i in `find -type d -iname .git|sed 's/\.git//g'`; do
     cd "$FOLDER/$i"
     if test -d .git; then git reset --hard; fi
     cd ..
