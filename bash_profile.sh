@@ -1422,13 +1422,13 @@ function hf_install_insync() {
 
 function hf_install_foxit() {
   hf_log_func
-  if test -d $HOME/opt/foxitsoftware; then return; fi
-  URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
-  hf_fetch_extract_to $URL /tmp/
-  sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
-  sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  if test -d $HOME/opt/foxitsoftware; then
+    URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
+    hf_fetch_extract_to $URL /tmp/
+    sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
+    sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
+  fi
   sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
-  sudo updatedb
 }
 
 function hf_install_stremio() {
@@ -1445,14 +1445,15 @@ function hf_install_stremio() {
 
   sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
   echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
-  sudo updatedb
+  sudo desktop-file-install /usr/share/applications/stremio.desktop
 }
 
 function hf_install_tor() {
   hf_log_func
-  if test -d $HOME/opt/tor; then return; fi
-  URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
-  hf_fetch_extract_to $URL $HOME/opt/
+  if ! test -d $HOME/opt/tor; then
+    URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
+    hf_fetch_extract_to $URL $HOME/opt/
+  fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
   sed -i 's/^Exec=.*/Exec=$HOME\/opt\/tor\/Browser\/start-tor-browser/g' $HOME/opt/tor/start-tor-browser.desktop
@@ -1461,10 +1462,11 @@ function hf_install_tor() {
 
 function hf_install_zotero() {
   hf_log_func
-  if test -d $HOME/opt/zotero; then return; fi
-  URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
-  hf_fetch_extract_to $URL /tmp/
-  mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
+  if ! test -d $HOME/opt/zotero; then
+    URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
+    hf_fetch_extract_to $URL /tmp/
+    mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
+  fi
   {
     echo '[Desktop Entry]'
     echo 'Version=1.0'
@@ -1474,7 +1476,6 @@ function hf_install_zotero() {
     echo "Icon=$HOME/opt/zotero/chrome/icons/default/default48.png"
   } >$HOME/opt/zotero/zotero.desktop
   sudo desktop-file-install $HOME/opt/zotero/zotero.desktop
-  sudo updatedb
 }
 
 function hf_install_zotero_ppa() {
