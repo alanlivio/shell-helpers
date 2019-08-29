@@ -1478,16 +1478,6 @@ function hf_install_zotero() {
   sudo desktop-file-install $HOME/opt/zotero/zotero.desktop
 }
 
-function hf_install_zotero_ppa() {
-  hf_log_func
-  dpkg --status zotero &>/dev/null
-  if test $? != 0; then
-    sudo add-apt-repository -y ppa:retorquere/zotero
-    sudo updatedb
-    sudo apt-get install zotero
-  fi
-}
-
 function hf_install_shellcheck() {
   hf_log_func
   if test -f /usr/local/bin/shellcheck; then return; fi
