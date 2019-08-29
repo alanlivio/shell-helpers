@@ -940,6 +940,14 @@ function hf_system_rcd_create_startup_script() {
 }
 
 # ---------------------------------------
+# mount functions
+# ---------------------------------------
+
+function hf_mount_list() {
+  sudo lsblk -f
+}
+
+# ---------------------------------------
 # gnome functions
 # ---------------------------------------
 
