@@ -988,6 +988,13 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.desktop.search-providers sort-order []
   gsettings set org.gnome.desktop.sound event-sounds false
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+  gsettings set org.gnome.gedit.preferences.editor bracket-matching true
+  gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
+  gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
+  gsettings set org.gnome.gedit.preferences.editor display-right-margin true
+  gsettings set org.gnome.gedit.preferences.editor scheme 'classic'
+  gsettings set org.gnome.gedit.preferences.editor wrap-last-split-mode 'word'
+  gsettings set org.gnome.gedit.preferences.editor wrap-mode 'word'
   gsettings set org.gnome.mutter dynamic-workspaces false
   gsettings set org.gnome.nautilus.list-view default-visible-columns ['name', 'size', 'date_modified']
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
