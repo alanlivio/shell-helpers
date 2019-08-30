@@ -1430,7 +1430,7 @@ function hf_install_insync() {
 
 function hf_install_foxit() {
   hf_log_func
-  if test -d $HOME/opt/foxitsoftware; then
+  if ! test -d $HOME/opt/foxitsoftware; then
     URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
     hf_fetch_extract_to $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
@@ -1441,18 +1441,18 @@ function hf_install_foxit() {
 
 function hf_install_stremio() {
   hf_log_func
-  if test -d $HOME/opt/stremio; then return; fi
-  mkdir $HOME/opt/stremio/
+  if ! test -d $HOME/opt/stremio; then
+    mkdir $HOME/opt/stremio/
+    EXE=Stremio+4.0.10.appimage
+    URL=https://dl.strem.io/linux/v4.0.10/$EXE
+    wget --continue $URL -P /tmp/
+    chmod +x /tmp/$EXE
+    mv /tmp/$EXE $HOME/opt/stremio/
+    sudo chown $USER:$USER $HOME/opt/stremio/
 
-  EXE=Stremio+4.0.10.appimage
-  URL=https://dl.strem.io/linux/v4.0.10/$EXE
-  wget --continue $URL -P /tmp/
-  chmod +x /tmp/$EXE
-  mv /tmp/$EXE $HOME/opt/stremio/
-  sudo chown $USER:$USER $HOME/opt/stremio/
-
-  sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
-  echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
+    sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
+    echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
+  fi
   sudo desktop-file-install /usr/share/applications/stremio.desktop
 }
 
@@ -1496,28 +1496,23 @@ function hf_install_shellcheck() {
 
 function hf_install_tizen_studio() {
   hf_log_func
-  if test -d $HOME/opt/tizen-studio; then return; fi
-  URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
-  wget $URL -P /tmp/
-  chmod +x /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
-  /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+  if ! test -d $HOME/opt/tizen-studio; then
+    URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+    wget $URL -P /tmp/
+    chmod +x /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+    /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
+  fi
 }
 
 function hf_install_vp() {
   hf_log_func
-  if test -d $HOME/opt/vp; then return; fi
+  if ! test -d $HOME/opt/vp; then
   URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
   hf_fetch_extract_to $URL /tmp/
   sudo bash "/tmp/$(basename $URL)"
   sudo chown $USER:$USER $HOME/opt/vp/
   sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
-}
-
-function hf_install_shfmt() {
-  hf_log_func
-  if test -f $HOME/opt/go/bin/shfmt; then return; fi
-  if ! test -d $HOME/opt/go/; then echo "create dir $HOME/opt/go/" && mkdir $HOME/opt/go/; fi
-  sudo -E go get -u mvdan.cc/sh/cmd/shfmt
+  fi
 }
 
 # ---------------------------------------
