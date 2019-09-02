@@ -1361,7 +1361,8 @@ function hf_install_slack_deb() {
   hf_log_func
   dpkg --status slack-desktop &>/dev/null
   if test $? != 0; then
-    curl -s https://packagecloud.io/install/repositories/slacktechnologies/slack/script.deb.sh | sudo bash
+    sudo apt install -y libappindicator1
+    hf_apt_fetch_install https://downloads.slack-edge.com/linux_releases/slack-desktop-4.0.2-amd64.deb
   fi
 }
 
