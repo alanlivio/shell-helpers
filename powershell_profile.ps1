@@ -283,5 +283,4 @@ function hf_windows_init() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
   hf_install_chocolatey
-  hf_install_bash
 }
