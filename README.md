@@ -2,18 +2,17 @@
 
 ![terminal](https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png)
 
-This project made easy bash profile configuration and have helper functions to be used in powershell.
+This project made easy bash profile configuration and have helper functions to be used in powershell cmd.
 
-## How to use
+## How to use 
 
-Fetch the  `powershell_profile.ps1`:
-
+1. Download and enable script exececution.
 ```powershell
-wget raw.githubusercontent.com/alanlivio/powershell_profile/master/powershell_profile.ps1
+Invoke-WebRequest raw.githubusercontent.com/alanlivio/powershell_profile/master/powershell_profile.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+Set-ExecutionPolicy unrestricted
 ```
 
-Load the `powershell_profile.ps1` in the beginning of your powershell script:
-
+2. Force load (optional)
 ```powershell
-Import-Module -Force -Global powershell_profile.ps1
+Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
 ```
