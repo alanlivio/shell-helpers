@@ -298,6 +298,12 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
+
+function hf_git_services_test() {
+  ssh -T git@gitlab.com
+  ssh -T git@github.com
+}
+
 function hf_git_add_partial() {
   git stash
   git difftool -y stash
