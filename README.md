@@ -6,13 +6,21 @@ This project made easy bash profile configuration and have helper functions to b
 
 ## How to use 
 
-1. Download and enable script exececution.
+1. Download 
+
+
+
 ```powershell
 Invoke-WebRequest raw.githubusercontent.com/alanlivio/powershell_profile/master/powershell_profile.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
-Set-ExecutionPolicy unrestricted
 ```
 
-2. Force load (optional)
+2. enable script exececution.
+
+```powershell
+Set-ExecutionPolicy unrestricted -force
+```
+
+3. Force load
 ```powershell
 Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
 ```
