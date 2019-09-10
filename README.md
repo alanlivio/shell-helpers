@@ -9,11 +9,11 @@ This project provide a set of helper functions to be used in bash.
 Fetch the  `bash_profile.sh`:
 
 ```bash
-wget raw.githubusercontent.com/alanlivio/bash_profile/master/bash_profile.sh
+wget raw.githubusercontent.com/alanlivio/bash_profile/master/bash_profile.sh -O ~/.bash_profile.sh
 ```
 
 Load the `bash_profile.sh` at your .bashrc:
 
 ```bash
-source bash_profile.sh
+echo "source ~/.bash_profile.sh" >> .bashrc
 ```
