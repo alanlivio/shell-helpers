@@ -927,10 +927,10 @@ function hf_service_rcd_enable() {
 
 function hf_service_rcd_disable() {
   : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
-  update-rc.d -f $1 disable
+  sudo update-rc.d -f $1 disable
 }
 
-function hf_system_rcd_add_script() {
+function hf_service_add_script() {
   : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
   echo "creating /etc/init.d/$1"
   sudo touch /etc/init.d/$1
@@ -938,7 +938,7 @@ function hf_system_rcd_add_script() {
   sudo update-rc.d $1 defaults
 }
 
-function hf_system_rcd_create_startup_script() {
+function hf_service_create_startup_script() {
   : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
   echo "creating /etc/init.d/$1"
   echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
