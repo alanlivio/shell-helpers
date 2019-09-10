@@ -547,7 +547,7 @@ function hf_folder_files_sizes() {
 # ---------------------------------------
 
 function hf_latex_clean() {
-  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name "*.synctex.gz" -o -name "*.toc" | xargs rm -rf
+  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name "*.synctex.gz" -o -name "*.toc" | xargs rm -r
 }
 
 # ---------------------------------------
@@ -563,11 +563,11 @@ function hf_cpp_find_autotools_files() {
 }
 
 function hf_cpp_delete_binary_files() {
-  find . -print0 -type -f -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -rf
+  find . -print0 -type -f -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -r
 }
 
 function hf_cpp_delete_cmake_files() {
-  rm -rf CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
+  rm -r CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
 }
 
 # ---------------------------------------
@@ -1063,7 +1063,7 @@ function hf_gnome_reset_tracker() {
 }
 
 function hf_gnome_reset_shotwell() {
-  rm -rf ~/.cache/shotwell ~/.local/share/shotwell
+  rm -r ~/.cache/shotwell ~/.local/share/shotwell
 }
 
 function hf_gnome_update_desktop_database() {
@@ -1722,9 +1722,9 @@ function hf_clean_unused_folders() {
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -rf "$HOME/${i:?}" &>/dev/null
+        sudo rm -r "$HOME/${i:?}" &>/dev/null
       else
-        rm -rf "$HOME/${i:?}" &>/dev/null
+        rm -r "$HOME/${i:?}" &>/dev/null
       fi
     elif test -f "$HOME/$i"; then
       echo remove $i
@@ -1760,9 +1760,9 @@ function hf_clean_unused_config() {
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -rf "$HOME/${i:?}" &>/dev/null
+        sudo rm -r "$HOME/${i:?}" &>/dev/null
       else
-        rm -rf "$HOME/${i:?}" &>/dev/null
+        rm -r "$HOME/${i:?}" &>/dev/null
       fi
     elif test -f "$HOME/$i"; then
       echo remove $i
