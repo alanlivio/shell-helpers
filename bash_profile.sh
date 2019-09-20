@@ -927,6 +927,7 @@ function hf_service_rcd_enable() {
 
 function hf_service_rcd_disable() {
   : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
+  sudo service $1 stop
   sudo update-rc.d -f $1 disable
 }
 
