@@ -298,7 +298,6 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
-
 function hf_git_services_test() {
   ssh -T git@gitlab.com
   ssh -T git@github.com
@@ -396,7 +395,7 @@ function hf_git_reset_subfolders() {
   CWD=$(pwd)
   FOLDER=$(pwd $1)
   cd $FOLDER
-  for i in $(find . -type d -iname .git|sed 's/\.git//g'); do
+  for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
     cd "$FOLDER/$i"
     if test -d .git; then git reset --hard; fi
     cd ..
@@ -1322,7 +1321,7 @@ function hf_install_curl() {
 function hf_install_gitkraken() {
   hf_log_func
   if ! type gitkraken &>/dev/null; then
-  sudo apt install gconf2 gconf-service libgtk2.0-0
+    sudo apt install gconf2 gconf-service libgtk2.0-0
     hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
   fi
 }
@@ -1338,7 +1337,7 @@ function hf_install_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     # required to full python3.5.7
-    sudo apt-get install libssl-dev zlib1g-dev  libsqlite3-dev
+    sudo apt-get install libssl-dev zlib1g-dev libsqlite3-dev
     CWD=$(pwd)
     cd /tmp
     hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
@@ -1535,11 +1534,11 @@ function hf_install_tizen_studio() {
 function hf_install_vp() {
   hf_log_func
   if ! test -d $HOME/opt/vp; then
-  URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
-  hf_fetch_extract_to $URL /tmp/
-  sudo bash "/tmp/$(basename $URL)"
-  sudo chown $USER:$USER $HOME/opt/vp/
-  sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
+    URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
+    hf_fetch_extract_to $URL /tmp/
+    sudo bash "/tmp/$(basename $URL)"
+    sudo chown $USER:$USER $HOME/opt/vp/
+    sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
   fi
 }
 
