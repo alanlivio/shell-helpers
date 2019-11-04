@@ -441,6 +441,10 @@ function hf_git_folder_tree() {
   cd $CWD
 }
 
+function hf_git_log_history_file() {
+  git log --follow -p --format=short --all --first-parent --remotes --reflog --author-date-order -- $1
+}
+
 # ---------------------------------------
 # editors functions
 # ---------------------------------------
