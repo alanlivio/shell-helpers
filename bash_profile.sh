@@ -1341,16 +1341,21 @@ function hf_install_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     # required to full python3.5.7
-    sudo apt-get install libssl-dev zlib1g-dev libsqlite3-dev
+    sudo apt-get install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
     CWD=$(pwd)
     cd /tmp
     hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
     cd /tmp/Python-3.5.7
-    ./configure
+    sudo ./configure --enable-optimizations
     make
-    sudo make install
+    sudo make altinstall
     cd $CWD
   fi
+}
+
+function hf_uninstall_python35() {
+  sudo rm -r /usr/local/bin/python3.5
+  sudo rm -r /usr/local/lib/python3.5
 }
 
 function hf_install_neo4j() {
