@@ -298,6 +298,10 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
+function hf_git_kraken_folder() {
+  gitkraken -z -p . >/dev/null &
+}
+
 function hf_git_services_test() {
   ssh -T git@gitlab.com
   ssh -T git@github.com
