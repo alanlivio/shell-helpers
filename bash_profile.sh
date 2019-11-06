@@ -449,6 +449,10 @@ function hf_git_log_history_file() {
   git log --follow -p --all --first-parent --remotes --reflog --author-date-order -- $1
 }
 
+function hf_git_diff_one_commit() {
+  git diff $1~ $1
+}
+
 # ---------------------------------------
 # editors functions
 # ---------------------------------------
