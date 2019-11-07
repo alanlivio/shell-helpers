@@ -138,6 +138,8 @@ function hf_mac_enable_wifi() {
   dpkg --status bcmwl-kernel-source &>/dev/null
   if test $? != 0; then
     sudo apt install -y bcmwl-kernel-source
+    sudo modprobe -r b43 ssb wl brcmfmac brcmsmac bcma
+    sudo modprobe wl
   fi
 }
 
