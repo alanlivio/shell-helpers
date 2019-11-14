@@ -540,6 +540,10 @@ function hf_android_install_package() {
 # folder functions
 # ---------------------------------------
 
+function hf_folder_remove() {
+  if test -d $1; then rm -rf $1; fi
+}
+
 function hf_folder_info() {
   EXTENSIONS=$(for f in *.*; do printf "%s\n" "${f##*.}"; done | sort -u)
   echo "size="$(du -sh | awk '{print $1;exit}')
@@ -1288,7 +1292,7 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
-# juoyter functions
+# jupyter functions
 # ---------------------------------------
 
 function hf_jupyter_notebook() {
@@ -1363,9 +1367,15 @@ function hf_install_python35() {
   fi
 }
 
-function hf_uninstall_python35() {
+function hf_python_remove_python35() {
   sudo rm -r /usr/local/bin/python3.5
-  sudo rm -r /usr/local/lib/python3.5
+  sudo rm -r /usr/local/lib/python3.5/
+}
+
+function hf_python_remove_home_pkgs() {
+  hf_folder_remove ~/local/bin/
+  hf_folder_remove ~/.local/lib/python3.5/
+  hf_folder_remove ~/.local/lib/python3.7/
 }
 
 function hf_install_neo4j() {
