@@ -1299,6 +1299,13 @@ function hf_jupyter_notebook() {
   jupyter notebook
 }
 
+function hf_jupyter_configure_git_diff() {
+  sudo python install nbdime
+  nbdime config-git --enable --global
+  sed -i "s/git-nbdiffdriver diff$/git-nbdiffdriver diff -s/g" ~/.gitconfig
+
+}
+
 function hf_jupyter_dark_theme() {
   pip install jupyterthemes
   jt -t monokai
