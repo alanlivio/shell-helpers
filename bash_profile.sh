@@ -9,12 +9,13 @@
 # variables
 # ---------------------------------------
 
+# test os
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
 CYGWIN* | MINGW* | MSYS*) IS_WINDOWS=1 ;;
 esac
-
+# test WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
   *43-Microsoft)
@@ -98,7 +99,7 @@ function hf_test_exist_command() {
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-
+  # choco functions
   function hf_choco_install() {
     hf_log_msg "${FUNCNAME[0]}"
     choco install -y --acceptlicense --no-progress "$@"
@@ -109,6 +110,17 @@ if test -n "$IS_WINDOWS"; then
     choco upgrade -y --acceptlicense --no-progress all
   }
 
+  function hf_windows_install_choco() {
+    powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+  }
+
+  # wsl functions
+  function hf_wsl_fix_apt() {
+    hf_log_msg "${FUNCNAME[0]}"
+    sudo apt-get update --fix-missing
+  }
+
+  # msys functions
   function hf_msys_search() {
     hf_log_msg "${FUNCNAME[0]}"
     pacman -Ss "$@"
@@ -124,9 +136,6 @@ if test -n "$IS_WINDOWS"; then
     pacman -Su
   }
 
-  function hf_windows_install_choco() {
-    powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-  }
 fi
 
 # ---------------------------------------
