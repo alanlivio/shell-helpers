@@ -15,6 +15,7 @@ Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
 CYGWIN* | MINGW* | MSYS*) IS_WINDOWS=1 ;;
 esac
+
 # test WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
@@ -1025,6 +1026,13 @@ function hf_gnome_reset_keybindings() {
   gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys
 }
 
+function hf_gnome_dark() {
+  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
+  gsettings set org.gnome.desktop.interface enable-animations false
+  gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+  gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
+}
+
 function hf_gnome_sanity() {
   hf_log_func
   gsettings set org.gnome.desktop.background color-shading-type "solid"
@@ -1033,10 +1041,6 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background show-desktop-icons false
   gsettings set org.gnome.desktop.interface clock-show-date true
-  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
-  gsettings set org.gnome.desktop.interface enable-animations false
-  gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
-  gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
   gsettings set org.gnome.desktop.notifications show-banners false
   gsettings set org.gnome.desktop.notifications show-in-lock-screen false
   gsettings set org.gnome.desktop.privacy remember-recent-files false
