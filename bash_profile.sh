@@ -1257,6 +1257,10 @@ function hf_ruby_install_packages() {
 # python functions
 # ---------------------------------------
 
+function hf_python_clean() {
+  find -iname .idea -o -iname .ipynb_checkpoints -o -iname  __pycache__ | xargs rm -r
+}
+
 function hf_python_reinstall() {
   sudo update-alternatives --remove-all python
   sudo apt-get install --reinstall python
