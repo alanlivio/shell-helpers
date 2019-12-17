@@ -1068,7 +1068,6 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.gedit.preferences.editor wrap-last-split-mode 'word'
   gsettings set org.gnome.gedit.preferences.editor wrap-mode 'word'
   gsettings set org.gnome.mutter dynamic-workspaces false
-  gsettings set org.gnome.nautilus.list-view default-visible-columns ['name', 'size', 'date_modified']
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
