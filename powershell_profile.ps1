@@ -247,6 +247,14 @@ function hf_windows_update() {
 }
 
 # ---------------------------------------
+# choco function
+# ---------------------------------------
+
+function hf_choco_cleaner() {
+  \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
+}
+
+# ---------------------------------------
 # init function
 # ---------------------------------------
 
