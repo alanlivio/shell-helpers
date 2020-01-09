@@ -68,8 +68,21 @@ function hf_link_create($desntination, $source) {
 # explorer functions
 # ---------------------------------------
 
-function hf_explorer_open_start_menu() {
+
+function hf_explorer_open_start_menu_folder() {
   explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
+}
+
+function hf_explorer_open_task_bar_folder() {
+  explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
+}
+
+function hf_explorer_open_startup_folder() {
+  explorer 'shell:startup'
+}
+
+function hf_explorer_open_home_folder() {
+  explorer $env:USERPROFILE
 }
 
 # ---------------------------------------
