@@ -118,7 +118,7 @@ if test -n "$IS_WINDOWS"; then
   # wsl functions
   function hf_wsl_fix_apt() {
     hf_log_msg "${FUNCNAME[0]}"
-    sudo apt-get update --fix-missing
+    sudo apt update --fix-missing
   }
 
   # msys functions
@@ -1203,6 +1203,11 @@ function hf_system_list_gpu() {
 # npm functions
 # ---------------------------------------
 
+function hf_install_node() {
+  curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  sudo apt install -y nodejs
+}
+
 function hf_npm_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
   hf_log_func
@@ -1269,9 +1274,9 @@ function hf_python_clean() {
 
 function hf_python_reinstall() {
   sudo update-alternatives --remove-all python
-  sudo apt-get install --reinstall python
+  sudo apt install --reinstall python
   sudo update-alternatives --remove-all python3
-  sudo apt-get install --reinstall python3
+  sudo apt install --reinstall python3
 }
 
 function hf_venv_activate() {
@@ -1385,7 +1390,7 @@ function hf_install_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     # required to full python3.5.7
-    sudo apt-get install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+    sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
     CWD=$(pwd)
     cd /tmp
     hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
@@ -1413,7 +1418,7 @@ function hf_install_neo4j() {
   if ! type neo4j &>/dev/null; then
     wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
     echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
-    sudo apt-get update
+    sudo apt update
     sudo apt install neo4j
   fi
 }
@@ -1615,8 +1620,8 @@ function hf_apt_upgrade() {
 function hf_apt_fixes() {
   hf_log_func
   sudo dpkg --configure -a
-  sudo apt-get install -f
-  sudo apt-get dist-upgrade
+  sudo apt install -f
+  sudo apt dist-upgrade
 }
 
 function hf_apt_install_packages() {
