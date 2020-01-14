@@ -1,15 +1,12 @@
-# ---------------------------------------
-# powershell_profile helper functions.
-# site: github.com/alanlivio/powershell_profile
-# ---------------------------------------
+# URL: github.com/alanlivio/powershell-helper-functions
 
 # ---------------------------------------
-# load powershell_profile_cfg
+# load powershell_helper_functions_cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\powershell_profile.ps1"
+$SCRIPT_NAME = "$PSScriptRoot\powershell_helper_functions.ps1"
 $SCRIPT_DIR = $PSScriptRoot
-$SCRIPT_CFG = "$SCRIPT_DIR\powershell_profile_cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\powershell_helper_functions_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
