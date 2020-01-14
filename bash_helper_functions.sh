@@ -1,9 +1,5 @@
 #!/bin/bash
-
-# ---------------------------------------
-# bash_profile helper functions.
-# site: github.com/alanlivio/bash_profile
-# ---------------------------------------
+# URL: github.com/alanlivio/bash-helper-functions
 
 # ---------------------------------------
 # variables
@@ -1857,13 +1853,13 @@ function hf_clean_unused_config() {
 }
 
 # ---------------------------------------
-# load bash_profile_cfg
+# load bash_helper_functions_cfg
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_profile.sh
-SCRIPT_NAME="$SCRIPT_DIR/bash_profile.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_profile_cfg.sh"
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_helper_functions.sh
+SCRIPT_NAME="$SCRIPT_DIR/bash_helper_functions.sh"
+SCRIPT_CFG="$SCRIPT_DIR/bash_helper_functions_cfg.sh"
 if test -f $SCRIPT_CFG; then
   source $SCRIPT_CFG
 fi
