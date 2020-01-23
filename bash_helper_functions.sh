@@ -1566,7 +1566,7 @@ function hf_install_tor() {
 function hf_install_zotero() {
   hf_log_func
   if ! test -d $HOME/opt/zotero; then
-    URL=https://download.zotero.org/client/release/5.0.66/Zotero-5.0.66_linux-x86_64.tar.bz2
+    URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
     hf_fetch_extract_to $URL /tmp/
     mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
   fi
