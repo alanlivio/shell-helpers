@@ -232,6 +232,20 @@ function hf_gst_side_by_side_args() {
 }
 
 # ---------------------------------------
+# deb functions
+# ---------------------------------------
+
+function hf_deb_info() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  dpkg-deb --info $1
+}
+
+function hf_deb_contents() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  dpkg-deb --show $1
+}
+
+# ---------------------------------------
 # pkg-config functions
 # ---------------------------------------
 
