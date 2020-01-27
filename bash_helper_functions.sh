@@ -361,7 +361,7 @@ function hf_git_push_commit() {
 }
 
 function hf_git_ammend_push_force() {
-  git commit -a --amend --no-edit
+  git commit --amend --no-edit
   git push --force
 }
 
