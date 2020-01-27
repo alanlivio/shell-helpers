@@ -611,7 +611,7 @@ function hf_cpp_delete_binary_files() {
 }
 
 function hf_cpp_delete_cmake_files() {
-  rm -r CMakeFiles/ CMakeCache.txt cmake-install.cmake Makefile CPack* CPack* CTest* "*.cbp"
+  find . -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs rm -r
 }
 
 # ---------------------------------------
