@@ -1028,8 +1028,8 @@ function hf_gnome_init() {
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
+  hf_install_gdrive
   gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Nautilus.desktop']"
-  hf_install_insync
   hf_clean_unused_folders
   hf_user_permissions_opt
 }
@@ -1527,7 +1527,7 @@ function hf_install_vscode() {
   fi
 }
 
-function hf_install_insync() {
+function hf_install_gdrive() {
   hf_log_func
   if ! type insync &>/dev/null; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
