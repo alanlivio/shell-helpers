@@ -264,9 +264,10 @@ function hf_choco_cleaner() {
   \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
 }
 
-function hf_choco() {
-  hf_choco "$args"
+function hf_choco_install() {
+  choco install -y --acceptlicense --no-progress "$args"
 }
+
 
 # ---------------------------------------
 # init function
@@ -299,15 +300,36 @@ function hf_install_chocolatey() {
 
 function hf_install_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_choco install msys2
+  hf_choco_install msys2
 }
 
 function hf_install_tesseract() {
-  hf_choco install tesseract --pre
+  hf_choco_install tesseract --pre
+}
+
+function hf_install_curl() {
+  hf_choco_install "curl"
+}
+
+function hf_install_chrome() {
+  hf_choco_install "GoogleChrome"
+}
+
+function hf_install_vscode() {
+  hf_choco_install "vscode"
+}
+
+function hf_install_gdrive() {
+  hf_choco_install "google-backup-and-sync"
 }
 
 function hf_windows_init() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
   hf_install_chocolatey
+  hf_install_bash
+  hf_install_curl
+  hf_install_chrome
+  hf_install_vscode
+  hf_install_gdrive
 }
