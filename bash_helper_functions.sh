@@ -1029,9 +1029,8 @@ function hf_gnome_init() {
   hf_install_chrome
   hf_install_vscode
   hf_install_gdrive
-  gsettings set org.gnome.shell favorite-apps "['google-chrome.desktop', 'code.desktop', 'org.gnome.Nautilus.desktop']"
   hf_clean_unused_folders
-  hf_user_permissions_opt
+  # hf_user_permissions_opt
 }
 
 function hf_gnome_reset_keybindings() {
