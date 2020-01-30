@@ -1795,6 +1795,7 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
+  hf_log_func
   FOLDERS=(
     "Documents"
     "Images"
@@ -1819,16 +1820,16 @@ function hf_clean_unused_folders() {
     if test -d "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -r "$HOME/${i:?}" &>/dev/null
+        sudo rm -r "$HOME/${i:?}" >/dev/null
       else
-        rm -r "$HOME/${i:?}" &>/dev/null
+        rm -r "$HOME/${i:?}" >/dev/null
       fi
     elif test -f "$HOME/$i"; then
       echo remove $i
       if test -n "$IS_MAC"; then
-        sudo rm -f "$HOME/$i" &>/dev/null
+        sudo rm -f "$HOME/$i" >/dev/null
       else
-        rm -f "$HOME/${i:?}" &>/dev/null
+        rm -f "$HOME/${i:?}" >/dev/null
       fi
     fi
   done
