@@ -801,6 +801,16 @@ function hf_virtualbox_resize_to_2gb() {
 # user functions
 # ---------------------------------------
 
+function hf_user_create_new() {
+  : ${1?"Usage: ${FUNCNAME[0]} [user_name"}
+  sudo adduser "$1"
+}
+
+function hf_user_enable_sudo() {
+  : ${1?"Usage: ${FUNCNAME[0]} [user_name"}
+  sudo usermod -aG sudo "$1"
+}
+
 function hf_user_permissions_sudo() {
   SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
 }
@@ -1286,7 +1296,7 @@ function hf_ruby_install_packages() {
 # ---------------------------------------
 
 function hf_python_clean() {
-  find . -print0-iname .idea -o -iname .ipynb_checkpoints -o -iname  __pycache__ | xargs rm -r
+  find . -print0-iname .idea -o -iname .ipynb_checkpoints -o -iname __pycache__ | xargs rm -r
 }
 
 function hf_python_reinstall() {
@@ -1407,7 +1417,7 @@ function hf_install_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     # required to full python3.5.7
-    sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+    sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
     CWD=$(pwd)
     cd /tmp
     hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
