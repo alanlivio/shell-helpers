@@ -315,10 +315,6 @@ function hf_install_tesseract() {
   hf_choco_install tesseract --pre
 }
 
-function hf_install_curl() {
-  hf_choco_install "curl"
-}
-
 function hf_install_chrome() {
   hf_choco_install "GoogleChrome"
 }
@@ -331,13 +327,26 @@ function hf_install_gdrive() {
   hf_choco_install "google-backup-and-sync"
 }
 
-function hf_windows_init() {
+function hf_install_ccleaner() {
+  hf_choco_install "ccleaner"
+}
+
+function hf_install_vlc() {
+  hf_choco_install "vlc"
+}
+
+function hf_windows_init_normal_user() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
   hf_install_chocolatey
-  hf_install_bash
-  hf_install_curl
   hf_install_chrome
+  hf_install_vlc
+  hf_install_ccleaner
+}
+
+function hf_windows_init() {
+  hf_windows_init_normal_user
   hf_install_vscode
   hf_install_gdrive
+  hf_install_bash
 }
