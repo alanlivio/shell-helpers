@@ -268,6 +268,10 @@ function hf_choco_install() {
   choco install -y --acceptlicense --no-progress "$args"
 }
 
+function hf_choco_uninstall() {
+  choco uninstall -y --acceptlicense --no-progress "$args"
+}
+
 function hf_choco_upgrade() {
   choco upgrade -y --acceptlicense --no-progress
 }
