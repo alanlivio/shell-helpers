@@ -611,7 +611,7 @@ function hf_cpp_delete_binary_files() {
 }
 
 function hf_cpp_delete_cmake_files() {
-  find . -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs rm -r
+  find . -print0 -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs rm -r
 }
 
 # ---------------------------------------
@@ -1286,7 +1286,7 @@ function hf_ruby_install_packages() {
 # ---------------------------------------
 
 function hf_python_clean() {
-  find -iname .idea -o -iname .ipynb_checkpoints -o -iname  __pycache__ | xargs rm -r
+  find . -print0-iname .idea -o -iname .ipynb_checkpoints -o -iname  __pycache__ | xargs rm -r
 }
 
 function hf_python_reinstall() {
@@ -1818,7 +1818,6 @@ function hf_clean_unused_folders() {
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
-      echo remove $i
       if test -n "$IS_MAC"; then
         sudo rm -r "$HOME/${i:?}" >/dev/null
       else
