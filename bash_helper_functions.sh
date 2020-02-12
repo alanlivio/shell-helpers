@@ -1115,7 +1115,6 @@ function hf_gnome_disable_unused_apps_in_search() {
   for i in $APPS_TO_HIDE; do
     sudo sh -c " echo 'NoDisplay=true' >> $i"
   done
-  sudo updatedb
 }
 
 function hf_gnome_disable_super_workspace_change() {
