@@ -1587,6 +1587,10 @@ function hf_install_tor() {
 }
 
 function hf_install_zotero() {
+  sudo snap install zotero-snap
+}
+
+function hf_install_zotero_apt() {
   hf_log_func
   if ! test -d $HOME/opt/zotero; then
     URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
@@ -1630,6 +1634,29 @@ function hf_install_vp() {
     sudo bash "/tmp/$(basename $URL)"
     sudo chown $USER:$USER $HOME/opt/vp/
     sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
+  fi
+}
+
+
+function hf_install_vidcutter_ppa() {
+  hf_log_func
+  dpkg --status vidcutter &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/ozmartian*
+    sudo add-apt-repository -y ppa:ozmartian/apps
+    sudo apt update
+    sudo apt install -y python3-dev vidcutter
+  fi
+}
+
+function hf_install_peek_ppa() {
+  hf_log_func
+  dpkg --status peek &>/dev/null
+  if test $? != 0; then
+    sudo rm /etc/apt/sources.list.d/peek-developers*
+    sudo add-apt-repository -y ppa:peek-developers/stable
+    sudo apt update
+    sudo apt install -y peek
   fi
 }
 
