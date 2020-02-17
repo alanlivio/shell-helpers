@@ -2,10 +2,10 @@
 # URL: github.com/alanlivio/bash-helper-functions
 
 # ---------------------------------------
-# variables
+# variables and log/test functions
 # ---------------------------------------
 
-# test os
+# test OS
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
@@ -22,30 +22,6 @@ if test $IS_LINUX; then
   *) IS_LINUX=1 ;;
   esac
 fi
-
-# ---------------------------------------
-# profile functions
-# ---------------------------------------
-
-function hf_profile_install() {
-  echo -e "\nsource $SCRIPT_NAME" >>~/.bashrc
-}
-
-function hf_profile_reload() {
-  source ~/.bashrc
-}
-
-function hf_profile_download() {
-  if test -f $SCRIPT_NAME; then
-    rm $SCRIPT_NAME
-  fi
-  wget $SCRIPT_URL $SCRIPT_NAME
-  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-}
-
-# ---------------------------------------
-# log functions
-# ---------------------------------------
 
 function hf_log_print() {
   echo -e "$1" | fold -w100 -s
@@ -78,10 +54,6 @@ function hf_log_try() {
   if test $? -ne 0; then hf_log_error "$1" && exit 1; fi
 }
 
-# ---------------------------------------
-# test functions
-# ---------------------------------------
-
 function hf_test_exist_command() {
   if ! type "$1" &>/dev/null; then
     hf_log_error "$1 not found."
@@ -92,44 +64,68 @@ function hf_test_exist_command() {
 }
 
 # ---------------------------------------
+# profile functions
+# ---------------------------------------
+
+function hf_profile_install() {
+  hf_log_func
+  echo -e "\nsource $SCRIPT_NAME" >>~/.bashrc
+}
+
+function hf_profile_reload() {
+  hf_log_func
+  source ~/.bashrc
+}
+
+function hf_profile_download() {
+  hf_log_func
+  if test -f $SCRIPT_NAME; then
+    rm $SCRIPT_NAME
+  fi
+  wget $SCRIPT_URL $SCRIPT_NAME
+  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+}
+
+# ---------------------------------------
 # windows functions
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
   # choco functions
   function hf_choco_install() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     choco install -y --acceptlicense --no-progress "$@"
   }
 
   function hf_choco_upgrade() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     choco upgrade -y --acceptlicense --no-progress all
   }
 
   function hf_windows_install_choco() {
+    hf_log_func
     powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
   }
 
   # wsl functions
   function hf_wsl_fix_apt() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     sudo apt update --fix-missing
   }
 
   # msys functions
   function hf_msys_search() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     pacman -Ss "$@"
   }
 
   function hf_msys_install() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     pacman -Su --needed "$@"
   }
 
   function hf_msys_upgrade() {
-    hf_log_msg "${FUNCNAME[0]}"
+    hf_log_func
     pacman -Su
   }
 
@@ -150,14 +146,17 @@ function hf_mac_enable_wifi() {
 }
 
 function hf_mac_keyboard_pt_br() {
+  hf_log_func
   setxkbmap -model abnt -layout us -variant intl
 }
 
 function hf_mac_keyboard_fnmode() {
+  hf_log_func
   sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
 }
 
 function hf_mac_install_refind() {
+  hf_log_func
   sudo apt install -y refind
 }
 
@@ -180,6 +179,7 @@ if test -n "$IS_MAC"; then
   function hf_mac_init() {
     hf_mac_install_homebrew
     hf_mac_install_bash4
+    hf_mac_enable_wifi
   }
 fi
 
@@ -188,7 +188,7 @@ fi
 # ---------------------------------------
 
 function hf_audio_create_empty() {
-  # gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
+  # i.e. gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
   : ${1?"Usage: ${FUNCNAME[0]} [audio_output]"}
 
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
@@ -1635,7 +1635,6 @@ function hf_install_vp() {
     sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
   fi
 }
-
 
 function hf_install_vidcutter_ppa() {
   hf_log_func
