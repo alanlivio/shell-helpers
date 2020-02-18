@@ -1492,7 +1492,7 @@ function hf_install_spotify() {
   hf_snap_install_packages spotify
 }
 
-function hf_install_grub_customizer() {
+function hf_install_grub_customizer_ppa() {
   hf_log_func
   if ! type customizer &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
@@ -1502,7 +1502,7 @@ function hf_install_grub_customizer() {
   fi
 }
 
-function hf_install_java_oraclejdk() {
+function hf_install_java_oraclejdk_ppa() {
   hf_log_func
   dpkg --status oracle-java12-installer &>/dev/null
   if test $? != 0; then
@@ -1513,7 +1513,7 @@ function hf_install_java_oraclejdk() {
   fi
 }
 
-function hf_install_simplescreenrercoder() {
+function hf_install_simplescreenrercoder_ppa() {
   hf_log_func
   if ! type simplescreenrecorder &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
