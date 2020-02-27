@@ -1038,7 +1038,7 @@ function hf_gnome_init() {
   hf_install_curl
   hf_install_chrome
   hf_install_vscode
-  hf_install_gdrive
+  hf_install_insync
   hf_clean_unused_folders
   # hf_user_permissions_opt
 }
@@ -1535,9 +1535,10 @@ function hf_install_vscode() {
   fi
 }
 
-function hf_install_gdrive() {
+function hf_install_insync() {
   hf_log_func
-  if ! type insync &>/dev/null; then
+  dpkg --status insync &>/dev/null
+  if test $? != 0; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
     echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
     sudo apt update
@@ -1876,13 +1877,10 @@ function hf_clean_unused_config() {
     ".apport-ignore.xml "
     ".bash_history"
     ".bash_logout"
-    ".eclipse"
     ".gimp-*"
     ".gradle/"
     ".java/"
-    ".mozilla/"
     ".mysql_history"
-    ".p2"
     ".python_history"
     ".thumbnails"
     ".viminfo"
