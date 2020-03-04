@@ -11,6 +11,6 @@ Fetch the  `powershell_helper_functions.ps1`, enable script execution and load:
 ```powershell
 Invoke-WebRequest raw.githubusercontent.com/alanlivio/powershell-helper-functions/master/powershell_helper_functions.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\powershell_helper_functions.ps1;`
   Set-ExecutionPolicy unrestricted -force;`
-  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\powershell_helper_functions.ps1;
+  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\powershell_helper_functions.ps1;`
   hf_profile_install
 ```
