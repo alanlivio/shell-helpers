@@ -618,6 +618,16 @@ function hf_cpp_delete_cmake_files() {
 # image functions
 # ---------------------------------------
 
+function hf_image_size_get() {
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  identify -format "%wx%h" "$1"
+}
+
+function hf_image_resize() {
+  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  echo convert "$1" -resize "$2"\> "rezised-$1"
+}
+
 function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
 
