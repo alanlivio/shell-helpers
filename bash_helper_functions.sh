@@ -625,7 +625,7 @@ function hf_image_size_get() {
 
 function hf_image_resize() {
   : ${1?"Usage: ${FUNCNAME[0]} [image]"}
-  echo convert "$1" -resize "$2"\> "rezised-$1"
+  convert "$1" -resize "$2"\> "rezised-$1"
 }
 
 function hf_image_reconize_text_en() {
