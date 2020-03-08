@@ -15,8 +15,8 @@ esac
 # test WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
-  *43-Microsoft)
-    IS_LINUX=0
+  *-Microsoft)
+    IS_LINUX=""
     IS_WINDOWS=1
     ;;
   *) IS_LINUX=1 ;;
