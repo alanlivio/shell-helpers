@@ -319,6 +319,10 @@ function hf_install_chrome() {
   hf_choco_install "GoogleChrome"
 }
 
+function hf_install_firefox() {
+  hf_choco_install "firefox"
+}
+
 function hf_install_vscode() {
   hf_choco_install "vscode"
 }
@@ -345,8 +349,13 @@ function hf_windows_init_normal_user() {
 }
 
 function hf_windows_init() {
-  hf_windows_init_normal_user
-  hf_install_vscode
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_windows_sanity
+  hf_install_chocolatey
+  hf_install_firefox
+  hf_install_chrome
+  hf_install_vlc
+  hf_install_ccleaner
   hf_install_gdrive
-  hf_install_bash
+  hf_install_vscode
 }
