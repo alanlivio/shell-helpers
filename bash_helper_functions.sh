@@ -1502,7 +1502,7 @@ function hf_install_spotify() {
   hf_snap_install_packages spotify
 }
 
-function hf_install_grub_customizer_ppa() {
+function hf_install_grub_customizer_apt() {
   hf_log_func
   if ! type customizer &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/danielrichter2007*
@@ -1512,7 +1512,7 @@ function hf_install_grub_customizer_ppa() {
   fi
 }
 
-function hf_install_java_oraclejdk_ppa() {
+function hf_install_java_oraclejdk_apt() {
   hf_log_func
   dpkg --status oracle-java12-installer &>/dev/null
   if test $? != 0; then
@@ -1523,7 +1523,7 @@ function hf_install_java_oraclejdk_ppa() {
   fi
 }
 
-function hf_install_simplescreenrercoder_ppa() {
+function hf_install_simplescreenrercoder_apt() {
   hf_log_func
   if ! type simplescreenrecorder &>/dev/null; then
     sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
@@ -1647,7 +1647,7 @@ function hf_install_vp() {
   fi
 }
 
-function hf_install_vidcutter_ppa() {
+function hf_install_vidcutter_apt() {
   hf_log_func
   dpkg --status vidcutter &>/dev/null
   if test $? != 0; then
@@ -1658,7 +1658,7 @@ function hf_install_vidcutter_ppa() {
   fi
 }
 
-function hf_install_peek_ppa() {
+function hf_install_peek_apt() {
   hf_log_func
   dpkg --status peek &>/dev/null
   if test $? != 0; then
