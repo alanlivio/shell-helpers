@@ -1,4 +1,5 @@
-# URL: github.com/alanlivio/powershell-helper-functions
+# author: Alan Livio <alan@telemidia.puc-rio.br>
+# URL:    https://github.com/alanlivio/powershell-helper-functions
 
 # ---------------------------------------
 # load powershell_helper_functions_cfg
@@ -237,6 +238,7 @@ function hf_uninstall_not_essential_store_packages() {
   NORDCURRENT.COOKINGFEVER'
   $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
 }
+
 function hf_explorer_sanity() {
   # https://gist.github.com/thoroc/86d354d029dda303598a
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
