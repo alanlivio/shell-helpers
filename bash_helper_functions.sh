@@ -1,5 +1,6 @@
 #!/bin/bash
-# URL: github.com/alanlivio/bash-helper-functions
+# author: Alan Livio <alan@telemidia.puc-rio.br>
+# URL:    https://github.com/alanlivio/bash-helper-functions
 
 # ---------------------------------------
 # variables and log/test functions
