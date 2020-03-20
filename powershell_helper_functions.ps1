@@ -34,6 +34,11 @@ function hf_profile_import($path) {
 # ---------------------------------------
 # powershell functions
 # ---------------------------------------
+
+function hf_powershell_show_function($name) {
+  Get-Content Function:\$name
+}
+
 function hf_powershell_enable_scripts() {
   Set-ExecutionPolicy unrestricted
 }
@@ -50,6 +55,14 @@ function hf_powershell_profiles_reset() {
 }
 
 # ---------------------------------------
+# system functions
+# ---------------------------------------
+
+function hf_system_rename($new_name) {
+  Rename-Computer -NewName "$new_name"
+}
+
+# ---------------------------------------
 # network functions
 # ---------------------------------------
 
@@ -58,7 +71,7 @@ function hf_network_list_wifi_SSIDs() {
 }
 
 # ---------------------------------------
-# network functions
+# link functions
 # ---------------------------------------
 
 function hf_link_create($desntination, $source) {
