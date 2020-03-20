@@ -318,6 +318,18 @@ function hf_choco_upgrade() {
 
 
 # ---------------------------------------
+# wsl function
+# ---------------------------------------
+
+function hf_wsl_root() {
+  wsl -u root
+}
+
+function hf_wsl_fix_home_folder() {
+  wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
+}
+
+# ---------------------------------------
 # init function
 # ---------------------------------------
 
