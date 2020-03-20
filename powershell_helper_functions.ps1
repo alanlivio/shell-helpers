@@ -434,6 +434,10 @@ function hf_install_7zip() {
   hf_choco_install "7zip"
 }
 
+function hf_install_driverbooster() {
+  hf_choco_install "driverbooster"
+}
+
 function hf_install_gamer() {
   hf_choco_install "battle.net steam deluge stremio"
 }
@@ -462,6 +466,7 @@ function hf_windows_init_normal_user() {
   hf_install_vlc
   hf_install_7zip
   hf_install_ccleaner
+  hf_install_driverbooster
 }
 
 function hf_windows_init_bash_user() {
