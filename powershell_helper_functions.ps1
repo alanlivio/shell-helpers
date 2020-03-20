@@ -181,6 +181,8 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.Wallet
   Microsoft.MinecraftUWP
   A278AB0D.MarchofEmpires
+  king.com.CandyCrushFriends
+  king.com.BubbleWitch3Saga
   Microsoft.Messaging
   Microsoft.Appconnector
   Microsoft.BingNews
