@@ -6,7 +6,6 @@
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
 # https://github.com/Disassembler0/Win10-Initial-Setup-Script
-# https://github.com/Disassembler0/Win10-Initial-Setup-Script
 # https://superuser.com/questions/1246790/can-i-disable-windows-10-animations-with-a-batch-file
 
 # ---------------------------------------
@@ -559,7 +558,9 @@ function hf_install_driverbooster() {
 }
 
 function hf_install_gamer() {
-  hf_choco_install "battle.net steam deluge stremio"
+  hf_choco_install "battle.net"
+  hf_choco_install "steam"
+  hf_choco_install "stremio"
 }
 
 function hf_wt_install_settings($path) {
@@ -572,14 +573,6 @@ function hf_install_wsl() {
   Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
   Add-AppxPackage $env:TEMP\Ubuntu.appx
   Invoke-Expression -Command "ubuntu$VERSION.exe"
-}
-
-# ---------------------------------------
-# utils function
-# ---------------------------------------
-
-function hf_remove_desktop_links() {
-  Remove-Item C:\Users\*\Desktop\*lnk –Force
 }
 
 # ---------------------------------------
