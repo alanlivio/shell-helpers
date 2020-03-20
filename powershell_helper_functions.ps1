@@ -483,24 +483,8 @@ function hf_wsl_fix_home_folder() {
 }
 
 # ---------------------------------------
-# init function
+# install function
 # ---------------------------------------
-
-function hf_windows_sanity() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_system_disable_password_policy
-  hf_remove_unused_folders
-  hf_system_adjust_visual_to_performace
-  hf_system_disable_unused_services
-  hf_sanity_start_menu
-  hf_sanity_explorer
-  hf_sanity_explorer_this_pc_folder
-  hf_sanity_taskbar
-  hf_sanity_lock
-  hf_system_disable_unused_features
-  hf_uninstall_not_essential_store_packages
-  hf_uninstall_ondrive
-}
 
 function hf_install_chocolatey() {
   if (-Not (Get-Command 'choco' -errorAction SilentlyContinue)) {
@@ -584,6 +568,34 @@ function hf_install_wsl() {
   Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
   Add-AppxPackage $env:TEMP\Ubuntu.appx
   Invoke-Expression -Command "ubuntu$VERSION.exe"
+}
+
+# ---------------------------------------
+# utils function
+# ---------------------------------------
+
+function hf_remove_desktop_links() {
+  Remove-Item C:\Users\*\Desktop\*lnk –Force
+}
+
+# ---------------------------------------
+# init functions
+# ---------------------------------------
+
+function hf_windows_sanity() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_system_disable_password_policy
+  hf_remove_unused_folders
+  hf_system_adjust_visual_to_performace
+  hf_system_disable_unused_services
+  hf_sanity_start_menu
+  hf_sanity_explorer
+  hf_sanity_explorer_this_pc_folder
+  hf_sanity_taskbar
+  hf_sanity_lock
+  hf_system_disable_unused_features
+  hf_uninstall_not_essential_store_packages
+  hf_uninstall_ondrive
 }
 
 function hf_windows_init_normal_user() {
