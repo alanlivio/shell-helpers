@@ -123,7 +123,7 @@ function hf_store_list_installed() {
 
 function hf_store_install($name) {
   Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
-  Get-AppxPackage -allusers $name | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
 }
 function hf_store_install_essentials() {
   Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
@@ -427,7 +427,11 @@ function hf_install_gsudo() {
 }
 
 function hf_install_shellcheck() {
-  hf_choco_install "shellcheck "
+  hf_choco_install "shellcheck"
+}
+
+function hf_install_7zip() {
+  hf_choco_install "7zip"
 }
 
 function hf_install_gamer() {
@@ -435,7 +439,7 @@ function hf_install_gamer() {
 }
 
 function hf_wt_install_settings($path) {
-  cp $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+  Copy-Item $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
 }
 
 function hf_install_wsl() {
@@ -456,21 +460,17 @@ function hf_windows_init_normal_user() {
   hf_install_chocolatey
   hf_install_chrome
   hf_install_vlc
+  hf_install_7zip
   hf_install_ccleaner
 }
 
-function hf_windows_init() {
+function hf_windows_init_bash_user() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
-  hf_install_firefox
   hf_install_chocolatey
+  hf_install_firefox
   hf_install_gsudo
   hf_install_wsl
   hf_install_windows_terminal
   hf_wsl_fix_home_folder
-  hf_install_vscode
-  hf_install_shellcheck
-  hf_install_gdrive
-  hf_install_vlc
-  hf_install_ccleaner
 }
