@@ -345,7 +345,7 @@ function hf_install_chocolatey() {
   choco -y --acceptlicense feature enable -name=exitOnRebootDetected
 }
 
-function hf_install_bash() {
+function hf_install_msys() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_choco_install msys2
 }
@@ -378,6 +378,34 @@ function hf_install_vlc() {
   hf_choco_install "vlc"
 }
 
+function hf_install_windows_terminal() {
+  hf_choco_install "microsoft-windows-terminal"
+}
+
+function hf_install_gsudo() {
+  hf_choco_install "gsudo"
+}
+
+function hf_install_gamer() {
+  hf_choco_install "battle.net steam deluge stremio"
+}
+
+function hf_wt_install_settings($path) {
+   cp $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+}
+
+function hf_install_wsl() {
+  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+  # https://docs.microsoft.com/en-us/windows/wsl/install-manual
+  $VERSION=1804
+  Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
+  Add-AppxPackage $env:TEMP\Ubuntu.appx
+  Ubuntu$VERSION.exe
+}
+
 function hf_windows_init_normal_user() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
@@ -390,11 +418,14 @@ function hf_windows_init_normal_user() {
 function hf_windows_init() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_windows_sanity
-  hf_install_chocolatey
   hf_install_firefox
-  hf_install_chrome
+  hf_install_chocolatey
+  hf_install_gsudo
+  hf_install_wsl
+  hf_install_windows_terminal
+  hf_wsl_fix_home_folder
+  hf_install_vscode
+  hf_install_gdrive
   hf_install_vlc
   hf_install_ccleaner
-  hf_install_gdrive
-  hf_install_vscode
 }
