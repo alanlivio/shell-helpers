@@ -77,19 +77,14 @@ function hf_system_adjust_visual_to_performace() {
 
 function hf_system_disable_unused_features() {
   # https://gist.github.com/thoroc/86d354d029dda303598a
-
-  # XPS Viewer
-  Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /quiet /norestart
   # XPS Services
   Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /quiet /norestart
   # Internet Explorer
   Dism /online /Disable-Feature /FeatureName:Internet-Explorer-Optional-amd64 /quiet /norestart
   # Work Folders
   Dism /online /Disable-Feature /FeatureName:WorkFolders-Client /quiet /norestart
-  # Enabling .NET 3.5 framework because a lot of programs still use it
-  Dism /online /Enable-Feature /FeatureName:NetFx3 /quiet /norestart
-
 }
+
 function hf_system_disable_unused_services() {
   # https://gist.github.com/thoroc/86d354d029dda303598a
   schtasks /Change /TN "Microsoft\Windows\Application Experience\ProgramDataUpdater" /Disable | out-null
@@ -217,7 +212,7 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.Wallet
   Microsoft.MinecraftUWP
   A278AB0D.MarchofEmpires
-  king.com.CandyCrushFriends
+  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
   king.com.BubbleWitch3Saga
   Microsoft.Messaging
   Microsoft.Appconnector
@@ -368,7 +363,14 @@ function hf_wsl_root() {
 }
 
 function hf_wsl_fix_home_folder() {
+  wsl -u root touch /etc/wsl.conf
+  wsl -u root chown $env:UserName":"$env:UserName  /etc/wsl.conf
   wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
+  bash -c 'echo "[automount]" > /etc/wsl.conf'
+  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
+  bash -c 'echo "root=/ >> /etc/wsl.conf'
+  bash -c 'echo -e "options=\"metadata\"" >> /etc/wsl.conf'
+  bash -c 'echo "mountFsTab=true" >> /etc/wsl.conf'
 }
 
 # ---------------------------------------
@@ -389,16 +391,19 @@ function hf_windows_sanity() {
 }
 
 function hf_install_chocolatey() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-  Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-  cmd /c 'setx ChocolateyToolsLocation C:\opt\'
+  if(-Not (Get-Command 'choco' -errorAction SilentlyContinue))
+  {
+    Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+    cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
-  hf_choco enable -n allowGlobalConfirmation
-  hf_choco disable -n showNonElevatedWarnings
-  hf_choco disable -n showDownloadProgress
-  hf_choco enable -n removePackageInformationOnUninstall
-  choco -y --acceptlicense feature enable -name=exitOnRebootDetected
+    choco enable -n allowGlobalConfirmation
+    choco disable -n showNonElevatedWarnings
+    choco disable -n showDownloadProgress
+    choco enable -n removePackageInformationOnUninstall
+    choco -y --acceptlicense feature enable -name=exitOnRebootDetected
+  }
 }
 
 function hf_install_msys() {
@@ -463,15 +468,11 @@ function hf_wt_install_settings($path) {
 }
 
 function hf_install_wsl() {
-  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-
   # https://docs.microsoft.com/en-us/windows/wsl/install-manual
   $VERSION = 1804
   Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
   Add-AppxPackage $env:TEMP\Ubuntu.appx
-  Ubuntu$VERSION.exe
+  Invoke-Expression -Command "ubuntu$VERSION.exe"
 }
 
 function hf_windows_init_normal_user() {
@@ -485,13 +486,23 @@ function hf_windows_init_normal_user() {
   hf_install_driverbooster
 }
 
+function hf_preconfigure_windows_init_bash_user() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all
+}
+
 function hf_windows_init_bash_user() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_windows_sanity
   hf_install_chocolatey
+  hf_install_gdrive
   hf_install_firefox
-  hf_install_gsudo
-  hf_install_wsl
+  hf_install_vscode
   hf_install_windows_terminal
+  hf_install_gsudo
+  hf_windows_sanity
+  hf_install_wsl
   hf_wsl_fix_home_folder
 }
+
