@@ -236,6 +236,10 @@ function hf_sanity_taskbar() {
 function hf_sanity_explorer() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
 
+  # Hide icons in desktop
+  $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+  Set-ItemProperty -Path $Path -Name "HideIcons" -Value 1
+
   # Hide recently and frequently used item shortcuts in Explorer
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 
