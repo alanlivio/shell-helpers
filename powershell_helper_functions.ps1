@@ -86,7 +86,7 @@ function hf_system_disable_unused_features() {
   # fax
   Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
   # XPS Services
-	Disable-WindowsOptionalFeature -Online -FeatureName "Printing-XPSServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  Disable-WindowsOptionalFeature -Online -FeatureName "Printing-XPSServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # print to pdf
   Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # Internet Explorer
@@ -113,6 +113,15 @@ function hf_system_disable_unused_services() {
   cmd /c sc config diagnosticshub.standardcollector.service start= disabled | out-null
   cmd /c sc config TrkWks start= disabled | out-null
   cmd /c sc config WMPNetworkSvc start= disabled | out-null
+}
+
+function hf_system_disable_password_policy {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  $tmpfile = New-TemporaryFile
+  secedit /export /cfg $tmpfile /quiet
+  (Get-Content $tmpfile).Replace("PasswordComplexity = 1", "PasswordComplexity = 0").Replace("MaximumPasswordAge = 42", "MaximumPasswordAge = -1") | Out-File $tmpfile
+  secedit /configure /db "$env:SYSTEMROOT\security\database\local.sdb" /cfg $tmpfile /areas SECURITYPOLICY | Out-Null
+  Remove-Item -Path $tmpfile
 }
 
 # ---------------------------------------
@@ -479,6 +488,7 @@ function hf_wsl_fix_home_folder() {
 
 function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_system_disable_password_policy
   hf_remove_unused_folders
   hf_system_adjust_visual_to_performace
   hf_system_disable_unused_services
