@@ -20,11 +20,15 @@ Set-Location ~
 # ---------------------------------------
 
 function hf_profile_install() {
-  Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+  Write-Output "Import-Module -Force -Global $SCRIPT_NAME" > $Profile.AllUsersAllHosts
 }
 
 function hf_profile_reload() {
-  Import-Module -Force -Global $SCRIPT_NAME
+  powershell -nologo
+}
+
+function hf_profile_import($path) {
+  Write-Output "RUN: Import-Module -Force -Global $path"
 }
 
 # ---------------------------------------
