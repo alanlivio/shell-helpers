@@ -235,18 +235,41 @@ function hf_uninstall_not_essential_store_packages() {
   NORDCURRENT.COOKINGFEVER'
   $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
 }
-
-function hf_disable_not_essential_context_menu() {
+function hf_explorer_sanity() {
+  # https://gist.github.com/thoroc/86d354d029dda303598a
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  # * Sharing
-  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\ModernSharing" /f }
-  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\Sharing" /f }
-  if (Test-Path "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP") { reg delete "HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\EPP" /f }
-  # AllFilesystemObjects
-  if (Test-Path "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") { reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" /f }
-  if (Test-Path "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu") { reg delete "HKEY_CLASSES_ROOT\AllFilesystemObjects\shellex\ContextMenuHandlers\CopyAsPathMenu" /f }
-  # Directory
-  if (Test-Path "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing") { reg delete "HKEY_CLASSES_ROOT\Directory\shellex\ContextMenuHandlers\Sharing" /f }
+
+  # Show file extensions
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # Remove 'Customize this folder' from context menu
+  New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
+
+  # Remove 'Restore to previous versions' from context menu (might be superflous, just in case)
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+
+  # Remove 'Share with' from context menu (First 9 might be superflous, just in case)
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name SharingWizardOn -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # Remove 'Include in library' from context menu (might be superflous, just in case)
+  Remove-Item -ErrorAction SilentlyContinue "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
+
+  # Remove 'Send to' from context menu (might be superflous, just in case)
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse | Out-Null
+
 }
 
 # ---------------------------------------
@@ -304,11 +327,10 @@ function hf_windows_sanity() {
   hf_disable_start_menu_bing
   hf_disable_this_pc_folders
   hf_disable_tiles_from_start_menu
-  hf_disable_not_essential_context_menu
+  hf_explorer_sanity
   hf_uninstall_not_essential_store_packages
   hf_uninstall_ondrive
 }
-
 
 function hf_install_chocolatey() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
