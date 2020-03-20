@@ -121,6 +121,17 @@ function hf_store_list_installed() {
   Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
+function hf_store_install($name) {
+  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Get-AppxPackage -allusers $name | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+}
+function hf_store_install_essentials() {
+  Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
+  hf_store_install Microsoft.WindowsStore
+  hf_store_install Microsoft.WindowsCalculator
+  hf_store_install Microsoft.Windows.Photos
+}
+
 # ---------------------------------------
 # remove functions
 # ---------------------------------------
