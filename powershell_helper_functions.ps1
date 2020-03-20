@@ -177,8 +177,19 @@ function hf_remove_unused_folders() {
 # ---------------------------------------
 
 function hf_sanity_taskbar() {
-  # Show file extensions
+  # use small icons
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
+
+  # hide search button
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # hide task view button
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # restart
+  taskkill /f /im explorer.exe
+  Start-Process explorer.exe
 }
 
 function hf_sanity_explorer() {
