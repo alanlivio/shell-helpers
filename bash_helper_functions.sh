@@ -74,7 +74,12 @@ function hf_profile_install() {
 
 function hf_profile_reload() {
   hf_log_func
-  source ~/.bashrc
+  if test -n "$IS_WINDOWS"; then
+    # for WSL
+    source ~/.profile
+  else
+    source ~/.bashrc
+  fi
 }
 
 function hf_profile_download() {
@@ -107,13 +112,29 @@ if test -n "$IS_WINDOWS"; then
     powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
   }
 
+  # ---------------------------------------
   # wsl functions
+  # ---------------------------------------
+
   function hf_wsl_fix_apt() {
     hf_log_func
     sudo apt update --fix-missing
   }
 
+  function hf_wsl_fix_mount() {
+    # https://blog.johanbove.info/posts/2018/06/30/cannot-ssh-from-wsl.html
+    sudo su
+    cd /tmp
+    sudo umount /mnt/c
+    sudo mount -t drvfs C: /mnt/c -o metadata
+    sudo chown alan:aln -R
+    exit
+  }
+
+  # ---------------------------------------
   # msys functions
+  # ---------------------------------------
+
   function hf_msys_search() {
     hf_log_func
     pacman -Ss "$@"
@@ -129,6 +150,29 @@ if test -n "$IS_WINDOWS"; then
     pacman -Su
   }
 
+fi
+
+# ---------------------------------------
+# macos-only functions
+# ---------------------------------------
+
+if test -n "$IS_MAC"; then
+  function hf_mac_install_homebrew() {
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  }
+
+  function hf_mac_install_bash4() {
+    brew install bash
+    sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
+    sudo chsh -s /usr/local/bin/bash
+    echo $BASH && echo $BASH_VERSION
+  }
+
+  function hf_mac_init() {
+    hf_mac_install_homebrew
+    hf_mac_install_bash4
+    hf_mac_enable_wifi
+  }
 fi
 
 # ---------------------------------------
@@ -159,29 +203,6 @@ function hf_mac_install_refind() {
   hf_log_func
   sudo apt install -y refind
 }
-
-# ---------------------------------------
-# macos-only functions
-# ---------------------------------------
-
-if test -n "$IS_MAC"; then
-  function hf_mac_install_homebrew() {
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  }
-
-  function hf_mac_install_bash4() {
-    brew install bash
-    sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
-    sudo chsh -s /usr/local/bin/bash
-    echo $BASH && echo $BASH_VERSION
-  }
-
-  function hf_mac_init() {
-    hf_mac_install_homebrew
-    hf_mac_install_bash4
-    hf_mac_enable_wifi
-  }
-fi
 
 # ---------------------------------------
 # audio functions
@@ -840,12 +861,10 @@ function hf_user_permissions_opt() {
 
 function hf_user_permissions_ssh() {
   if ! test -d ~/.ssh/; then mkdir ~/.ssh/; fi
-  chmod 700 ~/.ssh/
+  sudo chmod 700 ~/.ssh/
   if test -f ~/.ssh/id_rsa; then
     sudo chmod 600 ~/.ssh/id_rsa
-    sudo chmod 644 ~/.ssh/id_rsa.pubssh-rsa
-    sudo chmod 600 ~/.ssh/id_ed25519
-    sudo chmod 644 ~/.ssh/id_ed25519.pub
+    sudo chmod 640 ~/.ssh/id_rsa.pubssh-rsa
   fi
 }
 
