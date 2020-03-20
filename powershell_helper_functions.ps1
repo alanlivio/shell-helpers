@@ -409,6 +409,10 @@ function hf_install_gsudo() {
   hf_choco_install "gsudo"
 }
 
+function hf_install_shellcheck() {
+  hf_choco_install "shellcheck "
+}
+
 function hf_install_gamer() {
   hf_choco_install "battle.net steam deluge stremio"
 }
@@ -448,6 +452,7 @@ function hf_windows_init() {
   hf_install_windows_terminal
   hf_wsl_fix_home_folder
   hf_install_vscode
+  hf_install_shellcheck
   hf_install_gdrive
   hf_install_vlc
   hf_install_ccleaner
