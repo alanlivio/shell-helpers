@@ -75,6 +75,40 @@ function hf_system_adjust_visual_to_performace() {
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
 }
 
+function hf_system_disable_unused_features() {
+  # https://gist.github.com/thoroc/86d354d029dda303598a
+
+  # XPS Viewer
+  Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /quiet /norestart
+  # XPS Services
+  Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /quiet /norestart
+  # Internet Explorer
+  Dism /online /Disable-Feature /FeatureName:Internet-Explorer-Optional-amd64 /quiet /norestart
+  # Work Folders
+  Dism /online /Disable-Feature /FeatureName:WorkFolders-Client /quiet /norestart
+  # Enabling .NET 3.5 framework because a lot of programs still use it
+  Dism /online /Enable-Feature /FeatureName:NetFx3 /quiet /norestart
+
+}
+function hf_system_disable_unused_services() {
+  # https://gist.github.com/thoroc/86d354d029dda303598a
+  schtasks /Change /TN "Microsoft\Windows\Application Experience\ProgramDataUpdater" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\AppID\SmartScreenSpecific" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\NetTrace\GatherNetworkInfo" /Disable | out-null
+  schtasks /Change /TN "Microsoft\Windows\Windows Error Reporting\QueueReporting" /Disable | out-null
+
+  cmd /c sc config DiagTrack start= disabled | out-null
+  cmd /c sc config dmwappushservice start= disabled | out-null
+  cmd /c sc config diagnosticshub.standardcollector.service start= disabled | out-null
+  cmd /c sc config TrkWks start= disabled | out-null
+  cmd /c sc config WMPNetworkSvc start= disabled | out-null
+}
+
 # ---------------------------------------
 # network functions
 # ---------------------------------------
@@ -156,28 +190,6 @@ function hf_disable_tiles_from_start_menu() {
 function hf_enable_dark_mode() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
-}
-
-function hf_disable_this_pc_folders() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  $folders = @(
-    "{088e3905-0323-4b02-9826-5d99428e115f}",
-    "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}",
-    "{1CF1260C-4DD0-4ebb-811F-33C572699FDE}",
-    "{24ad3ad4-a569-4530-98e1-ab02f9417aa8}",
-    "{374DE290-123F-4565-9164-39C4925E467B}",
-    "{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}",
-    "{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}",
-    "{A0953C92-50DC-43bf-BE83-3742FED03C9C}",
-    "{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}",
-    "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}",
-    "{d3162b92-9365-467a-956b-92703aca08af}",
-    "{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}")
-  $path1 = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
-  $path2 = "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"
-  $folders | ForEach-Object { if ( Test-Path $path1$_) { reg delete $path1$_ /f } }
-  $folders | ForEach-Object { if (Test-Path $path2$_) { reg delete $path2$_ /f }
-  }
 }
 
 function hf_disable_start_menu_bing() {
@@ -265,6 +277,9 @@ function hf_uninstall_not_essential_store_packages() {
 function hf_explorer_sanity() {
   # https://gist.github.com/thoroc/86d354d029dda303598a
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+
+  # Set explorer to open to "This PC"
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
 
   # Show file extensions
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
@@ -363,13 +378,14 @@ function hf_wsl_fix_home_folder() {
 function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_system_adjust_visual_to_performace
-  hf_remove_unused_folders
-  hf_disable_start_menu_bing
-  hf_disable_this_pc_folders
-  hf_disable_tiles_from_start_menu
   hf_explorer_sanity
+  hf_system_disable_unused_services
+  hf_system_disable_unused_features
+  hf_disable_tiles_from_start_menu
   hf_uninstall_not_essential_store_packages
   hf_uninstall_ondrive
+  hf_disable_start_menu_bing
+  hf_remove_unused_folders
 }
 
 function hf_install_chocolatey() {
