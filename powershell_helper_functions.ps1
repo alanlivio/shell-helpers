@@ -83,12 +83,16 @@ function hf_system_adjust_visual_to_performace() {
 }
 
 function hf_system_disable_unused_features() {
+  # fax
+  Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
   # XPS Services
-  Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /quiet /norestart
+	Disable-WindowsOptionalFeature -Online -FeatureName "Printing-XPSServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  # print to pdf
+  Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # Internet Explorer
-  Dism /online /Disable-Feature /FeatureName:Internet-Explorer-Optional-amd64 /quiet /norestart
+  Disable-WindowsOptionalFeature -Online -FeatureName "Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # Work Folders
-  Dism /online /Disable-Feature /FeatureName:WorkFolders-Client /quiet /norestart
+  Disable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # windows media player
   Disable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart -WarningAction SilentlyContinue | Out-Null
 }
