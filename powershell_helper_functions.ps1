@@ -63,6 +63,12 @@ function hf_system_rename($new_name) {
   Rename-Computer -NewName "$new_name"
 }
 
+# https://superuser.com/questions/1246790/can-i-disable-windows-10-animations-with-a-batch-file
+function hf_system_adjust_visual_to_performace() {
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
+}
+
 # ---------------------------------------
 # network functions
 # ---------------------------------------
@@ -339,6 +345,7 @@ function hf_wsl_fix_home_folder() {
 
 function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_system_adjust_visual_to_performace
   hf_remove_unused_folders
   hf_disable_start_menu_bing
   hf_disable_this_pc_folders
@@ -407,7 +414,7 @@ function hf_install_gamer() {
 }
 
 function hf_wt_install_settings($path) {
-   cp $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+  cp $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
 }
 
 function hf_install_wsl() {
@@ -416,7 +423,7 @@ function hf_install_wsl() {
   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
   # https://docs.microsoft.com/en-us/windows/wsl/install-manual
-  $VERSION=1804
+  $VERSION = 1804
   Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
   Add-AppxPackage $env:TEMP\Ubuntu.appx
   Ubuntu$VERSION.exe
