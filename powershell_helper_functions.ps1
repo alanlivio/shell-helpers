@@ -11,6 +11,12 @@ $SCRIPT_CFG = "$SCRIPT_DIR\powershell_helper_functions_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
+
+# ---------------------------------------
+# alias
+# ---------------------------------------
+Set-Alias -Name grep -Value Select-String
+
 # ---------------------------------------
 # go home
 # ---------------------------------------
