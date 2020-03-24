@@ -396,8 +396,8 @@ function hf_git_push_commit() {
   git push
 }
 
-function hf_git_ammend_push_force() {
-  git commit --amend --no-edit
+function hf_git_ammend_commit_all_push_force() {
+  git commit -a --amend --no-edit
   git push --force
 }
 
@@ -871,7 +871,6 @@ function hf_user_permissions_ssh() {
 
 function hf_user_send_ssh_keys() {
   : ${1?"Usage: ${FUNCNAME[0]} [user]"}
-
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pubssh-rsa
 }
 
