@@ -589,6 +589,10 @@ function hf_android_install_package() {
 # folder functions
 # ---------------------------------------
 
+function hf_folder_host_http() {
+  sudo python3 -m http.server 80
+}
+
 function hf_folder_remove() {
   if test -d $1; then rm -rf $1; fi
 }
