@@ -1586,8 +1586,8 @@ function hf_install_foxit() {
     hf_fetch_extract_to $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
     sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
+    sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
   fi
-  sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
 }
 
 function hf_install_stremio() {
