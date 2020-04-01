@@ -796,8 +796,18 @@ function hf_partitions_list() {
 # network functions
 # ---------------------------------------
 
-function hf_network_open_ports() {
+function hf_network_ports_list_open() {
   netstat -tulpn
+}
+
+function hf_network_ports_list_using() {
+  : ${1?"Usage: ${FUNCNAME[0]} <port>"}
+  sudo lsof -i:$1
+}
+
+function hf_network_ports_kill_using() {
+  : ${1?"Usage: ${FUNCNAME[0]} <port>"}
+  sudo kill -9 $(sudo lsof -t -i:$1)
 }
 
 function hf_network_domain_info() {
