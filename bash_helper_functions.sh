@@ -796,6 +796,19 @@ function hf_partitions_list() {
 # network functions
 # ---------------------------------------
 
+
+function hf_network_ports_tcp_listening() {
+  ss -lt
+}
+
+function hf_network_ports_udp_listening() {
+  ss -lu
+}
+
+function hf_network_ports_processes() {
+  ss -p
+}
+
 function hf_network_ports_list_open() {
   netstat -tulpn
 }
@@ -1007,22 +1020,6 @@ function hf_ubuntu_upgrade() {
   sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
   sudo apt update && sudo apt dist-upgrade
   do-release-upgrade
-}
-
-# ---------------------------------------
-# tcp functions
-# ---------------------------------------
-
-function hf_ports_tcp_listening() {
-  ss -lt
-}
-
-function hf_ports_udp_listening() {
-  ss -lu
-}
-
-function hf_ports_processes() {
-  ss -p
 }
 
 # ---------------------------------------
