@@ -217,7 +217,7 @@ function hf_audio_create_empty() {
 }
 
 function hf_audio_compress() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
 
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
@@ -227,7 +227,7 @@ function hf_audio_compress() {
 # ---------------------------------------
 
 function hf_video_create_by_image() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
 
   ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
 }
@@ -289,7 +289,7 @@ function hf_pkg_config_show() {
 # ---------------------------------------
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
-  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
@@ -297,7 +297,7 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
 }
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
-  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
@@ -390,7 +390,7 @@ function hf_git_remove_from_tree() {
 }
 
 function hf_git_push_commit() {
-  : ${1?"Usage: ${FUNCNAME[0]} [commit message]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
   git push
@@ -407,7 +407,7 @@ function hf_git_check_if_need_pull() {
 }
 
 function hf_git_create_gitignore() {
-  : ${1?"Usage: ${FUNCNAME[0]} [contexts,..]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <contexts,..>"}
 
   curl -L -s "https://www.gitignore.io/api/$1"
 }
@@ -541,7 +541,7 @@ function hf_grub_splash_boot() {
 function hf_android_start_activity() {
   #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
   #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
-  : ${1?"Usage: ${FUNCNAME[0]} [activity]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <activity>"}
 
   adb shell am start -a android.intent.action.MAIN -n "$1"
 }
@@ -568,19 +568,19 @@ function hf_android_get_printscreen() {
 }
 
 function hf_android_installed_package() {
-  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
 
   adb shell pm list packages | grep $1
 }
 
 function hf_android_uninstall_package() {
   # adb uninstall org.libsdl.app
-  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
 
   adb uninstall $1
 }
 function hf_android_install_package() {
-  : ${1?"Usage: ${FUNCNAME[0]} [package]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
 
   adb install $1
 }
@@ -645,42 +645,42 @@ function hf_cpp_delete_cmake_files() {
 # ---------------------------------------
 
 function hf_image_size_get() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   identify -format "%wx%h" "$1"
 }
 
 function hf_image_resize() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   convert "$1" -resize "$2"\> "rezised-$1"
 }
 
 function hf_image_reconize_text_en() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
 
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hf_image_reconize_text_pt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
 
   tesseract -l por "$1" "$1.txt"
 }
 
 function hf_image_reconize_stdout() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
 
   tesseract "$1" stdout
 }
 
 function hf_imagem_compress() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   hf_test_exist_command pngquant
 
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hf_imagem_compress2() {
-  : ${1?"Usage: ${FUNCNAME[0]} [image]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   hf_test_exist_command jpegoptim
 
   jpegoptim -d . $1.jpeg
@@ -695,7 +695,7 @@ function hf_pdf_find_duplicates() {
 }
 
 function hf_pdf_remove_annotations() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
   # libcam-pdf-perl
   hf_test_exist_command rewritepdf
 
@@ -703,21 +703,21 @@ function hf_pdf_remove_annotations() {
 }
 
 function hf_pdf_search_pattern() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
   hf_test_exist_command pdfgrep
 
   pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
 function hf_pdf_remove_password() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
   hf_test_exist_command qpdf
 
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
 function hf_pdf_remove_watermark() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
 
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
@@ -725,25 +725,25 @@ function hf_pdf_remove_watermark() {
 }
 
 function hf_pdf_compress() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
 
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard1() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
 
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard2() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
 
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_count_words() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
 
   pdftotext $1 - | wc -w
 }
@@ -753,12 +753,12 @@ function hf_pdf_count_words() {
 # ---------------------------------------
 
 function hf_convert_to_markdown() {
-  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
   pandoc -s $1 -t markdown -o ${1%.*}.md
 }
 
 function hf_convert_to_pdf() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pdf]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
@@ -767,7 +767,7 @@ function hf_convert_to_pdf() {
 # ---------------------------------------
 
 function hf_rename_to_lowercase_with_underscore() {
-  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
   hf_test_exist_command rename || return
   echo "rename to lowercase with underscore"
   rename 'y/A-Z/a-z/' "$@"
@@ -776,7 +776,7 @@ function hf_rename_to_lowercase_with_underscore() {
 }
 
 function hf_rename_to_lowercase_with_dash() {
-  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
   hf_test_exist_command rename || return
   echo "rename to lowercase with dash"
   rename 'y/A-Z/a-z/' "$@"
@@ -860,12 +860,12 @@ function hf_virtualbox_resize_to_2gb() {
 # ---------------------------------------
 
 function hf_user_create_new() {
-  : ${1?"Usage: ${FUNCNAME[0]} [user_name"}
+  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
   sudo adduser "$1"
 }
 
 function hf_user_enable_sudo() {
-  : ${1?"Usage: ${FUNCNAME[0]} [user_name"}
+  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
   sudo usermod -aG sudo "$1"
 }
 
@@ -896,7 +896,7 @@ function hf_user_permissions_ssh() {
 }
 
 function hf_user_send_ssh_keys() {
-  : ${1?"Usage: ${FUNCNAME[0]} [user]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
   ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pubssh-rsa
 }
 
@@ -981,13 +981,13 @@ function hf_snap_hide_home_folder() {
 # ---------------------------------------
 
 function hf_vscode_run_as_root() {
-  : ${1?"Usage: ${FUNCNAME[0]} [folder]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
   sudo code --user-data-dir="~/.vscode" "$1"
 }
 
 function hf_vscode_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [package_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <package, ...>"}
   hf_log_func
 
   PKGS_TO_INSTALL=""
@@ -1030,18 +1030,18 @@ function hf_service_status_all() {
 }
 
 function hf_service_rcd_enable() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
+  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}$1
   sudo update-rc.d $1 enable
 }
 
 function hf_service_rcd_disable() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}$1
+  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}$1
   sudo service $1 stop
   sudo update-rc.d -f $1 disable
 }
 
 function hf_service_add_script() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
   echo "creating /etc/init.d/$1"
   sudo touch /etc/init.d/$1
   sudo chmod 755 /etc/init.d/$1
@@ -1049,7 +1049,7 @@ function hf_service_add_script() {
 }
 
 function hf_service_create_startup_script() {
-  : ${1?"Usage: ${FUNCNAME[0]} [script_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
   echo "creating /etc/init.d/$1"
   echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
   systemctl daemon-reload
@@ -1202,19 +1202,19 @@ function hf_gnome_settings_reset() {
 }
 
 function hf_gnome_settings_save_to_file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
+  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
 
   dconf dump $1 >$2
 }
 
 function hf_gnome_settings_load_from_file() {
-  : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
 
   dconf load $1 <$2
 }
 
 function hf_gnome_settings_diff_actual_and_file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] [file]"}
+  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
 
   TMP_FILE=/tmp/gnome_settings_diff
   hf_gnome_settings_save_to_file $1 $TMP_FILE
@@ -1274,7 +1274,7 @@ function hf_install_node() {
 }
 
 function hf_npm_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package, ...>"}
   hf_log_func
 
   PKGS_TO_INSTALL=""
@@ -1308,7 +1308,7 @@ function hf_npm_install_packages() {
 # ---------------------------------------
 
 function hf_ruby_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [npm_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package, ...>"}
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
@@ -1430,21 +1430,21 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 
 function hf_curl_get() {
-  : ${1?"Usage: ${FUNCNAME[0]} <URI>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
   curl -X GET \
     -H "Accept: application/json" \
     --data $1
 }
 
 function hf_curl_post() {
-  : ${1?"Usage: ${FUNCNAME[0]} <URI>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
   curl -X POST \
     -H "Accept: application/json" \
     --data $1
 }
 
 function hf_curl_post_file() {
-  : ${1?"Usage: ${FUNCNAME[0]} <file> <URI>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <file> <URL>"}
   curl -X POST \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
@@ -1818,7 +1818,7 @@ function hf_apt_remove_orphan_packages() {
 }
 
 function hf_apt_fetch_install() {
-  : ${1?"Usage: ${FUNCNAME[0]} [url]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
 
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
@@ -1834,7 +1834,7 @@ function hf_apt_fetch_install() {
 # ---------------------------------------
 
 function hf_fetch_extract_to() {
-  : ${2?"Usage: ${FUNCNAME[0]} [url] [folder]"}
+  : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
 
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
