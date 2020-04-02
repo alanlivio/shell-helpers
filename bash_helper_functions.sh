@@ -1430,6 +1430,16 @@ function hf_eclipse_uninstall_packages() {
 # install functions
 # ---------------------------------------
 
+function hf_install_luarocks() {
+  hf_log_func
+  if ! type luarocks &>/dev/null; then
+    wget https://luarocks.org/releases/luarocks-3.3.0.tar.gz
+    tar zxpf luarocks-3.3.0.tar.gz
+    cd luarocks-3.3.0
+    ./configure && make && sudo make install
+  fi
+}
+
 function hf_install_curl() {
   hf_log_func
   if ! type curl &>/dev/null; then
