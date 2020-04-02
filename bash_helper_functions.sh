@@ -796,7 +796,6 @@ function hf_partitions_list() {
 # network functions
 # ---------------------------------------
 
-
 function hf_network_ports_tcp_listening() {
   ss -lt
 }
@@ -1424,6 +1423,32 @@ function hf_eclipse_uninstall_packages() {
   #   org.eclipse.wst.server_adapters.feature.feature.group
   eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
   eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
+}
+
+# ---------------------------------------
+# curl functions
+# ---------------------------------------
+
+function hf_curl_get() {
+  : ${1?"Usage: ${FUNCNAME[0]} <URI>"}
+  curl -X GET \
+    -H "Accept: application/json" \
+    --data $1
+}
+
+function hf_curl_post() {
+  : ${1?"Usage: ${FUNCNAME[0]} <URI>"}
+  curl -X POST \
+    -H "Accept: application/json" \
+    --data $1
+}
+
+function hf_curl_post_file() {
+  : ${1?"Usage: ${FUNCNAME[0]} <file> <URI>"}
+  curl -X POST \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    --data $1 $2
 }
 
 # ---------------------------------------
