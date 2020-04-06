@@ -480,7 +480,7 @@ function hf_wsl_fix_home_folder() {
   wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
   bash -c 'echo "[automount]" > /etc/wsl.conf'
   bash -c 'echo "enabled=true" >> /etc/wsl.conf'
-  bash -c 'echo "root=/ >> /etc/wsl.conf'
+  bash -c 'echo "root=/" >> /etc/wsl.conf'
   bash -c 'echo -e "options=\"metadata\"" >> /etc/wsl.conf'
   bash -c 'echo "mountFsTab=true" >> /etc/wsl.conf'
 }
@@ -603,26 +603,29 @@ function hf_windows_init_normal_user() {
   hf_install_vlc
   hf_install_7zip
   hf_install_ccleaner
-  hf_install_driverbooster
 }
 
-function hf_preconfigure_windows_init_bash_user() {
+function hf_wsl_enable_features() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all
 }
 
+function hf_wsl_configure() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_install_wsl
+  hf_wsl_fix_home_folder
+}
+
 function hf_windows_init_bash_user() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  hf_windows_sanity
   hf_install_chocolatey
   hf_install_gdrive
   hf_install_firefox
   hf_install_vscode
   hf_install_windows_terminal
   hf_install_gsudo
-  hf_windows_sanity
-  hf_install_wsl
-  hf_wsl_fix_home_folder
 }
 
