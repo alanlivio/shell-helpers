@@ -1662,6 +1662,7 @@ function hf_install_tor() {
 }
 
 function hf_install_zotero() {
+  hf_log_func
   sudo snap install zotero-snap
 }
 
@@ -1819,6 +1820,7 @@ function hf_apt_remove_orphan_packages() {
 
 function hf_apt_fetch_install() {
   : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
+  hf_log_func
 
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
@@ -1835,6 +1837,7 @@ function hf_apt_fetch_install() {
 
 function hf_fetch_extract_to() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
+  hf_log_func
 
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
@@ -1873,7 +1876,7 @@ function hf_fetch_extract_to() {
 
 function hf_fetch_youtube_playlist() {
   : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
-
+  hf_log_func
   youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
@@ -1882,10 +1885,12 @@ function hf_fetch_youtube_playlist() {
 # ---------------------------------------
 
 function hf_list_sorted_by_size() {
+  hf_log_func
   du -h | sort -h
 }
 
 function hf_list_recursive_sorted_by_size() {
+  hf_log_func
   du -ah | sort -h
 }
 
@@ -1894,10 +1899,12 @@ function hf_list_recursive_sorted_by_size() {
 # ---------------------------------------
 
 function hf_x11_properties_of_window() {
+  hf_log_func
   xprop | grep "^WM_"
 }
 
 function hf_x11_properties_of_window() {
+  hf_log_func
   xprop | grep "^WM_"
 }
 
@@ -1946,6 +1953,7 @@ function hf_clean_unused_folders() {
 }
 
 function hf_clean_unused_config() {
+  hf_log_func
   cd ~ || exit
   FOLDERS=(
     ".android"
