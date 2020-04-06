@@ -1950,11 +1950,12 @@ function hf_clean_unused_config() {
   FOLDERS=(
     ".android"
     ".apport-ignore.xml "
-    ".bash_history"
     ".bash_logout"
+    ".cache/"
     ".gimp-*"
     ".gradle/"
     ".java/"
+    ".less"
     ".mysql_history"
     ".python_history"
     ".thumbnails"
