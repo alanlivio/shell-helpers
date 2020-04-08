@@ -819,7 +819,10 @@ function hf_network_ports_list_using() {
 
 function hf_network_ports_kill_using() {
   : ${1?"Usage: ${FUNCNAME[0]} <port>"}
-  sudo kill -9 $(sudo lsof -t -i:$1)
+  pid=$(sudo lsof -t -i:$1)
+  if test -n "$pid"; then
+    sudo kill -9 "$pid"
+  fi
 }
 
 function hf_network_domain_info() {
