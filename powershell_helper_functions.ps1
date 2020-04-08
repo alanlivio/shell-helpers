@@ -1,7 +1,6 @@
 # author: Alan Livio <alan@telemidia.puc-rio.br>
 # URL:    https://github.com/alanlivio/powershell-helper-functions
 
-
 # thanks
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
@@ -157,7 +156,7 @@ function hf_explorer_open_startup_folder() {
 }
 
 function hf_explorer_open_home_folder() {
-  explorer $env:USERPROFILE
+  explorer $env:userprofile
 }
 
 # ---------------------------------------
@@ -476,12 +475,12 @@ function hf_wsl_root() {
 
 function hf_wsl_fix_home_folder() {
   wsl -u root touch /etc/wsl.conf
-  wsl -u root chown $env:UserName":"$env:UserName  /etc/wsl.conf
+  wsl -u root chown -R $env:UserName":"$env:UserName  /etc/wsl.conf
   wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
   bash -c 'echo "[automount]" > /etc/wsl.conf'
   bash -c 'echo "enabled=true" >> /etc/wsl.conf'
   bash -c 'echo "root=/" >> /etc/wsl.conf'
-  bash -c 'echo -e "options=\"metadata\"" >> /etc/wsl.conf'
+  bash -c 'echo -e "options=metadata,uid=1000,gid=1000,umask=022" >> /etc/wsl.conf'
   bash -c 'echo "mountFsTab=true" >> /etc/wsl.conf'
 }
 
@@ -563,16 +562,25 @@ function hf_install_gamer() {
   hf_choco_install "stremio"
 }
 
-function hf_wt_install_settings($path) {
-  Copy-Item $path C:\Users\alan\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
-}
-
 function hf_install_wsl() {
   # https://docs.microsoft.com/en-us/windows/wsl/install-manual
   $VERSION = 1804
   Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
   Add-AppxPackage $env:TEMP\Ubuntu.appx
   Invoke-Expression -Command "ubuntu$VERSION.exe"
+}
+
+# ---------------------------------------
+# init functions
+# ---------------------------------------
+
+
+function hf_config_install_wt($path) {
+  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+}
+
+function hf_config_installvscode($path) {
+  Copy-Item $path .\AppData\Roaming\Code\User\settings.json
 }
 
 # ---------------------------------------
@@ -595,21 +603,11 @@ function hf_windows_sanity() {
   hf_uninstall_ondrive
 }
 
-function hf_windows_init_normal_user() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_windows_sanity
-  hf_install_chocolatey
-  hf_install_chrome
-  hf_install_vlc
-  hf_install_7zip
-  hf_install_ccleaner
-}
-
 function hf_wsl_enable_features() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 }
 
 function hf_wsl_configure() {
@@ -618,11 +616,23 @@ function hf_wsl_configure() {
   hf_wsl_fix_home_folder
 }
 
-function hf_windows_init_bash_user() {
+function hf_windows_init_user_nomal() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_windows_sanity
+  echo "run hf_windows_sanity in other terminal"
   hf_install_chocolatey
-  hf_install_gdrive
+  hf_install_chrome
+  hf_install_vlc
+  hf_install_7zip
+  hf_install_ccleaner
+}
+
+function hf_windows_init_user_bash() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  echo "run hf_windows_sanity in other terminal"
+  echo "run hf_wsl_enable_features"
+  echo "install ubuntu and windows terminal from windows Store"
+  echo "run hf_wsl_configure"
+  hf_install_chocolatey
   hf_install_firefox
   hf_install_vscode
   hf_install_windows_terminal
