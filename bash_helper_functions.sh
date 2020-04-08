@@ -70,16 +70,16 @@ function hf_test_exist_command() {
 
 function hf_profile_install() {
   hf_log_func
-  echo -e "\nsource $SCRIPT_NAME" >>~/.bashrc
+  echo -e "\nsource $SCRIPT_NAME" >>$HOME/.bashrc
 }
 
 function hf_profile_reload() {
   hf_log_func
   if test -n "$IS_WINDOWS"; then
     # for WSL
-    source ~/.profile
+    source $HOME/.profile
   else
-    source ~/.bashrc
+    source $HOME/.bashrc
   fi
 }
 
@@ -366,7 +366,7 @@ function hf_git_github_check_ssh() {
 
 function hf_git_reset_author() {
   : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
-  git rebase -i HEAD~$1 -x "git commit --amend --reset-author"
+  git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
 }
 function hf_git_github_init() {
   : ${1?"Usage: ${FUNCNAME[0]} [github name]"}
@@ -382,7 +382,7 @@ function hf_git_github_init() {
 }
 
 function hf_git_github_fix() {
-  echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee ~/.ssh/config
+  echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee $HOME/.ssh/config
 }
 
 function hf_git_remove_from_tree() {
@@ -501,7 +501,7 @@ function hf_git_log_history_file() {
 }
 
 function hf_git_diff_one_commit() {
-  git diff $1~ $1
+  git diff $1$HOME $1
 }
 
 # ---------------------------------------
@@ -887,17 +887,17 @@ function hf_user_permissions_opt() {
 }
 
 function hf_user_permissions_ssh() {
-  if ! test -d ~/.ssh/; then mkdir ~/.ssh/; fi
-  sudo chmod 700 ~/.ssh/
-  if test -f ~/.ssh/id_rsa; then
-    sudo chmod 600 ~/.ssh/id_rsa
-    sudo chmod 640 ~/.ssh/id_rsa.pubssh-rsa
+  if ! test -d $HOME/.ssh/; then mkdir $HOME/.ssh/; fi
+  sudo chmod 700 $HOME/.ssh/
+  if test -f $HOME/.ssh/id_rsa; then
+    sudo chmod 600 $HOME/.ssh/id_rsa
+    sudo chmod 640 $HOME/.ssh/id_rsa.pubssh-rsa
   fi
 }
 
 function hf_user_send_ssh_keys() {
   : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
-  ssh "$1" 'cat - >> ~/.ssh/authorized_keys' <~/.ssh/id_rsa.pubssh-rsa
+  ssh "$1" 'cat - >> $HOME/.ssh/authorized_keys' <$HOME/.ssh/id_rsa.pubssh-rsa
 }
 
 # ---------------------------------------
@@ -973,7 +973,7 @@ function hf_snap_upgrade() {
 }
 
 function hf_snap_hide_home_folder() {
-  echo snap >>~/.hidden
+  echo snap >>$HOME/.hidden
 }
 
 # ---------------------------------------
@@ -983,7 +983,7 @@ function hf_snap_hide_home_folder() {
 function hf_vscode_run_as_root() {
   : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
-  sudo code --user-data-dir="~/.vscode" "$1"
+  sudo code --user-data-dir="$HOME/.vscode" "$1"
 }
 
 function hf_vscode_install_packages() {
@@ -1173,15 +1173,15 @@ function hf_gnome_reset_tracker() {
 }
 
 function hf_gnome_reset_shotwell() {
-  rm -r ~/.cache/shotwell ~/.local/share/shotwell
+  rm -r $HOME/.cache/shotwell $HOME/.local/share/shotwell
 }
 
 function hf_gnome_update_desktop_database() {
-  sudo update-desktop-database -v /usr/share/applications ~/.local/share/applications ~/.gnome/apps/
+  sudo update-desktop-database -v /usr/share/applications $HOME/.local/share/applications $HOME/.gnome/apps/
 }
 
 function hf_gnome_update_icons() {
-  sudo update-icon-caches -v /usr/share/icons/ ~/.local/share/icons/
+  sudo update-icon-caches -v /usr/share/icons/ $HOME/.local/share/icons/
 }
 
 function hf_gnome_show_version() {
@@ -1395,7 +1395,7 @@ function hf_jupyter_notebook() {
 function hf_jupyter_configure_git_diff() {
   sudo python install nbdime
   nbdime config-git --enable --global
-  sed -i "s/git-nbdiffdriver diff$/git-nbdiffdriver diff -s/g" ~/.gitconfig
+  sed -i "s/git-nbdiffdriver diff$/git-nbdiffdriver diff -s/g" $HOME/.gitconfig
 
 }
 
@@ -1509,9 +1509,9 @@ function hf_python_remove_python35() {
 }
 
 function hf_python_remove_home_pkgs() {
-  hf_folder_remove ~/local/bin/
-  hf_folder_remove ~/.local/lib/python3.5/
-  hf_folder_remove ~/.local/lib/python3.7/
+  hf_folder_remove $HOME/local/bin/
+  hf_folder_remove $HOME/.local/lib/python3.5/
+  hf_folder_remove $HOME/.local/lib/python3.7/
 }
 
 function hf_install_neo4j() {
@@ -1662,7 +1662,6 @@ function hf_install_tor() {
 }
 
 function hf_install_zotero() {
-  hf_log_func
   sudo snap install zotero-snap
 }
 
@@ -1820,7 +1819,6 @@ function hf_apt_remove_orphan_packages() {
 
 function hf_apt_fetch_install() {
   : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-  hf_log_func
 
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
@@ -1837,7 +1835,6 @@ function hf_apt_fetch_install() {
 
 function hf_fetch_extract_to() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
-  hf_log_func
 
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
@@ -1876,7 +1873,7 @@ function hf_fetch_extract_to() {
 
 function hf_fetch_youtube_playlist() {
   : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
-  hf_log_func
+
   youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
@@ -1885,12 +1882,10 @@ function hf_fetch_youtube_playlist() {
 # ---------------------------------------
 
 function hf_list_sorted_by_size() {
-  hf_log_func
   du -h | sort -h
 }
 
 function hf_list_recursive_sorted_by_size() {
-  hf_log_func
   du -ah | sort -h
 }
 
@@ -1899,12 +1894,10 @@ function hf_list_recursive_sorted_by_size() {
 # ---------------------------------------
 
 function hf_x11_properties_of_window() {
-  hf_log_func
   xprop | grep "^WM_"
 }
 
 function hf_x11_properties_of_window() {
-  hf_log_func
   xprop | grep "^WM_"
 }
 
@@ -1953,17 +1946,15 @@ function hf_clean_unused_folders() {
 }
 
 function hf_clean_unused_config() {
-  hf_log_func
-  cd ~ || exit
+  cd $HOME || exit
   FOLDERS=(
     ".android"
     ".apport-ignore.xml "
+    ".bash_history"
     ".bash_logout"
-    ".cache/"
     ".gimp-*"
     ".gradle/"
     ".java/"
-    ".less"
     ".mysql_history"
     ".python_history"
     ".thumbnails"
