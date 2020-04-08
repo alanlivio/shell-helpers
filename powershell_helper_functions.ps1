@@ -1,6 +1,7 @@
 # author: Alan Livio <alan@telemidia.puc-rio.br>
 # URL:    https://github.com/alanlivio/powershell-helper-functions
 
+
 # thanks
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
@@ -475,8 +476,8 @@ function hf_wsl_root() {
 
 function hf_wsl_fix_home_folder() {
   wsl -u root touch /etc/wsl.conf
-  wsl -u root chown -R $env:UserName":"$env:UserName  /etc/wsl.conf
-  wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
+  wsl -u root chown -R $env:UserName":"$env:UserName /etc/wsl.conf
+  wsl -u root sudo usermod -d /c/Users/$env:UserName $env:UserName
   bash -c 'echo "[automount]" > /etc/wsl.conf'
   bash -c 'echo "enabled=true" >> /etc/wsl.conf'
   bash -c 'echo "root=/" >> /etc/wsl.conf'
