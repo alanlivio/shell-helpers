@@ -1117,7 +1117,7 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.desktop.search-providers disable-external true
   gsettings set org.gnome.desktop.search-providers sort-order []
   gsettings set org.gnome.desktop.sound event-sounds false
-  gsettings set org.gnome.desktop.wm.preferences num-workspaces 2
+  gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
   gsettings set org.gnome.gedit.preferences.editor bracket-matching true
   gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
   gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
