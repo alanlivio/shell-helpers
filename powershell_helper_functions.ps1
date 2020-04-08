@@ -98,10 +98,8 @@ function hf_system_disable_unused_features() {
 
 function hf_system_disable_unused_services() {
   schtasks /Change /TN "Microsoft\Windows\Application Experience\ProgramDataUpdater" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\AppID\SmartScreenSpecific" /Disable | out-null
   schtasks /Change /TN "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /Disable | out-null
   schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" /Disable | out-null
   schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /Disable | out-null
   schtasks /Change /TN "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" /Disable | out-null
   schtasks /Change /TN "Microsoft\Windows\NetTrace\GatherNetworkInfo" /Disable | out-null
@@ -186,8 +184,7 @@ function hf_store_install_essentials() {
 
 function hf_remove_unused_folders() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/",
-    "Local Settings/")
+  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/", "Local Settings/")
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
@@ -415,6 +412,7 @@ function hf_uninstall_not_essential_store_packages() {
   king.com.CandyCrushFriends
   king.com.BubbleWitch3Saga
   king.com.CandyCrushSodaSaga
+  king.com.FarmHeroesSaga
   7EE7776C.LinkedInforWindows
   king.com.CandyCrushSaga
   NORDCURRENT.COOKINGFEVER'
@@ -591,16 +589,15 @@ function hf_config_installvscode($path) {
 function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_system_disable_password_policy
-  hf_remove_unused_folders
   hf_system_adjust_visual_to_performace
-  hf_system_disable_unused_services
   hf_sanity_start_menu
   hf_sanity_explorer
   hf_sanity_explorer_this_pc_folder
   hf_sanity_taskbar
   hf_sanity_lock
-  hf_system_disable_unused_features
   hf_uninstall_not_essential_store_packages
+  hf_remove_unused_folders
+  hf_system_disable_unused_features
   hf_uninstall_ondrive
 }
 
@@ -629,10 +626,10 @@ function hf_windows_init_user_nomal() {
 
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  echo "run hf_windows_sanity in other terminal"
-  echo "run hf_wsl_enable_features"
-  echo "install ubuntu and windows terminal from windows Store"
-  echo "run hf_wsl_configure"
+  echo "-- run hf_windows_sanity in other terminal"
+  echo "-- install ubuntu from windows Store"
+  echo "-- then run hf_wsl_enable_features in other terminal"
+  echo "-- after reboot, run hf_wsl_configure, hf_config_install_wt, and hf_config_install_vscode"
   hf_install_chocolatey
   hf_install_firefox
   hf_install_vscode
