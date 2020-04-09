@@ -595,6 +595,27 @@ function hf_android_install_package() {
 }
 
 # ---------------------------------------
+# zip functions
+# ---------------------------------------
+
+function hf_zip_folder() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
+  zipname=$1
+  shift
+  zip $zipname -r "$@"
+}
+
+function hf_zip_extract() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
+  unzip  $1
+}
+
+function hf_zip_list() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
+  unzip -l $1
+}
+
+# ---------------------------------------
 # folder functions
 # ---------------------------------------
 
