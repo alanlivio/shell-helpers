@@ -1484,6 +1484,13 @@ function hf_install_curl() {
   fi
 }
 
+function hf_install_git_lfs() {
+  hf_log_func
+  if ! type git-lfs &>/dev/null; then
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+    sudo apt-get install git-lfs
+  fi
+}
 function hf_install_gitkraken() {
   hf_log_func
   if ! type gitkraken &>/dev/null; then
