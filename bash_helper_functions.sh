@@ -351,6 +351,15 @@ function hf_git_services_test() {
   ssh -T git@github.com
 }
 
+function hf_git_remotes_update() {
+  git remote update origin --prune
+}
+
+function hf_git_remotes_set_upstrem() {
+    : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
+  git branch --set-upstream-to $1
+}
+
 function hf_git_add_partial() {
   git stash
   git difftool -y stash
