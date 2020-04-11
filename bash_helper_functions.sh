@@ -1000,12 +1000,20 @@ function hf_snap_hide_home_folder() {
 }
 
 # ---------------------------------------
+# diff functions
+# ---------------------------------------
+
+function hf_diff_vscode() {
+  : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
+  code --diff "$1" "$2"
+}
+
+# ---------------------------------------
 # vscode functions
 # ---------------------------------------
 
 function hf_vscode_run_as_root() {
   : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
-
   sudo code --user-data-dir="$HOME/.vscode" "$1"
 }
 
@@ -1411,7 +1419,6 @@ function hf_jupyter_configure_git_diff() {
   sudo python install nbdime
   nbdime config-git --enable --global
   sed -i "s/git-nbdiffdriver diff$/git-nbdiffdriver diff -s/g" $HOME/.gitconfig
-
 }
 
 function hf_jupyter_dark_theme() {
