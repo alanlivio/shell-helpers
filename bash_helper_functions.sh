@@ -1,10 +1,12 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/bash-helper-functions
+# project url: https://github.com/alanlivio/bash-helper-functions
 
 # ---------------------------------------
 # variables and log/test functions
 # ---------------------------------------
+
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_helper_functions.sh
 
 # test OS
 case "$(uname -s)" in
@@ -97,7 +99,9 @@ function hf_profile_download() {
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
+  # ---------------------------------------
   # choco functions
+  # ---------------------------------------
   function hf_choco_install() {
     hf_log_func
     choco install -y --acceptlicense --no-progress "$@"
@@ -212,13 +216,11 @@ function hf_mac_install_refind() {
 function hf_audio_create_empty() {
   # i.e. gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
   : ${1?"Usage: ${FUNCNAME[0]} [audio_output]"}
-
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
 }
 
 function hf_audio_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
 
@@ -228,14 +230,12 @@ function hf_audio_compress() {
 
 function hf_video_create_by_image() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-
   ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
 }
 
 function hf_video_cut() {
   # e.g. ffmpeg -i video-cuted.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "video.mp4"
   : ${3?"Usage: ${FUNCNAME[0]} [video] [begin_time] [end_time]"}
-
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
 
@@ -249,7 +249,6 @@ function hf_gst_side_by_side_test() {
 
 function hf_gst_side_by_side_args() {
   : ${2?"Usage: ${FUNCNAME[0]} [video1] [video2]"}
-
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
 
@@ -290,7 +289,6 @@ function hf_pkg_config_show() {
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
   : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
-
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
   done
@@ -328,13 +326,11 @@ function hf_gcc_headers() {
 
 function hf_gdb_run_bt() {
   : ${1?"Usage: ${FUNCNAME[0]} [program]"}
-
   gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
 }
 
 function hf_gdb_run_bt_all_threads() {
   : ${1?"Usage: ${FUNCNAME[0]} [program]"}
-
   gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
 }
 
@@ -356,7 +352,7 @@ function hf_git_remotes_update() {
 }
 
 function hf_git_remotes_set_upstrem() {
-    : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
   git branch --set-upstream-to $1
 }
 
@@ -377,6 +373,7 @@ function hf_git_reset_author() {
   : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
   git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
 }
+
 function hf_git_github_init() {
   : ${1?"Usage: ${FUNCNAME[0]} [github name]"}
   NAME=$(basename "$1" ".${1##*.}")
@@ -417,7 +414,6 @@ function hf_git_check_if_need_pull() {
 
 function hf_git_create_gitignore() {
   : ${1?"Usage: ${FUNCNAME[0]} <contexts,..>"}
-
   curl -L -s "https://www.gitignore.io/api/$1"
 }
 
@@ -607,7 +603,7 @@ function hf_zip_folder() {
 
 function hf_zip_extract() {
   : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
-  unzip  $1
+  unzip $1
 }
 
 function hf_zip_list() {
@@ -616,11 +612,15 @@ function hf_zip_list() {
 }
 
 # ---------------------------------------
-# folder functions
+# http functions
 # ---------------------------------------
 
-function hf_folder_host_http() {
+function hf_http_host_folder() {
   sudo python3 -m http.server 80
+}
+
+function hf_folder_remove_empty_folder() {
+  find . -type d -empty -exec rm -i -R {} \;
 }
 
 function hf_folder_remove() {
@@ -686,26 +686,25 @@ function hf_image_resize() {
 
 function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-
+  hf_test_exist_command tesseract
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hf_image_reconize_text_pt() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-
+  hf_test_exist_command tesseract
   tesseract -l por "$1" "$1.txt"
 }
 
 function hf_image_reconize_stdout() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-
+  hf_test_exist_command tesseract
   tesseract "$1" stdout
 }
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   hf_test_exist_command pngquant
-
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
@@ -726,16 +725,13 @@ function hf_pdf_find_duplicates() {
 
 function hf_pdf_remove_annotations() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  # libcam-pdf-perl
   hf_test_exist_command rewritepdf
-
   rewritepdf "$1" "-no-annotations-$1"
 }
 
 function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
   hf_test_exist_command pdfgrep
-
   pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
@@ -748,7 +744,7 @@ function hf_pdf_remove_password() {
 
 function hf_pdf_remove_watermark() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-
+  hf_test_exist_command pdftk
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
@@ -756,25 +752,21 @@ function hf_pdf_remove_watermark() {
 
 function hf_pdf_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard1() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard2() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-
   ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$1-compressed.pdf $1
 }
 
 function hf_pdf_count_words() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-
   pdftotext $1 - | wc -w
 }
 
@@ -784,11 +776,13 @@ function hf_pdf_count_words() {
 
 function hf_convert_to_markdown() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
+  hf_test_exist_command pandoc
   pandoc -s $1 -t markdown -o ${1%.*}.md
 }
 
 function hf_convert_to_pdf() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
+  hf_test_exist_command pandoc
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
@@ -940,7 +934,6 @@ function hf_user_send_ssh_keys() {
 function hf_snap_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
   hf_log_func
-
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
   PKGS_TO_INSTALL=""
@@ -961,7 +954,6 @@ function hf_snap_install_packages() {
 function hf_snap_install_packages_classic() {
   : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
   hf_log_func
-
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
   PKGS_TO_INSTALL=""
@@ -982,9 +974,7 @@ function hf_snap_install_packages_classic() {
 function hf_snap_install_packages_edge() {
   : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
   hf_log_func
-
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
@@ -1022,7 +1012,6 @@ function hf_vscode_run_as_root() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <package, ...>"}
   hf_log_func
-
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
   for i in "$@"; do
@@ -1230,25 +1219,21 @@ function hf_gnome_gdm_restart() {
 
 function hf_gnome_settings_reset() {
   : ${1?"Usage: ${FUNCNAME[0]} [scheme]"}
-
   gsettings reset-recursively $1
 }
 
 function hf_gnome_settings_save_to_file() {
   : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
-
   dconf dump $1 >$2
 }
 
 function hf_gnome_settings_load_from_file() {
   : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
-
   dconf load $1 <$2
 }
 
 function hf_gnome_settings_diff_actual_and_file() {
   : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
-
   TMP_FILE=/tmp/gnome_settings_diff
   hf_gnome_settings_save_to_file $1 $TMP_FILE
   diff $TMP_FILE $2
@@ -1261,7 +1246,6 @@ function hf_gnome_settings_diff_actual_and_file() {
 function hf_vlc_youtube_playlist_extension() {
   wget --continue https://dl.opendesktop.org/api/files/download/id/1473753829/149909-playlist_youtube.lua -P /tmp/
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-
   sudo install /tmp/149909-playlist_youtube.lua /usr/lib/vlc/lua/playlist/
 }
 
@@ -1309,7 +1293,6 @@ function hf_install_node() {
 function hf_npm_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <npm_package, ...>"}
   hf_log_func
-
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
   for i in "$@"; do
@@ -1392,7 +1375,6 @@ function hf_python_list_installed() {
 function hf_python_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [pip_packages_list]"}
   hf_log_func
-
   if ! type pip &>/dev/null; then
     hf_log_error "pip not found."
     sudo pip install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
@@ -1442,8 +1424,7 @@ function hf_jupyter_dark_theme() {
 # ---------------------------------------
 
 function hf_eclipse_install_packages() {
-  # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, \
-  #   org.eclipse.dltk.sh.feature.group
+  # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, org.eclipse.dltk.sh.feature.group
   eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
 
@@ -1456,32 +1437,6 @@ function hf_eclipse_uninstall_packages() {
   #   org.eclipse.wst.server_adapters.feature.feature.group
   eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
   eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
-}
-
-# ---------------------------------------
-# curl functions
-# ---------------------------------------
-
-function hf_curl_get() {
-  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-  curl -X GET \
-    -H "Accept: application/json" \
-    --data $1
-}
-
-function hf_curl_post() {
-  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-  curl -X POST \
-    -H "Accept: application/json" \
-    --data $1
-}
-
-function hf_curl_post_file() {
-  : ${1?"Usage: ${FUNCNAME[0]} <file> <URL>"}
-  curl -X POST \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    --data $1 $2
 }
 
 # ---------------------------------------
@@ -1795,7 +1750,6 @@ function hf_apt_fixes() {
 function hf_apt_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
   hf_log_func
-
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
@@ -1821,7 +1775,6 @@ function hf_apt_autoremove() {
 function hf_apt_remove_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
   hf_log_func
-
   PKGS_TO_REMOVE=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
@@ -1859,7 +1812,6 @@ function hf_apt_remove_orphan_packages() {
 
 function hf_apt_fetch_install() {
   : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-
   apt_NAME=$(basename $1)
   if test ! -f /tmp/$apt_NAME; then
     wget --continue $1 -P /tmp/
@@ -1875,7 +1827,6 @@ function hf_apt_fetch_install() {
 
 function hf_fetch_extract_to() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
-
   FILE_NAME_ORIG=$(basename $1)
   FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
   FILE_EXTENSION=${FILE_NAME##*.}
@@ -2026,7 +1977,6 @@ function hf_clean_unused_config() {
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_helper_functions.sh
 SCRIPT_NAME="$SCRIPT_DIR/bash_helper_functions.sh"
 SCRIPT_CFG="$SCRIPT_DIR/bash_helper_functions_cfg.sh"
 if test -f $SCRIPT_CFG; then
