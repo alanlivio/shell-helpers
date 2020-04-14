@@ -1930,6 +1930,20 @@ function hf_clean_unused_folders() {
     "SendTo"
   )
 
+  if test -n "$IS_WINDOWS"; then
+    FOLDERS+=(
+      "My\ Documents"
+      "Start\ Menu"
+      "Application Data"
+      "Local\ Settings"
+      "Recent"
+      "Intel"
+      "IntelGraphicsProfiles"
+      "NetHood"
+      "PrintHood"
+     )
+  fi
+
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
       if test -n "$IS_MAC"; then
