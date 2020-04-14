@@ -194,11 +194,6 @@ function hf_mac_enable_wifi() {
   fi
 }
 
-function hf_mac_keyboard_pt_br() {
-  hf_log_func
-  setxkbmap -model abnt -layout us -variant intl
-}
-
 function hf_mac_keyboard_fnmode() {
   hf_log_func
   sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
@@ -1097,6 +1092,16 @@ function hf_mount_list() {
 # ---------------------------------------
 # gnome functions
 # ---------------------------------------
+
+function hf_gnome_keyboard_set_us_international() {
+  hf_log_func
+  setxkbmap -layout us -variant intl
+}
+
+function hf_gnome_keyboard_gsettings_us_international() {
+  hf_log_func
+  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
+}
 
 function hf_gnome_init() {
   hf_log_func
