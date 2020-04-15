@@ -180,6 +180,21 @@ if test -n "$IS_MAC"; then
   }
 fi
 
+function hf_mac_ubuntu_keyboard_fix() {
+  hf_log_func
+  # alternative: setxkbmap -layout us -variant intl
+  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
+
+  grep -q cedilla /etc/environment
+  if test $? != 0; then
+    # fix cedilla
+    echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+    echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+    # enable fnmode
+    echo -e "echo 2 > /sys/module/hid_apple/parameters/fnmode" | sudo tee -a /etc/environment
+  fi
+}
+
 # ---------------------------------------
 # ubuntu-on-mac functions
 # ---------------------------------------
@@ -192,11 +207,6 @@ function hf_mac_enable_wifi() {
     sudo modprobe -r b43 ssb wl brcmfmac brcmsmac bcma
     sudo modprobe wl
   fi
-}
-
-function hf_mac_keyboard_fnmode() {
-  hf_log_func
-  sudo bash -c "echo 2 > /sys/module/hid_apple/parameters/fnmode"
 }
 
 function hf_mac_install_refind() {
@@ -459,9 +469,9 @@ function hf_git_reset_subfolders() {
 }
 
 function hf_git_folder_tree() {
+  hf_log_func
   DEV_FOLDER=$1
   REPOS=$2
-  hf_log_msg "hf_git_folder_tree for $DEV_FOLDER"
 
   if test ! -d $DEV_FOLDER; then
     hf_log_msg "creating $DEV_FOLDER"
@@ -487,7 +497,7 @@ function hf_git_folder_tree() {
         # elif test "$1" = "pull"; then
         hf_log_msg_2nd "pull $j"
         cd "$(basename -s .git $j)"
-        git pull
+        git pull --all
         cd ..
       fi
     done
@@ -569,19 +579,16 @@ function hf_android_get_printscreen() {
 
 function hf_android_installed_package() {
   : ${1?"Usage: ${FUNCNAME[0]} <package>"}
-
   adb shell pm list packages | grep $1
 }
 
 function hf_android_uninstall_package() {
   # adb uninstall org.libsdl.app
   : ${1?"Usage: ${FUNCNAME[0]} <package>"}
-
   adb uninstall $1
 }
 function hf_android_install_package() {
   : ${1?"Usage: ${FUNCNAME[0]} <package>"}
-
   adb install $1
 }
 
@@ -867,13 +874,11 @@ function hf_network_arp_scan() {
 
 function hf_virtualbox_compact() {
   : ${1?"Usage: ${FUNCNAME[0]} [vdi_file]"}
-
   VBoxManage modifyhd "$1" compact
 }
 
 function hf_virtualbox_resize_to_2gb() {
   : ${1?"Usage: ${FUNCNAME[0]} [vdi_file"}
-
   VBoxManage modifyhd "$1" --resize 200000
 }
 
@@ -1092,16 +1097,6 @@ function hf_mount_list() {
 # ---------------------------------------
 # gnome functions
 # ---------------------------------------
-
-function hf_gnome_keyboard_set_us_international() {
-  hf_log_func
-  setxkbmap -layout us -variant intl
-}
-
-function hf_gnome_keyboard_gsettings_us_international() {
-  hf_log_func
-  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
-}
 
 function hf_gnome_init() {
   hf_log_func
@@ -1941,7 +1936,7 @@ function hf_clean_unused_folders() {
       "IntelGraphicsProfiles"
       "NetHood"
       "PrintHood"
-     )
+    )
   fi
 
   for i in "${FOLDERS[@]}"; do
