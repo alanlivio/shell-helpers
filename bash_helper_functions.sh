@@ -178,22 +178,28 @@ if test -n "$IS_MAC"; then
     hf_mac_install_bash4
     hf_mac_enable_wifi
   }
+
+  function hf_mac_ubuntu_keyboard_fn() {
+    echo 2 >/sys/module/hid_apple/parameters/fnmode
+  }
+
+  function hf_mac_ubuntu_keyboard_fix() {
+    hf_log_func
+    # alternative: setxkbmap -layout us -variant intl
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
+
+    grep -q cedilla /etc/environment
+    if test $? != 0; then
+      # fix cedilla
+      echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+      echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+      # enable fnmode
+      echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
+      sudo update-initramfs -u
+    fi
+  }
+
 fi
-
-function hf_mac_ubuntu_keyboard_fix() {
-  hf_log_func
-  # alternative: setxkbmap -layout us -variant intl
-  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
-
-  grep -q cedilla /etc/environment
-  if test $? != 0; then
-    # fix cedilla
-    echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-    echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-    # enable fnmode
-    echo -e "echo 2 > /sys/module/hid_apple/parameters/fnmode" | sudo tee -a /etc/environment
-  fi
-}
 
 # ---------------------------------------
 # ubuntu-on-mac functions
@@ -344,7 +350,7 @@ function hf_gdb_run_bt_all_threads() {
 # ---------------------------------------
 
 function hf_git_remotes_track_all() {
-   git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
+  git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
 }
 
 function hf_git_kraken_folder() {
