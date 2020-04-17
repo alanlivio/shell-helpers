@@ -343,6 +343,10 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
+function hf_git_remotes_track_all() {
+   git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
+}
+
 function hf_git_kraken_folder() {
   gitkraken -z -p . >/dev/null &
 }
