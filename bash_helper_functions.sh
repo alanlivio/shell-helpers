@@ -118,6 +118,14 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
+  # windows terminal functions
+  # ---------------------------------------
+
+  function hf_terminal_win_open_settings(){
+    code $(wslpath -w $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/profiles.json)
+  }
+
+  # ---------------------------------------
   # wsl functions
   # ---------------------------------------
 
