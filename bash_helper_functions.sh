@@ -909,6 +909,11 @@ function hf_user_create_new() {
   sudo adduser "$1"
 }
 
+function hf_user_logout() {
+  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
+  sudo skill -KILL -u $1
+}
+
 function hf_user_enable_sudo() {
   : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
   sudo usermod -aG sudo "$1"
