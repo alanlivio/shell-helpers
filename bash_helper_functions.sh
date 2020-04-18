@@ -1935,6 +1935,22 @@ function hf_clean_unused_folders() {
     "SendTo"
   )
 
+  if test -n "$IS_LINUX"; then
+    FOLDERS=(
+      ".android"
+      ".apport-ignore.xml "
+      ".bash_history"
+      ".bash_logout"
+      ".gimp-*"
+      ".gradle/"
+      ".java/"
+      ".mysql_history"
+      ".python_history"
+      ".thumbnails"
+      ".viminfo"
+    )
+  fi
+
   if test -n "$IS_WINDOWS"; then
     FOLDERS+=(
       "My\ Documents"
@@ -1946,15 +1962,16 @@ function hf_clean_unused_folders() {
       "IntelGraphicsProfiles"
       "NetHood"
       "PrintHood"
+      "MicrosoftEdgeBackups"
     )
   fi
 
   for i in "${FOLDERS[@]}"; do
     if test -d "$HOME/$i"; then
       if test -n "$IS_MAC"; then
-        sudo rm -r "$HOME/${i:?}" >/dev/null
+        sudo rm -rf "$HOME/${i:?}" >/dev/null
       else
-        rm -r "$HOME/${i:?}" >/dev/null
+        rm -rf "$HOME/${i:?}" >/dev/null
       fi
     elif test -f "$HOME/$i"; then
       echo remove $i
@@ -1965,42 +1982,6 @@ function hf_clean_unused_folders() {
       fi
     fi
   done
-}
-
-function hf_clean_unused_config() {
-  cd $HOME || exit
-  FOLDERS=(
-    ".android"
-    ".apport-ignore.xml "
-    ".bash_history"
-    ".bash_logout"
-    ".gimp-*"
-    ".gradle/"
-    ".java/"
-    ".mysql_history"
-    ".python_history"
-    ".thumbnails"
-    ".viminfo"
-  )
-
-  for i in "${FOLDERS[@]}"; do
-    if test -d "$HOME/$i"; then
-      echo remove $i
-      if test -n "$IS_MAC"; then
-        sudo rm -r "$HOME/${i:?}" &>/dev/null
-      else
-        rm -r "$HOME/${i:?}" &>/dev/null
-      fi
-    elif test -f "$HOME/$i"; then
-      echo remove $i
-      if test -n "$IS_MAC"; then
-        sudo rm -f "$HOME/$i" &>/dev/null
-      else
-        rm -f "$HOME/${i:?}" &>/dev/null
-      fi
-    fi
-  done
-  cd - >/dev/null
 }
 
 # ---------------------------------------
