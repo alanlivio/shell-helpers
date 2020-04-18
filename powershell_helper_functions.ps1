@@ -472,15 +472,25 @@ function hf_wsl_root() {
   wsl -u root
 }
 
+function hf_wsl_list_running() {
+  wsl --list --running
+}
+
+function hf_wsl_terminate_running() {
+   wsl -t ((wsl --list --running -split [System.Environment]::NewLine)[3]).split(' ')[0]
+}
+
+# https://docs.microsoft.com/en-us/windows/wsl/wsl-config
 function hf_wsl_fix_home_folder() {
+  wsl -u root skill -KILL -u $env:UserName
   wsl -u root touch /etc/wsl.conf
   wsl -u root chown -R $env:UserName":"$env:UserName /etc/wsl.conf
   wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
   bash -c 'echo "[automount]" > /etc/wsl.conf'
   bash -c 'echo "enabled=true" >> /etc/wsl.conf'
-  bash -c 'echo "root=/" >> /etc/wsl.conf'
-  bash -c 'echo -e "options=metadata,uid=1000,gid=1000,umask=022" >> /etc/wsl.conf'
+  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   bash -c 'echo "mountFsTab=true" >> /etc/wsl.conf'
+  bash -c 'echo "metadata,umask=22,fmask=11" >> /etc/wsl.conf'
 }
 
 # ---------------------------------------
