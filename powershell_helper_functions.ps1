@@ -570,9 +570,8 @@ function hf_install_wsl() {
 }
 
 # ---------------------------------------
-# init functions
+# config functions
 # ---------------------------------------
-
 
 function hf_config_install_wt($path) {
   Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
@@ -580,6 +579,14 @@ function hf_config_install_wt($path) {
 
 function hf_config_installvscode($path) {
   Copy-Item $path .\AppData\Roaming\Code\User\settings.json
+}
+
+# ---------------------------------------
+# windows terminal functions
+# ---------------------------------------
+
+function hf_terminal_win_open_settings(){
+  code $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
 }
 
 # ---------------------------------------
