@@ -188,24 +188,25 @@ function hf_explorer_open_home_folder() {
 
 
 function hf_explorer_hide_dotfiles() {
-  ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
 # https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
 function hf_explorer_sanity_search() {
-  (gci 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes' |
-    ?{(gp $_.PSPath).CanonicalName -match '\.S'}).PSChildname | %{
-          $SRPath = "HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\$_"
-          New-Item  -ErrorAction SilentlyContinue  -Force -Path $SRPath | Out-Null
-          New-ItemProperty -ErrorAction SilentlyContinue -Force -Path $SRPath -Name 'Mode' -Value 4 | Out-Null
-       }
+  (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes' |
+    Where-Object { (Get-ChildItem $_.PSPath).CanonicalName -match '\.S' }).PSChildname |
+  ForEach-Object {
+    $SRPath = "HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\$_"
+    New-Item  -ErrorAction SilentlyContinue  -Force -Path $SRPath | Out-Null
+    New-ItemProperty -ErrorAction SilentlyContinue -Force -Path $SRPath -Name 'Mode' -Value 4 | Out-Null
+  }
 }
 
 function hf_explorer_sanity_lock() {
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
   }
-  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
+  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
 }
 
 function hf_explorer_sanity_taskbar() {
@@ -408,7 +409,7 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.Office.Desktop
   Microsoft.MicrosoftSolitaireCollection
   Microsoft.MixedReality.Portal'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage | Out-Null }
 
   # others
   $pkgs = 'Facebook.Facebook
@@ -422,7 +423,7 @@ function hf_uninstall_not_essential_store_packages() {
   7EE7776C.LinkedInforWindows
   king.com.CandyCrushSaga
   NORDCURRENT.COOKINGFEVER'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage | Out-Null }
 }
 
 # ---------------------------------------
@@ -483,7 +484,7 @@ function hf_wsl_list_running() {
 }
 
 function hf_wsl_terminate_running() {
-   wsl -t ((wsl --list --running -split [System.Environment]::NewLine)[3]).split(' ')[0]
+  wsl -t ((wsl --list --running -split [System.Environment]::NewLine)[3]).split(' ')[0]
 }
 
 # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
@@ -492,11 +493,11 @@ function hf_wsl_fix_home_folder() {
   wsl -u root touch /etc/wsl.conf
   wsl -u root chown -R $env:UserName":"$env:UserName /etc/wsl.conf
   wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
-  bash -c 'echo "[automount]" > /etc/wsl.conf'
-  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
-  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
-  bash -c 'echo "mountFsTab=true" >> /etc/wsl.conf'
-  bash -c 'echo "metadata,umask=22,fmask=11" >> /etc/wsl.conf'
+  bash -c 'Wrhite-Output "[automount]" > /etc/wsl.conf'
+  bash -c 'Wrhite-Output "enabled=true" >> /etc/wsl.conf'
+  bash -c 'Wrhite-Output "root=/mnt" >> /etc/wsl.conf'
+  bash -c 'Wrhite-Output "mountFsTab=true" >> /etc/wsl.conf'
+  bash -c 'Wrhite-Output "metadata,umask=22,fmask=11" >> /etc/wsl.conf'
 }
 
 # ---------------------------------------
@@ -601,7 +602,7 @@ function hf_config_installvscode($path) {
 # windows terminal functions
 # ---------------------------------------
 
-function hf_terminal_win_open_settings(){
+function hf_terminal_win_open_settings() {
   code $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
 }
 
@@ -640,7 +641,7 @@ function hf_wsl_configure() {
 
 function hf_windows_init_user_nomal() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  echo "run hf_windows_sanity in other terminal"
+  Wrhite-Output "run hf_windows_sanity in other terminal"
   hf_install_chocolatey
   hf_install_chrome
   hf_install_vlc
@@ -650,10 +651,10 @@ function hf_windows_init_user_nomal() {
 
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  echo "-- run hf_windows_sanity in other terminal"
-  echo "-- install ubuntu from windows Store"
-  echo "-- then run hf_wsl_enable_features in other terminal"
-  echo "-- after reboot, run hf_wsl_configure, hf_config_install_wt, and hf_config_install_vscode"
+  Wrhite-Output "-- run hf_windows_sanity in other terminal"
+  Wrhite-Output "-- install ubuntu from windows Store"
+  Wrhite-Output "-- then run hf_wsl_enable_features in other terminal"
+  Wrhite-Output "-- after reboot, run hf_wsl_configure, hf_config_install_wt, and hf_config_install_vscode"
   hf_install_chocolatey
   hf_install_firefox
   hf_install_vscode
