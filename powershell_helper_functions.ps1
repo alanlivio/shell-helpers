@@ -158,6 +158,10 @@ function hf_explorer_open_home_folder() {
   explorer $env:userprofile
 }
 
+function hf_explorer_hide_dotfiles() {
+  ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+}
+
 # ---------------------------------------
 # store functions
 # ---------------------------------------
