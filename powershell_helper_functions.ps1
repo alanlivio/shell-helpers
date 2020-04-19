@@ -186,15 +186,26 @@ function hf_explorer_open_home_folder() {
   explorer $env:userprofile
 }
 
+
 function hf_explorer_hide_dotfiles() {
   ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+}
+
+# https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
+function hf_explorer_sanity_search() {
+  (gci 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes' |
+    ?{(gp $_.PSPath).CanonicalName -match '\.S'}).PSChildname | %{
+          $SRPath = "HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\$_"
+          New-Item  -ErrorAction SilentlyContinue  -Force -Path $SRPath | Out-Null
+          New-ItemProperty -ErrorAction SilentlyContinue -Force -Path $SRPath -Name 'Mode' -Value 4 | Out-Null
+       }
 }
 
 function hf_explorer_sanity_lock() {
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
   }
-  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
+  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
 }
 
 function hf_explorer_sanity_taskbar() {
@@ -227,7 +238,7 @@ function hf_explorer_sanity_taskbar() {
   Start-Process explorer.exe
 }
 
-function hf_explorer_sanity_explorer() {
+function hf_explorer_sanity_navigation() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
 
   # Hide icons in desktop
@@ -280,7 +291,7 @@ function hf_explorer_sanity_explorer() {
 
 }
 
-function hf_explorer_sanity_explorer_this_pc_folder() {
+function hf_explorer_sanity_this_pc_folder() {
   # remove users folder from this pc
   Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -Recurse -ErrorAction SilentlyContinue
   Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -Recurse -ErrorAction SilentlyContinue
@@ -334,8 +345,6 @@ function hf_enable_dark_mode() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
 }
-
-
 
 # ---------------------------------------
 # uninstall functions
@@ -604,9 +613,10 @@ function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_system_disable_password_policy
   hf_system_adjust_visual_to_performace
+  hf_explorer_sanity_navigation
   hf_explorer_sanity_start_menu
-  hf_explorer_sanity_explorer
-  hf_explorer_sanity_explorer_this_pc_folder
+  hf_explorer_sanity_search
+  hf_explorer_sanity_this_pc_folder
   hf_explorer_sanity_taskbar
   hf_explorer_sanity_lock
   hf_uninstall_not_essential_store_packages
