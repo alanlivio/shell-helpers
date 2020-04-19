@@ -5,8 +5,6 @@
 # thanks
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
-# https://github.com/Disassembler0/Win10-Initial-Setup-Script
-# https://superuser.com/questions/1246790/can-i-disable-windows-10-animations-with-a-batch-file
 
 # ---------------------------------------
 # load powershell_helper_functions_cfg
@@ -138,31 +136,6 @@ function hf_link_create($desntination, $source) {
 }
 
 # ---------------------------------------
-# explorer functions
-# ---------------------------------------
-
-
-function hf_explorer_open_start_menu_folder() {
-  explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
-}
-
-function hf_explorer_open_task_bar_folder() {
-  explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
-}
-
-function hf_explorer_open_startup_folder() {
-  explorer 'shell:startup'
-}
-
-function hf_explorer_open_home_folder() {
-  explorer $env:userprofile
-}
-
-function hf_explorer_hide_dotfiles() {
-  ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
-}
-
-# ---------------------------------------
 # store functions
 # ---------------------------------------
 
@@ -192,18 +165,39 @@ function hf_remove_unused_folders() {
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
+
 # ---------------------------------------
-# sanity functions
+# explorer functions
 # ---------------------------------------
 
-function hf_sanity_lock() {
+function hf_explorer_open_start_menu_folder() {
+  explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
+}
+
+function hf_explorer_open_task_bar_folder() {
+  explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
+}
+
+function hf_explorer_open_startup_folder() {
+  explorer 'shell:startup'
+}
+
+function hf_explorer_open_home_folder() {
+  explorer $env:userprofile
+}
+
+function hf_explorer_hide_dotfiles() {
+  ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+}
+
+function hf_explorer_sanity_lock() {
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
   }
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
 }
 
-function hf_sanity_taskbar() {
+function hf_explorer_sanity_taskbar() {
   # use small icons
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
 
@@ -233,7 +227,7 @@ function hf_sanity_taskbar() {
   Start-Process explorer.exe
 }
 
-function hf_sanity_explorer() {
+function hf_explorer_sanity_explorer() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
 
   # Hide icons in desktop
@@ -286,8 +280,7 @@ function hf_sanity_explorer() {
 
 }
 
-function hf_sanity_explorer_this_pc_folder() {
-
+function hf_explorer_sanity_explorer_this_pc_folder() {
   # remove users folder from this pc
   Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -Recurse -ErrorAction SilentlyContinue
   Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -Recurse -ErrorAction SilentlyContinue
@@ -316,7 +309,7 @@ function hf_sanity_explorer_this_pc_folder() {
   Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -Recurse -ErrorAction SilentlyContinue
 }
 
-function hf_sanity_start_menu() {
+function hf_explorer_sanity_start_menu() {
   # Remove tiles
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   (New-Object -Com Shell.Application).
@@ -611,11 +604,11 @@ function hf_windows_sanity() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_system_disable_password_policy
   hf_system_adjust_visual_to_performace
-  hf_sanity_start_menu
-  hf_sanity_explorer
-  hf_sanity_explorer_this_pc_folder
-  hf_sanity_taskbar
-  hf_sanity_lock
+  hf_explorer_sanity_start_menu
+  hf_explorer_sanity_explorer
+  hf_explorer_sanity_explorer_this_pc_folder
+  hf_explorer_sanity_taskbar
+  hf_explorer_sanity_lock
   hf_uninstall_not_essential_store_packages
   hf_remove_unused_folders
   hf_system_disable_unused_features
