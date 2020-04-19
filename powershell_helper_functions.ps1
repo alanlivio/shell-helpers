@@ -1,7 +1,6 @@
 # author: Alan Livio <alan@telemidia.puc-rio.br>
 # URL:    https://github.com/alanlivio/powershell-helper-functions
 
-
 # thanks
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
@@ -165,7 +164,6 @@ function hf_remove_unused_folders() {
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
-
 # ---------------------------------------
 # explorer functions
 # ---------------------------------------
@@ -186,13 +184,12 @@ function hf_explorer_open_home_folder() {
   explorer $env:userprofile
 }
 
-
 function hf_explorer_hide_dotfiles() {
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
-# https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
 function hf_explorer_sanity_search() {
+  # https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
   (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes' |
     Where-Object { (Get-ChildItem $_.PSPath).CanonicalName -match '\.S' }).PSChildname |
   ForEach-Object {
@@ -284,12 +281,10 @@ function hf_explorer_sanity_navigation() {
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse | Out-Null
 
   # Disable search for app in store for unknown extensions
-  Write-Output "Disabling search for app in store for unknown extensions..."
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
   }
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
-
 }
 
 function hf_explorer_sanity_this_pc_folder() {
@@ -470,7 +465,6 @@ function hf_choco_upgrade() {
   choco upgrade -y --acceptlicense --no-progress
 }
 
-
 # ---------------------------------------
 # wsl function
 # ---------------------------------------
@@ -487,17 +481,41 @@ function hf_wsl_terminate_running() {
   wsl -t ((wsl --list --running -split [System.Environment]::NewLine)[3]).split(' ')[0]
 }
 
-# https://docs.microsoft.com/en-us/windows/wsl/wsl-config
-function hf_wsl_fix_home_folder() {
-  wsl -u root skill -KILL -u $env:UserName
+function hf_wsl_ubuntu_set_default_user() {
+  ubuntu1804.exe config --default-user alan
+}
+
+function hf_wsl_enable_features() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+}
+
+function hf_wsl_fix_home_user() {
+
+  # fix file metadata
+  # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
+  # https://github.com/Microsoft/WSL/issues/3138
+  # https://devblogs.microsoft.com/commandline/chmod-chown-wsl-improvements/
   wsl -u root touch /etc/wsl.conf
-  wsl -u root chown -R $env:UserName":"$env:UserName /etc/wsl.conf
-  wsl -u root sudo usermod -d /mnt/c/Users/$env:UserName $env:UserName
-  bash -c 'Wrhite-Output "[automount]" > /etc/wsl.conf'
-  bash -c 'Wrhite-Output "enabled=true" >> /etc/wsl.conf'
-  bash -c 'Wrhite-Output "root=/mnt" >> /etc/wsl.conf'
-  bash -c 'Wrhite-Output "mountFsTab=true" >> /etc/wsl.conf'
-  bash -c 'Wrhite-Output "metadata,umask=22,fmask=11" >> /etc/wsl.conf'
+  bash -c 'echo "[automount]" > /etc/wsl.conf'
+  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
+  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
+  bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
+  bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
+  wsl -t Ubuntu-18.04
+
+  # ensure sudoer
+  wsl -u root usermod -aG sudo "$env:UserName"
+  wsl -u root usermod -aG root "$env:UserName"
+
+  # change default folder to /mnt/c/Users/
+  wsl -u root skill -KILL -u $env:UserName
+  wsl -u root usermod -d /mnt/c/Users/$env:UserName $env:UserName
+
+  # change permissions
+  wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName
 }
 
 # ---------------------------------------
@@ -572,12 +590,6 @@ function hf_install_driverbooster() {
   hf_choco_install "driverbooster"
 }
 
-function hf_install_gamer() {
-  hf_choco_install "battle.net"
-  hf_choco_install "steam"
-  hf_choco_install "stremio"
-}
-
 function hf_install_wsl() {
   # https://docs.microsoft.com/en-us/windows/wsl/install-manual
   $VERSION = 1804
@@ -626,39 +638,36 @@ function hf_windows_sanity() {
   hf_uninstall_ondrive
 }
 
-function hf_wsl_enable_features() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-}
-
-function hf_wsl_configure() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_install_wsl
-  hf_wsl_fix_home_folder
-}
-
 function hf_windows_init_user_nomal() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Wrhite-Output "run hf_windows_sanity in other terminal"
+  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
   hf_install_chrome
   hf_install_vlc
   hf_install_7zip
   hf_install_ccleaner
 }
+function hf_windows_init_user_gamer() {
+  hf_choco_install "battle.net"
+  hf_choco_install "steam"
+  hf_choco_install "stremio"
+}
 
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Wrhite-Output "-- run hf_windows_sanity in other terminal"
-  Wrhite-Output "-- install ubuntu from windows Store"
-  Wrhite-Output "-- then run hf_wsl_enable_features in other terminal"
-  Wrhite-Output "-- after reboot, run hf_wsl_configure, hf_config_install_wt, and hf_config_install_vscode"
+  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
+  Write-Output "-- (2) in WindowStore install ubuntu and WindowsTerminal"
+  Write-Output "-- (3) in other PowerShell terminal, run hf_wsl_enable_features "
+  Write-Output "-- (4) reboot"
+  Write-Output "-- (5) in PowerShell terminal, run hf_wsl_fix_home_user"
+  Write-Output "-- (6) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
   hf_install_firefox
   hf_install_vscode
-  hf_install_windows_terminal
   hf_install_gsudo
+  hf_install_chrome
+  hf_install_vlc
+  hf_install_7zip
+  hf_install_ccleaner
 }
 
