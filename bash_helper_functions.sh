@@ -937,7 +937,6 @@ function hf_user_permissions_opt() {
 }
 
 function hf_user_permissions_ssh() {
-  if ! test -d $HOME/.ssh/; then mkdir $HOME/.ssh/; fi
   sudo chmod 700 $HOME/.ssh/
   if test -f $HOME/.ssh/id_rsa; then
     sudo chmod 600 $HOME/.ssh/id_rsa
@@ -1298,6 +1297,10 @@ function hf_system_product_name() {
 
 function hf_system_distro() {
   lsb_release -a
+}
+
+function hf_system_host() {
+  hostnamectl
 }
 
 function hf_system_product_is_macbook() {
@@ -1968,8 +1971,9 @@ function hf_clean_unused_folders() {
     FOLDERS+=(
       "My\ Documents"
       "Start\ Menu"
-      "Application Data"
       "Local\ Settings"
+      'Application\ Data'
+      'Cookies'
       "Recent"
       "Intel"
       "IntelGraphicsProfiles"
