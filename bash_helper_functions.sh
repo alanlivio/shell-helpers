@@ -121,7 +121,7 @@ if test -n "$IS_WINDOWS"; then
   # windows terminal functions
   # ---------------------------------------
 
-  function hf_terminal_win_open_settings(){
+  function hf_terminal_win_open_settings() {
     code $(wslpath -w $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/profiles.json)
   }
 
@@ -1122,6 +1122,7 @@ function hf_mount_list() {
 
 function hf_gnome_init() {
   hf_log_func
+  hf_gnome_dark
   hf_gnome_sanity
   hf_gnome_disable_update
   hf_gnome_disable_unused_apps_in_search
@@ -1144,7 +1145,7 @@ function hf_gnome_reset_keybindings() {
 }
 
 function hf_gnome_dark() {
-  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-White'
+  gsettings set org.gnome.desktop.interface cursor-theme 'DMZ-Black'
   gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
   gsettings set org.gnome.desktop.interface icon-theme 'ubuntu-mono-dark'
 }
