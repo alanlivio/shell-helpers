@@ -1672,7 +1672,7 @@ function hf_install_stremio() {
     sudo chown $USER:$USER $HOME/opt/stremio/
 
     sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
-    echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=/opt/stremio/$EXE\\n Icon=/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
+    echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=$HOME/opt/stremio/$EXE\\n Icon=$HOME/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
   fi
   sudo desktop-file-install /usr/share/applications/stremio.desktop
 }
