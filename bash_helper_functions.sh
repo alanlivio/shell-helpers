@@ -1152,6 +1152,8 @@ function hf_gnome_dark() {
 
 function hf_gnome_sanity() {
   hf_log_func
+  gsettings set org.gnome.desktop.search-providers disable-external false
+  gsettings set org.gnome.desktop.search-providers disabled "['org.gnome.Calculator.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Software.desktop']"
   gsettings set org.gnome.desktop.interface enable-animations false
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
