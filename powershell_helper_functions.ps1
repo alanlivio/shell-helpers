@@ -482,7 +482,7 @@ function hf_wsl_terminate_running() {
 }
 
 function hf_wsl_ubuntu_set_default_user() {
-  ubuntu1804.exe config --default-user alan
+  ubuntu.exe config --default-user alan
 }
 
 function hf_wsl_enable_features() {
@@ -504,7 +504,7 @@ function hf_wsl_fix_home_user() {
   bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
   bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
-  wsl -t Ubuntu-18.04
+  wsl -t Ubuntu
 
   # ensure sudoer
   wsl -u root usermod -aG sudo "$env:UserName"
@@ -603,19 +603,15 @@ function hf_install_wsl() {
 # ---------------------------------------
 
 function hf_config_install_wt($path) {
-  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 function hf_config_installvscode($path) {
   Copy-Item $path .\AppData\Roaming\Code\User\settings.json
 }
 
-# ---------------------------------------
-# windows terminal functions
-# ---------------------------------------
-
-function hf_terminal_win_open_settings() {
-  code $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json
+function hf_config_wt_open() {
+  code $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 # ---------------------------------------
