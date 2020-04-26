@@ -187,6 +187,11 @@ function hf_explorer_open_home_folder() {
 function hf_explorer_hide_dotfiles() {
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
+function hf_explorer_restart() {
+  # restart
+  taskkill /f /im explorer.exe
+  Start-Process explorer.exe
+}
 
 function hf_explorer_sanity_search() {
   # https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
@@ -223,17 +228,12 @@ function hf_explorer_sanity_taskbar() {
   }
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
 
-
   # disable action center
   if (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
     New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-
-  # restart
-  taskkill /f /im explorer.exe
-  Start-Process explorer.exe
 }
 
 function hf_explorer_sanity_navigation() {
@@ -628,6 +628,7 @@ function hf_windows_sanity() {
   hf_explorer_sanity_this_pc_folder
   hf_explorer_sanity_taskbar
   hf_explorer_sanity_lock
+  hf_explorer_restart
   hf_uninstall_not_essential_store_packages
   hf_remove_unused_folders
   hf_system_disable_unused_features
