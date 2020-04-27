@@ -623,7 +623,7 @@ function hf_zip_folder() {
 
 function hf_zip_extract() {
   : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
-  unzip $1
+  unzip $1 -d "${1%%.zip}"
 }
 
 function hf_zip_list() {
@@ -1937,21 +1937,12 @@ function hf_clean_unused_folders() {
   FOLDERS=(
     "Documents"
     "Images"
-    "Favorites"
+    "Movies"
+    "Music"
     "Pictures"
     "Public"
     "Templates"
     "Videos"
-    "Music"
-    "Links"
-    "Movies"
-    "Searches"
-    "Contacts"
-    "OneDrive"
-    "Saved Games"
-    "Favorites"
-    "3D Objects"
-    "SendTo"
   )
 
   if test -n "$IS_LINUX"; then
@@ -1972,17 +1963,26 @@ function hf_clean_unused_folders() {
 
   if test -n "$IS_WINDOWS"; then
     FOLDERS+=(
-      "My\ Documents"
-      "Start\ Menu"
-      "Local\ Settings"
-      'Application\ Data'
+      "Links"
       'Cookies'
-      "Recent"
+      "3D Objects"
+      "Contacts"
+      "Favorites"
+      "Cookies"
       "Intel"
       "IntelGraphicsProfiles"
-      "NetHood"
-      "PrintHood"
+      'Local Settings'
       "MicrosoftEdgeBackups"
+      "My Documents"
+      "NetHood"
+      "OneDrive"
+      "PrintHood"
+      "Recent"
+      "Saved Games"
+      "Searches"
+      "SendTo"
+      'Start Menu'
+      "Favorites"
     )
   fi
 
