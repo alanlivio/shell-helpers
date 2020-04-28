@@ -367,7 +367,16 @@ function hf_git_services_test() {
 }
 
 function hf_git_branch_create_all_from_remotes() {
-  git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
+  git branch -r | grep -v '\->' | while read -r remote; do
+    git branch --track "${remote#origin/}" "$remote"
+  done
+}
+
+function hf_git_branch_update_all() {
+  git branch -r | grep -v '\->' | while read -r remote; do
+    hf_log_msg "updating ${remote#origin/}"
+    git checkout "${remote#origin/}" && git pull --all
+  done
 }
 
 function hf_git_branch_set_upstrem() {
