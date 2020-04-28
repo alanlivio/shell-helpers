@@ -357,10 +357,6 @@ function hf_gdb_run_bt_all_threads() {
 # git functions
 # ---------------------------------------
 
-function hf_git_remotes_track_all() {
-  git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
-}
-
 function hf_git_kraken_folder() {
   gitkraken -z -p . >/dev/null &
 }
@@ -370,11 +366,11 @@ function hf_git_services_test() {
   ssh -T git@github.com
 }
 
-function hf_git_remotes_update() {
-  git remote update origin --prune
+function hf_git_branch_create_all_from_remotes() {
+  git branch -r | grep -v '\->' | while read -r remote; do git branch --track "${remote#origin/}" "$remote"; done
 }
 
-function hf_git_remotes_set_upstrem() {
+function hf_git_branch_set_upstrem() {
   : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
   git branch --set-upstream-to $1
 }
@@ -392,9 +388,8 @@ function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
 
-function hf_git_reset_author() {
-  : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
-  git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
+function hf_git_github_fix() {
+  echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee $HOME/.ssh/config
 }
 
 function hf_git_github_init() {
@@ -410,22 +405,23 @@ function hf_git_github_init() {
   git push -u origin master
 }
 
-function hf_git_github_fix() {
-  echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee $HOME/.ssh/config
+function hf_git_rebase_reset_author() {
+  : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
+  git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
 }
 
-function hf_git_remove_from_tree() {
+function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-function hf_git_push_commit() {
+function hf_git_commit_all_push() {
   : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
   git push
 }
 
-function hf_git_ammend_commit_all_push_force() {
+function hf_git_commit_ammend_all_push_force() {
   git commit -a --amend --no-edit
   git push --force
 }
@@ -435,55 +431,21 @@ function hf_git_check_if_need_pull() {
     | sed 's/\// /g') | cut -f1) ] && printf FALSE || printf TRUE
 }
 
-function hf_git_create_gitignore() {
+function hf_git_gitignore_create() {
   : ${1?"Usage: ${FUNCNAME[0]} <contexts,..>"}
   curl -L -s "https://www.gitignore.io/api/$1"
 }
 
-function hf_git_create_gitignore_essentials() {
-  hf_git_create_gitignore code,eclipse,executable,git,intellij,linux,notepadpp,osx,sublimetext,vim,windows,xcode
+function hf_git_gitignore_create_javascript() {
+  hf_git_gitignore_create node,bower,grunt
 }
 
-function hf_git_create_gitignore_javascript() {
-  hf_git_create_gitignore node,bower,grunt
-}
-
-function hf_git_create_gitignore_cpp() {
-  hf_git_create_gitignore c,c++,qt,autotools,make,ninja,cmake
-}
-
-function hf_git_uninstall_reset_clean() {
-  find .-name .git | while read -r i; do
-    cd "$(dirname $i)" || exit
-    make uninstall
-    git reset --hard
-    git clean -df
-    cd - >/dev/null
-  done
-}
-
-function hf_git_commit_formated() {
-  echo -e "\n" >/tmp/commit.txt
-  for i in $(git status -s | cut -c4-); do
-    echo -e "* $i: Likewise." >>/tmp/commit.txt
-  done
-  git commit -t /tmp/commit.txt
+function hf_git_gitignore_create_cpp() {
+  hf_git_gitignore_create c,c++,qt,autotools,make,ninja,cmake
 }
 
 function hf_git_list_large_files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
-}
-
-function hf_git_reset_subfolders() {
-  CWD=$(pwd)
-  FOLDER=$(pwd $1)
-  cd $FOLDER
-  for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
-    cd "$FOLDER/$i"
-    if test -d .git; then git reset --hard; fi
-    cd ..
-  done
-  cd $CWD
 }
 
 function hf_git_folder_tree() {
@@ -530,6 +492,36 @@ function hf_git_log_history_file() {
 
 function hf_git_diff_one_commit() {
   git diff $1$HOME $1
+}
+
+function hf_git_subfolders_reset() {
+  CWD=$(pwd)
+  FOLDER=$(pwd $1)
+  cd $FOLDER
+  for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
+    cd "$FOLDER/$i"
+    if test -d .git; then
+      git reset --hard
+    fi
+    cd ..
+  done
+  cd $CWD
+}
+
+function hf_git_subfolders_make_uninstall_reset_clean() {
+  CWD=$(pwd)
+  FOLDER=$(pwd $1)
+  cd $FOLDER
+  for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
+    cd "$FOLDER/$i"
+    if test -d .git; then
+      make uninstall
+      git reset --hard
+      git clean -df
+    fi
+    cd ..
+  done
+  cd $CWD
 }
 
 # ---------------------------------------
