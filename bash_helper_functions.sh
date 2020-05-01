@@ -668,7 +668,7 @@ function hf_folder_files_sizes() {
 # ---------------------------------------
 
 function hf_latex_clean() {
-  find . -print0 -type f -name "*-converted-to.pdf" -o -name "*.aux" -o -name "*.log" -o -name "*.nav" -o -name "*.out" -o -name "*.bbl" -o -name "*.blg" -o -name "*.lot" -o -name "*.lof" -o -name "*.lol" -o -name "*.tof" -o -name "*.snm" -o -name "*.synctex.gz" -o -name "*.toc" | xargs rm -r
+  rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls
 }
 
 # ---------------------------------------
