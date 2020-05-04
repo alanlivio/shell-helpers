@@ -503,6 +503,20 @@ function hf_git_diff_one_commit() {
   git diff $1$HOME $1
 }
 
+function hf_git_subfolders_push() {
+  CWD=$(pwd)
+  FOLDER=$(pwd $0)
+  cd $FOLDER
+  for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
+    cd "$FOLDER/$i"
+    if test -d .git; then
+      git push
+    fi
+    cd ..
+  done
+  cd $CWD
+}
+
 function hf_git_subfolders_reset() {
   CWD=$(pwd)
   FOLDER=$(pwd $1)
@@ -669,6 +683,13 @@ function hf_folder_files_sizes() {
 
 function hf_latex_clean() {
   rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls
+}
+
+function hf_latex_build() {
+  # : ${1?"Usage: ${FUNCNAME[0]} <main-tex-file>"}
+  pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
+  find . -maxdepth 1 -name "*.aux" -exec echo -e "\n-- bibtex" {} \; -exec bibtex {} \;
+  pdflatex--shell-escape -synctex=1 -interaction=nonstopmode -file-line-error  $1
 }
 
 # ---------------------------------------
