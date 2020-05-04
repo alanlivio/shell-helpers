@@ -26,30 +26,30 @@ if test $IS_LINUX; then
   esac
 fi
 
-function hf_log_print() {
+function hf_log_wrap() {
   echo -e "$1" | fold -w100 -s
 }
 
 function hf_log_error() {
-  hf_log_print "\033[00;31m-- $* \033[00m"
+  hf_log_wrap "\033[00;31m-- $* \033[00m"
 }
 
 function hf_log_msg() {
-  hf_log_print "\033[00;33m-- $* \033[00m"
+  hf_log_wrap "\033[00;33m-- $* \033[00m"
 }
 
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 
 function hf_log_msg_2nd() {
-  hf_log_print "\033[00;33m-- > $* \033[00m"
+  hf_log_wrap "\033[00;33m-- > $* \033[00m"
 }
 
 function hf_log_done() {
-  hf_log_print "\033[00;32m-- done\033[00m"
+  hf_log_wrap "\033[00;32m-- done\033[00m"
 }
 
 function hf_log_ok() {
-  hf_log_print "\033[00;32m-- ok\033[00m"
+  hf_log_wrap "\033[00;32m-- ok\033[00m"
 }
 
 function hf_log_try() {
@@ -423,14 +423,14 @@ function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-function hf_git_commit_all_push() {
+function hf_git_commit_push_all() {
   : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
   git push
 }
 
-function hf_git_commit_ammend_all_push_force() {
+function hf_git_commit_ammend_push_all_force() {
   git commit -a --amend --no-edit
   git push --force
 }
@@ -510,6 +510,7 @@ function hf_git_subfolders_push() {
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
     cd "$FOLDER/$i"
     if test -d .git; then
+      hf_log_msg "push on $i"
       git push
     fi
     cd ..
@@ -517,28 +518,29 @@ function hf_git_subfolders_push() {
   cd $CWD
 }
 
-function hf_git_subfolders_reset() {
+function hf_git_subfolders_pull() {
   CWD=$(pwd)
-  FOLDER=$(pwd $1)
+  FOLDER=$(pwd $0)
   cd $FOLDER
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
     cd "$FOLDER/$i"
     if test -d .git; then
-      git reset --hard
+      hf_log_msg "pull on $i"
+      git pull
     fi
     cd ..
   done
   cd $CWD
 }
 
-function hf_git_subfolders_make_uninstall_reset_clean() {
+function hf_git_subfolders_reset_clean() {
   CWD=$(pwd)
   FOLDER=$(pwd $1)
   cd $FOLDER
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
     cd "$FOLDER/$i"
     if test -d .git; then
-      make uninstall
+      hf_log_msg "reset and clean on $i"
       git reset --hard
       git clean -df
     fi
@@ -689,7 +691,7 @@ function hf_latex_build() {
   # : ${1?"Usage: ${FUNCNAME[0]} <main-tex-file>"}
   pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
   find . -maxdepth 1 -name "*.aux" -exec echo -e "\n-- bibtex" {} \; -exec bibtex {} \;
-  pdflatex--shell-escape -synctex=1 -interaction=nonstopmode -file-line-error  $1
+  pdflatex--shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
 }
 
 # ---------------------------------------
