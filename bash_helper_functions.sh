@@ -186,32 +186,31 @@ if test -n "$IS_MAC"; then
     hf_mac_install_bash4
     hf_mac_enable_wifi
   }
-
-  function hf_mac_ubuntu_keyboard_fn() {
-    echo 2 >/sys/module/hid_apple/parameters/fnmode
-  }
-
-  function hf_mac_ubuntu_keyboard_fix() {
-    hf_log_func
-    # alternative: setxkbmap -layout us -variant intl
-    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
-
-    grep -q cedilla /etc/environment
-    if test $? != 0; then
-      # fix cedilla
-      echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-      echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-      # enable fnmode
-      echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
-      sudo update-initramfs -u
-    fi
-  }
-
 fi
 
 # ---------------------------------------
 # ubuntu-on-mac functions
 # ---------------------------------------
+
+function hf_mac_ubuntu_keyboard_fn() {
+  echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
+}
+
+function hf_mac_ubuntu_keyboard_fix() {
+  hf_log_func
+  # alternative: setxkbmap -layout us -variant intl
+  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
+
+  grep -q cedilla /etc/environment
+  if test $? != 0; then
+    # fix cedilla
+    echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+    echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+    # enable fnmode
+    echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
+    sudo update-initramfs -u
+  fi
+}
 
 function hf_mac_enable_wifi() {
   hf_log_func
@@ -402,7 +401,7 @@ function hf_git_github_fix() {
 }
 
 function hf_git_github_init() {
-  : ${1?"Usage: ${FUNCNAME[0]} [github name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <github-name>"}
   NAME=$(basename "$1" ".${1##*.}")
   echo "init github repo $NAME "
 
@@ -414,8 +413,14 @@ function hf_git_github_init() {
   git push -u origin master
 }
 
+function hf_git_feature_create_local_and_remote() {
+  : ${1?"Usage: ${FUNCNAME[0]} <feature-name>"}
+  git checkcout -b $1
+  git push -u origin $1
+}
+
 function hf_git_rebase_reset_author() {
-  : ${1?"Usage: ${FUNCNAME[0]} [number of commits before HEAD to reset]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <number-of-commits-backwards-to-reset-author>"}
   git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
 }
 
@@ -684,7 +689,7 @@ function hf_folder_files_sizes() {
 # ---------------------------------------
 
 function hf_latex_clean() {
-  rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls
+  rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls
 }
 
 function hf_latex_build() {
