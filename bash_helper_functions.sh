@@ -420,8 +420,8 @@ function hf_git_feature_create_local_and_remote() {
 }
 
 function hf_git_rebase_reset_author() {
-  : ${1?"Usage: ${FUNCNAME[0]} <number-of-commits-backwards-to-reset-author>"}
-  git rebase -i HEAD$HOME$1 -x "git commit --amend --reset-author"
+  : ${1?"Usage: ${FUNCNAME[0]} <HEAD^n-commits-backwards>"}
+  git rebase -i HEAD^$1 -x "git commit --amend --reset-author"
 }
 
 function hf_git_rebase_remove_from_tree() {
