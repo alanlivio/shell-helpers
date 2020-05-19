@@ -365,13 +365,24 @@ function hf_git_services_test() {
   ssh -T git@github.com
 }
 
-function hf_git_branch_create_all_from_remotes() {
+function hf_git_branch_remote_push() {
+  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
+  git push -u origin $1
+}
+
+function hf_git_branch_remote_create_origin() {
+  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
+  git checkout -b $1
+  git push -u origin $1
+}
+
+function hf_git_branch_remote_all_create_local() {
   git branch -r | grep -v '\->' | while read -r remote; do
     git branch --track "${remote#origin/}" "$remote"
   done
 }
 
-function hf_git_branch_update_all() {
+function hf_git_branch_remote_all_update() {
   git branch -r | grep -v '\->' | while read -r remote; do
     hf_log_msg "updating ${remote#origin/}"
     git checkout "${remote#origin/}" && git pull --all
@@ -411,12 +422,6 @@ function hf_git_github_init() {
   git commit -m "first commit"
   git remote add origin $1
   git push -u origin master
-}
-
-function hf_git_feature_create_local_and_remote() {
-  : ${1?"Usage: ${FUNCNAME[0]} <feature-name>"}
-  git checkcout -b $1
-  git push -u origin $1
 }
 
 function hf_git_rebase_reset_author() {
@@ -694,9 +699,9 @@ function hf_latex_clean() {
 
 function hf_latex_build() {
   # : ${1?"Usage: ${FUNCNAME[0]} <main-tex-file>"}
-  pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1 &&\
-    find . -maxdepth 1 -name "*.aux" -exec echo -e "\n-- bibtex" {} \; -exec bibtex {} \; &&\
-    pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
+  pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1 \
+    && find . -maxdepth 1 -name "*.aux" -exec echo -e "\n-- bibtex" {} \; -exec bibtex {} \; \
+    && pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
 }
 
 # ---------------------------------------
