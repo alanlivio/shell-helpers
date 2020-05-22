@@ -1164,7 +1164,6 @@ function hf_gnome_init() {
   hf_log_func
   hf_gnome_dark
   hf_gnome_sanity
-  hf_gnome_disable_update
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
   hf_install_curl
@@ -1172,7 +1171,6 @@ function hf_gnome_init() {
   hf_install_vscode
   hf_install_insync
   hf_clean_unused_folders
-  # hf_user_permissions_opt
 }
 
 function hf_gnome_reset_keybindings() {
@@ -1235,12 +1233,6 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
   gsettings set org.gnome.shell.extensions.desktop-icons show-home false
   gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
-}
-
-function hf_gnome_disable_update() {
-  hf_log_func
-  gsettings set org.gnome.software download-updates false
-  sudo sed -i "s/1/0/g" /etc/apt/apt.conf.d/20auto-upgrades
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
@@ -1986,7 +1978,7 @@ function hf_clean_unused_folders() {
   )
 
   if test -n "$IS_LINUX"; then
-    FOLDERS=(
+    FOLDERS+=(
       ".android"
       ".apport-ignore.xml "
       ".bash_history"
