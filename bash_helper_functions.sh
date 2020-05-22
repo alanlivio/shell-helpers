@@ -1422,11 +1422,9 @@ function hf_python_clean() {
   find . -print0-iname .idea -o -iname .ipynb_checkpoints -o -iname __pycache__ | xargs rm -r
 }
 
-function hf_python_reinstall() {
-  sudo update-alternatives --remove-all python
-  sudo apt install --reinstall python
-  sudo update-alternatives --remove-all python3
-  sudo apt install --reinstall python3
+function hf_python_set_python3_default() {
+  sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+  sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 }
 
 function hf_venv_activate() {
@@ -1686,7 +1684,7 @@ function hf_install_insync() {
 
 function hf_install_foxit() {
   hf_log_func
-  if ! test -d $HOME/opt/foxitsoftware; then
+  if ! type FoxitReader &>/dev/null; then
     URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
     hf_fetch_extract_to $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
