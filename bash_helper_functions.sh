@@ -365,24 +365,30 @@ function hf_git_services_test() {
   ssh -T git@github.com
 }
 
-function hf_git_branch_remote_push() {
+function hf_git_branch_push() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git push -u origin $1
 }
 
-function hf_git_branch_remote_create_origin() {
+function hf_git_branch_create_origin() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git checkout -b $1
   git push -u origin $1
 }
 
-function hf_git_branch_remote_all_create_local() {
+function hf_git_branch_delete_local_and_origin() {
+  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
+  git branch -d $1
+  git push origin --delete $1
+}
+
+function hf_git_branch_all_create_local() {
   git branch -r | grep -v '\->' | while read -r remote; do
     git branch --track "${remote#origin/}" "$remote"
   done
 }
 
-function hf_git_branch_remote_all_update() {
+function hf_git_branch_all_pull() {
   git branch -r | grep -v '\->' | while read -r remote; do
     hf_log_msg "updating ${remote#origin/}"
     git checkout "${remote#origin/}" && git pull --all
