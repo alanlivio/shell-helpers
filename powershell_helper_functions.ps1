@@ -83,30 +83,12 @@ function hf_system_disable_unused_features() {
   Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
   # XPS Services
   Disable-WindowsOptionalFeature -Online -FeatureName "Printing-XPSServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
-  # print to pdf
-  Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # Internet Explorer
   Disable-WindowsOptionalFeature -Online -FeatureName "Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE" -NoRestart -WarningAction SilentlyContinue | Out-Null
   # Work Folders
   Disable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart -WarningAction SilentlyContinue | Out-Null
-  # windows media player
+  # WindowsMediaPlayer
   Disable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart -WarningAction SilentlyContinue | Out-Null
-}
-
-function hf_system_disable_unused_services() {
-  schtasks /Change /TN "Microsoft\Windows\Application Experience\ProgramDataUpdater" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\NetTrace\GatherNetworkInfo" /Disable | out-null
-  schtasks /Change /TN "Microsoft\Windows\Windows Error Reporting\QueueReporting" /Disable | out-null
-
-  cmd /c sc config DiagTrack start= disabled | out-null
-  cmd /c sc config dmwappushservice start= disabled | out-null
-  cmd /c sc config diagnosticshub.standardcollector.service start= disabled | out-null
-  cmd /c sc config TrkWks start= disabled | out-null
-  cmd /c sc config WMPNetworkSvc start= disabled | out-null
 }
 
 function hf_system_disable_password_policy {
@@ -425,11 +407,11 @@ function hf_choco_cleaner() {
 }
 
 function hf_choco_install() {
-  choco install -y --acceptlicense --no-progress "$args"
+  choco install -y --acceptlicense --no-progress ($args -join ";")
 }
 
 function hf_choco_uninstall() {
-  choco uninstall -y --acceptlicense --no-progress "$args"
+  choco uninstall -y --acceptlicense --no-progress ($args -join ";")
 }
 
 function hf_choco_upgrade() {
@@ -500,65 +482,17 @@ function hf_install_chocolatey() {
     Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
-    choco enable -n allowGlobalConfirmation
-    choco disable -n showNonElevatedWarnings
-    choco disable -n showDownloadProgress
-    choco enable -n removePackageInformationOnUninstall
-    choco -y --acceptlicense feature enable -name=exitOnRebootDetected
+    choco feature enable -n allowGlobalConfirmation
+    choco feature enable -n allowEmptyChecksumsSecure
+    choco feature disable -n showNonElevatedWarnings
+    choco feature disable -n showDownloadProgress
+    choco feature enable -n removePackageInformationOnUninstall
+    choco feature enable -n exitOnRebootDetected
   }
 }
 
 function hf_install_msys() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   hf_choco_install msys2
-}
-
-function hf_install_tesseract() {
-  hf_choco_install tesseract --pre
-}
-
-function hf_install_chrome() {
-  hf_choco_install "GoogleChrome"
-}
-
-function hf_install_firefox() {
-  hf_choco_install "firefox"
-}
-
-function hf_install_vscode() {
-  hf_choco_install "vscode"
-}
-
-function hf_install_gdrive() {
-  hf_choco_install "google-backup-and-sync"
-}
-
-function hf_install_ccleaner() {
-  hf_choco_install "ccleaner"
-}
-
-function hf_install_vlc() {
-  hf_choco_install "vlc"
-}
-
-function hf_install_windows_terminal() {
-  hf_choco_install "microsoft-windows-terminal"
-}
-
-function hf_install_gsudo() {
-  hf_choco_install "gsudo"
-}
-
-function hf_install_shellcheck() {
-  hf_choco_install "shellcheck"
-}
-
-function hf_install_7zip() {
-  hf_choco_install "7zip"
-}
-
-function hf_install_driverbooster() {
-  hf_choco_install "driverbooster"
 }
 
 function hf_install_wsl() {
@@ -596,6 +530,7 @@ function hf_windows_sanity() {
   hf_explorer_sanity_navigation
   hf_explorer_sanity_start_menu
   hf_explorer_sanity_search
+  hf_system_disable_unused_features
   hf_explorer_sanity_taskbar
   hf_explorer_sanity_lock
   hf_explorer_restart
@@ -609,15 +544,11 @@ function hf_windows_init_user_nomal() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
-  hf_install_chrome
-  hf_install_vlc
-  hf_install_7zip
-  hf_install_ccleaner
+  hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }
+
 function hf_windows_init_user_gamer() {
-  hf_choco_install "battle.net"
-  hf_choco_install "steam"
-  hf_choco_install "stremio"
+ hf_choco_install battle.net steam stremio
 }
 
 function hf_windows_init_user_bash() {
@@ -629,12 +560,7 @@ function hf_windows_init_user_bash() {
   Write-Output "-- (5) in PowerShell terminal, run hf_wsl_fix_home_user"
   Write-Output "-- (6) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
-  hf_install_firefox
-  hf_install_vscode
-  hf_install_gsudo
-  hf_install_chrome
-  hf_install_vlc
-  hf_install_7zip
-  hf_install_ccleaner
+  hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
+  hf_choco_install vscode gsudo
 }
 
