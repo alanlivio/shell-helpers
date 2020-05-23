@@ -1630,12 +1630,7 @@ function hf_install_spotify() {
 
 function hf_install_grub_customizer_apt() {
   hf_log_func
-  if ! type customizer &>/dev/null; then
-    sudo rm /etc/apt/sources.list.d/danielrichter2007*
-    sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
-    sudo apt update
-    sudo apt install -y grub-customizer
-  fi
+  sudo apt install -y grub-customizer
 }
 
 function hf_install_java_oraclejdk_apt() {
