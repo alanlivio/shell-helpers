@@ -439,14 +439,14 @@ function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-function hf_git_commit_push_all() {
+function hf_git_push_commit_all() {
   : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
   git push
 }
 
-function hf_git_commit_ammend_push_all_force() {
+function hf_git_push_ammend_all_force() {
   git commit -a --amend --no-edit
   git push --force
 }
@@ -886,14 +886,6 @@ function hf_network_ports_tcp_listening() {
 
 function hf_network_ports_udp_listening() {
   ss -lu
-}
-
-function hf_network_ports_processes() {
-  ss -p
-}
-
-function hf_network_ports_list_open() {
-  netstat -tulpn
 }
 
 function hf_network_ports_list_using() {
