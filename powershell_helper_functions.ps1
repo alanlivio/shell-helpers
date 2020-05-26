@@ -20,6 +20,8 @@ if (Test-Path $SCRIPT_CFG) {
 # alias
 # ---------------------------------------
 Set-Alias -Name grep -Value Select-String
+Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
+Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
 
 # ---------------------------------------
 # go home
@@ -407,7 +409,7 @@ function hf_choco_cleaner() {
 }
 
 function hf_choco_install() {
-  choco install -y --acceptlicense --no-progress ($args -join ";")
+  choco install -y --acceptlicense --no-progress --ignorechecksum  ($args -join ";")
 }
 
 function hf_choco_uninstall() {
