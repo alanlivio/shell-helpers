@@ -104,12 +104,12 @@ if test -n "$IS_WINDOWS"; then
   # ---------------------------------------
   function hf_choco_install() {
     hf_log_func
-    choco install -y --acceptlicense --no-progress "$@"
+    choco install -y --acceptlicense --no-progress --ignorechecksum "$@"
   }
 
   function hf_choco_upgrade() {
     hf_log_func
-    choco upgrade -y --acceptlicense --no-progress all
+    choco upgrade -y --acceptlicense --no-progress --ignorechecksum all
   }
 
   function hf_windows_install_choco() {
