@@ -880,6 +880,10 @@ function hf_partitions_list() {
 # network functions
 # ---------------------------------------
 
+function hf_network_wait_for_conectivity() {
+  watch -g -n 1 ping -c 1 google.com
+}
+
 function hf_network_ports_tcp_listening() {
   ss -lt
 }
@@ -914,8 +918,14 @@ function hf_network_ip() {
 }
 
 function hf_network_arp_scan() {
-  ip=$(hf_network_ip)
-  sudo nmap --host-timeout 1s --script smb-os-discovery.nse -RsP --version-light --system-dns $ip/24 | grep -e 'Nmap scan report' -e 'Host is' -e 'MAC Address:' | sed 's/Nmap scan/----------------------------------------\nNmap scan/'
+  hf_test_exist_command arp-scan
+  sudo arp-scan --localnet
+}
+
+function hf_network_arp_scan_for_interface() {
+  : ${1?"Usage: ${FUNCNAME[0]} [interface]"}
+  hf_test_exist_command arp-scan
+  sudo arp-scan --localnet --interface=$1
 }
 
 # ---------------------------------------
