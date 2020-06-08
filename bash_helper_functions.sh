@@ -1192,41 +1192,51 @@ function hf_gnome_dark() {
 
 function hf_gnome_sanity() {
   hf_log_func
+  # gnome search
+  gsettings set org.gnome.desktop.search-providers sort-order "[]"
   gsettings set org.gnome.desktop.search-providers disable-external false
   gsettings set org.gnome.desktop.search-providers disabled "['org.gnome.Calculator.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.clocks.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Software.desktop']"
+  # animation
   gsettings set org.gnome.desktop.interface enable-animations false
+  # background
   gsettings set org.gnome.desktop.background color-shading-type "solid"
   gsettings set org.gnome.desktop.background picture-uri ''
   gsettings set org.gnome.desktop.background primary-color "#000000"
   gsettings set org.gnome.desktop.background secondary-color "#000000"
   gsettings set org.gnome.desktop.background show-desktop-icons false
+  # cloack
   gsettings set org.gnome.desktop.interface clock-show-date true
+  # notifications
   gsettings set org.gnome.desktop.notifications show-banners false
   gsettings set org.gnome.desktop.notifications show-in-lock-screen false
+  # recent files
   gsettings set org.gnome.desktop.privacy remember-recent-files false
+  # screensaver
   gsettings set org.gnome.desktop.screensaver color-shading-type "solid"
   gsettings set org.gnome.desktop.screensaver lock-enabled false
   gsettings set org.gnome.desktop.screensaver picture-uri ''
   gsettings set org.gnome.desktop.screensaver primary-color "#000000"
   gsettings set org.gnome.desktop.screensaver secondary-color "#000000"
-  gsettings set org.gnome.desktop.search-providers disable-external true
-  gsettings set org.gnome.desktop.search-providers sort-order []
+  # sound
   gsettings set org.gnome.desktop.sound event-sounds false
   gsettings set org.gnome.desktop.wm.preferences num-workspaces 1
+  # gedit
   gsettings set org.gnome.gedit.preferences.editor bracket-matching true
-  gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
   gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
   gsettings set org.gnome.gedit.preferences.editor display-right-margin true
   gsettings set org.gnome.gedit.preferences.editor scheme 'classic'
   gsettings set org.gnome.gedit.preferences.editor wrap-last-split-mode 'word'
   gsettings set org.gnome.gedit.preferences.editor wrap-mode 'word'
+  # workspaces
   gsettings set org.gnome.mutter dynamic-workspaces false
+  # nautilus
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
   gsettings set org.gnome.nautilus.window-state initial-size '(890, 544)'
   gsettings set org.gnome.nautilus.window-state maximized false
   gsettings set org.gnome.nautilus.window-state sidebar-width 180
+  # dock
   gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
   gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
   gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
