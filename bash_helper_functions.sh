@@ -1941,6 +1941,12 @@ function hf_fetch_youtube_playlist() {
   youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
+function hf_fetch_youtube_txt_list() {
+  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites  --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+}
+
 # ---------------------------------------
 # list functions
 # ---------------------------------------
