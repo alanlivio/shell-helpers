@@ -1151,6 +1151,17 @@ function hf_service_create_startup_script() {
 }
 
 # ---------------------------------------
+# security functions
+# ---------------------------------------
+
+function hf_install_bb_warsaw() {
+  hf_log_func
+  if ! type warsaw &>/dev/null; then
+    hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
+  fi
+}
+
+# ---------------------------------------
 # mount functions
 # ---------------------------------------
 
@@ -1173,6 +1184,10 @@ function hf_gnome_init() {
   hf_install_vscode
   hf_install_insync
   hf_clean_unused_folders
+}
+
+function hf_gnome_execute_desktop_file() {
+  awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' $1
 }
 
 function hf_gnome_reset_keybindings() {
