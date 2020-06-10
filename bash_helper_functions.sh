@@ -1162,17 +1162,6 @@ function hf_service_create_startup_script() {
 }
 
 # ---------------------------------------
-# security functions
-# ---------------------------------------
-
-function hf_install_bb_warsaw() {
-  hf_log_func
-  if ! type warsaw &>/dev/null; then
-    hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
-  fi
-}
-
-# ---------------------------------------
 # mount functions
 # ---------------------------------------
 
@@ -1557,6 +1546,13 @@ function hf_install_luarocks() {
   fi
 }
 
+function hf_install_bb_warsaw() {
+  hf_log_func
+  if ! type warsaw &>/dev/null; then
+    hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
+  fi
+}
+
 function hf_install_curl() {
   hf_log_func
   if ! type curl &>/dev/null; then
@@ -1728,20 +1724,20 @@ function hf_install_foxit() {
 
 function hf_install_stremio() {
   hf_log_func
-  if ! test -d $HOME/opt/stremio; then
-    mkdir $HOME/opt/stremio/
-    EXE=Stremio+4.0.10.appimage
-    URL=https://dl.strem.io/linux/v4.0.10/$EXE
-    wget --continue $URL -P /tmp/
-    chmod +x /tmp/$EXE
-    mv /tmp/$EXE $HOME/opt/stremio/
-    sudo chown $USER:$USER $HOME/opt/stremio/
-
-    sudo wget --continue https://www.macupdate.com/images/icons256/56058.png -O $HOME/opt/stremio/stremio.png
-    echo -e "[Desktop Entry]\\n Version=1.0\\n Name=stremio\\n Exec=$HOME/opt/stremio/$EXE\\n Icon=$HOME/opt/stremio/stremio.png\\n Type=Application\\n Categories=Application" | sudo tee /usr/share/applications/stremio.desktop
+  if ! type stremio &>/dev/null; then
+    hf_apt_install_packages libmpv1 libqt5qml5
+    hf_apt_fetch_install https://dl.strem.io/linux/v4.4.106/stremio_4.4.106-1_amd64.deb
   fi
-  sudo desktop-file-install /usr/share/applications/stremio.desktop
 }
+
+function hf_install_flutter() {
+  hf_log_func
+  if ! test -d $HOME/opt/tor; then
+    URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.17.3-stable.tar.xz
+    hf_fetch_extract_to $URL $HOME/opt/
+  fi
+  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+} 
 
 function hf_install_tor() {
   hf_log_func
@@ -1753,10 +1749,6 @@ function hf_install_tor() {
   mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
   sed -i 's/^Exec=.*/Exec=$HOME\/opt\/tor\/Browser\/start-tor-browser/g' $HOME/opt/tor/start-tor-browser.desktop
   sudo desktop-file-install $HOME/opt/tor/start-tor-browser.desktop
-}
-
-function hf_install_zotero() {
-  sudo snap install zotero-snap
 }
 
 function hf_install_zotero_apt() {
