@@ -83,14 +83,18 @@ function hf_system_adjust_visual_to_performace() {
 function hf_system_disable_unused_features() {
   # fax
   Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
+
   # XPS Services
-  Disable-WindowsOptionalFeature -Online -FeatureName "Printing-XPSServices-Features" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
+
   # Internet Explorer
-  Disable-WindowsOptionalFeature -Online -FeatureName "Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  dism.exe /online /quiet /disable-feature /featurename:Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE /norestart
+
   # Work Folders
-  Disable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
+
   # WindowsMediaPlayer
-  Disable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart -WarningAction SilentlyContinue | Out-Null
+  dism.exe /online /quiet /disable-feature /featurename:WindowsMediaPlayer /norestart
 }
 
 function hf_system_disable_password_policy {
@@ -443,8 +447,8 @@ function hf_wsl_ubuntu_set_default_user() {
 function hf_wsl_enable_features() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+  dism.exe /online /quiet /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /quiet /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 }
 
 function hf_wsl_fix_home_user() {
