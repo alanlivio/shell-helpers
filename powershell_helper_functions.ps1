@@ -173,7 +173,7 @@ function hf_explorer_hide_dotfiles() {
 }
 function hf_explorer_restart() {
   # restart
-  taskkill /f /im explorer.exe
+  taskkill /f /im explorer.exe | Out-Null
   Start-Process explorer.exe
 }
 
@@ -282,10 +282,10 @@ function hf_explorer_sanity_start_menu() {
   ForEach-Object { $_.DoIt() }
 
   # Disable Bing
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f  | Out-Null
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f  | Out-Null
 }
 
 # ---------------------------------------
@@ -294,7 +294,7 @@ function hf_explorer_sanity_start_menu() {
 
 function hf_enable_dark_mode() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f
+  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 }
 
 # ---------------------------------------
@@ -505,6 +505,10 @@ function hf_install_wsl() {
   Invoke-Expression -Command "ubuntu$VERSION.exe"
 }
 
+function hf_install_battle_steam_stramio() {
+  hf_choco_install battle.net steam stremio
+}
+
 # ---------------------------------------
 # config functions
 # ---------------------------------------
@@ -536,7 +540,6 @@ function hf_windows_sanity() {
   hf_explorer_sanity_taskbar
   hf_explorer_sanity_lock
   hf_explorer_restart
-  hf_uninstall_not_essential_store_packages
   hf_remove_unused_folders
   hf_system_disable_unused_features
   hf_uninstall_ondrive
@@ -544,24 +547,22 @@ function hf_windows_sanity() {
 
 function hf_windows_init_user_nomal() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
+  Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
   hf_install_chocolatey
+  hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
-}
-
-function hf_windows_init_user_gamer() {
- hf_choco_install battle.net steam stremio
 }
 
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
+  Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
   Write-Output "-- (2) in WindowStore install ubuntu and WindowsTerminal"
   Write-Output "-- (3) in other PowerShell terminal, run hf_wsl_enable_features "
   Write-Output "-- (4) reboot"
   Write-Output "-- (5) in PowerShell terminal, run hf_wsl_fix_home_user"
   Write-Output "-- (6) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
+  hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
   hf_choco_install vscode gsudo
 }
