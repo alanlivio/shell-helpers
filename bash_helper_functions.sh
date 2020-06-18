@@ -285,6 +285,16 @@ function hf_gst_side_by_side_args() {
 # deb functions
 # ---------------------------------------
 
+function hf_deb_install() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  sudo dpkg -i $1
+}
+
+function hf_deb_install_force_depends() {
+  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  sudo dpkg -i --force-depends $1
+}
+
 function hf_deb_info() {
   : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
   dpkg-deb --info $1
@@ -450,16 +460,20 @@ function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-function hf_git_push_commit_all() {
+function hf_git_ammend() {
+  git commit -a --amend --no-edit
+}
+
+function hf_git_ammend_push() {
+  git commit -a --amend --no-edit
+  git push --force
+}
+
+function hf_git_commit_all_push() {
   : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
   git push
-}
-
-function hf_git_push_ammend_all_force() {
-  git commit -a --amend --no-edit
-  git push --force
 }
 
 function hf_git_check_if_need_pull() {
@@ -711,7 +725,7 @@ function hf_folder_files_sizes() {
 # ---------------------------------------
 
 function hf_latex_clean() {
-  rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls ./*.bcf
+  rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.lof ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls ./*.bcf
 }
 
 function hf_latex_build() {
