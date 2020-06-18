@@ -1737,7 +1737,7 @@ function hf_install_flutter() {
     hf_fetch_extract_to $URL $HOME/opt/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-} 
+}
 
 function hf_install_tor() {
   hf_log_func
@@ -1829,6 +1829,16 @@ function hf_apt_upgrade() {
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
     sudo apt -y upgrade
   fi
+}
+
+function hf_apt_ppa_remove() {
+  hf_log_func
+  sudo add-apt-repository --remove $1
+}
+
+function hf_apt_ppa_list() {
+  hf_log_func
+  apt policy
 }
 
 function hf_apt_fixes() {
