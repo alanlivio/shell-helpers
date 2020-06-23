@@ -412,7 +412,10 @@ function hf_git_branch_all_create_local() {
 function hf_git_branch_all_pull() {
   git branch -r | grep -v '\->' | while read -r remote; do
     hf_log_msg "updating ${remote#origin/}"
-    git checkout "${remote#origin/}" && git pull --all
+    git checkout "${remote#origin/}"
+    if test $? != 0; then hf_log_error "cannot goes to ${remote#origin/} because there are local changes"; exit; fi
+    git pull --all
+    if test $? != 0; then hf_log_error "cannot pull ${remote#origin/} because there are local changes"; exit; fi
   done
 }
 
@@ -460,11 +463,11 @@ function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-function hf_git_ammend() {
+function hf_git_ammend_all() {
   git commit -a --amend --no-edit
 }
 
-function hf_git_ammend_push() {
+function hf_git_ammend_all_push() {
   git commit -a --amend --no-edit
   git push --force
 }
