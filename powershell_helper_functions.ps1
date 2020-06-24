@@ -363,7 +363,7 @@ function hf_uninstall_not_essential_store_packages() {
   Microsoft.Office.Desktop
   Microsoft.MicrosoftSolitaireCollection
   Microsoft.MixedReality.Portal'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage | Out-Null }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | Remove-AppxPackage -ErrorAction SilentlyContinue -AllUsers | Out-Null }
 
   # others
   $pkgs = 'Facebook.Facebook
@@ -377,7 +377,7 @@ function hf_uninstall_not_essential_store_packages() {
   7EE7776C.LinkedInforWindows
   king.com.CandyCrushSaga
   NORDCURRENT.COOKINGFEVER'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | remove-AppxPackage | Out-Null }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | Remove-AppxPackage -ErrorAction SilentlyContinue -AllUsers | Out-Null }
 }
 
 # ---------------------------------------
