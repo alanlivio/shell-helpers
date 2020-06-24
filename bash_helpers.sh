@@ -1,12 +1,12 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# project url: https://github.com/alanlivio/bash-helper-functions
+# project url: https://github.com/alanlivio/bash-helpers
 
 # ---------------------------------------
 # variables and log/test functions
 # ---------------------------------------
 
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helper-functions/master/bash_helper_functions.sh
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.sh
 
 # test OS
 case "$(uname -s)" in
@@ -2065,12 +2065,12 @@ function hf_clean_unused_folders() {
 }
 
 # ---------------------------------------
-# load bash_helper_functions_cfg
+# load bash_helpers_cfg
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/bash_helper_functions.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_helper_functions_cfg.sh"
+SCRIPT_NAME="$SCRIPT_DIR/bash_helpers.sh"
+SCRIPT_CFG="$SCRIPT_DIR/bash_helpers_cfg.sh"
 if test -f $SCRIPT_CFG; then
   source $SCRIPT_CFG
 fi
