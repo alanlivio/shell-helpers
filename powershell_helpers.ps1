@@ -1,17 +1,17 @@
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/powershell-helper-functions
+# URL:    https://github.com/alanlivio/powershell-helpers
 
 # thanks
 # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
 # https://gist.github.com/thoroc/86d354d029dda303598a
 
 # ---------------------------------------
-# load powershell_helper_functions_cfg
+# load powershell_helpers_cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\powershell_helper_functions.ps1"
+$SCRIPT_NAME = "$PSScriptRoot\powershell_helpers.ps1"
 $SCRIPT_DIR = $PSScriptRoot
-$SCRIPT_CFG = "$SCRIPT_DIR\powershell_helper_functions_cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\powershell_helpers_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
