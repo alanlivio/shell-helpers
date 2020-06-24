@@ -133,6 +133,7 @@ if test -n "$IS_WINDOWS"; then
   # ---------------------------------------
 
   function hf_terminal_win_open_settings() {
+    hf_log_func
     code $(wslpath -w $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/profiles.json)
   }
 
@@ -147,6 +148,7 @@ if test -n "$IS_WINDOWS"; then
 
   function hf_wsl_fix_mount() {
     # https://blog.johanbove.info/posts/2018/06/30/cannot-ssh-from-wsl.html
+    hf_log_func
     sudo su
     cd /tmp
     sudo umount /mnt/c
@@ -182,10 +184,12 @@ fi
 
 if test -n "$IS_MAC"; then
   function hf_mac_install_homebrew() {
+    hf_log_func
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   }
 
   function hf_mac_install_bash4() {
+    hf_log_func
     brew install bash
     sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
     sudo chsh -s /usr/local/bin/bash
@@ -193,6 +197,7 @@ if test -n "$IS_MAC"; then
   }
 
   function hf_mac_init() {
+    hf_log_func
     hf_mac_install_homebrew
     hf_mac_install_bash4
     hf_mac_enable_wifi
@@ -204,6 +209,7 @@ fi
 # ---------------------------------------
 
 function hf_mac_ubuntu_keyboard_fn() {
+  hf_log_func
   echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
 }
 
@@ -233,23 +239,19 @@ function hf_mac_enable_wifi() {
   fi
 }
 
-function hf_mac_install_refind() {
-  hf_log_func
-  sudo apt install -y refind
-}
-
 # ---------------------------------------
 # audio functions
 # ---------------------------------------
 
 function hf_audio_create_empty() {
-  # i.e. gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location=file.mp3
   : ${1?"Usage: ${FUNCNAME[0]} [audio_output]"}
+  hf_log_func
   gst-launch-1.0 audiotestsrc wave=4 ! audioconvert ! lamemp3enc ! id3v2mux ! filesink location="$1"
 }
 
 function hf_audio_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
+  hf_log_func
   lame -b 32 "$1".mp3 compressed"$1".mp3
 }
 
@@ -259,12 +261,13 @@ function hf_audio_compress() {
 
 function hf_video_create_by_image() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
+  hf_log_func
   ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
 }
 
-function hf_video_cut() {
-  # e.g. ffmpeg -i video-cuted.mp4 -vcodec copy -acodec copy -ss 00:16:03 -t 00:09:34 -f mp4 "video.mp4"
-  : ${3?"Usage: ${FUNCNAME[0]} [video] [begin_time] [end_time]"}
+function hf_video_cut_mp4() {
+  : ${3?"Usage: ${FUNCNAME[0]} [video] [begin_time_in_format_00:00:00] [end_time_in_format_00:00:00]"}
+  hf_log_func
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
 
@@ -273,11 +276,13 @@ function hf_video_cut() {
 # ---------------------------------------
 
 function hf_gst_side_by_side_test() {
+  hf_log_func
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
 }
 
 function hf_gst_side_by_side_args() {
   : ${2?"Usage: ${FUNCNAME[0]} [video1] [video2]"}
+  hf_log_func
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
 
@@ -352,14 +357,6 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
 }
 
 # ---------------------------------------
-# gcc functions
-# ---------------------------------------
-
-function hf_gcc_headers() {
-  echo | gcc -Wp,-v -x c++ - -fsyntax-only
-}
-
-# ---------------------------------------
 # gdb functions
 # ---------------------------------------
 
@@ -413,9 +410,15 @@ function hf_git_branch_all_pull() {
   git branch -r | grep -v '\->' | while read -r remote; do
     hf_log_msg "updating ${remote#origin/}"
     git checkout "${remote#origin/}"
-    if test $? != 0; then hf_log_error "cannot goes to ${remote#origin/} because there are local changes"; exit; fi
+    if test $? != 0; then
+      hf_log_error "cannot goes to ${remote#origin/} because there are local changes"
+      exit
+    fi
     git pull --all
-    if test $? != 0; then hf_log_error "cannot pull ${remote#origin/} because there are local changes"; exit; fi
+    if test $? != 0; then
+      hf_log_error "cannot pull ${remote#origin/} because there are local changes"
+      exit
+    fi
   done
 }
 
@@ -662,8 +665,7 @@ function hf_android_installed_package() {
 }
 
 function hf_android_uninstall_package() {
-  # adb uninstall org.libsdl.app
-  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <package_in_format_XXX.YYY.ZZZ>"}
   adb uninstall $1
 }
 function hf_android_install_package() {
@@ -1645,21 +1647,6 @@ function hf_install_sqlworkbench() {
   fi
 }
 
-function hf_install_pycharm() {
-  hf_log_func
-  hf_snap_install_packages_classic pycharm-professional
-}
-
-function hf_install_clion() {
-  hf_log_func
-  hf_snap_install_packages_classic clion
-}
-
-function hf_install_android_studio() {
-  hf_log_func
-  hf_snap_install_packages android-studio
-}
-
 function hf_install_slack_deb() {
   hf_log_func
   dpkg --status slack-desktop &>/dev/null
@@ -1667,21 +1654,6 @@ function hf_install_slack_deb() {
     sudo apt install -y libappindicator1
     hf_apt_fetch_install https://downloads.slack-edge.com/linux_releases/slack-desktop-4.0.2-amd64.deb
   fi
-}
-
-function hf_install_slack_snap() {
-  hf_log_func
-  hf_snap_install_packages_classic slack
-}
-
-function hf_install_spotify() {
-  hf_log_func
-  hf_snap_install_packages spotify
-}
-
-function hf_install_grub_customizer_apt() {
-  hf_log_func
-  sudo apt install -y grub-customizer
 }
 
 function hf_install_java_oraclejdk_apt() {
