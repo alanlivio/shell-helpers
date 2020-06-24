@@ -2,7 +2,8 @@
 
 ![terminal](https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png)
 
-This project provide a set of helper functions to be used in powershell cmd.
+This project provide a set of helpers to be used in powershell cmd.  
+It intented to be used as [Powershell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7)
 
 ## How to use
 
