@@ -70,6 +70,10 @@ function hf_test_exist_command() {
   fi
 }
 
+function hf_file_test_or_touch() {
+  if ! test -f "$1"; then touch "$1"; fi
+}
+
 # ---------------------------------------
 # profile
 # ---------------------------------------
