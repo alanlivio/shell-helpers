@@ -1485,10 +1485,6 @@ function hf_python_set_python3_default() {
   sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 }
 
-function hf_venv_activate() {
-  if test -d ./venv/bin/; then source ./venv/bin/activate; fi
-}
-
 function hf_python_version() {
   python -V 2>&1 | grep -Po '(?<=Python ).{1}'
 }
@@ -1522,6 +1518,23 @@ function hf_python_install_packages() {
     sudo pip install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
   fi
   sudo pip install -U "$@" &>/dev/null
+}
+
+# ---------------------------------------
+# venv
+# ---------------------------------------
+
+function hf_venv_create() {
+  deactivate
+  if test -d ./venv/bin/; then rm -r ./venv; fi
+  python3 -m venv venv
+  if test requirements.txt; then pip install -r requirements.txt; fi
+}
+
+function hf_venv_load() {
+  deactivate
+  source venv/bin/activate
+  if test requirements.txt; then pip install -r requirements.txt; fi
 }
 
 # ---------------------------------------
