@@ -3,7 +3,7 @@
 # project url: https://github.com/alanlivio/bash-helpers
 
 # ---------------------------------------
-# variables and log/test functions
+# variables
 # ---------------------------------------
 
 SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.sh
@@ -25,6 +25,10 @@ if test $IS_LINUX; then
   *) IS_LINUX=1 ;;
   esac
 fi
+
+# ---------------------------------------
+# log
+# ---------------------------------------
 
 function hf_log_wrap() {
   echo -e "$1" | fold -w100 -s
@@ -67,7 +71,7 @@ function hf_test_exist_command() {
 }
 
 # ---------------------------------------
-# profile functions
+# profile
 # ---------------------------------------
 
 function hf_profile_install() {
@@ -95,13 +99,13 @@ function hf_profile_download() {
 }
 
 # ---------------------------------------
-# windows functions
+# windows
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
 
   # ---------------------------------------
-  # cygwin functions
+  # cygwin
   # ---------------------------------------
 
   hf_cygwin_env_fix() {
@@ -111,7 +115,7 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
-  # choco functions
+  # choco
   # ---------------------------------------
   function hf_choco_install() {
     hf_log_func
@@ -129,7 +133,7 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
-  # windows terminal functions
+  # windows terminal
   # ---------------------------------------
 
   function hf_terminal_win_open_settings() {
@@ -138,7 +142,7 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
-  # wsl functions
+  # wsl
   # ---------------------------------------
 
   function hf_wsl_fix_apt() {
@@ -158,7 +162,7 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
-  # msys functions
+  # msys
   # ---------------------------------------
 
   function hf_msys_search() {
@@ -179,7 +183,7 @@ if test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# macos-only functions
+# macos-only
 # ---------------------------------------
 
 if test -n "$IS_MAC"; then
@@ -205,7 +209,7 @@ if test -n "$IS_MAC"; then
 fi
 
 # ---------------------------------------
-# ubuntu-on-mac functions
+# ubuntu-on-mac
 # ---------------------------------------
 
 function hf_mac_ubuntu_keyboard_fn() {
@@ -240,7 +244,7 @@ function hf_mac_enable_wifi() {
 }
 
 # ---------------------------------------
-# audio functions
+# audio
 # ---------------------------------------
 
 function hf_audio_create_empty() {
@@ -256,7 +260,7 @@ function hf_audio_compress() {
 }
 
 # ---------------------------------------
-# video functions
+# video
 # ---------------------------------------
 
 function hf_video_create_by_image() {
@@ -272,7 +276,7 @@ function hf_video_cut_mp4() {
 }
 
 # ---------------------------------------
-# gst functions
+# gst
 # ---------------------------------------
 
 function hf_gst_side_by_side_test() {
@@ -287,7 +291,7 @@ function hf_gst_side_by_side_args() {
 }
 
 # ---------------------------------------
-# deb functions
+# deb
 # ---------------------------------------
 
 function hf_deb_install() {
@@ -311,7 +315,7 @@ function hf_deb_contents() {
 }
 
 # ---------------------------------------
-# pkg-config functions
+# pkg-config
 # ---------------------------------------
 
 function hf_pkg_config_find() {
@@ -328,7 +332,7 @@ function hf_pkg_config_show() {
 }
 
 # ---------------------------------------
-# pygmentize functions
+# pygmentize
 # ---------------------------------------
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
@@ -357,7 +361,7 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
 }
 
 # ---------------------------------------
-# gdb functions
+# gdb
 # ---------------------------------------
 
 function hf_gdb_run_bt() {
@@ -371,7 +375,7 @@ function hf_gdb_run_bt_all_threads() {
 }
 
 # ---------------------------------------
-# git functions
+# git
 # ---------------------------------------
 
 function hf_git_kraken_folder() {
@@ -597,7 +601,7 @@ function hf_git_subfolders_reset_clean() {
 }
 
 # ---------------------------------------
-# editors functions
+# editors
 # ---------------------------------------
 
 function hf_qtcreator_project_from_git() {
@@ -613,7 +617,7 @@ function hf_eclipse_list_installed() {
 }
 
 # ---------------------------------------
-# grub functions
+# grub
 # ---------------------------------------
 
 function hf_grub_verbose_boot() {
@@ -627,7 +631,7 @@ function hf_grub_splash_boot() {
 }
 
 # ---------------------------------------
-# android functions
+# android
 # ---------------------------------------
 
 function hf_android_start_activity() {
@@ -674,7 +678,7 @@ function hf_android_install_package() {
 }
 
 # ---------------------------------------
-# zip functions
+# zip
 # ---------------------------------------
 
 function hf_zip_folder() {
@@ -695,7 +699,7 @@ function hf_zip_list() {
 }
 
 # ---------------------------------------
-# http functions
+# http
 # ---------------------------------------
 
 function hf_http_host_folder() {
@@ -726,7 +730,7 @@ function hf_folder_files_sizes() {
 }
 
 # ---------------------------------------
-# latex functions
+# latex
 # ---------------------------------------
 
 function hf_latex_clean() {
@@ -741,7 +745,7 @@ function hf_latex_build() {
 }
 
 # ---------------------------------------
-# cpp functions
+# cpp
 # ---------------------------------------
 
 function hf_cpp_find_code_files() {
@@ -761,7 +765,7 @@ function hf_cpp_delete_cmake_files() {
 }
 
 # ---------------------------------------
-# image functions
+# image
 # ---------------------------------------
 
 function hf_image_size_get() {
@@ -806,7 +810,7 @@ function hf_imagem_compress2() {
 }
 
 # ---------------------------------------
-# pdf functions
+# pdf
 # ---------------------------------------
 
 function hf_pdf_find_duplicates() {
@@ -861,7 +865,7 @@ function hf_pdf_count_words() {
 }
 
 # ---------------------------------------
-# convert functions
+# convert
 # ---------------------------------------
 
 function hf_convert_to_markdown() {
@@ -877,7 +881,7 @@ function hf_convert_to_pdf() {
 }
 
 # ---------------------------------------
-# rename functions
+# rename
 # ---------------------------------------
 
 function hf_rename_to_lowercase_with_underscore() {
@@ -899,7 +903,7 @@ function hf_rename_to_lowercase_with_dash() {
 }
 
 # ---------------------------------------
-# partitions functions
+# partitions
 # ---------------------------------------
 
 function hf_partitions_list() {
@@ -907,7 +911,7 @@ function hf_partitions_list() {
 }
 
 # ---------------------------------------
-# network functions
+# network
 # ---------------------------------------
 
 function hf_network_wait_for_conectivity() {
@@ -959,7 +963,7 @@ function hf_network_arp_scan_for_interface() {
 }
 
 # ---------------------------------------
-# virtualbox functions
+# virtualbox
 # ---------------------------------------
 
 function hf_virtualbox_compact() {
@@ -973,7 +977,7 @@ function hf_virtualbox_resize_to_2gb() {
 }
 
 # ---------------------------------------
-# user functions
+# user
 # ---------------------------------------
 
 function hf_user_create_new() {
@@ -1022,7 +1026,7 @@ function hf_user_send_ssh_keys() {
 }
 
 # ---------------------------------------
-# snap functions
+# snap
 # ---------------------------------------
 
 function hf_snap_install_packages() {
@@ -1094,7 +1098,7 @@ function hf_snap_hide_home_folder() {
 }
 
 # ---------------------------------------
-# diff functions
+# diff
 # ---------------------------------------
 
 function hf_diff_vscode() {
@@ -1103,7 +1107,7 @@ function hf_diff_vscode() {
 }
 
 # ---------------------------------------
-# vscode functions
+# vscode
 # ---------------------------------------
 
 function hf_vscode_run_as_root() {
@@ -1136,7 +1140,7 @@ function hf_vscode_uninstall_all_packages() {
 }
 
 # ---------------------------------------
-# ubuntu functions
+# ubuntu
 # ---------------------------------------
 
 function hf_ubuntu_upgrade() {
@@ -1146,7 +1150,7 @@ function hf_ubuntu_upgrade() {
 }
 
 # ---------------------------------------
-# service functions
+# service
 # ---------------------------------------
 
 function hf_service_status_all() {
@@ -1181,7 +1185,7 @@ function hf_service_create_startup_script() {
 }
 
 # ---------------------------------------
-# mount functions
+# mount
 # ---------------------------------------
 
 function hf_mount_list() {
@@ -1189,7 +1193,7 @@ function hf_mount_list() {
 }
 
 # ---------------------------------------
-# gnome functions
+# gnome
 # ---------------------------------------
 
 function hf_gnome_init() {
@@ -1351,7 +1355,7 @@ function hf_gnome_settings_diff_actual_and_file() {
 }
 
 # ---------------------------------------
-# vlc functions
+# vlc
 # ---------------------------------------
 
 function hf_vlc_youtube_playlist_extension() {
@@ -1361,7 +1365,7 @@ function hf_vlc_youtube_playlist_extension() {
 }
 
 # ---------------------------------------
-# date functions
+# date
 # ---------------------------------------
 
 function hf_date() {
@@ -1369,7 +1373,7 @@ function hf_date() {
 }
 
 # ---------------------------------------
-# system functions
+# system
 # ---------------------------------------
 
 function hf_system_product_name() {
@@ -1397,7 +1401,7 @@ function hf_system_list_gpu() {
 }
 
 # ---------------------------------------
-# npm functions
+# npm
 # ---------------------------------------
 
 function hf_install_node() {
@@ -1435,7 +1439,7 @@ function hf_npm_install_packages() {
 }
 
 # ---------------------------------------
-# ruby functions
+# ruby
 # ---------------------------------------
 
 function hf_ruby_install_packages() {
@@ -1461,7 +1465,7 @@ function hf_ruby_install_packages() {
 }
 
 # ---------------------------------------
-# python functions
+# python
 # ---------------------------------------
 
 function hf_python_clean() {
@@ -1513,7 +1517,7 @@ function hf_python_install_packages() {
 }
 
 # ---------------------------------------
-# jupyter functions
+# jupyter
 # ---------------------------------------
 
 function hf_jupyter_notebook() {
@@ -1532,7 +1536,7 @@ function hf_jupyter_dark_theme() {
 }
 
 # ---------------------------------------
-# eclipse functions
+# eclipse
 # ---------------------------------------
 
 function hf_eclipse_install_packages() {
@@ -1552,7 +1556,7 @@ function hf_eclipse_uninstall_packages() {
 }
 
 # ---------------------------------------
-# install functions
+# install
 # ---------------------------------------
 
 function hf_install_luarocks() {
@@ -1810,7 +1814,7 @@ function hf_install_peek_apt() {
 }
 
 # ---------------------------------------
-# zotero functions
+# zotero
 # ---------------------------------------
 
 function hf_zotero_symbolic_link() {
@@ -1823,7 +1827,7 @@ function hf_zotero_symbolic_link() {
 }
 
 # ---------------------------------------
-# apt functions
+# apt
 # ---------------------------------------
 
 function hf_apt_upgrade() {
@@ -1925,7 +1929,7 @@ function hf_apt_fetch_install() {
 }
 
 # ---------------------------------------
-# fetch functions
+# fetch
 # ---------------------------------------
 
 function hf_fetch_extract_to() {
@@ -1978,7 +1982,7 @@ function hf_fetch_youtube_txt_list() {
 }
 
 # ---------------------------------------
-# list functions
+# list
 # ---------------------------------------
 
 function hf_list_sorted_by_size() {
@@ -1990,7 +1994,7 @@ function hf_list_recursive_sorted_by_size() {
 }
 
 # ---------------------------------------
-# x11 functions
+# x11
 # ---------------------------------------
 
 function hf_x11_properties_of_window() {
@@ -2002,7 +2006,7 @@ function hf_x11_properties_of_window() {
 }
 
 # ---------------------------------------
-# clean functions
+# clean
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
