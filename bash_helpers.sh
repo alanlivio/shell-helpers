@@ -1810,6 +1810,19 @@ function hf_install_peek_apt() {
 }
 
 # ---------------------------------------
+# zotero functions
+# ---------------------------------------
+
+function hf_zotero_symbolic_link() {
+  if test -n "$IS_WINDOWS"; then
+    cmd /c "mklink /D \users\$USER\Zotero\storage \users\$USER\gdrive\zotero_storage"
+  else
+    rm -rf $HOME/Zotero/storage/
+    ln -s $HOME/gdrive/zotero-storage $HOME/Zotero/storage
+  fi
+}
+
+# ---------------------------------------
 # apt functions
 # ---------------------------------------
 
