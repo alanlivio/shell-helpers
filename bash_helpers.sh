@@ -1149,6 +1149,10 @@ function hf_ubuntu_upgrade() {
   do-release-upgrade
 }
 
+function hf_ubuntu_bluetooth_reinstall() {
+  sudo apt reinstall pulseaudio pulseaudio-utils pavucontrol pulseaudio-module-bluetooth rtbth-dkms
+}
+
 # ---------------------------------------
 # service
 # ---------------------------------------
