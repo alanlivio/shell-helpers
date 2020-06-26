@@ -478,12 +478,12 @@ function hf_git_ammend_all() {
   git commit -a --amend --no-edit
 }
 
-function hf_git_ammend_all_push() {
+function hf_git_push_ammend_all() {
   git commit -a --amend --no-edit
   git push --force
 }
 
-function hf_git_commit_all_push() {
+function hf_git_push_commit_all() {
   : ${1?"Usage: ${FUNCNAME[0]} <commit_message>"}
   echo $1
   git commit -am "$1"
@@ -2033,7 +2033,6 @@ function hf_x11_properties_of_window() {
 function hf_clean_unused_folders() {
   hf_log_func
   FOLDERS=(
-    "Documents"
     "Images"
     "Movies"
     "Music"
@@ -2045,6 +2044,7 @@ function hf_clean_unused_folders() {
 
   if test -n "$IS_LINUX"; then
     FOLDERS+=(
+      "Documents" # sensible data in Windows
       ".android"
       ".apport-ignore.xml "
       ".bash_history"
@@ -2071,7 +2071,8 @@ function hf_clean_unused_folders() {
       "IntelGraphicsProfiles"
       'Local Settings'
       "MicrosoftEdgeBackups"
-      "My Documents"
+      # "My Documents"
+      # "Documents"
       "NetHood"
       "OneDrive"
       "PrintHood"
