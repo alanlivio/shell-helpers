@@ -1990,13 +1990,29 @@ function hf_fetch_extract_to() {
   esac
 }
 
-function hf_fetch_youtube_playlist() {
+function hf_youtubedl_from_url_playlist() {
   : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
 
   youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
-function hf_fetch_youtube_txt_list() {
+# ---------------------------------------
+# youtubedl
+# ---------------------------------------
+
+function hf_youtubedl_from_txt() {
+  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+}
+
+function hf_youtubedl_music_from_url_playlist() {
+  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+}
+
+function hf_youtubedl_music_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
 
   youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
