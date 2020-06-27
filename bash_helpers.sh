@@ -27,6 +27,23 @@ if test $IS_LINUX; then
 fi
 
 # ---------------------------------------
+# alias
+# ---------------------------------------
+if test -n "$IS_LINUX"; then
+  alias ls='ls --color=auto'
+  alias grep='grep --color=auto'
+elif test -n "$IS_WINDOWS"; then
+  PS_HELPERS=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+  function alan_ps_helpers_invoke() {
+    powershell.exe -command "& { . $PS_HELPERS; $1 }"
+  }
+  alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\gsudo.exe")
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
+elif test -n "$IS_MAC"; then
+  alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+fi
+
+# ---------------------------------------
 # log
 # ---------------------------------------
 
