@@ -34,7 +34,7 @@ if test -n "$IS_LINUX"; then
   alias grep='grep --color=auto'
 elif test -n "$IS_WINDOWS"; then
   PS_HELPERS=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
-  function alan_ps_helpers_invoke() {
+  function hf_powershell_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS; $1 }"
   }
   alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\gsudo.exe")
@@ -1700,12 +1700,12 @@ function hf_install_slack_deb() {
 
 function hf_install_java_oraclejdk_apt() {
   hf_log_func
-  dpkg --status oracle-java12-installer &>/dev/null
+  dpkg --status oracle-java14-installer &>/dev/null
   if test $? != 0; then
     sudo rm /etc/apt/sources.list.d/linuxuprising*
-    sudo add-apt-repository -y ppa:linuxuprising/java
+    sudo add-apt-repository ppa:linuxuprising/java
     sudo apt update
-    sudo apt install -y oracle-java12-installer oracle-java12-set-default
+    sudo apt install oracle-java14-installer
   fi
 }
 
@@ -2007,32 +2007,29 @@ function hf_fetch_extract_to() {
   esac
 }
 
-function hf_youtubedl_from_url_playlist() {
-  : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
-
-  youtube-dl "$1" --yes-playlist --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
-}
 
 # ---------------------------------------
 # youtubedl
 # ---------------------------------------
 
-function hf_youtubedl_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
-
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+function hf_youtubedl_from_url_playlist() {
+  : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
+  youtube-dl "$1" --yes-playlist --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
-function hf_youtubedl_music_from_url_playlist() {
+function hf_youtubedl_video480_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]'  --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+}
 
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+function hf_youtubedl_from_txt() {
+  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
 }
 
 function hf_youtubedl_music_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
-
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --audio-format "mp3" --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 # ---------------------------------------
