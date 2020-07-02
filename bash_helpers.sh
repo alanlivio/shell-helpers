@@ -38,6 +38,7 @@ elif test -n "$IS_WINDOWS"; then
     powershell.exe -command "& { . $PS_HELPERS; $1 }"
   }
   alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\gsudo.exe")
+  alias choco=$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
 elif test -n "$IS_MAC"; then
   alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
