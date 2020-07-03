@@ -432,6 +432,10 @@ function hf_wsl_root() {
   wsl -u root
 }
 
+function hf_wsl_list() {
+  wsl --list -v
+}
+
 function hf_wsl_list_running() {
   wsl --list --running
 }
@@ -449,6 +453,7 @@ function hf_wsl_enable_features() {
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /quiet /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
   dism.exe /online /quiet /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+  wsl --set-default-version 2
 }
 
 function hf_wsl_fix_home_user() {
@@ -499,14 +504,6 @@ function hf_install_chocolatey() {
 
 function hf_install_msys() {
   hf_choco_install msys2
-}
-
-function hf_install_wsl() {
-  # https://docs.microsoft.com/en-us/windows/wsl/install-manual
-  $VERSION = 1804
-  Invoke-WebRequest -Uri https://aka.ms/wsl-ubuntu-$VERSION -OutFile $env:TEMP\Ubuntu.appx -UseBasicParsing
-  Add-AppxPackage $env:TEMP\Ubuntu.appx
-  Invoke-Expression -Command "ubuntu$VERSION.exe"
 }
 
 function hf_install_battle_steam_stramio() {
