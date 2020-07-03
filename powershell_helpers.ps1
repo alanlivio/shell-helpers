@@ -75,6 +75,10 @@ function hf_system_rename($new_name) {
   Rename-Computer -NewName "$new_name"
 }
 
+function hf_system_win_version() {
+  Get-ComputerInfo | Select-Object windowsversion
+}
+
 function hf_system_adjust_visual_to_performace() {
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
