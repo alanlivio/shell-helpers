@@ -7,6 +7,9 @@
 # ---------------------------------------
 
 SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_NAME="$SCRIPT_DIR/bash_helpers.sh"
+SCRIPT_CFG="$SCRIPT_DIR/bash_helpers_cfg.sh"
 
 # test OS
 case "$(uname -s)" in
@@ -45,7 +48,6 @@ if test -n "$IS_WINDOWS"; then
     alias gsudo=$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
     alias choco=$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
   fi
-
   function hf_powershell_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
   }
@@ -2144,9 +2146,6 @@ function hf_clean_unused_folders() {
 # load bash_helpers_cfg
 # ---------------------------------------
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/bash_helpers.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_helpers_cfg.sh"
 if test -f $SCRIPT_CFG; then
   source $SCRIPT_CFG
 fi
