@@ -147,6 +147,10 @@ function hf_store_install_essentials() {
   hf_store_install Microsoft.Windows.Photos
 }
 
+function hf_store_reinstall_all() {
+  Get-AppXPackage -AllUsers | ForEach-Object {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+}
+
 # ---------------------------------------
 # folders functions
 # ---------------------------------------
