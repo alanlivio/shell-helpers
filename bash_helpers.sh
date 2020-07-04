@@ -12,7 +12,10 @@ SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
-CYGWIN* | MINGW* | MSYS*) IS_WINDOWS=1 ;;
+CYGWIN* | MINGW* | MSYS*) 
+  IS_WINDOWS=1 
+  IS_WINDOWS_MINGW=1
+  ;;
 esac
 
 # test WSL
@@ -21,24 +24,31 @@ if test $IS_LINUX; then
   *-Microsoft)
     IS_LINUX=""
     IS_WINDOWS=1
+    IS_WINDOWS_WSL=1
     ;;
-  *) IS_LINUX=1 ;;
   esac
 fi
 
 # ---------------------------------------
 # alias
 # ---------------------------------------
-if test -n "$IS_LINUX"; then
-  alias ls='ls --color=auto'
-  alias grep='grep --color=auto'
-elif test -n "$IS_WINDOWS"; then
-  PS_HELPERS=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+
+if test -n "$IS_WINDOWS"; then
+  if test -n "$IS_WINDOWS_WSL"; then
+    PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+    alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
+    alias choco=$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
+  else
+    PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+    alias gsudo=$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
+    alias choco=$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
+  fi
+
   function hf_powershell_helpers_call() {
-    powershell.exe -command "& { . $PS_HELPERS; $1 }"
+    powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
   }
-  alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\gsudo.exe")
-  alias choco=$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
 elif test -n "$IS_MAC"; then
   alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
@@ -189,17 +199,17 @@ if test -n "$IS_WINDOWS"; then
 
   function hf_msys_search() {
     hf_log_func
-    pacman -Ss "$@"
+    pacman -Ss --noconfirm "$@"
   }
 
   function hf_msys_install() {
     hf_log_func
-    pacman -Su --needed "$@"
+    pacman -Su --needed --noconfirm "$@"
   }
 
   function hf_msys_upgrade() {
     hf_log_func
-    pacman -Su
+    pacman -Su --noconfirm
   }
 
 fi
@@ -2008,7 +2018,6 @@ function hf_fetch_extract_to() {
   esac
 }
 
-
 # ---------------------------------------
 # youtubedl
 # ---------------------------------------
@@ -2020,7 +2029,7 @@ function hf_youtubedl_from_url_playlist() {
 
 function hf_youtubedl_video480_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
-  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]'  --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]' --download-archive downloaded.txt --no-post-overwrites --ignore-errors
 }
 
 function hf_youtubedl_from_txt() {
@@ -2078,13 +2087,10 @@ function hf_clean_unused_folders() {
       "Documents" # sensible data in Windows
       ".android"
       ".apport-ignore.xml "
-      ".bash_history"
       ".bash_logout"
       ".gimp-*"
       ".gradle/"
       ".java/"
-      ".mysql_history"
-      ".python_history"
       ".thumbnails"
       ".viminfo"
     )
