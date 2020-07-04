@@ -15,8 +15,8 @@ SCRIPT_CFG="$SCRIPT_DIR/bash_helpers_cfg.sh"
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
-CYGWIN* | MINGW* | MSYS*) 
-  IS_WINDOWS=1 
+CYGWIN* | MINGW* | MSYS*)
+  IS_WINDOWS=1
   IS_WINDOWS_MINGW=1
   ;;
 esac
@@ -139,13 +139,12 @@ function hf_profile_download() {
 if test -n "$IS_WINDOWS"; then
 
   # ---------------------------------------
-  # cygwin
+  # mingw
   # ---------------------------------------
 
-  hf_cygwin_env_fix() {
+  hf_mingw_env_fix() {
     unset temp
     unset tmp
-    alias sudo=' '
   }
 
   # ---------------------------------------
@@ -161,9 +160,15 @@ if test -n "$IS_WINDOWS"; then
     choco upgrade -y --acceptlicense --no-progress --ignorechecksum all
   }
 
-  function hf_windows_install_choco() {
+  function hf_install_choco() {
     hf_log_func
     powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+  }
+
+  function hf_choco_cleaner() {
+    hf_log_func
+    hf_choco_install choco-cleaner
+    \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
   }
 
   # ---------------------------------------
@@ -1030,7 +1035,8 @@ function hf_user_enable_sudo() {
 }
 
 function hf_user_permissions_sudo() {
-  SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/sudoers-user"
+  if ! test -d /etc/sudoers.d/; then mkdir /etc/sudoers.d/; fi
+  SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/sudoers-user"
 }
 
 function hf_user_passwd_disable_len_restriction() {
