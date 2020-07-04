@@ -139,6 +139,7 @@ function hf_store_install($name) {
   Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
   Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
 }
+
 function hf_store_install_essentials() {
   Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
   hf_store_install Microsoft.WindowsStore
@@ -179,6 +180,7 @@ function hf_explorer_open_home_folder() {
 function hf_explorer_hide_dotfiles() {
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
+
 function hf_explorer_restart() {
   # restart
   taskkill /f /im explorer.exe | Out-Null
@@ -453,15 +455,16 @@ function hf_wsl_ubuntu_set_default_user() {
 }
 
 function hf_wsl_enable_features() {
+  Write-Output "-- (1) after hf_wsl_enable_features, reboot "
+  Write-Output "-- (2) in WindowStore, download ubuntu"
+  Write-Output "-- (3) in PowerShell terminal, run hf_wsl_fix_home_user"
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  dism.exe /online /quiet /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /quiet /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-  wsl --set-default-version 2
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 }
 
 function hf_wsl_fix_home_user() {
-
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
   # https://github.com/Microsoft/WSL/issues/3138
@@ -504,10 +507,6 @@ function hf_install_chocolatey() {
     choco feature enable -n removePackageInformationOnUninstall
     choco feature enable -n exitOnRebootDetected
   }
-}
-
-function hf_install_msys() {
-  hf_choco_install msys2
 }
 
 function hf_install_battle_steam_stramio() {
@@ -561,14 +560,10 @@ function hf_windows_init_user_nomal() {
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
-  Write-Output "-- (2) in WindowStore install ubuntu and WindowsTerminal"
-  Write-Output "-- (3) in other PowerShell terminal, run hf_wsl_enable_features "
-  Write-Output "-- (4) reboot"
-  Write-Output "-- (5) in PowerShell terminal, run hf_wsl_fix_home_user"
-  Write-Output "-- (6) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
+  Write-Output "-- (2) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
+  hf_choco_install vscode gsudo msys2
   hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
-  hf_choco_install vscode gsudo
 }
 
