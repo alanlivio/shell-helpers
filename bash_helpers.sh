@@ -1,6 +1,6 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# project url: https://github.com/alanlivio/bash-helpers
+# project url: https://github.com/alanlivio/shell.env
 
 # ---------------------------------------
 # variables
