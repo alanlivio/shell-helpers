@@ -420,6 +420,7 @@ function hf_windows_update() {
 # ---------------------------------------
 
 function hf_choco_cleaner() {
+  hf_choco_install choco-cleaner
   \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
 }
 

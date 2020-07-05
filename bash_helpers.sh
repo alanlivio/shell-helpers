@@ -1,6 +1,6 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# project url: https://github.com/alanlivio/shell.env
+# URL:    https://github.com/alanlivio/shell.env
 
 # ---------------------------------------
 # variables
@@ -43,10 +43,11 @@ if test -n "$IS_WINDOWS"; then
     PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
     alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
     alias choco=$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
-  else
+  elif test -n "$IS_WINDOWS_MINGW"; then
     PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
     alias gsudo=$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
     alias choco=$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
+    alias sudo=""
   fi
   function hf_powershell_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
@@ -2116,7 +2117,8 @@ function hf_clean_unused_folders() {
       "IntelGraphicsProfiles"
       'Local Settings'
       "MicrosoftEdgeBackups"
-      # "My Documents"
+      "My\ Documents"
+      'Application\ Data'
       # "Documents"
       "NetHood"
       "OneDrive"
