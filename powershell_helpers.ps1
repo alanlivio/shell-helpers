@@ -80,6 +80,19 @@ function hf_system_win_version() {
   Get-ComputerInfo | Select-Object windowsversion
 }
 
+function hf_system_path_add($addPath) {
+    if (Test-Path $addPath){
+        $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
+        $regexAddPath = [regex]::Escape($addPath)
+        $arrPath = $path -split ';' | Where-Object {$_ -notMatch 
+"^$regexAddPath\\?"}
+        $newpath = ($arrPath + $addPath) -join ';'
+        [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
+    } else {
+        Throw "'$addPath' is not a valid path."
+    }
+}
+
 function hf_system_adjust_visual_to_performace() {
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
@@ -569,7 +582,7 @@ function hf_windows_init_user_bash() {
   Write-Output "-- (2) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
   hf_choco_install vscode gsudo msys2
+  hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
   hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }
-
