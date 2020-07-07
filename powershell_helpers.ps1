@@ -81,16 +81,17 @@ function hf_system_win_version() {
 }
 
 function hf_system_path_add($addPath) {
-    if (Test-Path $addPath){
-        $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
-        $regexAddPath = [regex]::Escape($addPath)
-        $arrPath = $path -split ';' | Where-Object {$_ -notMatch 
-"^$regexAddPath\\?"}
-        $newpath = ($arrPath + $addPath) -join ';'
-        [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
-    } else {
-        Throw "'$addPath' is not a valid path."
-    }
+  if (Test-Path $addPath) {
+    $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
+    $regexAddPath = [regex]::Escape($addPath)
+    $arrPath = $path -split ';' | Where-Object { $_ -notMatch 
+      "^$regexAddPath\\?" }
+    $newpath = ($arrPath + $addPath) -join ';'
+    [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
+  }
+  else {
+    Throw "'$addPath' is not a valid path."
+  }
 }
 
 function hf_system_adjust_visual_to_performace() {
@@ -162,7 +163,7 @@ function hf_store_install_essentials() {
 }
 
 function hf_store_reinstall_all() {
-  Get-AppXPackage -AllUsers | ForEach-Object {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+  Get-AppXPackage -AllUsers | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
 }
 
 # ---------------------------------------
@@ -311,9 +312,9 @@ function hf_explorer_sanity_start_menu() {
 
   # Disable Bing
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f  | Out-Null
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f  | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
 }
 
 # ---------------------------------------
