@@ -18,10 +18,10 @@ In particular, it supports helper function to:
   - configure VSCode
   
 - in Windows
-   - install essential software (msys2, VScode)
-   - Windows sanity (e.g., disable unused features, dark mode)
-   - configure terminals (PowerShell, msys2, VSCode Integrated Terminal)
-   - configure VSCode
+  - install essential software (msys2, VScode)
+  - Windows sanity (e.g., disable unused features, dark mode)
+  - configure terminals (PowerShell, msys2, VSCode Integrated Terminal)
+  - configure VSCode
 
 ## How to use in Ubuntu
 

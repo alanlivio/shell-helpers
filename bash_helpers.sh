@@ -41,20 +41,20 @@ alias grep='grep --color=auto'
 if test -n "$IS_WINDOWS"; then
   if test -n "$IS_WINDOWS_WSL"; then
     PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
-    alias gsudo=$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
-    alias choco=$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
+    alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+    alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
   elif test -n "$IS_WINDOWS_MINGW"; then
     PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
-    alias gsudo=$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")
-    alias choco=$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")
-    alias sudo=""
+    alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+    alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+    alias sudo=''
   fi
   function hf_powershell_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
   }
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
 elif test -n "$IS_MAC"; then
-  alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+  alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
 
 # ---------------------------------------
@@ -169,7 +169,7 @@ if test -n "$IS_WINDOWS"; then
   function hf_choco_cleaner() {
     hf_log_func
     hf_choco_install choco-cleaner
-    \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "\ProgramData\chocolatey\bin\Choco-Cleaner.ps1"
   }
 
   # ---------------------------------------
@@ -1150,11 +1150,6 @@ function hf_diff_vscode() {
 # ---------------------------------------
 # vscode
 # ---------------------------------------
-
-function hf_vscode_run_as_root() {
-  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
-  sudo code --user-data-dir="$HOME/.vscode" "$1"
-}
 
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <package, ...>"}
