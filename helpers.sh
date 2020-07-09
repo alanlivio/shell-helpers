@@ -6,10 +6,10 @@
 # variables
 # ---------------------------------------
 
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.sh
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/shell.env/master/helpers.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/bash_helpers.sh"
-SCRIPT_CFG="$SCRIPT_DIR/bash_helpers_cfg.sh"
+SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
+SCRIPT_CFG="$SCRIPT_DIR/helpers_cfg.sh"
 
 # test OS
 case "$(uname -s)" in
@@ -40,16 +40,16 @@ alias grep='grep --color=auto'
 
 if test -n "$IS_WINDOWS"; then
   if test -n "$IS_WINDOWS_WSL"; then
-    PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+    PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/helpers.ps1")
     alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
   elif test -n "$IS_WINDOWS_MINGW"; then
-    PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/powershell_helpers.ps1")
+    PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/helpers.ps1")
     alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
     alias sudo=''
   fi
-  function hf_powershell_helpers_call() {
+  function hf_ps_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
   }
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
@@ -2146,7 +2146,7 @@ function hf_clean_unused_folders() {
 }
 
 # ---------------------------------------
-# load bash_helpers_cfg
+# load helpers_cfg
 # ---------------------------------------
 
 if test -f $SCRIPT_CFG; then

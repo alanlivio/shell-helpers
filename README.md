@@ -29,8 +29,8 @@ The shell.env can be used as a [Bash Startup File](https://www.gnu.org/software/
 To do that, fetch and insert the following command at the end of your `~/.bashrc`:
 
 ```bash
-wget -O ~/.env/bash_helpers.sh https://raw.githubusercontent.com/alanlivio/bash-helpers/master/bash_helpers.sh &&\
-  echo "source ~/.env/bash_helpers.sh" >> ~/.bashrc &&\
+wget -O ~/.env/helpers.sh https://raw.githubusercontent.com/alanlivio/bash-helpers/master/helpers.sh &&\
+  echo "source ~/.env/helpers.sh" >> ~/.bashrc &&\
   source ~/.bashrc
 ```
 
@@ -40,8 +40,8 @@ The shell.env can be used as a [PowerShell Profile](https://docs.microsoft.com/e
 To do that, fetch powershell-helpers andmport it as module:
 
 ```powershell
-Invoke-WebRequest raw.githubusercontent.com/alanlivio/powershell-helper-functions/master/powershell_helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\powershell_helpers.ps1;`
+Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell.env/master/helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
   Set-ExecutionPolicy unrestricted -force;`
-  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\powershell_helpers.ps1;`
+  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
   hf_profile_install
 ```

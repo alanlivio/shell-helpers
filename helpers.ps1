@@ -7,12 +7,12 @@
 # https://gist.github.com/thoroc/86d354d029dda303598a
 
 # ---------------------------------------
-# load powershell_helpers_cfg
+# load helpers_cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\powershell_helpers.ps1"
+$SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_DIR = $PSScriptRoot
-$SCRIPT_CFG = "$SCRIPT_DIR\powershell_helpers_cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\helpers_cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
