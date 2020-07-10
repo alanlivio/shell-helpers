@@ -1788,13 +1788,13 @@ function hf_install_flutter() {
 function hf_install_tor() {
   hf_log_func
   if ! test -d $HOME/opt/tor; then
-    URL=https://dist.torproject.org/torbrowser/8.5.3/tor-browser-linux64-8.5.3_en-US.tar.xz
+    URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
     hf_fetch_extract_to $URL $HOME/opt/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
-  sed -i 's/^Exec=.*/Exec=$HOME\/opt\/tor\/Browser\/start-tor-browser/g' $HOME/opt/tor/start-tor-browser.desktop
-  sudo desktop-file-install $HOME/opt/tor/start-tor-browser.desktop
+  sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HOME/opt/tor/start-tor-browser.desktop
+  sudo desktop-file-install "$HOME/opt/tor/start-tor-browser.desktop"
 }
 
 function hf_install_zotero_apt() {
