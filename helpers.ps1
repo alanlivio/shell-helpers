@@ -301,14 +301,7 @@ function hf_explorer_sanity_navigation() {
 }
 
 function hf_explorer_sanity_start_menu() {
-  # Remove tiles
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  (New-Object -Com Shell.Application).
-  NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
-  Items() |
-  ForEach-Object { $_.Verbs() } |
-  Where-Object { $_.Name -match 'Un.*pin from Start' } |
-  ForEach-Object { $_.DoIt() }
 
   # Disable Bing
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
