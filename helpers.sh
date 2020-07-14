@@ -1,12 +1,12 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/shell.env
+# URL:    https://github.com/alanlivio/shell-env
 
 # ---------------------------------------
 # variables
 # ---------------------------------------
 
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/shell.env/master/helpers.sh
+SCRIPT_URL=raw.githubusercontent.com/alanlivio/shell-env/master/helpers.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 SCRIPT_CFG="$SCRIPT_DIR/helpers_cfg.sh"
