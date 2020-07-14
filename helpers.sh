@@ -48,6 +48,10 @@ if test -n "$IS_WINDOWS"; then
     alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
     alias sudo=''
+    # if in a elevated shell, this force run code in non-admin
+    # fix mingw tmp
+    unset temp
+    unset tmp
   fi
   function hf_ps_helpers_call() {
     powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
@@ -138,15 +142,6 @@ function hf_profile_download() {
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-
-  # ---------------------------------------
-  # mingw
-  # ---------------------------------------
-
-  hf_mingw_env_fix() {
-    unset temp
-    unset tmp
-  }
 
   # ---------------------------------------
   # choco
