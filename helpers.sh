@@ -305,7 +305,7 @@ function hf_video_create_by_image() {
 }
 
 function hf_video_cut_mp4() {
-  : ${3?"Usage: ${FUNCNAME[0]} [video] [begin_time_in_format_00:00:00] [end_time_in_format_00:00:00]"}
+  : ${3?"Usage: ${FUNCNAME[0]} <video> <begin_time_in_format_00:00:00> <end_time_in_format_00:00:00>"}
   hf_log_func
   ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
 }
@@ -320,7 +320,7 @@ function hf_gst_side_by_side_test() {
 }
 
 function hf_gst_side_by_side_args() {
-  : ${2?"Usage: ${FUNCNAME[0]} [video1] [video2]"}
+  : ${2?"Usage: ${FUNCNAME[0]} <video1 <video2>"}
   hf_log_func
   gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
 }
@@ -330,22 +330,22 @@ function hf_gst_side_by_side_args() {
 # ---------------------------------------
 
 function hf_deb_install() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   sudo dpkg -i $1
 }
 
 function hf_deb_install_force_depends() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   sudo dpkg -i --force-depends $1
 }
 
 function hf_deb_info() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   dpkg-deb --info $1
 }
 
 function hf_deb_contents() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   dpkg-deb --show $1
 }
 
@@ -354,12 +354,12 @@ function hf_deb_contents() {
 # ---------------------------------------
 
 function hf_pkg_config_find() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   pkg-config --list-all | grep --color=auto $1
 }
 
 function hf_pkg_config_show() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pkg_name]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   PKG=$(pkg-config --list-all | grep -w $1 | awk '{print $1;exit}')
   echo 'version:    '"$(pkg-config --modversion $PKG)"
   echo 'provides:   '"$(pkg-config --print-provides $PKG)"
@@ -400,12 +400,12 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
 # ---------------------------------------
 
 function hf_gdb_run_bt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [program]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <program>"}
   gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
 }
 
 function hf_gdb_run_bt_all_threads() {
-  : ${1?"Usage: ${FUNCNAME[0]} [program]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <program>"}
   gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
 }
 
@@ -992,7 +992,7 @@ function hf_network_arp_scan() {
 }
 
 function hf_network_arp_scan_for_interface() {
-  : ${1?"Usage: ${FUNCNAME[0]} [interface]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <network_interface>"}
   hf_test_exist_command arp-scan
   sudo arp-scan --localnet --interface=$1
 }
@@ -1002,12 +1002,12 @@ function hf_network_arp_scan_for_interface() {
 # ---------------------------------------
 
 function hf_virtualbox_compact() {
-  : ${1?"Usage: ${FUNCNAME[0]} [vdi_file]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
   VBoxManage modifyhd "$1" compact
 }
 
 function hf_virtualbox_resize_to_2gb() {
-  : ${1?"Usage: ${FUNCNAME[0]} [vdi_file"}
+  : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
   VBoxManage modifyhd "$1" --resize 200000
 }
 
@@ -1066,7 +1066,7 @@ function hf_user_send_ssh_keys() {
 # ---------------------------------------
 
 function hf_snap_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
@@ -1086,7 +1086,7 @@ function hf_snap_install_packages() {
 }
 
 function hf_snap_install_packages_classic() {
-  : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
 
@@ -1106,7 +1106,7 @@ function hf_snap_install_packages_classic() {
 }
 
 function hf_snap_install_packages_edge() {
-  : ${1?"Usage: ${FUNCNAME[0]} [snap_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
@@ -1147,7 +1147,7 @@ function hf_diff_vscode() {
 # ---------------------------------------
 
 function hf_vscode_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <package, ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ...>"}
   hf_log_func
   PKGS_TO_INSTALL=""
   INSTALLED_LIST="$(code --list-extensions)"
@@ -1454,7 +1454,7 @@ function hf_install_node() {
 }
 
 function hf_npm_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package, ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ...>"}
   hf_log_func
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
@@ -1487,7 +1487,7 @@ function hf_npm_install_packages() {
 # ---------------------------------------
 
 function hf_ruby_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package, ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ...>"}
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
@@ -1530,7 +1530,7 @@ function hf_python_list_installed() {
 }
 
 function hf_python_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [pip_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <pip_package ... >"}
   hf_log_func
   if ! type pip &>/dev/null; then
     hf_log_error "pip not found."
@@ -1912,7 +1912,7 @@ function hf_apt_fixes() {
 }
 
 function hf_apt_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <apt_packages ... >"}
   hf_log_func
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1937,7 +1937,7 @@ function hf_apt_autoremove() {
 }
 
 function hf_apt_remove_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} [apt_packages_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <apt_package ... >"}
   hf_log_func
   PKGS_TO_REMOVE=""
   for i in "$@"; do
@@ -2031,22 +2031,22 @@ function hf_fetch_extract_to() {
 # ---------------------------------------
 
 function hf_youtubedl_from_url_playlist() {
-  : ${1?"Usage: ${FUNCNAME[0]} [playlist_url]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <playlist_url>"}
   youtube-dl "$1" --yes-playlist --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 function hf_youtubedl_video480_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
   youtube-dl -a "$1" youtube-dl -f 'best[height<=480]' --download-archive downloaded.txt --no-post-overwrites --ignore-errors
 }
 
 function hf_youtubedl_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
   youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
 }
 
 function hf_youtubedl_music_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} [txt_list]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
   youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
