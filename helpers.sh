@@ -1368,22 +1368,22 @@ function hf_gnome_gdm_restart() {
 }
 
 function hf_gnome_settings_reset() {
-  : ${1?"Usage: ${FUNCNAME[0]} [scheme]"}
+  : ${1?"Usage: ${FUNCNAME[0]} <scheme>"}
   gsettings reset-recursively $1
 }
 
 function hf_gnome_settings_save_to_file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
+  : ${2?"Usage: ${FUNCNAME[0]} <dconf-dir> <file_name>"}
   dconf dump $1 >$2
 }
 
 function hf_gnome_settings_load_from_file() {
-  : ${1?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <dconf-dir> <file_name>"}
   dconf load $1 <$2
 }
 
 function hf_gnome_settings_diff_actual_and_file() {
-  : ${2?"Usage: ${FUNCNAME[0]} [dconf-dir] <file_name>"}
+  : ${2?"Usage: ${FUNCNAME[0]} <dconf-dir> <file_name>"}
   TMP_FILE=/tmp/gnome_settings_diff
   hf_gnome_settings_save_to_file $1 $TMP_FILE
   diff $TMP_FILE $2
@@ -1405,6 +1405,15 @@ function hf_vlc_youtube_playlist_extension() {
 
 function hf_date() {
   date +%F
+}
+
+# ---------------------------------------
+# openssl
+# ---------------------------------------
+
+function hf_opessl_showcerts_https() {
+  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
+  openssl s_client -showcerts -connect "$1":https
 }
 
 # ---------------------------------------
