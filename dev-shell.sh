@@ -1,15 +1,14 @@
 #!/bin/bash
 # author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/shell-env
+# URL:    https://github.com/alanlivio/dev-shell
 
 # ---------------------------------------
 # variables
 # ---------------------------------------
 
-SCRIPT_URL=raw.githubusercontent.com/alanlivio/shell-env/master/helpers.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
-SCRIPT_CFG="$SCRIPT_DIR/helpers_cfg.sh"
+SCRIPT_NAME="$SCRIPT_DIR/dev-shell.sh"
+SCRIPT_CFG="$SCRIPT_DIR/dev-shell-cfg.sh"
 
 # test OS
 case "$(uname -s)" in
@@ -40,11 +39,11 @@ alias grep='grep --color=auto'
 
 if test -n "$IS_WINDOWS"; then
   if test -n "$IS_WINDOWS_WSL"; then
-    PS_HELPERS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/helpers.ps1")
+    DEV_SHELL_PS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/dev-shell.ps1")
     alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
   elif test -n "$IS_WINDOWS_MINGW"; then
-    PS_HELPERS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/helpers.ps1")
+    DEV_SHELL_PS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/dev-shell.ps1")
     alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
     alias sudo=''
@@ -53,8 +52,8 @@ if test -n "$IS_WINDOWS"; then
     unset temp
     unset tmp
   fi
-  function hf_ps_helpers_call() {
-    powershell.exe -command "& { . $PS_HELPERS_WIN_PATH; $1 }"
+  function hf_dev_shell_ps_call() {
+    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
   }
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
 elif test -n "$IS_MAC"; then
@@ -126,15 +125,6 @@ function hf_profile_reload() {
   else
     source $HOME/.bashrc
   fi
-}
-
-function hf_profile_download() {
-  hf_log_func
-  if test -f $SCRIPT_NAME; then
-    rm $SCRIPT_NAME
-  fi
-  wget $SCRIPT_URL $SCRIPT_NAME
-  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
 
 # ---------------------------------------
@@ -2156,7 +2146,7 @@ function hf_clean_unused_folders() {
 }
 
 # ---------------------------------------
-# load helpers_cfg
+# load dev-shell_cfg
 # ---------------------------------------
 
 if test -f $SCRIPT_CFG; then

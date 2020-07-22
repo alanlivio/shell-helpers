@@ -1,4 +1,4 @@
-<h1 align="center">shell-env</h1>
+<h1 align="center">dev-shell</h1>
 <p align="center">
   shells:<img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/2/20/Bash_Logo_black_and_white_icon_only.svg">
   <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png">
@@ -25,23 +25,23 @@ In particular, it supports helper functions for:
 
 ## How to use in Ubuntu
 
-The shell-env can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).  
-To do that, fetch helpers and insert the following command at the end of your `~/.bashrc`:
+The dev-shell can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).  
+To do that, fetch dev-shell.sh and insert the following command at the end of your `~/.bashrc`:
 
 ```bash
-wget -O ~/.env/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-env/master/helpers.sh &&\
-  echo "source ~/.env/helpers.sh" >> ~/.bashrc &&\
+wget -O ~/.config/dev-shell.sh https://raw.githubusercontent.com/alanlivio/dev-shell/master/dev-shell.sh &&\
+  echo "source ~/.config/dev-shell.sh" >> ~/.bashrc &&\
   source ~/.bashrc
 ```
 
 ## How to use in Windows
 
-The shell-env can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).  
-To do that, fetch helpers and import it as powershell module:
+The dev-shell can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).  
+To do that, fetch dev-shell.ps1 and import it as powershell module:
 
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell-env/master/helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
+Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/dev-shell/master/dev-shell.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\dev-shell.ps1;`
   Set-ExecutionPolicy unrestricted -force;`
-  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
+  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\dev-shell.ps1;`
   hf_profile_install
 ```
