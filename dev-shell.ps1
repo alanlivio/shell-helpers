@@ -472,10 +472,14 @@ function hf_wsl_ubuntu_set_default_user() {
   ubuntu.exe config --default-user alan
 }
 
+function hf_wsl_install_ubuntu(){
+  hf_store_install CanonicalGroupLimited.UbuntuonWindows
+}
+
 function hf_wsl_enable_features() {
   Write-Output "-- (1) after hf_wsl_enable_features, reboot "
-  Write-Output "-- (2) in WindowStore, download ubuntu"
-  Write-Output "-- (3) in PowerShell terminal, run hf_wsl_fix_home_user"
+  Write-Output "-- (2) in PowerShell terminal, run hf_wsl_install_ubuntu"
+  Write-Output "-- (3) after install ubuntu, in PowerShell terminal, run hf_wsl_fix_home_user"
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
