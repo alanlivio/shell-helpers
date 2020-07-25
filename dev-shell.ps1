@@ -154,31 +154,113 @@ function hf_store_install($name) {
   Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
   Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
 }
+function hf_store_uninstall($name) {
+  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Get-AppxPackage -allusers $name | Remove-AppxPackage 
+}
 
 function hf_store_install_essentials() {
   Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
-  hf_store_install Microsoft.WindowsStore
-  hf_store_install Microsoft.WindowsCalculator
-  hf_store_install Microsoft.Windows.Photos
+  $pkgs = '
+  Microsoft.WindowsStore
+  Microsoft.WindowsCalculator
+  Microsoft.Windows.Photos
+  Microsoft.WindowsFeedbackHub
+  Microsoft.WindowsTerminal
+  Microsoft.WindowsCamera
+  Microsoft.WindowsSoundRecorder
+  '
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_install $_ }
+  
 }
 
 function hf_store_reinstall_all() {
   Get-AppXPackage -AllUsers | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
 }
 
-# ---------------------------------------
-# folders functions
-# ---------------------------------------
-
-function hf_remove_unused_folders() {
+function hf_store_uninstall_not_essential() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/")
-  $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
+
+  # windows
+  $pkgs = '
+  Microsoft.MicrosoftEdge.Stable
+  Microsoft.XboxGameOverlay
+  Microsoft.GetHelp
+  Microsoft.XboxApp
+  Microsoft.Xbox.TCUI
+  Microsoft.XboxSpeechToTextOverlay
+  Microsoft.Wallet
+  Microsoft.MinecraftUWP
+  A278AB0D.MarchofEmpires
+  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
+  king.com.BubbleWitch3Saga
+  Microsoft.Messaging
+  Microsoft.Appconnector
+  Microsoft.BingNews
+  Microsoft.SkypeApp
+  Microsoft.BingSports
+  Microsoft.CommsPhone
+  Microsoft.ConnectivityStore
+  Microsoft.Office.Sway
+  Microsoft.WindowsPhone
+  Microsoft.BingNews
+  Microsoft.XboxIdentityProvider
+  Microsoft.StorePurchaseApp
+  Microsoft.DesktopAppInstaller
+  Microsoft.BingWeather
+  Microsoft.MicrosoftStickyNotes
+  Microsoft.MicrosoftSolitaireCollection
+  Microsoft.OneConnect
+  Microsoft.People
+  Microsoft.ZuneMusic
+  Microsoft.ZuneVideo
+  Microsoft.Getstarted
+  Microsoft.XboxApp
+  Microsoft.windowscommunicationsapps
+  Microsoft.WindowsMaps
+  Microsoft.3DBuilder
+  Microsoft.WindowsFeedbackHub
+  Microsoft.MicrosoftOfficeHub
+  Microsoft.3DBuilder
+  Microsoft.OneDrive
+  Microsoft.Print3D
+  Microsoft.Office.OneNote
+  Microsoft.Microsoft3DViewer
+  Microsoft.XboxGamingOverlay
+  Microsoft.MSPaint
+  Microsoft.Office.Desktop
+  Microsoft.MicrosoftSolitaireCollection
+  Microsoft.MixedReality.Portal'
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall $_ }
+
+  # others
+  $pkgs = 'Facebook.Facebook
+  SpotifyAB.SpotifyMusic
+  9E2F88E3.Twitter
+  A278AB0D.DisneyMagicKingdoms
+  king.com.CandyCrushFriends
+  king.com.BubbleWitch3Saga
+  king.com.CandyCrushSodaSaga
+  king.com.FarmHeroesSaga
+  7EE7776C.LinkedInforWindows
+  king.com.CandyCrushSaga
+  NORDCURRENT.COOKINGFEVER'
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall $_ }
 }
+
 
 # ---------------------------------------
 # explorer functions
 # ---------------------------------------
+function hf_explorer_hide_dotfiles() {
+  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+}
+
+function hf_explorer_remove_unused_folders() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/")
+  $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
+}
 
 function hf_explorer_open_start_menu_folder() {
   explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
@@ -196,8 +278,9 @@ function hf_explorer_open_home_folder() {
   explorer $env:userprofile
 }
 
-function hf_explorer_hide_dotfiles() {
-  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+function hf_explorer_sanity_uninstall_ondrive() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
 }
 
 function hf_explorer_restart() {
@@ -216,6 +299,7 @@ function hf_explorer_sanity_search() {
     New-ItemProperty -ErrorAction SilentlyContinue -Force -Path $SRPath -Name 'Mode' -Value 4 | Out-Null
   }
 }
+
 
 function hf_explorer_sanity_lock() {
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
@@ -317,85 +401,6 @@ function hf_explorer_sanity_start_menu() {
 function hf_enable_dark_mode() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
-}
-
-# ---------------------------------------
-# uninstall functions
-# ---------------------------------------
-
-function hf_uninstall_ondrive() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
-}
-
-function hf_uninstall_not_essential_store_packages() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-
-  # windows
-  $pkgs = 'Microsoft.XboxGameOverlay
-  Microsoft.GetHelp
-  Microsoft.XboxApp
-  Microsoft.Xbox.TCUI
-  Microsoft.XboxSpeechToTextOverlay
-  Microsoft.Wallet
-  Microsoft.MinecraftUWP
-  A278AB0D.MarchofEmpires
-  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
-  king.com.BubbleWitch3Saga
-  Microsoft.Messaging
-  Microsoft.Appconnector
-  Microsoft.BingNews
-  Microsoft.SkypeApp
-  Microsoft.BingSports
-  Microsoft.CommsPhone
-  Microsoft.ConnectivityStore
-  Microsoft.Office.Sway
-  Microsoft.WindowsPhone
-  Microsoft.XboxIdentityProvider
-  Microsoft.StorePurchaseApp
-  Microsoft.DesktopAppInstaller
-  Microsoft.BingWeather
-  Microsoft.MicrosoftStickyNotes
-  Microsoft.MicrosoftSolitaireCollection
-  Microsoft.OneConnect
-  Microsoft.People
-  Microsoft.ZuneMusic
-  Microsoft.ZuneVideo
-  Microsoft.Getstarted
-  Microsoft.XboxApp
-  Microsoft.windowscommunicationsapps
-  Microsoft.WindowsCamera
-  Microsoft.WindowsSoundRecorder
-  Microsoft.WindowsMaps
-  Microsoft.3DBuilder
-  Microsoft.WindowsFeedbackHub
-  Microsoft.MicrosoftOfficeHub
-  Microsoft.WindowsAlarms
-  Microsoft.3DBuilder
-  Microsoft.OneDrive
-  Microsoft.Print3D
-  Microsoft.Office.OneNote
-  Microsoft.Microsoft3DViewer
-  Microsoft.XboxGamingOverlay
-  Microsoft.MSPaint
-  Microsoft.Office.Desktop
-  Microsoft.MicrosoftSolitaireCollection
-  Microsoft.MixedReality.Portal'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | Remove-AppxPackage -ErrorAction SilentlyContinue -AllUsers | Out-Null }
-
-  # others
-  $pkgs = 'Facebook.Facebook
-  SpotifyAB.SpotifyMusic
-  9E2F88E3.Twitter
-  A278AB0D.DisneyMagicKingdoms
-  king.com.CandyCrushFriends
-  king.com.BubbleWitch3Saga
-  king.com.CandyCrushSodaSaga
-  king.com.FarmHeroesSaga
-  7EE7776C.LinkedInforWindows
-  king.com.CandyCrushSaga
-  NORDCURRENT.COOKINGFEVER'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { Get-AppxPackage -allusers $_ | Remove-AppxPackage -ErrorAction SilentlyContinue -AllUsers | Out-Null }
 }
 
 # ---------------------------------------
@@ -553,13 +558,12 @@ function hf_windows_sanity() {
   hf_explorer_sanity_navigation
   hf_explorer_sanity_start_menu
   hf_explorer_sanity_search
-  hf_system_disable_unused_features
   hf_explorer_sanity_taskbar
   hf_explorer_sanity_lock
+  hf_explorer_sanity_uninstall_ondrive
+  hf_explorer_remove_unused_folders
   hf_explorer_restart
-  hf_remove_unused_folders
   hf_system_disable_unused_features
-  hf_uninstall_ondrive
 }
 
 function hf_windows_init_user_nomal() {
