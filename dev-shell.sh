@@ -200,6 +200,11 @@ if test -n "$IS_WINDOWS"; then
     pacman -Su --needed --noconfirm "$@"
   }
 
+  function hf_msys_uninstall() {
+    hf_log_func
+    pacman -R--noconfirm "$@"
+  }
+
   function hf_msys_upgrade() {
     hf_log_func
     pacman -Su --noconfirm
