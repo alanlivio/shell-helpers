@@ -56,6 +56,8 @@ if test -n "$IS_WINDOWS"; then
     powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
   }
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
+elif test -n "$IS_LINUX"; then
+  alias start='xdg-open'
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
@@ -768,9 +770,9 @@ function hf_latex_clean() {
 }
 
 function hf_latex_gitignore() {
-  hf_git_gitignore_create latex > .gitignore
-  echo "main.pdf" >> .gitignore
-  echo "_main.pdf" >> .gitignore
+  hf_git_gitignore_create latex >.gitignore
+  echo "main.pdf" >>.gitignore
+  echo "_main.pdf" >>.gitignore
 }
 
 function hf_latex_build_pdflatex() {
@@ -1765,10 +1767,10 @@ function hf_install_insync() {
 function hf_install_foxit() {
   hf_log_func
   if ! type FoxitReader &>/dev/null; then
-    URL=http://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
+    URL=https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
     hf_fetch_extract_to $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
-    sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
+    sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
     sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
   fi
 }
