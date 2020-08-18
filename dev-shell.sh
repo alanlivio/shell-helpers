@@ -436,6 +436,10 @@ function hf_git_branch_delete_local_and_origin() {
   git push origin --delete $1
 }
 
+function hf_git_branch_prune() {
+  git fetch -p
+}
+
 function hf_git_branch_all_create_local() {
   git branch -r | grep -v '\->' | while read -r remote; do
     git branch --track "${remote#origin/}" "$remote"
