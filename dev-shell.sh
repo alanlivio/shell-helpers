@@ -169,26 +169,6 @@ if test -n "$IS_WINDOWS"; then
   }
 
   # ---------------------------------------
-  # wsl
-  # ---------------------------------------
-
-  function hf_wsl_fix_apt() {
-    hf_log_func
-    sudo apt update --fix-missing
-  }
-
-  function hf_wsl_fix_mount() {
-    # https://blog.johanbove.info/posts/2018/06/30/cannot-ssh-from-wsl.html
-    hf_log_func
-    sudo su
-    cd /tmp
-    sudo umount /mnt/c
-    sudo mount -t drvfs C: /mnt/c -o metadata
-    sudo chown alan:aln -R
-    exit
-  }
-
-  # ---------------------------------------
   # msys
   # ---------------------------------------
 

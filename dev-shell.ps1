@@ -487,16 +487,18 @@ function hf_wsl_enable_features() {
 }
 
 function hf_wsl_fix_home_user() {
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
   # https://github.com/Microsoft/WSL/issues/3138
   # https://devblogs.microsoft.com/commandline/chmod-chown-wsl-improvements/
   wsl -u root touch /etc/wsl.conf
-  bash -c 'echo "[automount]" > /etc/wsl.conf'
-  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
-  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
-  bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
-  bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
+  wsl -u root  bash -c 'echo "[automount]" > /etc/wsl.conf'
+  wsl -u root  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
+  wsl -u root  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
+  wsl -u root  bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
+  wsl -u root  bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
   wsl -t Ubuntu
 
   # ensure sudoer
@@ -507,8 +509,10 @@ function hf_wsl_fix_home_user() {
   wsl -u root skill -KILL -u $env:UserName
   wsl -u root usermod -d /mnt/c/Users/$env:UserName $env:UserName
 
-  # change permissions
-  wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName
+  # changing file permissions
+  Write-Host "changing file permissions" -ForegroundColor YELLOW
+  wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
+  wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/.ssh/*
 }
 
 # ---------------------------------------
