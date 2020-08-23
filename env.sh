@@ -1,14 +1,12 @@
 #!/bin/bash
-# author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/dev-shell
 
 # ---------------------------------------
 # variables
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/dev-shell.sh"
-SCRIPT_CFG="$SCRIPT_DIR/dev-shell-cfg.sh"
+SCRIPT_NAME="$SCRIPT_DIR/env.sh"
+SCRIPT_CFG="$SCRIPT_DIR/env-cfg.sh"
 
 # test OS
 case "$(uname -s)" in
@@ -39,11 +37,11 @@ alias grep='grep --color=auto'
 
 if test -n "$IS_WINDOWS"; then
   if test -n "$IS_WINDOWS_WSL"; then
-    DEV_SHELL_PS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/dev-shell.ps1")
+    DEV_SHELL_PS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/env.ps1")
     alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
   elif test -n "$IS_WINDOWS_MINGW"; then
-    DEV_SHELL_PS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/dev-shell.ps1")
+    DEV_SHELL_PS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/env.ps1")
     alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
     alias sudo=''
@@ -2137,7 +2135,7 @@ function hf_clean_unused_folders() {
 }
 
 # ---------------------------------------
-# load dev-shell_cfg
+# load env-cfg.sh
 # ---------------------------------------
 
 if test -f $SCRIPT_CFG; then

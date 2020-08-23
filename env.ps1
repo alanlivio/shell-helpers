@@ -1,18 +1,12 @@
 #!/bin/powershell
-# author: Alan Livio <alan@telemidia.puc-rio.br>
-# URL:    https://github.com/alanlivio/dev-shell
-
-# thanks
-# https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
-# https://gist.github.com/thoroc/86d354d029dda303598a
 
 # ---------------------------------------
-# load dev-shell-cfg
+# load env-cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\dev-shell.ps1"
+$SCRIPT_NAME = "$PSScriptRoot\env.ps1"
 $SCRIPT_DIR = $PSScriptRoot
-$SCRIPT_CFG = "$SCRIPT_DIR\dev-shell-cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\env-cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
