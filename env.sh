@@ -21,7 +21,7 @@ esac
 # test WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
-  *-Microsoft)
+  *-microsoft*)
     IS_LINUX=""
     IS_WINDOWS=1
     IS_WINDOWS_WSL=1
@@ -2030,9 +2030,9 @@ function hf_youtubedl_from_txt() {
   youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
 }
 
-function hf_youtubedl_music_from_txt() {
+function hf_youtubedl_audio_best_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 # ---------------------------------------
