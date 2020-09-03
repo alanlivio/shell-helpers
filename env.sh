@@ -40,6 +40,15 @@ if test -n "$IS_WINDOWS"; then
     DEV_SHELL_PS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/env.ps1")
     alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
     alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+    # fix writting permissions
+    if [[ "$(umask)" = "0000" ]]; then
+      umask 0022
+    fi
+    # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
+    # export to X server at windows env in WSL 2
+    DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
+    export DISPLAY
+    export LIBGL_ALWAYS_INDIRECT=1
   elif test -n "$IS_WINDOWS_MINGW"; then
     DEV_SHELL_PS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/env.ps1")
     alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
@@ -2015,24 +2024,31 @@ function hf_fetch_extract_to() {
 # youtubedl
 # ---------------------------------------
 
-function hf_youtubedl_from_url_playlist() {
-  : ${1?"Usage: ${FUNCNAME[0]} <playlist_url>"}
-  youtube-dl "$1" --yes-playlist --extract-audio --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+YOUTUBEDL_PARAMS="--download-archive .downloaded.txt --no-warnings --no-post-overwrites --ignore-errors"
+function hf_youtubedl_from_txt() {
+  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+  youtube-dl -a "$1" --download-archive .downloaded.txt $YOUTUBEDL_PARAMS
 }
+
+function hf_youtubedl_video480() {
+  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+  youtube-dl "$1" youtube-dl -f 'best[height<=480]' $YOUTUBEDL_PARAMS
+}
+
 
 function hf_youtubedl_video480_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]' --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]' $YOUTUBEDL_PARAMS
 }
 
-function hf_youtubedl_from_txt() {
+function hf_youtubedl_audio() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites --ignore-errors
+  youtube-dl "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 function hf_youtubedl_audio_best_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" --download-archive downloaded.txt --no-post-overwrites -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+  youtube-dl -a "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
 }
 
 # ---------------------------------------
