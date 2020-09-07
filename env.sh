@@ -135,7 +135,18 @@ function hf_test_exist_command() {
   fi
 }
 
+
+# ---------------------------------------
+# file
+# ---------------------------------------
+
+function hf_file_md5_compare() {
+  : ${2?"Usage: ${FUNCNAME[0]} [file1] [file2]"}
+  if [ $(md5sum $1 | awk '{print $1;exit}') == $(md5sum $2 | awk '{print $1;exit}') ]; then echo "same"; else echo "different"; fi
+}
+
 function hf_file_test_or_touch() {
+  : ${1?"Usage: ${FUNCNAME[0]} [file]"}
   if ! test -f "$1"; then touch "$1"; fi
 }
 
