@@ -1986,7 +1986,7 @@ function hf_apt_remove_orphan_packages() {
       for j in "$@"; do
         if test "$i" = "$j"; then
           FOUND_EXCEPTION=true
-          break
+          return
         fi
       done
       if ! $FOUND_EXCEPTION; then
