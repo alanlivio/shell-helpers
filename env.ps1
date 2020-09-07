@@ -579,7 +579,7 @@ function hf_windows_init_user_nomal() {
 function hf_windows_init_user_bash() {
   Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
   Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
-  Write-Output "-- (2) in PowerShell terminal, run hf_config_install_wt <profiles.jon>"
+  Write-Output "-- (2) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
   hf_choco_install vscode gsudo msys2
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'

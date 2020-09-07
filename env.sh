@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ---------------------------------------
-# variables
+# variables/alias
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,44 +30,66 @@ if test $IS_LINUX; then
 fi
 
 # ---------------------------------------
-# alias
+# windows
 # ---------------------------------------
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
 
 if test -n "$IS_WINDOWS"; then
+  # hide windows user files when ls home
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
+  
+  # hf_windows_path_tool
   if test -n "$IS_WINDOWS_WSL"; then
-    DEV_SHELL_PS_WIN_PATH=$(wslpath -w "$SCRIPT_DIR/env.ps1")
-    alias gsudo='$(wslpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-    alias choco='$(wslpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+    alias hf_windows_path_tool='wslpath'
+  elif test -n "$IS_WINDOWS_MINGW"; then
+    alias hf_windows_path_tool='cygpath'
+  fi
+
+  # hf_dev_shell_ps_call
+  DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
+  function hf_dev_shell_ps_call() {
+    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
+  }
+
+  # gsudo/choco alias
+  alias gsudo='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+  alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+
+  # fixes
+  if test -n "$IS_WINDOWS_WSL"; then
     # fix writting permissions
     if [[ "$(umask)" = "0000" ]]; then
       umask 0022
     fi
+
+    # x,pulseaudio server
     # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
-    # export to X server at windows env in WSL 2
-    DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
-    export DISPLAY
+    export DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
+    export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export LIBGL_ALWAYS_INDIRECT=1
+
   elif test -n "$IS_WINDOWS_MINGW"; then
-    DEV_SHELL_PS_WIN_PATH=$(cygpath -w "$SCRIPT_DIR/env.ps1")
-    alias gsudo='$(cygpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-    alias choco='$(cygpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
     alias sudo=''
     # if in a elevated shell, this force run code in non-admin
     # fix mingw tmp
     unset temp
     unset tmp
   fi
-  function hf_dev_shell_ps_call() {
-    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
-  }
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
-elif test -n "$IS_LINUX"; then
-  alias start='xdg-open'
-elif test -n "$IS_MAC"; then
-  alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
+
+function hf_windows_wsl_install_essentials() {
+  sudo apt install xdg-utils xfce4 x11-apps git wget ca-certificates
+}
+
+function hf_windows_x_pulseaudio_start() {
+  hf_windows_x_pulseaudio_kill
+  $(hf_windows_path_tool C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
+  "$(hf_windows_path_tool 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
+}
+
+function hf_windows_x_pulseaudio_kill() {
+  cmd.exe /c "taskkill /IM pulseaudio.exe /F"
+  cmd.exe /c "taskkill /IM vcxsrv.exe /F"
+}
 
 # ---------------------------------------
 # log
@@ -557,10 +579,9 @@ function hf_git_folder_tree() {
         hf_log_msg_2nd "clone $j"
         git clone $j
       else
-        # elif test "$1" = "pull"; then
         hf_log_msg_2nd "pull $j"
         cd "$(basename -s .git $j)"
-        git pull --all
+        git pull
         cd ..
       fi
     done
@@ -1870,7 +1891,7 @@ function hf_install_peek_apt() {
 
 function hf_zotero_symbolic_link() {
   if test -n "$IS_WINDOWS"; then
-    cmd /c "mklink /D \users\$USER\Zotero\storage \users\$USER\gdrive\zotero_storage"
+    cmd.exe /c "mklink /D \users\$USER\Zotero\storage \users\$USER\gdrive\zotero_storage"
   else
     rm -rf $HOME/Zotero/storage/
     ln -s $HOME/gdrive/zotero-storage $HOME/Zotero/storage
@@ -2034,7 +2055,6 @@ function hf_youtubedl_video480() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
   youtube-dl "$1" youtube-dl -f 'best[height<=480]' $YOUTUBEDL_PARAMS
 }
-
 
 function hf_youtubedl_video480_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
