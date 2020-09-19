@@ -216,6 +216,11 @@ if test -n "$IS_WINDOWS"; then
     hf_log_func
     pacman -Ss --noconfirm "$@"
   }
+  
+  function hf_msys_fix_home_user() {
+    echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | sudo tee /etc/fstab
+    echo -e 2 "C:/Users /home ntfs binary,noacl,auto 1 1" | sudo tee -a /etc/fstab
+  }
 
   function hf_msys_install() {
     hf_log_func
