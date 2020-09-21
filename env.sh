@@ -732,27 +732,6 @@ function hf_android_install_package() {
 }
 
 # ---------------------------------------
-# zip
-# ---------------------------------------
-
-function hf_zip_folder() {
-  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
-  zipname=$1
-  shift
-  zip $zipname -r "$@"
-}
-
-function hf_zip_extract() {
-  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
-  unzip $1 -d "${1%%.zip}"
-}
-
-function hf_zip_list() {
-  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
-  unzip -l $1
-}
-
-# ---------------------------------------
 # http
 # ---------------------------------------
 
@@ -862,7 +841,7 @@ function hf_imagem_compress() {
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
-function hf_imagem_compress2() {
+function hf_imagem_compress_hard() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   hf_test_exist_command jpegoptim
 
@@ -1694,7 +1673,7 @@ function hf_install_python35() {
     sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
     CWD=$(pwd)
     cd /tmp
-    hf_fetch_extract_to https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
+    hf_compression_extract_from_url https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
     cd /tmp/Python-3.5.7
     sudo ./configure --enable-optimizations
     make
@@ -1790,8 +1769,10 @@ function hf_install_foxit() {
   hf_log_func
   if ! type FoxitReader &>/dev/null; then
     URL=https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
-    hf_fetch_extract_to $URL /tmp/
+    hf_compression_extract_from_url $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
+  fi
+  if ! test -d $HOME/opt/foxitsoftware; then
     sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
     sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
   fi
@@ -1809,7 +1790,7 @@ function hf_install_flutter() {
   hf_log_func
   if ! test -d $HOME/opt/tor; then
     URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.17.3-stable.tar.xz
-    hf_fetch_extract_to $URL $HOME/opt/
+    hf_compression_extract_from_url $URL $HOME/opt/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
@@ -1818,7 +1799,7 @@ function hf_install_tor() {
   hf_log_func
   if ! test -d $HOME/opt/tor; then
     URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
-    hf_fetch_extract_to $URL $HOME/opt/
+    hf_compression_extract_from_url $URL $HOME/opt/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
   mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
@@ -1830,7 +1811,7 @@ function hf_install_zotero_apt() {
   hf_log_func
   if ! test -d $HOME/opt/zotero; then
     URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
-    hf_fetch_extract_to $URL /tmp/
+    hf_compression_extract_from_url $URL /tmp/
     mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
   fi
   {
@@ -1848,7 +1829,7 @@ function hf_install_shellcheck() {
   hf_log_func
   if test -f /usr/local/bin/shellcheck; then return; fi
   URL=https://github.com/koalaman/shellcheck/archive/v0.6.0.tar.gz
-  hf_fetch_extract_to $URL /tmp/
+  hf_compression_extract_from_url $URL /tmp/
   sudo install /tmp/shellcheck-0.6.0/shellcheck /usr/local/bin/
 }
 
@@ -1866,7 +1847,7 @@ function hf_install_vp() {
   hf_log_func
   if ! test -d $HOME/opt/vp; then
     URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
-    hf_fetch_extract_to $URL /tmp/
+    hf_compression_extract_from_url $URL /tmp/
     sudo bash "/tmp/$(basename $URL)"
     sudo chown $USER:$USER $HOME/opt/vp/
     sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
@@ -2011,44 +1992,80 @@ function hf_apt_fetch_install() {
 }
 
 # ---------------------------------------
-# fetch
+# compress
 # ---------------------------------------
 
-function hf_fetch_extract_to() {
+function hf_compression_zip_files() {
+  : ${2?"Usage: ${FUNCNAME[0]} <zip-name> <files...>"}
+  zipname=$1
+  shift
+  zip "$zipname" -r "$@"
+}
+
+function hf_compression_zip_folder() {
+  : ${1?"Usage: ${FUNCNAME[0]} <folder-name>"}
+  zip "$(basename $1).zip" -r $1
+}
+
+function hf_compression_zip_extract() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
+  unzip $1 -d "${1%%.zip}"
+}
+
+function hf_compression_zip_list() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name>"}
+  unzip -l $1
+}
+
+function hf_compression_extract() {
+  : ${1?"Usage: ${FUNCNAME[0]} <zip-name> [folder-name]"}
+  local EXT=${1##*.}
+  local DST
+  if [ $# -eq 1 ]; then
+    DST=.
+  else
+    DST=$2
+  fi
+  
+  case $EXT in
+  tgz)
+    tar -xzf $1 -C $DST
+    ;;
+  gz) # consider tar.gz
+    tar -xf $1 -C $DST
+    ;;
+  bz2) # consider tar.bz2
+    tar -xjf $1 -C $DST
+    ;;
+  zip)
+    unzip $1 -d $DST
+    ;;
+  xz)
+    tar -xJf $1 -C $DST
+    ;;
+  rar)
+    unrar x $1 -C $DST
+    ;;
+  *)
+    hf_log_error "$EXT is not supported compression." && exit
+    ;;
+  esac
+}
+
+function hf_compression_extract_from_url() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
-  FILE_NAME_ORIG=$(basename $1)
-  FILE_NAME=$(echo $FILE_NAME_ORIG | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
-  FILE_EXTENSION=${FILE_NAME##*.}
+  local BASE_NAME=$(basename $1)
+  FILE_NAME=$(echo $BASE_NAME | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
 
   if test ! -f /tmp/$FILE_NAME; then
     echo "fetching $FILE_NAME"
-    wget --continue $1 -P /tmp/
+    cd /tmp/
+    wget --continue $1
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    echo "extracting $FILE_NAME"
+    hf_compression_extract $FILE_NAME $2
+    cd -
   fi
-  echo "extracting $FILE_NAME"
-  case $FILE_EXTENSION in
-  tgz)
-    tar -xzf /tmp/$FILE_NAME -C $2
-    ;;
-  gz) # consider tar.gz
-    tar -xf /tmp/$FILE_NAME -C $2
-    ;;
-  bz2) # consider tar.bz2
-    tar -xjf /tmp/$FILE_NAME -C $2
-    ;;
-  zip)
-    unzip /tmp/$FILE_NAME -d $2/
-    ;;
-  xz)
-    tar -xJf /tmp/$FILE_NAME -C $2
-    ;;
-  rar)
-    unrar x /tmp/$FILE_NAME -C $2
-    ;;
-  *)
-    hf_log_error "$FILE_EXTENSION is not supported compression." && exit
-    ;;
-  esac
 }
 
 # ---------------------------------------
