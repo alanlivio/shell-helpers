@@ -35,7 +35,7 @@ fi
 
 if test -n "$IS_WINDOWS"; then
   # hide windows user files when ls home
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* '
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
   
   # hf_windows_path_tool
   if test -n "$IS_WINDOWS_WSL"; then
@@ -219,7 +219,7 @@ if test -n "$IS_WINDOWS"; then
   
   function hf_msys_fix_home_user() {
     echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | sudo tee /etc/fstab
-    echo -e 2 "C:/Users /home ntfs binary,noacl,auto 1 1" | sudo tee -a /etc/fstab
+    echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | sudo tee -a /etc/fstab
   }
 
   function hf_msys_install() {
