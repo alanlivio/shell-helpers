@@ -74,6 +74,15 @@ function hf_system_win_version() {
   Get-ComputerInfo | Select-Object windowsversion
 }
 
+function hf_system_disable_password_policy {
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  $tmpfile = New-TemporaryFile
+  secedit /export /cfg $tmpfile /quiet
+  (Get-Content $tmpfile).Replace("PasswordComplexity = 1", "PasswordComplexity = 0").Replace("MaximumPasswordAge = 42", "MaximumPasswordAge = -1") | Out-File $tmpfile
+  secedit /configure /db "$env:SYSTEMROOT\security\database\local.sdb" /cfg $tmpfile /areas SECURITYPOLICY | Out-Null
+  Remove-Item -Path $tmpfile
+}
+
 function hf_system_path_add($addPath) {
   if (Test-Path $addPath) {
     $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
@@ -88,92 +97,167 @@ function hf_system_path_add($addPath) {
   }
 }
 
-function hf_system_adjust_visual_to_performace() {
+# ---------------------------------------
+# optimize functions
+# ---------------------------------------
+
+function hf_optimize_features() {
+  # https://github.com/adolfintel/Windows10-Privacy
+  # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
+  # https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
+  # https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
+  
+  # Visual to performace
+  Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
-}
-
-function hf_system_disable_unused_features() {
-  # fax
+  
+  # Fax
+  Write-Host -ForegroundColor YELLOW  "-- Remove Fax ..."
   Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
 
   # XPS Services
+  Write-Host -ForegroundColor YELLOW  "-- Remove XPS ..."
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
 
-  # Internet Explorer
-  dism.exe /online /quiet /disable-feature /featurename:Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE /norestart
-
   # Work Folders
+  Write-Host -ForegroundColor YELLOW  "-- Remove Work Folders ..."
   dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
 
   # WindowsMediaPlayer
+  Write-Host -ForegroundColor YELLOW  "-- Remove WindowsMediaPlayer ..."
   dism.exe /online /quiet /disable-feature /featurename:WindowsMediaPlayer /norestart
-}
-
-function hf_system_disable_password_policy {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  $tmpfile = New-TemporaryFile
-  secedit /export /cfg $tmpfile /quiet
-  (Get-Content $tmpfile).Replace("PasswordComplexity = 1", "PasswordComplexity = 0").Replace("MaximumPasswordAge = 42", "MaximumPasswordAge = -1") | Out-File $tmpfile
-  secedit /configure /db "$env:SYSTEMROOT\security\database\local.sdb" /cfg $tmpfile /areas SECURITYPOLICY | Out-Null
-  Remove-Item -Path $tmpfile
-}
-
-# ---------------------------------------
-# network functions
-# ---------------------------------------
-
-function hf_network_list_wifi_SSIDs() {
-  return (netsh wlan show net mode=bssid)
-}
-
-# ---------------------------------------
-# link functions
-# ---------------------------------------
-
-function hf_link_create($desntination, $source) {
-  cmd /c mklink /D $desntination $source
-}
-
-# ---------------------------------------
-# store functions
-# ---------------------------------------
-
-function hf_store_list_installed() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
-}
-
-function hf_store_install($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
-  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
-}
-function hf_store_uninstall($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
-  Get-AppxPackage -allusers $name | Remove-AppxPackage 
-}
-
-function hf_store_install_essentials() {
-  Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
-  $pkgs = '
-  Microsoft.WindowsStore
-  Microsoft.WindowsCalculator
-  Microsoft.Windows.Photos
-  Microsoft.WindowsFeedbackHub
-  Microsoft.WindowsTerminal
-  Microsoft.WindowsCamera
-  Microsoft.WindowsSoundRecorder
-  '
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_install $_ }
   
+  # Remove Lockscreen
+  Write-Host -ForegroundColor YELLOW  "-- Remove Lockscreen ..."
+  If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
+    New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
+  }
+  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
+  
+  # Remove OneDrive
+  Write-Host -ForegroundColor YELLOW  "-- Remove OneDrive ..."
+  c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
+  
+  # Disable services
+  Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
+  foreach ($service in @(
+      "*diagnosticshub.standardcollector.service*"
+      "*DiagTrack*"
+      "*dmwappushsvc*"
+      "*lfsvc*"
+      "*MapsBroker*"
+      "*RetailDemo*"
+      "*WbioSrvc*"
+      "*xbgm*"
+      "*XblAuthManager*"
+      "*XblGameSave*"
+      "*XboxNetApiSvc*"
+    )) {
+    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
+  }
 }
 
-function hf_store_reinstall_all() {
-  Get-AppXPackage -AllUsers | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
+function hf_optimize_taskbar() {
+  # use small icons
+  Write-Host -ForegroundColor YELLOW  "-- Use small icons ..."
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
+
+  # hide search button
+  Write-Host -ForegroundColor YELLOW  "-- Hide search button ..."
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # hide task view button
+  Write-Host -ForegroundColor YELLOW  "-- Hide taskview button ..."
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # hide taskbar people icon
+  Write-Host -ForegroundColor YELLOW  "-- Hide people button ..."
+  if (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
+    New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
+  }
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
+
+  # disable action center
+  Write-Host -ForegroundColor YELLOW  "-- Hide action center button ..."
+  if (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
+    New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
+  }
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
+  
+  # Disable Bing
+  Write-Host -ForegroundColor YELLOW  "-- Disable Bing search ..."
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
 }
 
-function hf_store_uninstall_not_essential() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+function hf_optimize_explorer() {
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+
+  # Hide icons in desktop
+  Write-Host -ForegroundColor YELLOW  "-- Hide icons in desktop ..."
+  $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+  Set-ItemProperty -Path $Path -Name "HideIcons" -Value 1
+
+  # Hide recently explorer shortcut
+  Write-Host -ForegroundColor YELLOW  "-- Hide recently explorer shortcut ..."
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
+
+  # Set explorer to open to This PC
+  Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to This PC ..."
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
+
+  # Show file extensions
+  Write-Host -ForegroundColor YELLOW  "-- Show file extensions ..."  
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # isable context menu Customize this folder
+  Write-Host -ForegroundColor YELLOW  "-- Disable context menu Customize this folder ...."  
+  New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
+
+  # Disable context Restore to previous versions 
+  Write-Host -ForegroundColor YELLOW  "-- Disable context Restore to previous version s..."  
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+
+  # Disable context 'Share with'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context 'Share with' ..."  
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name SharingWizardOn -PropertyType DWORD -Value 0 -Force | Out-Null
+
+  # Disable context  menu 'Include in library'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context  menu 'Include in library' ..."  
+  Remove-Item -ErrorAction SilentlyContinue "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
+  Remove-Item -ErrorAction SilentlyContinue "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
+
+  # isable context menu 'Send to'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
+  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse | Out-Null
+
+  # Disable store search for unknown extensions
+  Write-Host -ForegroundColor YELLOW  "-- Disable store search for unknown extensions '..."  
+  If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
+    New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
+  }
+  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
+}
+
+function hf_optimize_store_apps() {
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
 
   # windows
   $pkgs = '
@@ -225,7 +309,7 @@ function hf_store_uninstall_not_essential() {
   Microsoft.Office.Desktop
   Microsoft.MicrosoftSolitaireCollection
   Microsoft.MixedReality.Portal'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall $_ }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_app $_ }
 
   # others
   $pkgs = 'Facebook.Facebook
@@ -239,9 +323,72 @@ function hf_store_uninstall_not_essential() {
   7EE7776C.LinkedInforWindows
   king.com.CandyCrushSaga
   NORDCURRENT.COOKINGFEVER'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall $_ }
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_app $_ }
+  
+  $pkgs = 'App.Support.QuickAssist 
+  *Hello-Face*
+  *phone*'
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_package $_ }
 }
 
+# ---------------------------------------
+# network functions
+# ---------------------------------------
+
+function hf_network_list_wifi_SSIDs() {
+  return (netsh wlan show net mode=bssid)
+}
+
+# ---------------------------------------
+# link functions
+# ---------------------------------------
+
+function hf_link_create($desntination, $source) {
+  cmd /c mklink /D $desntination $source
+}
+
+# ---------------------------------------
+# store functions
+# ---------------------------------------
+
+function hf_store_list_installed() {
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
+}
+
+function hf_store_install($name) {
+  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
+}
+
+function hf_store_uninstall_app($name) {
+  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Get-AppxPackage -allusers $name | Remove-AppxPackage 
+}
+
+function hf_store_uninstall_package($name) {
+  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Get-WindowsPackage -Online | Where PackageName -like "$name" | Remove-WindowsPackage -Online -NoRestart
+}
+
+function hf_store_install_essentials() {
+  Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
+  $pkgs = '
+  Microsoft.WindowsStore
+  Microsoft.WindowsCalculator
+  Microsoft.Windows.Photos
+  Microsoft.WindowsFeedbackHub
+  Microsoft.WindowsTerminal
+  Microsoft.WindowsCamera
+  Microsoft.WindowsSoundRecorder
+  '
+  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_install $_ }
+  
+}
+
+function hf_store_reinstall_all() {
+  Get-AppXPackage -AllUsers | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
+}
 
 # ---------------------------------------
 # explorer functions
@@ -251,7 +398,7 @@ function hf_explorer_hide_dotfiles() {
 }
 
 function hf_explorer_remove_unused_folders() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/")
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
@@ -272,120 +419,10 @@ function hf_explorer_open_home_folder() {
   explorer $env:userprofile
 }
 
-function hf_explorer_sanity_uninstall_ondrive() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
-}
-
 function hf_explorer_restart() {
   # restart
   taskkill /f /im explorer.exe | Out-Null
   Start-Process explorer.exe
-}
-
-function hf_explorer_sanity_search() {
-  # https://superuser.com/questions/1498668/how-do-you-default-the-windows-10-explorer-view-to-details-when-looking-at-sea/1499413
-  (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes' |
-    Where-Object { (Get-ChildItem $_.PSPath).CanonicalName -match '\.S' }).PSChildname |
-  ForEach-Object {
-    $SRPath = "HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\$_"
-    New-Item  -ErrorAction SilentlyContinue  -Force -Path $SRPath | Out-Null
-    New-ItemProperty -ErrorAction SilentlyContinue -Force -Path $SRPath -Name 'Mode' -Value 4 | Out-Null
-  }
-}
-
-
-function hf_explorer_sanity_lock() {
-  If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
-    New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
-  }
-  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
-}
-
-function hf_explorer_sanity_taskbar() {
-  # use small icons
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
-
-  # hide search button
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -Force | Out-Null
-
-  # hide task view button
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse | Out-Null
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
-
-  # hide taskbar people icon
-  if (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
-    New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
-  }
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
-
-  # disable action center
-  if (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
-    New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
-  }
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-}
-
-function hf_explorer_sanity_navigation() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-
-  # Hide icons in desktop
-  $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-  Set-ItemProperty -Path $Path -Name "HideIcons" -Value 1
-
-  # Hide recently and frequently used item shortcuts in Explorer
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
-
-  # Set explorer to open to "This PC"
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
-
-  # Show file extensions
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
-
-  # Remove 'Customize this folder' from context menu
-  New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
-
-  # Remove 'Restore to previous versions' from context menu (might be superflous, just in case)
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-
-  # Remove 'Share with' from context menu (First 9 might be superflous, just in case)
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name SharingWizardOn -PropertyType DWORD -Value 0 -Force | Out-Null
-
-  # Remove 'Include in library' from context menu (might be superflous, just in case)
-  Remove-Item -ErrorAction SilentlyContinue "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
-
-  # Remove 'Send to' from context menu (might be superflous, just in case)
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse | Out-Null
-
-  # Disable search for app in store for unknown extensions
-  If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
-    New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
-  }
-  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
-}
-
-function hf_explorer_sanity_start_menu() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-
-  # Disable Bing
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
 }
 
 # ---------------------------------------
@@ -393,7 +430,7 @@ function hf_explorer_sanity_start_menu() {
 # ---------------------------------------
 
 function hf_enable_dark_mode() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 }
 
@@ -402,12 +439,12 @@ function hf_enable_dark_mode() {
 # ---------------------------------------
 
 function hf_adminstrator_user_enable() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   net user administrator /active:yes
 }
 
 function hf_adminstrator_user_disable() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   net user administrator /active:no
 }
 
@@ -416,7 +453,7 @@ function hf_adminstrator_user_disable() {
 # ---------------------------------------
 
 function hf_windows_update() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   control update
   wuauclt /detectnow /updatenow
 }
@@ -474,14 +511,14 @@ function hf_wsl_enable_features() {
   Write-Output "-- (1) after hf_wsl_enable_features, reboot "
   Write-Output "-- (2) in PowerShell terminal, run hf_wsl_install_ubuntu"
   Write-Output "-- (3) after install ubuntu, in PowerShell terminal, run hf_wsl_fix_home_user"
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 }
 
 function hf_wsl_fix_home_user() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
 
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
@@ -515,7 +552,7 @@ function hf_wsl_fix_home_user() {
 
 function hf_install_chocolatey() {
   if (-Not (Get-Command 'choco' -errorAction SilentlyContinue)) {
-    Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
+    Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -554,35 +591,29 @@ function hf_config_wt_open() {
 # ---------------------------------------
 
 function hf_windows_sanity() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  hf_system_disable_password_policy
-  hf_system_adjust_visual_to_performace
-  hf_explorer_sanity_navigation
-  hf_explorer_sanity_start_menu
-  hf_explorer_sanity_search
-  hf_explorer_sanity_taskbar
-  hf_explorer_sanity_lock
-  hf_explorer_sanity_uninstall_ondrive
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   hf_explorer_remove_unused_folders
-  hf_explorer_restart
-  hf_system_disable_unused_features
+  hf_system_disable_password_policy
+  hf_optimize_explorer
+  hf_optimize_taskbar
+  hf_optimize_features
+  hf_optimize_store_apps
+  # hf_explorer_restart
 }
 
 function hf_windows_init_user_nomal() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
-  hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }
 
 function hf_windows_init_user_bash() {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW
-  Write-Output "-- (1) in other PowerShell terminal, run hf_uninstall_not_essential_store_packages"
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
   Write-Output "-- (2) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   hf_install_chocolatey
   hf_choco_install vscode gsudo msys2
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
-  hf_windows_sanity
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }

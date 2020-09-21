@@ -1,7 +1,7 @@
 <h1 align="center">dev-env</h1>
 
 This project aims to support creating a minimal developer environment in different
-operating systems. It provides helper functions to configure: 
+operating systems. It provides helper functions to configure:
 
 | cmd shells | graphical shells | terminals | code editors |
 | :-: | :-: | :-: | :-: |
@@ -23,7 +23,7 @@ In particular, there are helper functions for:
 
 ## How to use in Ubuntu
 
-The dev-env can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html). 
+The dev-env can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
 To do that, fetch env.sh and insert the following command at the end of your `~/.bashrc` :
 
 ``` bash
@@ -34,7 +34,7 @@ wget -O ~/.config/env.sh https://raw.githubusercontent.com/alanlivio/dev-env/mas
 
 ## How to use in Windows
 
-The dev-env can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7). 
+The dev-env can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).
 To do that, fetch env.ps1 and import it as powershell module:
 
 ``` powershell
@@ -59,4 +59,4 @@ For powershell:
 
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
-* https://gitlab.com/sgur/powershellrc/-/tree/master
+* https://gitlab.com/sgur/powershellrc/
