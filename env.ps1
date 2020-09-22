@@ -62,9 +62,23 @@ function hf_powershell_profiles_reset() {
   $profile.CurrentUserCurrentHost = "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 }
 
+function hf_powershell_wait_for_fey {
+  Write-Host -ForegroundColor YELLOW "`nPress any key to continue..."
+  [Console]::ReadKey($true) | Out-Null
+}
+
 # ---------------------------------------
 # system functions
 # ---------------------------------------
+
+function hf_system_rename($new_name) {
+  Rename-Computer -NewName "$new_name"
+}
+
+Function Restart {
+  Write-Host -ForegroundColor YELLOW "Restarting..."
+  Restart-Computer
+}
 
 function hf_system_rename($new_name) {
   Rename-Computer -NewName "$new_name"
@@ -128,7 +142,7 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Remove WindowsMediaPlayer ..."
   dism.exe /online /quiet /disable-feature /featurename:WindowsMediaPlayer /norestart
   
-  # Remove Lockscreen
+  # Remove Lock screen
   Write-Host -ForegroundColor YELLOW  "-- Remove Lockscreen ..."
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
@@ -139,26 +153,53 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Remove OneDrive ..."
   c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
   
+  # Disabledrives Autoplay
+  Write-Host -ForegroundColor YELLOW "-- Disabling new drives Autoplay..."
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1  | Out-Null
+  
+  # Disable Autorun for all drives
+  Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
+  If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
+    New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
+  }
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
+  
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
   foreach ($service in @(
       "*diagnosticshub.standardcollector.service*"
+      "*diagsvc*"
       "*DiagTrack*"
+      "*dmwappushservice*"
       "*dmwappushsvc*"
       "*lfsvc*"
       "*MapsBroker*"
+      "*OneSyncSvc*"
+      "*PcaSvc*"
+      "*PhoneSvc*"
       "*RetailDemo*"
+      "*SessionEnv*"
+      "*shpamsvc*"
+      "*SysMain*"
+      "*TermService*"
+      "*TroubleshootingSvc*"
+      "*UmRdpService*"
       "*WbioSrvc*"
+      "*wercplsupport*"
+      "*WerSvc*"
       "*xbgm*"
       "*XblAuthManager*"
       "*XblGameSave*"
       "*XboxNetApiSvc*"
     )) {
+    Write-Host -ForegroundColor YELLOW  "  -- Stopping and disabling $service..."
+    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
   }
 }
 
-function hf_optimize_taskbar() {
+function hf_optimize_explorer() {
+  
   # use small icons
   Write-Host -ForegroundColor YELLOW  "-- Use small icons ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
@@ -193,10 +234,6 @@ function hf_optimize_taskbar() {
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
-}
-
-function hf_optimize_explorer() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
 
   # Hide icons in desktop
   Write-Host -ForegroundColor YELLOW  "-- Hide icons in desktop ..."
@@ -207,28 +244,28 @@ function hf_optimize_explorer() {
   Write-Host -ForegroundColor YELLOW  "-- Hide recently explorer shortcut ..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 
-  # Set explorer to open to This PC
-  Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to This PC ..."
+  # Set explorer to open to 'This PC'
+  Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to 'This PC' ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
 
-  # Show file extensions
-  Write-Host -ForegroundColor YELLOW  "-- Show file extensions ..."  
+  # Set explorers how file extensions
+  Write-Host -ForegroundColor YELLOW  "-- Set explorers how file extensions ..."  
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
 
-  # isable context menu Customize this folder
+  # Disable context menu 'Customize this folder'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu Customize this folder ...."  
   New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
 
-  # Disable context Restore to previous versions 
-  Write-Host -ForegroundColor YELLOW  "-- Disable context Restore to previous version s..."  
+  # Disable context men 'Restore to previous versions'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context 'Restore to previous version'..."  
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
 
-  # Disable context 'Share with'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context 'Share with' ..."  
+  # Disable context menu 'Share with'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Share with' ..."  
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Force -Recurse | Out-Null
@@ -239,8 +276,8 @@ function hf_optimize_explorer() {
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name SharingWizardOn -PropertyType DWORD -Value 0 -Force | Out-Null
 
-  # Disable context  menu 'Include in library'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context  menu 'Include in library' ..."  
+  # Disable context menu 'Include in library'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Include in library' ..."  
   Remove-Item -ErrorAction SilentlyContinue "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
   Remove-Item -ErrorAction SilentlyContinue "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
 
@@ -254,6 +291,9 @@ function hf_optimize_explorer() {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
   }
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
+  
+  # restart explorer
+  hf_explorer_restart
 }
 
 function hf_optimize_store_apps() {
@@ -368,7 +408,7 @@ function hf_store_uninstall_app($name) {
 
 function hf_store_uninstall_package($name) {
   Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
-  Get-WindowsPackage -Online | Where PackageName -like "$name" | Remove-WindowsPackage -Online -NoRestart
+  Get-WindowsPackage -Online | Where-Object PackageName -like "$name" | Remove-WindowsPackage -Online -NoRestart
 }
 
 function hf_store_install_essentials() {
@@ -503,7 +543,7 @@ function hf_wsl_ubuntu_set_default_user() {
   ubuntu.exe config --default-user alan
 }
 
-function hf_wsl_install_ubuntu(){
+function hf_wsl_install_ubuntu() {
   hf_store_install CanonicalGroupLimited.UbuntuonWindows
 }
 
@@ -594,11 +634,9 @@ function hf_windows_sanity() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   hf_explorer_remove_unused_folders
   hf_system_disable_password_policy
-  hf_optimize_explorer
-  hf_optimize_taskbar
   hf_optimize_features
   hf_optimize_store_apps
-  # hf_explorer_restart
+  hf_optimize_explorer
 }
 
 function hf_windows_init_user_nomal() {
