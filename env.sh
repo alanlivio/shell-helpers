@@ -36,7 +36,7 @@ fi
 if test -n "$IS_WINDOWS"; then
   # hide windows user files when ls home
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
-  
+
   # hf_windows_path_tool
   if test -n "$IS_WINDOWS_WSL"; then
     alias hf_windows_path_tool='wslpath'
@@ -135,7 +135,6 @@ function hf_test_exist_command() {
   fi
 }
 
-
 # ---------------------------------------
 # file
 # ---------------------------------------
@@ -216,7 +215,7 @@ if test -n "$IS_WINDOWS"; then
     hf_log_func
     pacman -Ss --noconfirm "$@"
   }
-  
+
   function hf_msys_fix_home_user() {
     echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | sudo tee /etc/fstab
     echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | sudo tee -a /etc/fstab
@@ -2026,7 +2025,7 @@ function hf_compression_extract() {
   else
     DST=$2
   fi
-  
+
   case $EXT in
   tgz)
     tar -xzf $1 -C $DST
@@ -2080,12 +2079,12 @@ function hf_youtubedl_from_txt() {
 
 function hf_youtubedl_video480() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl "$1" youtube-dl -f 'best[height<=480]' $YOUTUBEDL_PARAMS
+  youtube-dl "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
 }
 
 function hf_youtubedl_video480_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" youtube-dl -f 'best[height<=480]' $YOUTUBEDL_PARAMS
+  youtube-dl -a "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
 }
 
 function hf_youtubedl_audio() {
