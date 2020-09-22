@@ -115,12 +115,13 @@ function hf_system_path_add($addPath) {
 # optimize functions
 # ---------------------------------------
 
+# references
+# https://github.com/adolfintel/Windows10-Privacy
+# https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
+# https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
+# https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
+
 function hf_optimize_features() {
-  # https://github.com/adolfintel/Windows10-Privacy
-  # https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
-  # https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
-  # https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
-  
   # Visual to performace
   Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
@@ -257,29 +258,33 @@ function hf_optimize_explorer() {
   New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
 
-  # Disable context men 'Restore to previous versions'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context 'Restore to previous version'..."  
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force -Recurse | Out-Null
+  # Disable context menu 'Restore to previous versions'
+  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Restore to previous version'..."  
+  New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
+  foreach ($path in @(
+      "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+      "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+      "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+      "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+    )) {
+    Remove-Item $path -Recurse -ea 0 -Force -Recurse | Out-Null
+  }
+  Remove-PSDrive HKCR | Out-Null
 
   # Disable context menu 'Share with'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Share with' ..."  
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Drive\shellex\PropertySheetHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing" -Force -Recurse | Out-Null
-  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name SharingWizardOn -PropertyType DWORD -Value 0 -Force | Out-Null
+  Remove-Item "HKCR:\*\shellex\ContextMenuHandlers\ModernSharing" -Recurse -ea 0 
 
   # Disable context menu 'Include in library'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Include in library' ..."  
-  Remove-Item -ErrorAction SilentlyContinue "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
-  Remove-Item -ErrorAction SilentlyContinue "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -Force -Recurse | Out-Null
+  New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
+  foreach ($path in @(
+      "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location"
+      "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location"
+    )) {
+    Remove-Item $path -Recurse -ea 0  | Out-Null
+  }
+  Remove-PSDrive HKCR | Out-Null
 
   # isable context menu 'Send to'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
@@ -516,7 +521,11 @@ function hf_choco_uninstall() {
 }
 
 function hf_choco_upgrade() {
-  choco upgrade -y --acceptlicense --no-progress
+  choco upgrade -y --acceptlicense --no-progress  --ignorechecksum all
+}
+
+function hf_choco_list_installed() {
+  choco list -l
 }
 
 # ---------------------------------------
@@ -597,12 +606,15 @@ function hf_install_chocolatey() {
     Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
 
-    choco feature enable -n allowGlobalConfirmation
-    choco feature enable -n allowEmptyChecksumsSecure
-    choco feature disable -n showNonElevatedWarnings
+    choco feature disable -n checksumFiles
     choco feature disable -n showDownloadProgress
-    choco feature enable -n removePackageInformationOnUninstall
+    choco feature disable -n showNonElevatedWarnings
+    choco feature disable -n logValidationResultsOnWarnings
+    choco feature enable -n allowEmptyChecksumsSecure
+    choco feature enable -n allowGlobalConfirmation
     choco feature enable -n exitOnRebootDetected
+    choco feature enable -n removePackageInformationOnUninstall
+    choco feature enable -n useRememberedArgumentsForUpgrades
   }
 }
 
@@ -653,5 +665,6 @@ function hf_windows_init_user_bash() {
   hf_install_chocolatey
   hf_choco_install vscode gsudo msys2
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  hf_system_path_add 'C:\tools\msys64\mingw64\bin'
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }
