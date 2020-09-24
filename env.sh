@@ -204,7 +204,7 @@ if test -n "$IS_WINDOWS"; then
   # ---------------------------------------
   # windows install
   # ---------------------------------------
-  
+
   function hf_install_choco() {
     hf_log_func
     powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
@@ -247,7 +247,6 @@ if test -n "$IS_WINDOWS"; then
     hf_log_func
     pacman -Su --noconfirm
   }
-
 fi
 
 # ---------------------------------------
@@ -257,22 +256,19 @@ fi
 if test -n "$IS_MAC"; then
   function hf_mac_install_homebrew() {
     hf_log_func
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   }
 
-  function hf_mac_install_bash4() {
+  function hf_mac_install_bash() {
     hf_log_func
     brew install bash
-    sudo bash -c "echo /usr/local/bin/bash >> /private/etc/shells"
-    sudo chsh -s /usr/local/bin/bash
-    echo $BASH && echo $BASH_VERSION
+    bash --version
   }
 
   function hf_mac_init() {
     hf_log_func
     hf_mac_install_homebrew
-    hf_mac_install_bash4
-    hf_mac_enable_wifi
+    hf_mac_install_bash
   }
 fi
 
@@ -301,7 +297,7 @@ function hf_mac_ubuntu_keyboard_fix() {
   fi
 }
 
-function hf_mac_enable_wifi() {
+function hf_mac_ubuntu_enable_wifi() {
   hf_log_func
   dpkg --status bcmwl-kernel-source &>/dev/null
   if test $? != 0; then
