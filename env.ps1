@@ -126,6 +126,15 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type String -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Type String -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](144,18,3,128,16,0,0,0)) | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Type String -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Keyboard" -Name "KeyboardDelay" -Type DWord -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewAlphaSelect" -Type DWord -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewShadow" -Type DWord -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Type DWord -Value 0 | Out-Null
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWord -Value 0 | Out-Null
   
   # Fax
   Write-Host -ForegroundColor YELLOW  "-- Remove Fax ..."
@@ -154,16 +163,42 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Remove OneDrive ..."
   c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
   
-  # Disabledrives Autoplay
+  # Disable drives Autoplay
   Write-Host -ForegroundColor YELLOW "-- Disabling new drives Autoplay..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1  | Out-Null
+  
+  # Disable offering of Malicious Software Removal Tool through Windows Update
+  Write-Host -ForegroundColor YELLOW "-- Disabling Malicious Software Removal Tool offering..."
+  If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT")) {
+    New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" | Out-Null
+  }
+  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Type DWord -Value 1
+  
+  # Disable Remote Assistance
+  Write-Host -ForegroundColor YELLOW "-- Disabling Remote Assistance..."
+  Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0
+  
+  # Disable AutoRotation Hotkeys
+  Write-Host -ForegroundColor YELLOW "-- Disabling AutoRotation Hotkeys..."
+  reg add "HKEY_CURRENT_USER\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
+  
+  # Disable Sticky keys prompt
+  Write-Host -ForegroundColor YELLOW  "-- Disabling Sticky keys prompt..." 
+  Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506" | Out-Null
+  
+  # Disabling Autorun for all drives...
+  Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
+  If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
+    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
+  }
+  Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
   
   # Disable Autorun for all drives
   Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
   If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
     New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
   }
-  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
+  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
   
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
@@ -191,37 +226,113 @@ function hf_optimize_features() {
       "*xbgm*"
       "*XblAuthManager*"
       "*XblGameSave*"
+      "*HomeGroupListener*"
       "*XboxNetApiSvc*"
     )) {
-    Write-Host -ForegroundColor YELLOW  "  -- Stopping and disabling $service..."
+    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
+  }
+  
+  # Disable more services
+  Write-Host -ForegroundColor YELLOW  "-- Disable more services ..."
+  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Siuf\Rules" /v "NumberOfSIUFInPeriod" /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKLM\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" /v Start /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v AITEnable /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisableInventory /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisablePCA /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisableUAR /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKCU\Software\Microsoft\Internet Explorer\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoRecentDocsHistory" /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\CompatTelRunner.exe" /v Debugger /t REG_SZ /d "%windir%\System32\taskkill.exe" /f | Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DeviceCensus.exe" /v Debugger /t REG_SZ /d "%windir%\System32\taskkill.exe" /f | Out-Null
+  
+  # Disable error reporting
+  Write-Host -ForegroundColor YELLOW  "-- Disable error reporting ..."
+  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
+  
+  # Disable license checking
+  Write-Host -ForegroundColor YELLOW  "-- Disable license checking ..."
+  reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
+  
+  # Disable tips
+  Write-Host -ForegroundColor YELLOW  "-- Disable tips ..."
+  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKLM\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
+  
+  # Disable Scheduled tasks
+  Write-Host -ForegroundColor YELLOW  "-- Disable tasks ..."
+  foreach ($task in @(
+    "*AitAgent*"
+    "*AnalyzeSystem*"
+    "*Appraiser*"
+    "*CloudExperienceHost*"
+    "*Consolidator*"
+    "*DiskDiagnosticDataCollector*"
+    "*DsSvcCleanup*"
+    "*DsSvcCleanup*"
+    "*EnableLicenseAcquisition*"
+    "*FamilySafetyMonitor*"
+    "*FamilySafetyMonitorToastTask*"
+    "*FamilySafetyRefresh*"
+    "*FamilySafetyRefreshTask*"
+    "*FamilySafetyUpload*"
+    "*GatherNetworkInfo*"
+    "*KernelCeipTask*"
+    "*License Validation*"
+    "*LicenseAcquisition*"
+    "*LoginCheck*"
+    "*Proxy*"
+    "*QueueReporting*"
+    "*RecommendedTroubleshootingScanner*"
+    "*SmartScreenSpecific*"
+    "*StartupAppTask*"
+    "*TempSignedLicenseExchange*"
+    "*UsbCeip*"
+    "*UsbCeip*"
+    "*WinSAT*"
+    "*XblGameSaveTask*"
+    "*XblGameSaveTaskLogon*"
+  )) {
+    Write-Host -ForegroundColor YELLOW  " Disabling $task..."
+    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 | Out-Null
   }
 }
 
 function hf_optimize_explorer() {
   
-  # use small icons
+  # Use small icons
   Write-Host -ForegroundColor YELLOW  "-- Use small icons ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
-
-  # hide search button
+  
+  # Hide search button
   Write-Host -ForegroundColor YELLOW  "-- Hide search button ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -Force | Out-Null
 
-  # hide task view button
+  # Hide task view button
   Write-Host -ForegroundColor YELLOW  "-- Hide taskview button ..."
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
 
-  # hide taskbar people icon
+  # Hide taskbar people icon
   Write-Host -ForegroundColor YELLOW  "-- Hide people button ..."
   if (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
     New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
 
-  # disable action center
+  
+  # Disabling file delete confirmation dialog
+  Write-Output "Disabling file delete confirmation dialog..."
+  Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -ErrorAction SilentlyContinue
+
+  # Disable action center
   Write-Host -ForegroundColor YELLOW  "-- Hide action center button ..."
   if (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
     New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
@@ -286,7 +397,7 @@ function hf_optimize_explorer() {
   }
   Remove-PSDrive HKCR | Out-Null
 
-  # isable context menu 'Send to'
+  # Disable context menu 'Send to'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
   Remove-Item -ErrorAction SilentlyContinue -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse | Out-Null
 
