@@ -1459,11 +1459,6 @@ function hf_system_list_gpu() {
 # npm
 # ---------------------------------------
 
-function hf_install_node() {
-  curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-  sudo apt install -y nodejs
-}
-
 function hf_npm_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <npm_package ...>"}
   hf_log_func
@@ -1567,6 +1562,17 @@ function hf_python_install_packages() {
   sudo pip install -U "$@" &>/dev/null
 }
 
+function hf_python_remove_python35() {
+  sudo rm -r /usr/local/bin/python3.5
+  sudo rm -r /usr/local/lib/python3.5/
+}
+
+function hf_python_remove_home_pkgs() {
+  hf_folder_remove $HOME/local/bin/
+  hf_folder_remove $HOME/.local/lib/python3.5/
+  hf_folder_remove $HOME/.local/lib/python3.7/
+}
+
 # ---------------------------------------
 # venv
 # ---------------------------------------
@@ -1626,6 +1632,20 @@ function hf_eclipse_uninstall_packages() {
 # ---------------------------------------
 # install
 # ---------------------------------------
+
+function hf_install_node() {
+  hf_log_funch
+  curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  sudo apt install -y nodejs
+}
+
+function hf_install_powershell() {
+  hf_log_func
+  curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+  sudo curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/16.04/prod.list
+  sudo apt-get update
+  sudo apt-get install -y powershell
+}
 
 function hf_install_luarocks() {
   hf_log_func
@@ -1687,17 +1707,6 @@ function hf_install_python35() {
     sudo make altinstall
     cd $CWD
   fi
-}
-
-function hf_python_remove_python35() {
-  sudo rm -r /usr/local/bin/python3.5
-  sudo rm -r /usr/local/lib/python3.5/
-}
-
-function hf_python_remove_home_pkgs() {
-  hf_folder_remove $HOME/local/bin/
-  hf_folder_remove $HOME/.local/lib/python3.5/
-  hf_folder_remove $HOME/.local/lib/python3.7/
 }
 
 function hf_install_neo4j() {
