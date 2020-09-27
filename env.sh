@@ -1641,10 +1641,7 @@ function hf_install_node() {
 
 function hf_install_powershell() {
   hf_log_func
-  curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-  sudo curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/16.04/prod.list
-  sudo apt-get update
-  sudo apt-get install -y powershell
+  hf_apt_fetch_install https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
 }
 
 function hf_install_luarocks() {
