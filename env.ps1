@@ -115,12 +115,6 @@ function hf_system_path_add($addPath) {
 # optimize functions
 # ---------------------------------------
 
-# references
-# https://github.com/adolfintel/Windows10-Privacy
-# https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
-# https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
-# https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
-
 function hf_optimize_features() {
   # Visual to performace
   Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
@@ -204,22 +198,20 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Disable Telemetry services ..."
   foreach ($service in @(
       "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
+      "*dmwappushservice*" # Device Management WAP Push message Routing Service
       "*diagsvc*" # Diagnostic Execution Service
       "*DiagTrack*" # Connected User Experiences and Telemetry
-      "*dmwappushservice*" # Device Management WAP Push message Routing Service
-      "*AppVClient*" # Microsoft App-V Client
-      "*PcaSvc*" # Program Compatibility Assistant Servic
+      "*lfsvc*" # Geolocation Service
+      "*MapsBroker*" # Downloaded Maps Manager
+      "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service
       "*RetailDemo*" # Retail Demo Service
-      "*SessionEnv*" # Remote Desktop Configuration
-      "*shpamsvc*" # Shared PC Account Manager
-      "*SysMain*" # SysMain (Maintains and improves system performance)
-      "*TermService*" # Remote Desktop Services
-      "*TroubleshootingSvc*" # Recommended Troubleshooting Service
-      "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
-      "*wercplsupport*" # Problem Reports Control Panel Support
-      "*wisvc*" # Windows Insider Service
-      "*WerSvc*" # Windows Error Reporting Service
-      "*EventLog*" # Windows Event Log
+      "*RemoteRegistry*" # Remote Registry
+      "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
+      "*TrkWks*" # Distributed Link Tracking Client
+      "*xbgm*"
+      "*XblAuthManager*" # Xbox Live Auth Manager
+      "*XboxNetApiSvc*" # Xbox Live Networking Service
+      "*XblGameSave*" # Xbox Live Game Save
     )) {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
@@ -229,10 +221,6 @@ function hf_optimize_features() {
   # Disable Xbox services
   Write-Host -ForegroundColor YELLOW  "-- Disable Xbox  services ..."
   foreach ($service in @(
-      "*xbgm*"
-      "*XblAuthManager*" # Xbox Live Auth Manager
-      "*XboxNetApiSvc*" # Xbox Live Networking Service
-      "*XblGameSave*" # Xbox Live Game Save
       "*HomeGroupListener*"
     )) {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
@@ -315,32 +303,40 @@ function hf_optimize_features_advanced() {
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
   foreach ($service in @(
-      "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
+      "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
+      "*Bonjour Service*" # bootcamp: Bonjour Service
+      "*ClickToRunSvc*" # Office Click-to-Run Service
+      "*EventLog*" # Windows Event Log
+      "*FoxitReaderUpdateService*" # Foxit Reader Update Service
       "*gupdate*" # Google Update Service (gupdate)
       "*gupdatem*" # Google Update Service (gupdatem)
-      "*RemoteRegistry*" # Remote Registry
-      "*lfsvc*" # Geolocation Service
-      "*MapsBroker*" # Downloaded Maps Manager
+      "*PcaSvc*" # Program Compatibility Assistant Service
       "*PhoneSvc*" # Phone Service
-      "*FoxitReaderUpdateService*" # Foxit Reader Update Service
-      "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
-      # "*BootCampService*" # bootcamp: 
-      "*Bonjour Service*" # bootcamp: Bonjour Service
-      "*AxInstSV*" # ActiveX Installer
-      "*WbioSrvc*" # Windows Biometric Service
-      "*ClickToRunSvc*" # Office Click-to-Run Service
-      "*ssh-agent*" # OpenSSH Authentication Agent
-      # "*SecurityHealthService*"
-      "*SharedAccess*" # Internet Connection Sharing (ICS)
-      "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service
-      "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
-      "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service
+      "*SessionEnv*" # Remote Desktop Configuration
+      "*SysMain*" # SysMain (Maintains and improves system performance)
+      "*TermService*" # Remote Desktop Services
       "*Themes*" # Themes (Provides user experience theme management.)
-      # "*WinDefend*"
+      "*TroubleshootingSvc*" # Recommended Troubleshooting Service
+      "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming) !!!
+      "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
+      "*WbioSrvc*" # Windows Biometric Service
+      "*wercplsupport*" # Problem Reports Control Panel Support
+      "*WerSvc*" # Windows Error Reporting Service
+      "*wisvc*" # Windows Insider Service
+      "ndu" # Windows Network Data Usage Monitor
+      # "*AppVClient*" # Microsoft App-V Client
+      # "*AxInstSV*" # ActiveX Installer
+      # "*BootCampService*" # bootcamp: Boot Camp Service
+      # "*HomeGroupListener*"
+      # "*SecurityHealthService*"
+      # "*SharedAccess*" # Internet Connection Sharing (ICS)
+      # "*shpamsvc*" # Shared PC Account Manager
+      # "*ssh-agent*" # OpenSSH Authentication Agent
+      # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. # OBS removing the next will disable WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
     )) {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
-    Get-Service -Name BootCampService | Stop-Service -WarningAction SilentlyContinue
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 #| Out-Null
+    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
+    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
   }
   
   # Disable Scheduled tasks
@@ -350,12 +346,15 @@ function hf_optimize_features_advanced() {
     "*GoogleCrashHandler*"
     "*cftmon*"
     "*SecurityHealthService*"
+    "Windows Defender Cache Maintenance"
+    "Windows Defender Cleanup"
+    "Windows Defender Scheduled Scan"
+    "Windows Defender Verification"
   )) {
-    Write-Host -ForegroundColor YELLOW  " Disabling $task..."
-    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 #| Out-Null
+    Write-Host -ForegroundColor YELLOW  "   Disabling $task..."
+    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 | Out-Null
   }
 }
-
 
 function hf_optimize_explorer() {
   
@@ -379,7 +378,6 @@ function hf_optimize_explorer() {
   }
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
 
-  
   # Disabling file delete confirmation dialog
   Write-Output "Disabling file delete confirmation dialog..."
   Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -ErrorAction SilentlyContinue
@@ -436,9 +434,55 @@ function hf_optimize_explorer() {
   Write-Host -ForegroundColor YELLOW  "-- Hide recently explorer shortcut ..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 
+  Write-Host -ForegroundColor YELLOW "Disable easy access keyboard ..."
+  Set-ItemProperty "HKCU:\Control Panel\Accessibility\StickyKeys" "Flags" "506"
+  Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" "Flags" "122"
+  Set-ItemProperty "HKCU:\Control Panel\Accessibility\ToggleKeys" "Flags" "58"
+
   # Set explorer to open to 'This PC'
   Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to 'This PC' ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
+
+  # Remove * from This PC
+  Write-Host -ForegroundColor YELLOW  "Removing user folders under This PC ..."
+  
+  # Remove Desktop from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}"
+  
+  # Remove Documents from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}"
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}"
+  
+  # Remove Downloads from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}"
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}"
+  
+  # Remove Music from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}"
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}"
+  
+  # Remove Pictures from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}"
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}"
+  
+  # Remove Videos from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}"
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}"
+  
+  # Remove 3D Objects from This PC
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
 
   # Set explorers how file extensions
   Write-Host -ForegroundColor YELLOW  "-- Set explorers how file extensions ..."  
@@ -448,6 +492,10 @@ function hf_optimize_explorer() {
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu Customize this folder ...."  
   New-Item -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
+
+  # Disable Windows Defender context menu item'
+  Write-Output "Disable Windows Defender context menu item ..."
+  Set-Item "HKLM:\SOFTWARE\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" ""
 
   # Disable context menu 'Restore to previous versions'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Restore to previous version'..."  
@@ -460,7 +508,6 @@ function hf_optimize_explorer() {
     )) {
     Remove-Item $path -Recurse -ea 0 -Force -Recurse | Out-Null
   }
-  Remove-PSDrive HKCR | Out-Null
 
   # Disable context menu 'Share with'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Share with' ..."  
@@ -475,7 +522,6 @@ function hf_optimize_explorer() {
     )) {
     Remove-Item $path -Recurse -ea 0  | Out-Null
   }
-  Remove-PSDrive HKCR | Out-Null
 
   # Disable context menu 'Send to'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
@@ -629,6 +675,7 @@ function hf_store_reinstall_all() {
 # ---------------------------------------
 # explorer functions
 # ---------------------------------------
+
 function hf_explorer_hide_dotfiles() {
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }

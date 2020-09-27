@@ -16,12 +16,17 @@ In particular, there are helper functions for:
   + configure VSCode
 
 * in Windows
-  + install essential software (msys2, VScode)
+  + install essential software (msys2, WSL, VScode)
   + configure Windows shell (e.g., disable unused features, dark mode)
-  + configure terminals (PowerShell, msys2, VSCode Integrated Terminal)
+  + configure terminals (PowerShell, msys2, WSL, VSCode Integrated Terminal)
   + configure VSCode
 
-## How to use in Ubuntu
+* in macOS
+  + install essential software (bash, VScode)
+  + configure terminals (bash, VSCode Integrated Terminal)
+  + configure VSCode
+
+## How to use in Ubuntu, macOS or in WSL
 
 The dev-env can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
 To do that, fetch env.sh and insert the following command at the end of your `~/.bashrc` :
@@ -44,9 +49,9 @@ Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/dev-env/master/env
  hf_profile_install
 ```
 
-# Inspirations
+# References and Thanks
 
-Other projects support create a dev environment.
+Other projects used as inspiration or reference.
 
 For bash:
 
@@ -60,3 +65,11 @@ For powershell:
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
 * https://gitlab.com/sgur/powershellrc/
+
+For powershell windows optimization:
+
+* https://github.com/adolfintel/Windows10-Privacy
+* https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
+* https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
+* https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
+* https://github.com/W4RH4WK/Debloat-Windows-10
