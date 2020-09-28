@@ -306,7 +306,6 @@ function hf_optimize_features_advanced() {
       "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
       "*Bonjour Service*" # bootcamp: Bonjour Service
       "*ClickToRunSvc*" # Office Click-to-Run Service
-      "*EventLog*" # Windows Event Log
       "*FoxitReaderUpdateService*" # Foxit Reader Update Service
       "*gupdate*" # Google Update Service (gupdate)
       "*gupdatem*" # Google Update Service (gupdatem)
@@ -316,8 +315,6 @@ function hf_optimize_features_advanced() {
       "*SysMain*" # SysMain (Maintains and improves system performance)
       "*TermService*" # Remote Desktop Services
       "*Themes*" # Themes (Provides user experience theme management.)
-      "*TroubleshootingSvc*" # Recommended Troubleshooting Service
-      "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming) !!!
       "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
       "*WbioSrvc*" # Windows Biometric Service
       "*wercplsupport*" # Problem Reports Control Panel Support
@@ -327,12 +324,15 @@ function hf_optimize_features_advanced() {
       # "*AppVClient*" # Microsoft App-V Client
       # "*AxInstSV*" # ActiveX Installer
       # "*BootCampService*" # bootcamp: Boot Camp Service
+      # "*EventLog*" # Windows Event Log
       # "*HomeGroupListener*"
       # "*SecurityHealthService*"
       # "*SharedAccess*" # Internet Connection Sharing (ICS)
       # "*shpamsvc*" # Shared PC Account Manager
       # "*ssh-agent*" # OpenSSH Authentication Agent
       # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. # OBS removing the next will disable WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
+      # "*TroubleshootingSvc*" # Recommended Troubleshooting Service
+      # "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
     )) {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
