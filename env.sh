@@ -21,7 +21,7 @@ esac
 # fix for WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
-  *-Microsoft*)
+  *icrosoft*) # (M/m)icrosoft
     IS_LINUX=""
     IS_WINDOWS=1
     IS_WINDOWS_WSL=1
@@ -240,7 +240,7 @@ if test -n "$IS_WINDOWS"; then
 
   function hf_msys_uninstall() {
     hf_log_func
-    pacman -R--noconfirm "$@"
+    pacman -R --noconfirm "$@"
   }
 
   function hf_msys_upgrade() {

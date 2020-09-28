@@ -122,7 +122,7 @@ function hf_optimize_features() {
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type String -Value 0 | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Type String -Value 0 | Out-Null
-  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](144,18,3,128,16,0,0,0)) | Out-Null
+  Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Type Binary -Value ([byte[]](144, 18, 3, 128, 16, 0, 0, 0)) | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Type String -Value 0 | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Keyboard" -Name "KeyboardDelay" -Type DWord -Value 0 | Out-Null
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewAlphaSelect" -Type DWord -Value 0 | Out-Null
@@ -194,55 +194,6 @@ function hf_optimize_features() {
   }
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
   
-  # Disable Telemetry services
-  Write-Host -ForegroundColor YELLOW  "-- Disable Telemetry services ..."
-  foreach ($service in @(
-      "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
-      "*dmwappushservice*" # Device Management WAP Push message Routing Service
-      "*diagsvc*" # Diagnostic Execution Service
-      "*DiagTrack*" # Connected User Experiences and Telemetry
-      "*lfsvc*" # Geolocation Service
-      "*MapsBroker*" # Downloaded Maps Manager
-      "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service
-      "*RetailDemo*" # Retail Demo Service
-      "*RemoteRegistry*" # Remote Registry
-      "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
-      "*TrkWks*" # Distributed Link Tracking Client
-      "*xbgm*"
-      "*XblAuthManager*" # Xbox Live Auth Manager
-      "*XboxNetApiSvc*" # Xbox Live Networking Service
-      "*XblGameSave*" # Xbox Live Game Save
-    )) {
-    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
-    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
-  }
-  
-  # Disable Xbox services
-  Write-Host -ForegroundColor YELLOW  "-- Disable Xbox  services ..."
-  foreach ($service in @(
-      "*HomeGroupListener*"
-    )) {
-    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
-    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
-  }
-  
-  # Disable more services
-  Write-Host -ForegroundColor YELLOW  "-- Disable more services ..."
-  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Siuf\Rules" /v "NumberOfSIUFInPeriod" /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKLM\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" /v Start /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v AITEnable /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisableInventory /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisablePCA /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" /v DisableUAR /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKCU\Software\Microsoft\Internet Explorer\PhishingFilter" /v "EnabledV9" /t REG_DWORD /d 0 /f | Out-Null
-  reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoRecentDocsHistory" /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\CompatTelRunner.exe" /v Debugger /t REG_SZ /d "%windir%\System32\taskkill.exe" /f | Out-Null
-  reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DeviceCensus.exe" /v Debugger /t REG_SZ /d "%windir%\System32\taskkill.exe" /f | Out-Null
-  
   # Disable error reporting
   Write-Host -ForegroundColor YELLOW  "-- Disable error reporting ..."
   reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
@@ -260,42 +211,63 @@ function hf_optimize_features() {
   reg add "HKLM\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
   
+  # Disable Telemetry services
+  Write-Host -ForegroundColor YELLOW  "-- Disable Telemetry services ..."
+  foreach ($service in @(
+      # "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
+      # "*diagsvc*" # Diagnostic Execution Service
+      "*dmwappushservice*" # Device Management WAP Push message Routing Service
+      "*DiagTrack*" # Connected User Experiences and Telemetry
+      "*lfsvc*" # Geolocation Service
+      "*MapsBroker*" # Downloaded Maps Manager
+      "*RetailDemo*" # Retail Demo Service
+      "*RemoteRegistry*" # Remote Registry
+      "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
+      "*TrkWks*" # Distributed Link Tracking Client
+      "*XblAuthManager*" # Xbox Live Auth Manager
+      "*XboxNetApiSvc*" # Xbox Live Networking Service
+      "*XblGameSave*" # Xbox Live Game Save
+      "*wisvc*" # Windows Insider Service
+    )) {
+    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
+    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
+    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 
+  }
+  
   # Disable Scheduled tasks
   Write-Host -ForegroundColor YELLOW  "-- Disable tasks ..."
   foreach ($task in @(
-    "*AitAgent*"
-    "*AnalyzeSystem*"
-    "*Appraiser*"
-    "*CloudExperienceHost*"
-    "*Consolidator*"
-    "*DiskDiagnosticDataCollector*"
-    "*DsSvcCleanup*"
-    "*DsSvcCleanup*"
-    "*EnableLicenseAcquisition*"
-    "*FamilySafetyMonitor*"
-    "*FamilySafetyMonitorToastTask*"
-    "*FamilySafetyRefresh*"
-    "*FamilySafetyRefreshTask*"
-    "*FamilySafetyUpload*"
-    "*GatherNetworkInfo*"
-    "*KernelCeipTask*"
-    "*License Validation*"
-    "*LicenseAcquisition*"
-    "*LoginCheck*"
-    "*Proxy*"
-    "*QueueReporting*"
-    "*RecommendedTroubleshootingScanner*"
-    "*SmartScreenSpecific*"
-    "*StartupAppTask*"
-    "*TempSignedLicenseExchange*"
-    "*UsbCeip*"
-    "*UsbCeip*"
-    "*WinSAT*"
-    "*XblGameSaveTask*"
-    "*XblGameSaveTaskLogon*"
-  )) {
+      "*AitAgent*"
+      "*AnalyzeSystem*"
+      "*Appraiser*"
+      "*CloudExperienceHost*"
+      "*Consolidator*"
+      "*DiskDiagnosticDataCollector*"
+      "*DsSvcCleanup*"
+      "*EnableLicenseAcquisition*"
+      "*FamilySafetyMonitor*"
+      "*FamilySafetyMonitorToastTask*"
+      "*FamilySafetyRefresh*"
+      "*FamilySafetyRefreshTask*"
+      "*FamilySafetyUpload*"
+      "*GatherNetworkInfo*"
+      "*KernelCeipTask*"
+      "*License Validation*"
+      "*LicenseAcquisition*"
+      "*LoginCheck*"
+      "*Proxy*"
+      "*QueueReporting*"
+      "*RecommendedTroubleshootingScanner*"
+      "*SmartScreenSpecific*"
+      "*TempSignedLicenseExchange*"
+      "*UsbCeip*"
+      "*UsbCeip*"
+      "*WinSAT*"
+      "*XblGameSaveTask*"
+      "*XblGameSaveTaskLogon*"
+    )) {
     Write-Host -ForegroundColor YELLOW  " Disabling $task..."
-    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 | Out-Null
+    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0
   }
 }
 
@@ -303,54 +275,65 @@ function hf_optimize_features_advanced() {
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
   foreach ($service in @(
+      "*TermService*" # Remote Desktop Services
+      "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
+      "*SessionEnv*" # Remote Desktop Configuration
+      
       "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
       "*Bonjour Service*" # bootcamp: Bonjour Service
-      "*ClickToRunSvc*" # Office Click-to-Run Service
+      # "*BootCampService*" # bootcamp: Boot Camp Service
+      
       "*FoxitReaderUpdateService*" # Foxit Reader Update Service
-      "*gupdate*" # Google Update Service (gupdate)
-      "*gupdatem*" # Google Update Service (gupdatem)
+      "*gupdate*" # Google Update Service
+      "*gupdatem*" # Google Update Service
+      
       "*PcaSvc*" # Program Compatibility Assistant Service
-      "*PhoneSvc*" # Phone Service
-      "*SessionEnv*" # Remote Desktop Configuration
-      "*SysMain*" # SysMain (Maintains and improves system performance)
-      "*TermService*" # Remote Desktop Services
-      "*Themes*" # Themes (Provides user experience theme management.)
-      "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
-      "*WbioSrvc*" # Windows Biometric Service
       "*wercplsupport*" # Problem Reports Control Panel Support
       "*WerSvc*" # Windows Error Reporting Service
-      "*wisvc*" # Windows Insider Service
+      
+      "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service   
+      "*PhoneSvc*" # Phone Service
+      "*Themes*" # Themes (Provides user experience theme management.)
+      "*WbioSrvc*" # Windows Biometric Service
+      "*Sense*" # Windows Defender Advanced Threat Protection Service
+
+      "*SysMain*" # SysMain (Maintains and improves system performance)
       "ndu" # Windows Network Data Usage Monitor
+      "*MicrosoftEdgeElevationService*" # Edge Update Service 
+      "*edgeupdate*" # Edge Update Service 
+      "*edgeupdatem*" # Edge Update Service
+      
+      # "*SecurityHealthService*"
+      
       # "*AppVClient*" # Microsoft App-V Client
       # "*AxInstSV*" # ActiveX Installer
-      # "*BootCampService*" # bootcamp: Boot Camp Service
-      # "*EventLog*" # Windows Event Log
-      # "*HomeGroupListener*"
-      # "*SecurityHealthService*"
       # "*SharedAccess*" # Internet Connection Sharing (ICS)
-      # "*shpamsvc*" # Shared PC Account Manager
-      # "*ssh-agent*" # OpenSSH Authentication Agent
-      # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. # OBS removing the next will disable WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
-      # "*TroubleshootingSvc*" # Recommended Troubleshooting Service
       # "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
+      
+      # craches
+      # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. OBS crashes WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
+      # "*ClickToRunSvc*" # Office Click-to-Run Service.
+      # "*shpamsvc*" # Shared PC Account Manager
+      # "*HomeGroupListener*" 
+      # "*UserManager*" # User Manager
     )) {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
-    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue | Out-Null
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 | Out-Null
+    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
+    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0
   }
   
   # Disable Scheduled tasks
   Write-Host -ForegroundColor YELLOW  "-- Disable tasks ..."
   foreach ($task in @(
-    "*CCleaner*"
-    "*GoogleCrashHandler*"
-    "*cftmon*"
-    "*SecurityHealthService*"
-    "Windows Defender Cache Maintenance"
-    "Windows Defender Cleanup"
-    "Windows Defender Scheduled Scan"
-    "Windows Defender Verification"
-  )) {
+      "*CCleaner*"
+      "*GoogleCrashHandler*"
+      "*cftmon*"
+      "*SecurityHealthService*"
+      "Windows Defender Cache Maintenance"
+      "Windows Defender Cleanup"
+      "Windows Defender Scheduled Scan"
+      "Windows Defender Verification"
+    )) {
     Write-Host -ForegroundColor YELLOW  "   Disabling $task..."
     Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 | Out-Null
   }
@@ -400,16 +383,16 @@ function hf_optimize_explorer() {
   # Disable Cortana
   Write-Host -ForegroundColor YELLOW  "-- Disabling Cortana..."
   If (!(Test-Path "HKCU:\Software\Microsoft\Personalization\Settings")) {
-      New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null
+    New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0
   If (!(Test-Path "HKCU:\Software\Microsoft\InputPersonalization")) {
-      New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization" -Force | Out-Null
+    New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization" -Force | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1 | Out-Null
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1 | Out-Null
   If (!(Test-Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore")) {
-      New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore" -Force | Out-Null| Out-Null 
+    New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore" -Force | Out-Null | Out-Null 
   } 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Type DWord -Value 0 | Out-Null
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
@@ -421,7 +404,7 @@ function hf_optimize_explorer() {
   Write-Host -ForegroundColor YELLOW "Removing AutoLogger file and restricting directory..."
   $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
   If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
-      Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"  | Out-Null
+    Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"  | Out-Null
   }
   icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
 
