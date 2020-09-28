@@ -859,6 +859,12 @@ function hf_install_battle_steam_stramio() {
   hf_choco_install battle.net steam stremio
 }
 
+function hf_install_msys2() {
+  hf_choco_install battle.net steam stremio
+  hf_choco_install msys2
+  hf_system_path_add 'C:\tools\msys64\mingw64\bin'
+}
+
 # ---------------------------------------
 # config functions
 # ---------------------------------------
@@ -897,11 +903,13 @@ function hf_windows_init_user_nomal() {
 
 function hf_windows_init_user_bash() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
-  Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
-  Write-Output "-- (2) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
+  Write-Output "-- (1) install Ubuntu from https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6"
+  Write-Output "-- (2) install WindowsTerminal from https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701"
+  Write-Output "-- (3) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
+  Write-Output "-- (4) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
-  hf_choco_install vscode gsudo msys2
-  hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
-  hf_system_path_add 'C:\tools\msys64\mingw64\bin'
+  hf_choco_install google-backup-and-sync
+  hf_choco_install vscode gsudo
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
+  hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }
