@@ -18,10 +18,10 @@ CYGWIN* | MINGW* | MSYS*)
   ;;
 esac
 
-# test WSL
+# fix for WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
-  *-microsoft*)
+  *-Microsoft*)
     IS_LINUX=""
     IS_WINDOWS=1
     IS_WINDOWS_WSL=1

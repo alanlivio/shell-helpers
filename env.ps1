@@ -811,12 +811,11 @@ function hf_wsl_fix_home_user() {
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
   # https://github.com/Microsoft/WSL/issues/3138
   # https://devblogs.microsoft.com/commandline/chmod-chown-wsl-improvements/
-  wsl -u root touch /etc/wsl.conf
-  wsl -u root  bash -c 'echo "[automount]" > /etc/wsl.conf'
-  wsl -u root  bash -c 'echo "enabled=true" >> /etc/wsl.conf'
-  wsl -u root  bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
-  wsl -u root  bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
-  wsl -u root  bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
+  wsl -u root bash -c 'echo "[automount]" > /etc/wsl.conf'
+  wsl -u root bash -c 'echo "enabled=true" >> /etc/wsl.conf'
+  wsl -u root bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
+  wsl -u root bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
+  wsl -u root bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
   wsl -t Ubuntu
 
   # ensure sudoer
