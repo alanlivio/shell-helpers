@@ -205,6 +205,14 @@ function hf_optimize_features() {
   
   # Disable tips
   Write-Host -ForegroundColor YELLOW  "-- Disable tips ..."
+  reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKCU\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
+  reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
+  
+  # Disable tips
+  Write-Host -ForegroundColor YELLOW  "-- Disable tips ..."
   reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
@@ -893,6 +901,6 @@ function hf_windows_init_user_bash() {
   hf_install_chocolatey
   hf_choco_install google-backup-and-sync
   hf_choco_install vscode gsudo
-  hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
+  hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader powershell-core
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }

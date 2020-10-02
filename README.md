@@ -73,3 +73,4 @@ For powershell windows optimization:
 * https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
 * https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
 * https://github.com/W4RH4WK/Debloat-Windows-10
+* https://github.com/Sycnex/Windows10Debloater
