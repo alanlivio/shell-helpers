@@ -738,7 +738,7 @@ function hf_windows_update() {
 
 function hf_choco_cleaner() {
   hf_choco_install choco-cleaner
-  \ProgramData\chocolatey\bin\Choco-Cleaner.ps1
+  \tools\BCURRAN3\choco-cleaner.ps1
 }
 
 function hf_choco_install() {
@@ -889,6 +889,7 @@ function hf_windows_init_user_nomal() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   Write-Output "-- (1) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
+  hf_choco_install google-backup-and-sync
   hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader
 }
 
@@ -900,7 +901,7 @@ function hf_windows_init_user_bash() {
   Write-Output "-- (4) in other PowerShell terminal, run hf_windows_sanity"
   hf_install_chocolatey
   hf_choco_install google-backup-and-sync
-  hf_choco_install vscode gsudo
-  hf_choco_install GoogleChrome vlc 7zip ccleaner FoxitReader powershell-core
+  hf_choco_install GoogleChrome
+  hf_choco_install vscode gsudo powershell-core
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }
