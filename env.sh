@@ -56,6 +56,7 @@ if test -n "$IS_WINDOWS"; then
 
   # fixes
   if test -n "$IS_WINDOWS_WSL"; then
+    alias start="cmd.exe /c start"
     # fix writting permissions
     if [[ "$(umask)" = "0000" ]]; then
       umask 0022
