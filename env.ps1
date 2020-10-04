@@ -174,7 +174,7 @@ function hf_optimize_features() {
   
   # Disable AutoRotation Hotkeys
   Write-Host -ForegroundColor YELLOW "-- Disabling AutoRotation Hotkeys..."
-  reg add "HKEY_CURRENT_USER\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
+  reg add "HKCU\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
   
   # Disable Sticky keys prompt
   Write-Host -ForegroundColor YELLOW  "-- Disabling Sticky keys prompt..." 
@@ -211,19 +211,11 @@ function hf_optimize_features() {
   reg add "HKCU\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
   
-  # Disable tips
-  Write-Host -ForegroundColor YELLOW  "-- Disable tips ..."
-  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
-  reg add "HKLM\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
-  
   # Disable Telemetry services
   Write-Host -ForegroundColor YELLOW  "-- Disable Telemetry services ..."
   foreach ($service in @(
-      # "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
-      # "*diagsvc*" # Diagnostic Execution Service
+      "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
+      "*diagsvc*" # Diagnostic Execution Service
       "*dmwappushservice*" # Device Management WAP Push message Routing Service
       "*DiagTrack*" # Connected User Experiences and Telemetry
       "*lfsvc*" # Geolocation Service
@@ -241,44 +233,8 @@ function hf_optimize_features() {
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 
   }
-  
-  # Disable Scheduled tasks
-  Write-Host -ForegroundColor YELLOW  "-- Disable tasks ..."
-  foreach ($task in @(
-      "*AitAgent*"
-      "*AnalyzeSystem*"
-      "*Appraiser*"
-      "*CloudExperienceHost*"
-      "*Consolidator*"
-      "*DiskDiagnosticDataCollector*"
-      "*DsSvcCleanup*"
-      "*EnableLicenseAcquisition*"
-      "*FamilySafetyMonitor*"
-      "*FamilySafetyMonitorToastTask*"
-      "*FamilySafetyRefresh*"
-      "*FamilySafetyRefreshTask*"
-      "*FamilySafetyUpload*"
-      "*GatherNetworkInfo*"
-      "*KernelCeipTask*"
-      "*License Validation*"
-      "*LicenseAcquisition*"
-      "*LoginCheck*"
-      "*Proxy*"
-      "*QueueReporting*"
-      "*RecommendedTroubleshootingScanner*"
-      "*SmartScreenSpecific*"
-      "*TempSignedLicenseExchange*"
-      "*UsbCeip*"
-      "*UsbCeip*"
-      "*WinSAT*"
-      "*XblGameSaveTask*"
-      "*XblGameSaveTaskLogon*"
-    )) {
-    Write-Host -ForegroundColor YELLOW  " Disabling $task..."
-    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0
-  }
 }
-
+  
 function hf_optimize_features_advanced() {
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
@@ -288,7 +244,7 @@ function hf_optimize_features_advanced() {
       "*SessionEnv*" # Remote Desktop Configuration
       
       "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
-      "*Bonjour Service*" # bootcamp: Bonjour Service
+      # "*Bonjour Service*" # bootcamp: Bonjour Service
       # "*BootCampService*" # bootcamp: Boot Camp Service
       
       "*FoxitReaderUpdateService*" # Foxit Reader Update Service
@@ -306,13 +262,11 @@ function hf_optimize_features_advanced() {
       "*Sense*" # Windows Defender Advanced Threat Protection Service
 
       "*SysMain*" # SysMain (Maintains and improves system performance)
-      "ndu" # Windows Network Data Usage Monitor
       "*MicrosoftEdgeElevationService*" # Edge Update Service 
       "*edgeupdate*" # Edge Update Service 
       "*edgeupdatem*" # Edge Update Service
       
       # "*SecurityHealthService*"
-      
       # "*AppVClient*" # Microsoft App-V Client
       # "*AxInstSV*" # ActiveX Installer
       # "*SharedAccess*" # Internet Connection Sharing (ICS)
@@ -328,22 +282,6 @@ function hf_optimize_features_advanced() {
     Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0
-  }
-  
-  # Disable Scheduled tasks
-  Write-Host -ForegroundColor YELLOW  "-- Disable tasks ..."
-  foreach ($task in @(
-      "*CCleaner*"
-      "*GoogleCrashHandler*"
-      "*cftmon*"
-      "*SecurityHealthService*"
-      "Windows Defender Cache Maintenance"
-      "Windows Defender Cleanup"
-      "Windows Defender Scheduled Scan"
-      "Windows Defender Verification"
-    )) {
-    Write-Host -ForegroundColor YELLOW  "   Disabling $task..."
-    Get-ScheduledTask -TaskName $task | Disable-ScheduledTask -ea 0 | Out-Null
   }
 }
 
@@ -383,9 +321,9 @@ function hf_optimize_explorer() {
   
   # Disable Bing
   Write-Host -ForegroundColor YELLOW  "-- Disable Bing search ..."
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
-  reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
+  reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
 
   # Disable Cortana
@@ -705,7 +643,7 @@ function hf_explorer_restart() {
 
 function hf_enable_dark_mode() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
-  reg add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
+  reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 }
 
 # ---------------------------------------
