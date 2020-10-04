@@ -443,6 +443,11 @@ function hf_gdb_run_bt_all_threads() {
 # git
 # ---------------------------------------
 
+function hf_git_overleaf_push_commit_all() {
+  git commit -am "Update from local git"
+  git push
+}
+
 function hf_git_kraken_folder() {
   gitkraken -z -p . >/dev/null &
 }
