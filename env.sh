@@ -44,9 +44,9 @@ if test -n "$IS_WINDOWS"; then
     alias hf_windows_path_tool='cygpath'
   fi
 
-  # hf_dev_shell_ps_call
+  # hf_env_ps_call
   DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
-  function hf_dev_shell_ps_call() {
+  function hf_env_ps_call() {
     powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
   }
 
@@ -2151,7 +2151,6 @@ function hf_clean_unused_folders() {
     "Images"
     "Movies"
     "Music"
-    "Pictures"
     "Public"
     "Templates"
     "Videos"
@@ -2160,6 +2159,7 @@ function hf_clean_unused_folders() {
   if test -n "$IS_LINUX"; then
     FOLDERS+=(
       "Documents" # sensible data in Windows
+      "Pictures"
       ".android"
       ".apport-ignore.xml "
       ".bash_logout"

@@ -675,8 +675,7 @@ function hf_windows_update() {
 # ---------------------------------------
 
 function hf_choco_cleaner() {
-  hf_choco_install choco-cleaner
-  \tools\BCURRAN3\choco-cleaner.ps1
+  gsudo \tools\BCURRAN3\choco-cleaner.ps1
 }
 
 function hf_choco_install() {
