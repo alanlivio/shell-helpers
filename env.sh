@@ -1647,7 +1647,7 @@ function hf_install_node() {
 
 function hf_install_powershell() {
   hf_log_func
-  hf_apt_fetch_install https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.18.04_amd64.deb
 }
 
 function hf_install_luarocks() {
@@ -2173,28 +2173,28 @@ function hf_clean_unused_folders() {
 
   if test -n "$IS_WINDOWS"; then
     FOLDERS+=(
-      "Links"
+      'Application\ Data'
       'Cookies'
+      'Local Settings'
+      'Start Menu'
       "3D Objects"
       "Contacts"
-      "Favorites"
       "Cookies"
+      "Favorites"
+      "Favorites"
       "Intel"
       "IntelGraphicsProfiles"
-      'Local Settings'
+      "Links"
       "MicrosoftEdgeBackups"
       "My\ Documents"
-      'Application\ Data'
-      # "Documents"
       "NetHood"
-      "OneDrive"
       "PrintHood"
       "Recent"
       "Saved Games"
       "Searches"
       "SendTo"
-      'Start Menu'
-      "Favorites"
+      # "Documents"
+      # "Pictures/"
     )
   fi
 

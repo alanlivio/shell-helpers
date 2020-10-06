@@ -153,10 +153,6 @@ function hf_optimize_features() {
   }
   Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
   
-  # Remove OneDrive
-  Write-Host -ForegroundColor YELLOW  "-- Remove OneDrive ..."
-  c:\\Windows\\SysWOW64\\OneDriveSetup.exe /uninstall
-  
   # Disable drives Autoplay
   Write-Host -ForegroundColor YELLOW "-- Disabling new drives Autoplay..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1  | Out-Null
@@ -511,7 +507,6 @@ function hf_optimize_store_apps() {
   Microsoft.WindowsFeedbackHub
   Microsoft.MicrosoftOfficeHub
   Microsoft.3DBuilder
-  Microsoft.OneDrive
   Microsoft.Print3D
   Microsoft.Office.OneNote
   Microsoft.Microsoft3DViewer
@@ -605,14 +600,41 @@ function hf_store_reinstall_all() {
 # explorer functions
 # ---------------------------------------
 
-function hf_explorer_hide_dotfiles() {
-  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+function hf_clean_unused_folders() {
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  $folders = @(
+    'Application\ Data'
+    'Cookies'
+    'Local Settings'
+    'Start Menu'
+    "3D Objects"
+    "Contacts"
+    "Cookies"
+    "Favorites"
+    "Favorites"
+    "Intel"
+    "IntelGraphicsProfiles"
+    "Links"
+    "MicrosoftEdgeBackups"
+    "My\ Documents"
+    "NetHood"
+    "PrintHood"
+    "Recent"
+    "Saved Games"
+    "Searches"
+    "SendTo"
+    # "Documents"
+    # "Pictures/"
+  )
+  $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
 
-function hf_explorer_remove_unused_folders() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
-  $folders = @("Favorites/", "OneDrive/", "Pictures/", "Public/", "Templates/", "Videos/", "Music/", "Links/", "Saved Games/", "Searches/", "SendTo/", "PrintHood", "MicrosoftEdgeBackups/", "IntelGraphicsProfiles/", "Contacts/", "3D Objects/", "Recent/", "NetHood/")
-  $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
+# ---------------------------------------
+# explorer functions
+# ---------------------------------------
+
+function hf_explorer_hide_dotfiles() {
+  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
 function hf_explorer_open_start_menu_folder() {
@@ -793,6 +815,25 @@ function hf_install_msys2() {
   hf_system_path_add 'C:\tools\msys64\mingw64\bin'
 }
 
+function hf_install_onedrive() {
+  $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
+  If (!(Test-Path $onedrive)) {
+    $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
+  }
+  Start-Process $onedrive -NoNewWindow -Wait
+}
+
+function hf_uninstall_onedrive() {
+  Stop-Process -Name "OneDrive*"
+  Start-Sleep 2
+  $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
+  If (!(Test-Path $onedrive)) {
+    $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
+  }
+  Start-Process $onedrive "/uninstall" -NoNewWindow -Wait
+  Start-Sleep 2
+}
+
 # ---------------------------------------
 # config functions
 # ---------------------------------------
@@ -815,7 +856,7 @@ function hf_config_wt_open() {
 
 function hf_windows_sanity() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
-  hf_explorer_remove_unused_folders
+  hf_clean_unused_folders
   hf_system_disable_password_policy
   hf_optimize_features
   hf_optimize_store_apps
