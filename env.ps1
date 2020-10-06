@@ -115,6 +115,7 @@ function hf_system_path_add($addPath) {
 # optimize functions
 # ---------------------------------------
 
+
 function hf_optimize_features() {
   # Visual to performace
   Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
@@ -176,7 +177,7 @@ function hf_optimize_features() {
   Write-Host -ForegroundColor YELLOW  "-- Disabling Sticky keys prompt..." 
   Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506" | Out-Null
   
-  # Disabling Autorun for all drives...
+  # Disabling Autorun for all drives
   Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
   If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
     New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
@@ -367,7 +368,10 @@ function hf_optimize_explorer() {
   # Set explorer to open to 'This PC'
   Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to 'This PC' ..."
   New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
-
+  
+  # Disable show frequent in Quick acess
+  New-ItemProperty -ErrorAction SilentlyContinue -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 -PropertyType DWORD -Force | Out-Null
+  
   # Remove * from This PC
   Write-Host -ForegroundColor YELLOW  "Removing user folders under This PC ..."
   
