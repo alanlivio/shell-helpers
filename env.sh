@@ -30,32 +30,13 @@ if test $IS_LINUX; then
 fi
 
 # ---------------------------------------
-# windows
+# windows/wsl
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-  # hide windows user files when ls home
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
-
-  # hf_windows_path_tool
+  # WSL or MINGW
   if test -n "$IS_WINDOWS_WSL"; then
     alias hf_windows_path_tool='wslpath'
-  elif test -n "$IS_WINDOWS_MINGW"; then
-    alias hf_windows_path_tool='cygpath'
-  fi
-
-  # hf_env_ps_call
-  DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
-  function hf_env_ps_call() {
-    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
-  }
-
-  # gsudo/choco alias
-  alias gsudo='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-  alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
-
-  # fixes
-  if test -n "$IS_WINDOWS_WSL"; then
     alias start="cmd.exe /c start"
     # fix writting permissions
     if [[ "$(umask)" = "0000" ]]; then
@@ -68,29 +49,42 @@ if test -n "$IS_WINDOWS"; then
     export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export LIBGL_ALWAYS_INDIRECT=1
 
+    function hf_wsl_install_essentials() {
+      sudo apt install xdg-utils xfce4 x11-apps git wget ca-certificates
+    }
+
+    function hf_wsl_x_pulseaudio_start() {
+      hf_windows_x_pulseaudio_kill
+      $(hf_windows_path_tool C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
+      "$(hf_windows_path_tool 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
+    }
+
+    function hf_wsl_x_pulseaudio_kill() {
+      cmd.exe /c "taskkill /IM pulseaudio.exe /F"
+      cmd.exe /c "taskkill /IM vcxsrv.exe /F"
+    }
   elif test -n "$IS_WINDOWS_MINGW"; then
+    alias hf_windows_path_tool='cygpath'
     alias sudo=''
     # if in a elevated shell, this force run code in non-admin
     # fix mingw tmp
     unset temp
     unset tmp
   fi
+  
+  # hide windows user files when ls home
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
+
+  # gsudo/choco alias
+  alias gsudo='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+  alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+  
+  # hf_env_ps_call
+  DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
+  function hf_env_ps_call() {
+    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
+  }
 fi
-
-function hf_windows_wsl_install_essentials() {
-  sudo apt install xdg-utils xfce4 x11-apps git wget ca-certificates
-}
-
-function hf_windows_x_pulseaudio_start() {
-  hf_windows_x_pulseaudio_kill
-  $(hf_windows_path_tool C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
-  "$(hf_windows_path_tool 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
-}
-
-function hf_windows_x_pulseaudio_kill() {
-  cmd.exe /c "taskkill /IM pulseaudio.exe /F"
-  cmd.exe /c "taskkill /IM vcxsrv.exe /F"
-}
 
 # ---------------------------------------
 # log
