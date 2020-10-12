@@ -2167,26 +2167,26 @@ function hf_clean_unused_folders() {
 
   if test -n "$IS_WINDOWS"; then
     FOLDERS+=(
-      'Application\ Data'
+      'Application Data'
       'Cookies'
       'Local Settings'
       'Start Menu'
-      "3D Objects"
-      "Contacts"
-      "Cookies"
-      "Favorites"
-      "Favorites"
-      "Intel"
-      "IntelGraphicsProfiles"
-      "Links"
-      "MicrosoftEdgeBackups"
-      "My\ Documents"
-      "NetHood"
-      "PrintHood"
-      "Recent"
-      "Saved Games"
-      "Searches"
-      "SendTo"
+      '3D Objects'
+      'Contacts'
+      'Cookies'
+      'Favorites'
+      'Favorites'
+      'Intel'
+      'IntelGraphicsProfiles'
+      'Links'
+      'MicrosoftEdgeBackups'
+      'My Documents'
+      'NetHood'
+      'PrintHood'
+      'Recent'
+      'Saved Games'
+      'Searches'
+      'SendTo'
       # "Documents"
       # "Pictures/"
     )

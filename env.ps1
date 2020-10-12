@@ -598,28 +598,28 @@ function hf_store_reinstall_all() {
 function hf_clean_unused_folders() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   $folders = @(
-    'Application\ Data'
+    'Application Data'
     'Cookies'
     'Local Settings'
     'Start Menu'
-    "3D Objects"
-    "Contacts"
-    "Cookies"
-    "Favorites"
-    "Favorites"
-    "Intel"
-    "IntelGraphicsProfiles"
-    "Links"
-    "MicrosoftEdgeBackups"
-    "My\ Documents"
-    "NetHood"
-    "PrintHood"
-    "Recent"
-    "Saved Games"
-    "Searches"
-    "SendTo"
-    # "Documents"
-    # "Pictures/"
+    '3D Objects'
+    'Contacts'
+    'Cookies'
+    'Favorites'
+    'Favorites'
+    'Intel'
+    'IntelGraphicsProfiles'
+    'Links'
+    'MicrosoftEdgeBackups'
+    'My Documents'
+    'NetHood'
+    'PrintHood'
+    'Recent'
+    'Saved Games'
+    'Searches'
+    'SendTo'
+    # 'Documents'
+    # 'Pictures/'
   )
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ErrorAction Ignore $_ }
 }
