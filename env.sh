@@ -245,25 +245,33 @@ if test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# macos-only
+# macos-only functions
 # ---------------------------------------
 
 if test -n "$IS_MAC"; then
-  function hf_mac_install_homebrew() {
+  function hf_mac_install_brew() {
     hf_log_func
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   }
 
   function hf_mac_install_bash() {
     hf_log_func
-    brew install bash
+    hf_brew_install bash
     bash --version
   }
 
   function hf_mac_init() {
     hf_log_func
-    hf_mac_install_homebrew
+    hf_mac_install_brew
     hf_mac_install_bash
+  }
+
+  function hf_brew_install() {
+    brew install "$@"
+  }
+
+  function hf_brew_upgrade() {
+    brew update && brew upgrade
   }
 fi
 
