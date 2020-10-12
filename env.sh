@@ -71,14 +71,14 @@ if test -n "$IS_WINDOWS"; then
     unset temp
     unset tmp
   fi
-  
+
   # hide windows user files when ls home
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
 
   # gsudo/choco alias
   alias gsudo='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
   alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
-  
+
   # hf_env_ps_call
   DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
   function hf_env_ps_call() {
