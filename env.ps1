@@ -697,15 +697,16 @@ function hf_choco_cleaner() {
 }
 
 function hf_choco_install() {
-  choco install -y --acceptlicense --no-progress --ignorechecksum  ($args -join ";")
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString() $args
+  choco install -y --acceptlicense ($args -join ";")
 }
 
 function hf_choco_uninstall() {
-  choco uninstall -y --acceptlicense --no-progress ($args -join ";")
+  choco uninstall -y --acceptlicense ($args -join ";")
 }
 
 function hf_choco_upgrade() {
-  choco upgrade -y --acceptlicense --no-progress  --ignorechecksum all
+  choco upgrade -y --acceptlicense all
 }
 
 function hf_choco_list_installed() {
@@ -793,9 +794,15 @@ function hf_install_chocolatey() {
     choco feature disable -n showDownloadProgress
     choco feature disable -n showNonElevatedWarnings
     choco feature disable -n logValidationResultsOnWarnings
+    choco feature disable -n logEnvironmentValues 
+    choco feature disable -n exitOnRebootDetected
+    choco feature disable -n warnOnUpcomingLicenseExpiration
+    choco feature enable -n stopOnFirstPackageFailure
+    choco feature enable -n skipPackageUpgradesWhenNotInstalled 
+    choco feature enable -n logWithoutColor 
     choco feature enable -n allowEmptyChecksumsSecure
     choco feature enable -n allowGlobalConfirmation
-    choco feature enable -n exitOnRebootDetected
+    choco feature enable -n failOnAutoUninstaller 
     choco feature enable -n removePackageInformationOnUninstall
     choco feature enable -n useRememberedArgumentsForUpgrades
   }
@@ -805,9 +812,8 @@ function hf_install_battle_steam_stramio() {
   hf_choco_install battle.net steam stremio
 }
 
-function hf_install_msys2() {
-  hf_choco_install battle.net steam stremio
-  hf_choco_install msys2
+function hf_install_msys() {
+  hf_choco_install msys
   hf_system_path_add 'C:\tools\msys64\mingw64\bin'
 }
 
@@ -863,8 +869,7 @@ function hf_init_user_nomal() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
   hf_install_chocolatey
-  hf_choco_install google-backup-and-sync
-  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
+  hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
 function hf_init_user_bash() {
@@ -874,8 +879,7 @@ function hf_init_user_bash() {
   Write-Output "-- (3) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   Write-Output "-- (4) in other PowerShell terminal, run hf_init_windows_sanity"
   hf_install_chocolatey
-  hf_choco_install google-backup-and-sync
-  hf_choco_install googlechrome
-  hf_choco_install vscode gsudo powershell-core
+  hf_choco_install google-backup-and-sync googlechrome vscode gsudo powershell-core
+  # latter: vlc 7zip ccleaner FoxitReader choco-cleaner
   hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }

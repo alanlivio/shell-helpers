@@ -82,7 +82,7 @@ if test -n "$IS_WINDOWS"; then
   # hf_env_ps_call
   DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
   function hf_env_ps_call() {
-    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $1 }"
+    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $@ }"
   }
 fi
 
@@ -164,59 +164,10 @@ function hf_profile_reload() {
 }
 
 # ---------------------------------------
-# windows
+# msys
 # ---------------------------------------
 
-if test -n "$IS_WINDOWS"; then
-
-  # ---------------------------------------
-  # choco
-  # ---------------------------------------
-  function hf_choco_install() {
-    hf_log_func
-    choco install -y --acceptlicense --no-progress --ignorechecksum "$@"
-  }
-
-  function hf_choco_uninstall() {
-    choco uninstall -y --acceptlicense --no-progress "$@"
-  }
-
-  function hf_choco_upgrade() {
-    hf_log_func
-    choco upgrade -y --acceptlicense --no-progress --ignorechecksum all
-  }
-
-  function hf_choco_list_installed() {
-    choco list -l
-  }
-
-  function hf_choco_cleaner() {
-    hf_log_func
-    # hf_choco_install choco-cleaner
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "\ProgramData\chocolatey\bin\Choco-Cleaner.ps1"
-  }
-
-  # ---------------------------------------
-  # windows install
-  # ---------------------------------------
-
-  function hf_install_choco() {
-    hf_log_func
-    powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-  }
-
-  # ---------------------------------------
-  # windows terminal
-  # ---------------------------------------
-
-  function hf_terminal_win_open_settings() {
-    hf_log_func
-    code $(wslpath -w $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/profiles.json)
-  }
-
-  # ---------------------------------------
-  # msys
-  # ---------------------------------------
+if test -n "$IS_WINDOWS_MINGW"; then
 
   function hf_msys_search() {
     hf_log_func
