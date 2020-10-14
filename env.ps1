@@ -464,53 +464,51 @@ function hf_optimize_store_apps() {
 
   # windows
   $pkgs = '
-  Microsoft.MicrosoftEdge.Stable
-  Microsoft.XboxGameOverlay
-  Microsoft.GetHelp
-  Microsoft.XboxApp
-  Microsoft.Xbox.TCUI
-  Microsoft.XboxSpeechToTextOverlay
-  Microsoft.Wallet
-  Microsoft.MinecraftUWP
   A278AB0D.MarchofEmpires
-  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
   king.com.BubbleWitch3Saga
-  Microsoft.Messaging
+  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
+  Microsoft.3DBuilder
   Microsoft.Appconnector
   Microsoft.BingNews
-  Microsoft.SkypeApp
   Microsoft.BingSports
+  Microsoft.BingWeather
   Microsoft.CommsPhone
   Microsoft.ConnectivityStore
-  Microsoft.Office.Sway
-  Microsoft.WindowsPhone
-  Microsoft.BingNews
-  Microsoft.XboxIdentityProvider
-  Microsoft.StorePurchaseApp
   Microsoft.DesktopAppInstaller
-  Microsoft.BingWeather
-  Microsoft.MicrosoftStickyNotes
-  Microsoft.MicrosoftSolitaireCollection
-  Microsoft.OneConnect
-  Microsoft.People
-  Microsoft.ZuneMusic
-  Microsoft.ZuneVideo
+  Microsoft.GetHelp
   Microsoft.Getstarted
-  Microsoft.XboxApp
-  Microsoft.windowscommunicationsapps
-  Microsoft.WindowsMaps
-  Microsoft.3DBuilder
-  Microsoft.WindowsFeedbackHub
-  Microsoft.MicrosoftOfficeHub
-  Microsoft.3DBuilder
-  Microsoft.Print3D
-  Microsoft.Office.OneNote
+  Microsoft.Messaging
   Microsoft.Microsoft3DViewer
-  Microsoft.XboxGamingOverlay
+  Microsoft.MicrosoftEdge.Stable
+  Microsoft.MicrosoftOfficeHub
+  Microsoft.MicrosoftSolitaireCollection
+  Microsoft.MicrosoftStickyNotes
+  Microsoft.MinecraftUWP
+  Microsoft.MixedReality.Portal
   Microsoft.MSPaint
   Microsoft.Office.Desktop
-  Microsoft.MicrosoftSolitaireCollection
-  Microsoft.MixedReality.Portal'
+  Microsoft.Office.OneNote
+  Microsoft.Office.Sway
+  Microsoft.MicrosoftOfficeHub
+  Microsoft.OneConnect
+  Microsoft.People
+  Microsoft.Print3D
+  Microsoft.StorePurchaseApp
+  Microsoft.Wallet
+  Microsoft.WindowsAlarms
+  Microsoft.windowscommunicationsapps
+  Microsoft.WindowsFeedbackHub
+  Microsoft.WindowsMaps
+  Microsoft.WindowsPhone
+  Microsoft.Xbox.TCUI
+  Microsoft.XboxApp
+  Microsoft.XboxGameOverlay
+  Microsoft.XboxGamingOverlay
+  Microsoft.XboxIdentityProvider
+  Microsoft.XboxSpeechToTextOverlay
+  Microsoft.ZuneMusic
+  Microsoft.ZuneVideo
+  '
   $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_app $_ }
 
   # others

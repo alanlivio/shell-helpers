@@ -1,7 +1,6 @@
 <h1 align="center">dev-env</h1>
 
-This project aims to support creating a minimal developer environment in different
-operating systems. It provides helper functions to configure:
+This project aims to support creating a minimal developer environment in different operating systems. It provides helper functions to configure:
 
 | cmd shells | graphical shells | terminals | code editors |
 | :-: | :-: | :-: | :-: |
