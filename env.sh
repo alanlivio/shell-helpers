@@ -82,7 +82,7 @@ if test -n "$IS_WINDOWS"; then
   # hf_env_ps_call
   DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
   function hf_env_ps_call() {
-    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $@ }"
+    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $* }"
   }
 fi
 
@@ -1119,16 +1119,17 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ...>"}
   hf_log_func
-  PKGS_TO_INSTALL=""
-  INSTALLED_LIST="$(code --list-extensions)"
+  local PKGS_TO_INSTALL=""
+  local INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
+  code --list-extensions >$INSTALLED_LIST_TMP_FILE
   for i in "$@"; do
-    echo "$INSTALLED_LIST" | grep -i "^$i" &>/dev/null
+    grep -i "^$i" &>/dev/null <$INSTALLED_LIST_TMP_FILE
     if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+      PKGS_TO_INSTALL="$i $PKGS_TO_INSTALL"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
-  if test -n "$PKGS_TO_INSTALL"; then
+  if ! test -z $PKGS_TO_INSTALL; then
+    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     for i in $PKGS_TO_INSTALL; do
       code --install-extension $i
     done
