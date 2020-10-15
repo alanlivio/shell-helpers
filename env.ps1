@@ -75,7 +75,7 @@ function hf_system_rename($new_name) {
   Rename-Computer -NewName "$new_name"
 }
 
-Function Restart {
+Function hf_system_restart {
   Write-Host -ForegroundColor YELLOW "Restarting..."
   Restart-Computer
 }
@@ -84,8 +84,8 @@ function hf_system_rename($new_name) {
   Rename-Computer -NewName "$new_name"
 }
 
-function hf_system_win_version() {
-  Get-ComputerInfo | Select-Object windowsversion
+function hf_system_info() {
+  cmd.exe /c systeminfo
 }
 
 function hf_system_disable_password_policy {
