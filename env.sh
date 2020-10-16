@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/env.sh"
 SCRIPT_CFG="$SCRIPT_DIR/env-cfg.sh"
 
-# test OS
+# detect OS
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
@@ -18,7 +18,7 @@ CYGWIN* | MINGW* | MSYS*)
   ;;
 esac
 
-# fix for WSL
+# detect WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
   *icrosoft*) # (M/m)icrosoft
@@ -27,6 +27,16 @@ if test $IS_LINUX; then
     IS_WINDOWS_WSL=1
     ;;
   esac
+fi
+
+alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+
+# ---------------------------------------
+# load env-cfg.sh
+# ---------------------------------------
+
+if test -f $SCRIPT_CFG; then
+  source $SCRIPT_CFG
 fi
 
 # ---------------------------------------
@@ -101,8 +111,6 @@ function hf_log_error() {
 function hf_log_msg() {
   hf_log_wrap "\033[00;33m-- $* \033[00m"
 }
-
-alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 
 function hf_log_msg_2nd() {
   hf_log_wrap "\033[00;33m-- > $* \033[00m"
@@ -1119,8 +1127,8 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ...>"}
   hf_log_func
-  local PKGS_TO_INSTALL=""
-  local INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
+  PKGS_TO_INSTALL=""
+  INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
   code --list-extensions >$INSTALLED_LIST_TMP_FILE
   for i in "$@"; do
     grep -i "^$i" &>/dev/null <$INSTALLED_LIST_TMP_FILE
@@ -2170,10 +2178,3 @@ function hf_clean_unused_folders() {
   done
 }
 
-# ---------------------------------------
-# load env-cfg.sh
-# ---------------------------------------
-
-if test -f $SCRIPT_CFG; then
-  source $SCRIPT_CFG
-fi
