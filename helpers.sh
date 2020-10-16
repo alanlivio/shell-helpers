@@ -5,8 +5,8 @@
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/env.sh"
-SCRIPT_CFG="$SCRIPT_DIR/env-cfg.sh"
+SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
+SCRIPT_CFG="$SCRIPT_DIR/helpers-cfg.sh"
 
 # detect OS
 case "$(uname -s)" in
@@ -90,9 +90,9 @@ if test -n "$IS_WINDOWS"; then
   alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
 
   # hf_env_ps_call
-  DEV_SHELL_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/env.ps1")
+  HELPERS_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/helpers.ps1")
   function hf_env_ps_call() {
-    powershell.exe -command "& { . $DEV_SHELL_PS_WIN_PATH; $* }"
+    powershell.exe -command "& { . $HELPERS_PS_WIN_PATH; $* }"
   }
 fi
 

@@ -1,6 +1,7 @@
-<h1 align="center">dev-env</h1>
+<h1 align="center">shell-helpers</h1>
 
-This project aims to support creating a minimal developer environment in different operating systems. It provides helper functions to configure:
+This project offers different helpers functions for both `bash` and `pwsh`.
+In particular, it support creating a minimal developer environment in different operating systems by configure:
 
 | cmd shells | graphical shells | terminals | code editors |
 | :-: | :-: | :-: | :-: |
@@ -25,32 +26,32 @@ In particular, there are helper functions for:
   + configure terminals (bash, VSCode Integrated Terminal)
   + configure VSCode
 
-## How to use in Ubuntu, macOS or in WSL
+### How to use in Ubuntu, macOS, or WSL
 
-The dev-env can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
-To do that, fetch env.sh and insert the following command at the end of your `~/.bashrc` :
+The shell-helpers can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
+To do that, fetch helpers.sh and insert the following command at the end of your `~/.bashrc` :
 
 ``` bash
-wget -O ~/.config/env.sh https://raw.githubusercontent.com/alanlivio/dev-env/master/env.sh &&\
- echo "source ~/.config/env.sh" >> ~/.bashrc &&\
+wget -O ~/.config/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
+ echo "source ~/.config/helpers.sh" >> ~/.bashrc &&\
  source ~/.bashrc
 ```
 
-## How to use in Windows
+### How to use in Windows
 
-The dev-env can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).
-To do that, fetch env.ps1 and import it as powershell module:
+The shell-helpers can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).
+To do that, fetch helpers.ps1 and import it as powershell module:
 
 ``` powershell
-Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/dev-env/master/env.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\env.ps1;`
+Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
  Set-ExecutionPolicy unrestricted -force;`
- Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\env.ps1;`
+ Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
  hf_profile_install
 ```
 
-# References and Thanks
+### References and Thanks
 
-Other projects used as inspiration or reference.
+Other projects were used as inspiration and reference.
 
 For bash:
 
