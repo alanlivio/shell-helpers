@@ -40,6 +40,38 @@ if test -f $SCRIPT_CFG; then
 fi
 
 # ---------------------------------------
+# init functions
+# ---------------------------------------
+
+function hf_init_gnome() {
+  hf_log_func
+  hf_gnome_dark
+  hf_gnome_sanity
+  hf_gnome_disable_unused_apps_in_search
+  hf_gnome_disable_super_workspace_change
+  hf_install_curl
+  hf_install_chrome
+  hf_install_vscode
+  hf_install_insync
+  hf_clean_unused_folders
+}
+
+if test -n "$IS_MAC"; then
+  function hf_init_mac() {
+    hf_log_func
+    hf_mac_install_brew
+    hf_mac_install_bash
+  }
+fi
+
+if test -n "$IS_WINDOWS"; then
+  function hf_init_windows() {
+    hf_env_ps_call
+    hf_env_ps_call "hf_init_user_bash"
+  }
+fi
+
+# ---------------------------------------
 # windows/wsl
 # ---------------------------------------
 
@@ -58,10 +90,6 @@ if test -n "$IS_WINDOWS"; then
     export DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export LIBGL_ALWAYS_INDIRECT=1
-
-    function hf_wsl_install_essentials() {
-      sudo apt install xdg-utils xfce4 x11-apps git wget ca-certificates
-    }
 
     function hf_wsl_x_pulseaudio_start() {
       hf_windows_x_pulseaudio_kill
@@ -217,12 +245,6 @@ if test -n "$IS_MAC"; then
     hf_log_func
     hf_brew_install bash
     bash --version
-  }
-
-  function hf_mac_init() {
-    hf_log_func
-    hf_mac_install_brew
-    hf_mac_install_bash
   }
 
   function hf_brew_install() {
@@ -744,6 +766,11 @@ function hf_latex_clean() {
   rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.lof ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls ./*.bcf
 }
 
+function hf_latex_apt_essentials() {
+  local PKGS_TO_INSTALL+="texlive-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-extra-utils texlive-fonts-extra texlive-xetex texlive-lang-english"
+  hf_apt_install_packages $PKGS_TO_INSTALL
+}
+
 function hf_latex_gitignore() {
   hf_git_gitignore_create latex >.gitignore
   echo "main.pdf" >>.gitignore
@@ -1209,19 +1236,6 @@ function hf_mount_list() {
 # ---------------------------------------
 # gnome
 # ---------------------------------------
-
-function hf_gnome_init() {
-  hf_log_func
-  hf_gnome_dark
-  hf_gnome_sanity
-  hf_gnome_disable_unused_apps_in_search
-  hf_gnome_disable_super_workspace_change
-  hf_install_curl
-  hf_install_chrome
-  hf_install_vscode
-  hf_install_insync
-  hf_clean_unused_folders
-}
 
 function hf_gnome_execute_desktop_file() {
   awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' $1
@@ -2177,4 +2191,3 @@ function hf_clean_unused_folders() {
     fi
   done
 }
-
