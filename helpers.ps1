@@ -624,7 +624,8 @@ function hf_clean_unused_folders() {
 }
 
 function hf_clean_choco() {
-  gsudo \tools\BCURRAN3\choco-cleaner.ps1
+  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  gsudo \tools\BCURRAN3\choco-cleaner.ps1 | Out-Null
 }
 
 # ---------------------------------------
