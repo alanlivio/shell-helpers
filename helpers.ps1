@@ -576,7 +576,7 @@ function hf_store_list_installed() {
 
 function hf_store_install($name) {
   Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
-  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
+  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
 }
 
 function hf_store_uninstall_app($name) {
@@ -754,18 +754,17 @@ function hf_wsl_ubuntu_set_default_user() {
   ubuntu.exe config --default-user alan
 }
 
-function hf_wsl_install_ubuntu() {
-  hf_store_install CanonicalGroupLimited.UbuntuonWindows
-}
-
-function hf_wsl_enable_features() {
-  Write-Output "-- (1) after hf_wsl_enable_features, reboot "
-  Write-Output "-- (2) in PowerShell terminal, run hf_wsl_install_ubuntu"
-  Write-Output "-- (3) after install ubuntu, in PowerShell terminal, run hf_wsl_fix_home_user"
+function hf_wsl_enable() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+  Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
+  msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
+}
+
+function hf_wsl_set_version2() {
+  wsl --set-version Ubuntu 2
 }
 
 function hf_wsl_fix_home_user() {
@@ -892,13 +891,15 @@ function hf_init_user_nomal() {
 
 function hf_init_user_bash() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
-  Write-Output "-- (1) install Ubuntu from https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6"
-  Write-Output "-- (2) install WindowsTerminal from https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701"
-  Write-Output "-- (3) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
-  Write-Output "-- (4) in other PowerShell terminal, run hf_init_windows_sanity"
+  Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
+  Write-Output "-- (2) in other PowerShell terminal, run hf_wsl_enable"
+  Write-Output "-- (3) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
+  Write-Output "-- (4) when Ubuntu installed, run hf_wsl_enable"
+  Write-Output "-- (4) when Ubuntu installed, run hf_wsl_set_version2"
+  Write-Output "-- (5) when Ubuntu installed, run hf_wsl_fix_home_user"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vscode gsudo powershell-core
-  # latter: vlc 7zip ccleaner FoxitReader choco-cleaner
-  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  hf_store_install Microsoft.WindowsTerminal
+  hf_store_install CanonicalGroupLimited.UbuntuonWindows
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }
