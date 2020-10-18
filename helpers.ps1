@@ -87,6 +87,9 @@ function hf_system_rename($new_name) {
 function hf_system_info() {
   cmd.exe /c systeminfo
 }
+function hf_system_env() {
+  [Environment]::GetEnvironmentVariables()
+}
 
 function hf_system_disable_password_policy {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
@@ -97,7 +100,10 @@ function hf_system_disable_password_policy {
   Remove-Item -Path $tmpfile
 }
 
-function hf_system_path_add($addPath) {
+# ---------------------------------------
+# path functions
+# ---------------------------------------
+function hf_path_add($addPath) {
   if (Test-Path $addPath) {
     $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
     $regexAddPath = [regex]::Escape($addPath)
@@ -111,10 +117,22 @@ function hf_system_path_add($addPath) {
   }
 }
 
+function hf_path_print($addPath) {
+  $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
+  Write-Output $path
+}
+
+function hf_path_add_msys() {
+  hf_path_add 'C:\tools\msys64\mingw64\bin'
+}
+function hf_path_add_choco_tools() {
+  $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
+  hf_path_add $chocotools
+}
+
 # ---------------------------------------
 # optimize functions
 # ---------------------------------------
-
 
 function hf_optimize_features() {
   # Visual to performace
@@ -295,7 +313,7 @@ function hf_optimize_explorer() {
 
   # Hide task view button
   Write-Host -ForegroundColor YELLOW  "-- Hide taskview button ..."
-  Remove-Item -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse  -ea 0| Out-Null
+  Remove-Item -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse  -ea 0 | Out-Null
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
 
   # Hide taskbar people icon
@@ -371,7 +389,7 @@ function hf_optimize_explorer() {
   New-ItemProperty -ea 0 -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
   
   # Disable show frequent in Quick acess
-   Write-Host -ForegroundColor YELLOW  "-- Disable show frequent in Quick acess ..."
+  Write-Host -ForegroundColor YELLOW  "-- Disable show frequent in Quick acess ..."
   New-ItemProperty -ea 0 -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 -PropertyType DWORD -Force | Out-Null
   
   # Remove * from This PC
@@ -448,7 +466,7 @@ function hf_optimize_explorer() {
 
   # Disable context menu 'Send to'
   Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
-  Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse -ea 0| Out-Null
+  Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse -ea 0 | Out-Null
 
   # Disable store search for unknown extensions
   Write-Host -ForegroundColor YELLOW  "-- Disable store search unknown extensions ..."  
@@ -782,7 +800,7 @@ function hf_wsl_fix_home_user() {
 # install function
 # ---------------------------------------
 
-function hf_install_chocolatey() {
+function hf_install_choco() {
   if (-Not (Get-Command 'choco' -ea 0)) {
     Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -810,10 +828,11 @@ function hf_install_chocolatey() {
 function hf_install_battle_steam_stramio() {
   hf_choco_install battle.net steam stremio
 }
-
-function hf_install_msys() {
-  hf_choco_install msys
-  hf_system_path_add 'C:\tools\msys64\mingw64\bin'
+function hf_install_luacheck() {
+  $luacheck_path = "C:\tools\luacheck.exe"
+  If (!(Test-Path $luacheck_path)) {
+    Invoke-WebRequest https://github.com/mpeterv/luacheck/releases/download/0.23.0/luacheck.exe -OutFile $luacheck_path
+  }
 }
 
 function hf_install_onedrive() {
@@ -867,7 +886,7 @@ function hf_init_windows_sanity() {
 function hf_init_user_nomal() {
   Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
   Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
-  hf_install_chocolatey
+  hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
@@ -877,8 +896,9 @@ function hf_init_user_bash() {
   Write-Output "-- (2) install WindowsTerminal from https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701"
   Write-Output "-- (3) in other PowerShell terminal, run hf_config_install_wt <profiles.jon>"
   Write-Output "-- (4) in other PowerShell terminal, run hf_init_windows_sanity"
-  hf_install_chocolatey
+  hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vscode gsudo powershell-core
   # latter: vlc 7zip ccleaner FoxitReader choco-cleaner
-  hf_system_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }

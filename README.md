@@ -1,7 +1,7 @@
 <h1 align="center">shell-helpers</h1>
 
 This project offers different helpers functions for both `bash` and `pwsh`.
-In particular, it support creating a minimal developer environment in different operating systems by configure:
+In particular, it supports creating a minimal developer environment in different operating systems by configure:
 
 | cmd shells | graphical shells | terminals | code editors |
 | :-: | :-: | :-: | :-: |
