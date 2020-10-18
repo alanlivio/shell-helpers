@@ -1623,7 +1623,8 @@ function hf_install_node() {
 
 function hf_install_powershell() {
   hf_log_func
-  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.18.04_amd64.deb
+  hf_apt_install_packages liblttng-ust0 $(hfl_apt_lastest_pkgs_names libssl libicu6)
+  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.ubuntu.18.04_amd64.deb
 }
 
 function hf_install_luarocks() {
@@ -1928,6 +1929,15 @@ function hf_apt_install_packages() {
   if test -n "$PKGS_TO_INSTALL"; then
     sudo apt install -y $PKGS_TO_INSTALL
   fi
+}
+
+function hfl_apt_lastest_pkgs_names(){
+  local PKGS_NAMES=""
+  for i in "$@"; do
+    PKGS_NAMES+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
+    PKGS_NAMES+=" "
+  done
+  echo $PKGS_NAMES
 }
 
 function hf_apt_autoremove() {
