@@ -171,6 +171,7 @@ function hf_optimize_features() {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
   }
   Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
+  Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Type DWord -Value 1 | Out-Null
   
   # Disable drives Autoplay
   Write-Host -ForegroundColor YELLOW "-- Disabling new drives Autoplay..."
