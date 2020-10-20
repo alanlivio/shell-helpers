@@ -78,7 +78,7 @@ fi
 if test -n "$IS_WINDOWS"; then
   # WSL or MINGW
   if test -n "$IS_WINDOWS_WSL"; then
-    alias hf_windows_path_tool='wslpath'
+    alias unixpath='wslpath'
     alias start="cmd.exe /c start"
     # fix writting permissions
     if [[ "$(umask)" = "0000" ]]; then
@@ -93,8 +93,8 @@ if test -n "$IS_WINDOWS"; then
 
     function hf_wsl_x_pulseaudio_start() {
       hf_windows_x_pulseaudio_kill
-      $(hf_windows_path_tool C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
-      "$(hf_windows_path_tool 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
+      $(unixpath C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
+      "$(unixpath 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
     }
 
     function hf_wsl_x_pulseaudio_kill() {
@@ -102,7 +102,7 @@ if test -n "$IS_WINDOWS"; then
       cmd.exe /c "taskkill /IM vcxsrv.exe /F"
     }
   elif test -n "$IS_WINDOWS_MINGW"; then
-    alias hf_windows_path_tool='cygpath'
+    alias unixpath='cygpath'
     alias sudo=''
     # if in a elevated shell, this force run code in non-admin
     # fix mingw tmp
@@ -114,11 +114,11 @@ if test -n "$IS_WINDOWS"; then
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
 
   # gsudo/choco alias
-  alias gsudo='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-  alias choco='$(hf_windows_path_tool "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+  alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+  alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
 
   # hf_env_ps_call
-  HELPERS_PS_WIN_PATH=$(hf_windows_path_tool -w "$SCRIPT_DIR/helpers.ps1")
+  HELPERS_PS_WIN_PATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
   function hf_env_ps_call() {
     powershell.exe -command "& { . $HELPERS_PS_WIN_PATH; $* }"
   }
@@ -1931,7 +1931,7 @@ function hf_apt_install_packages() {
   fi
 }
 
-function hfl_apt_lastest_pkgs_names(){
+function hfl_apt_lastest_pkgs_names() {
   local PKGS_NAMES=""
   for i in "$@"; do
     PKGS_NAMES+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
