@@ -311,6 +311,18 @@ function hf_audio_compress() {
 # video
 # ---------------------------------------
 
+function hf_video_add_srt_track() {
+  : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
+  hf_log_func
+   ffmpeg -i $1 -i $2 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 $3
+}
+
+function hf_video_add_srt_in_picutre() {
+  : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
+  hf_log_func
+  ffmpeg -i $1 -filter:v subtitles=$2 $3
+}
+
 function hf_video_create_by_image() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
   hf_log_func
