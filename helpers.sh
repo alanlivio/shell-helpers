@@ -903,17 +903,17 @@ function hf_pdf_remove_watermark() {
 
 function hf_pdf_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-compressed.pdf $1
+  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${1%.*}-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard1() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer -sOutputFile=$1-compressed.pdf $1
+  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer -sOutputFile=${1%.*}-compressed.pdf $1
 }
 
 function hf_pdf_compress_hard2() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$1-compressed.pdf $1
+  ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=${1%.*}-compressed.pdf $1
 }
 
 function hf_pdf_count_words() {
