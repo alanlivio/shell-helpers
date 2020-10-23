@@ -17,6 +17,8 @@ if (Test-Path $SCRIPT_CFG) {
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
+$hf_log_func = 'Write-Host -ForegroundColor YELLOW "--" $MyInvocation.MyCommand.ToString()'
+#C19C00
 
 # ---------------------------------------
 # go home
@@ -56,6 +58,7 @@ function hf_powershell_profiles_list() {
 }
 
 function hf_powershell_profiles_reset() {
+  Invoke-Expression $hf_log_func
   $profile.AllUsersAllHosts = "\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
   $profile.AllUsersCurrentHost = "\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
   $profile.CurrentUserAllHosts = "WindowsPowerShell\profile.ps1"
@@ -92,7 +95,7 @@ function hf_system_env() {
 }
 
 function hf_system_disable_password_policy {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   $tmpfile = New-TemporaryFile
   secedit /export /cfg $tmpfile /quiet
   (Get-Content $tmpfile).Replace("PasswordComplexity = 1", "PasswordComplexity = 0").Replace("MaximumPasswordAge = 42", "MaximumPasswordAge = -1") | Out-File $tmpfile
@@ -135,6 +138,7 @@ function hf_path_add_choco_tools() {
 # ---------------------------------------
 
 function hf_optimize_features() {
+  Invoke-Expression $hf_log_func
   # Visual to performace
   Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
@@ -253,6 +257,7 @@ function hf_optimize_features() {
 }
   
 function hf_optimize_features_advanced() {
+  Invoke-Expression $hf_log_func
   # Disable services
   Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
   foreach ($service in @(
@@ -303,7 +308,8 @@ function hf_optimize_features_advanced() {
 }
 
 function hf_optimize_explorer() {
-  
+  Invoke-Expression $hf_log_func
+
   # Use small icons
   Write-Host -ForegroundColor YELLOW  "-- Use small icons ..."
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
@@ -479,7 +485,7 @@ function hf_optimize_explorer() {
 }
 
 function hf_optimize_store_apps() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
 
   # windows
   $pkgs = '
@@ -571,27 +577,27 @@ function hf_link_create($desntination, $source) {
 # ---------------------------------------
 
 function hf_store_list_installed() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
 function hf_store_install($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
   Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
 }
 
 function hf_store_uninstall_app($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
   Get-AppxPackage -allusers $name | Remove-AppxPackage 
 }
 
 function hf_store_uninstall_package($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() "$name"  -ForegroundColor YELLOW
+  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
   Get-WindowsPackage -Online | Where-Object PackageName -like "$name" | Remove-WindowsPackage -Online -NoRestart
 }
 
 function hf_store_install_essentials() {
-  Write-Host $MyInvocation.MyCommand.ToString()  -ForegroundColor YELLOW
+  Invoke-Expression $hf_log_func
   $pkgs = '
   Microsoft.WindowsStore
   Microsoft.WindowsCalculator
@@ -614,7 +620,7 @@ function hf_store_reinstall_all() {
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   $folders = @(
     'Application Data'
     'Cookies'
@@ -643,7 +649,7 @@ function hf_clean_unused_folders() {
 }
 
 function hf_clean_choco() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   gsudo \tools\BCURRAN3\choco-cleaner.ps1 | Out-Null
 }
 
@@ -682,7 +688,7 @@ function hf_explorer_restart() {
 # ---------------------------------------
 
 function hf_enable_dark_mode() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 }
 
@@ -691,12 +697,12 @@ function hf_enable_dark_mode() {
 # ---------------------------------------
 
 function hf_adminstrator_user_enable() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   net user administrator /active:yes
 }
 
 function hf_adminstrator_user_disable() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   net user administrator /active:no
 }
 
@@ -705,7 +711,7 @@ function hf_adminstrator_user_disable() {
 # ---------------------------------------
 
 function hf_windows_update() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   control update
   wuauclt /detectnow /updatenow
 }
@@ -756,7 +762,7 @@ function hf_wsl_ubuntu_set_default_user() {
 }
 
 function hf_wsl_enable() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
@@ -769,7 +775,7 @@ function hf_wsl_set_version2() {
 }
 
 function hf_wsl_fix_home_user() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
 
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
@@ -826,9 +832,12 @@ function hf_install_choco() {
 }
 
 function hf_install_battle_steam_stramio() {
+  Invoke-Expression $hf_log_func
   hf_choco_install battle.net steam stremio
 }
+
 function hf_install_luacheck() {
+  Invoke-Expression $hf_log_func
   $luacheck_path = "C:\tools\luacheck.exe"
   If (!(Test-Path $luacheck_path)) {
     Invoke-WebRequest https://github.com/mpeterv/luacheck/releases/download/0.23.0/luacheck.exe -OutFile $luacheck_path
@@ -836,6 +845,7 @@ function hf_install_luacheck() {
 }
 
 function hf_install_onedrive() {
+  Invoke-Expression $hf_log_func
   $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
   If (!(Test-Path $onedrive)) {
     $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
@@ -844,6 +854,7 @@ function hf_install_onedrive() {
 }
 
 function hf_uninstall_onedrive() {
+  Invoke-Expression $hf_log_func
   Stop-Process -Name "OneDrive*"
   Start-Sleep 2
   $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
@@ -875,7 +886,7 @@ function hf_config_wt_open() {
 # ---------------------------------------
 
 function hf_init_windows_sanity() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   hf_clean_unused_folders
   hf_system_disable_password_policy
   hf_optimize_features
@@ -884,14 +895,14 @@ function hf_init_windows_sanity() {
 }
 
 function hf_init_user_nomal() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
 function hf_init_user_bash() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
+  Invoke-Expression $hf_log_func
   Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
   Write-Output "-- (2) in other PowerShell terminal, run hf_wsl_enable"
   Write-Output "-- (3) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
