@@ -12,13 +12,20 @@ if (Test-Path $SCRIPT_CFG) {
 }
 
 # ---------------------------------------
-# alias
+# alias and log
 # ---------------------------------------
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
-$hf_log_func = 'Write-Host -ForegroundColor YELLOW "--" $MyInvocation.MyCommand.ToString()'
-#C19C00
+
+# ---------------------------------------
+# log
+# ---------------------------------------
+$hf_log_func = 'Write-Host -ForegroundColor DarkYellow "--" $MyInvocation.MyCommand.ToString()'
+
+function hf_log() {
+  Write-Host -ForegroundColor DarkYellow "--" ($args -join " ")
+}
 
 # ---------------------------------------
 # go home
@@ -66,7 +73,7 @@ function hf_powershell_profiles_reset() {
 }
 
 function hf_powershell_wait_for_fey {
-  Write-Host -ForegroundColor YELLOW "`nPress any key to continue..."
+  hf_log "Press any key to continue..."
   [Console]::ReadKey($true) | Out-Null
 }
 
@@ -79,7 +86,7 @@ function hf_system_rename($new_name) {
 }
 
 Function hf_system_restart {
-  Write-Host -ForegroundColor YELLOW "Restarting..."
+  hf_log "Restarting..."
   Restart-Computer
 }
 
@@ -140,7 +147,7 @@ function hf_path_add_choco_tools() {
 function hf_optimize_features() {
   Invoke-Expression $hf_log_func
   # Visual to performace
-  Write-Host -ForegroundColor YELLOW  "-- Visuals to performace ..."
+  hf_log  "Visuals to performace ..."
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type String -Value 0 | Out-Null
@@ -154,23 +161,23 @@ function hf_optimize_features() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWord -Value 0 | Out-Null
   
   # Fax
-  Write-Host -ForegroundColor YELLOW  "-- Remove Fax ..."
+  hf_log  "Remove Fax ..."
   Remove-Printer -Name "Fax" -ea 0
 
   # XPS Services
-  Write-Host -ForegroundColor YELLOW  "-- Remove XPS ..."
+  hf_log  "Remove XPS ..."
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
 
   # Work Folders
-  Write-Host -ForegroundColor YELLOW  "-- Remove Work Folders ..."
+  hf_log  "Remove Work Folders ..."
   dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
 
   # WindowsMediaPlayer
-  Write-Host -ForegroundColor YELLOW  "-- Remove WindowsMediaPlayer ..."
+  hf_log  "Remove WindowsMediaPlayer ..."
   dism.exe /online /quiet /disable-feature /featurename:WindowsMediaPlayer /norestart
   
   # Remove Lock screen
-  Write-Host -ForegroundColor YELLOW  "-- Remove Lockscreen ..."
+  hf_log  "Remove Lockscreen ..."
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
   }
@@ -178,53 +185,53 @@ function hf_optimize_features() {
   Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Type DWord -Value 1 | Out-Null
   
   # Disable drives Autoplay
-  Write-Host -ForegroundColor YELLOW "-- Disabling new drives Autoplay..."
+  hf_log "Disabling new drives Autoplay..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1  | Out-Null
   
   # Disable offering of Malicious Software Removal Tool through Windows Update
-  Write-Host -ForegroundColor YELLOW "-- Disabling Malicious Software Removal Tool offering..."
+  hf_log "Disabling Malicious Software Removal Tool offering..."
   If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT")) {
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" | Out-Null
   }
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Type DWord -Value 1
   
   # Disable Remote Assistance
-  Write-Host -ForegroundColor YELLOW "-- Disabling Remote Assistance..."
+  hf_log "Disabling Remote Assistance..."
   Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0
   
   # Disable AutoRotation Hotkeys
-  Write-Host -ForegroundColor YELLOW "-- Disabling AutoRotation Hotkeys..."
+  hf_log "Disabling AutoRotation Hotkeys..."
   reg add "HKCU\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
   
   # Disable Sticky keys prompt
-  Write-Host -ForegroundColor YELLOW  "-- Disabling Sticky keys prompt..." 
+  hf_log  "Disabling Sticky keys prompt..." 
   Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506" | Out-Null
   
   # Disabling Autorun for all drives
-  Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
+  hf_log "Disabling Autorun for all drives..."
   If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
     New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
   }
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
   
   # Disable Autorun for all drives
-  Write-Host -ForegroundColor YELLOW "-- Disabling Autorun for all drives..."
+  hf_log "Disabling Autorun for all drives..."
   If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
     New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
   
   # Disable error reporting
-  Write-Host -ForegroundColor YELLOW  "-- Disable error reporting ..."
+  hf_log  "Disable error reporting ..."
   reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable license checking
-  Write-Host -ForegroundColor YELLOW  "-- Disable license checking ..."
+  hf_log  "Disable license checking ..."
   reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable tips
-  Write-Host -ForegroundColor YELLOW  "-- Disable tips ..."
+  hf_log  "Disable tips ..."
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
@@ -232,7 +239,7 @@ function hf_optimize_features() {
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
   
   # Disable Telemetry services
-  Write-Host -ForegroundColor YELLOW  "-- Disable Telemetry services ..."
+  hf_log  "Disable Telemetry services ..."
   foreach ($service in @(
       "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
       "*diagsvc*" # Diagnostic Execution Service
@@ -250,7 +257,7 @@ function hf_optimize_features() {
       "*XblGameSave*" # Xbox Live Game Save
       "*wisvc*" # Windows Insider Service
     )) {
-    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
+    hf_log  "  Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 
   }
@@ -259,7 +266,7 @@ function hf_optimize_features() {
 function hf_optimize_features_advanced() {
   Invoke-Expression $hf_log_func
   # Disable services
-  Write-Host -ForegroundColor YELLOW  "-- Disable services ..."
+  hf_log  "Disable services ..."
   foreach ($service in @(
       "*TermService*" # Remote Desktop Services
       "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
@@ -301,7 +308,7 @@ function hf_optimize_features_advanced() {
       # "*HomeGroupListener*" 
       # "*UserManager*" # User Manager
     )) {
-    Write-Host -ForegroundColor YELLOW  "   Stopping and disabling $service..."
+    hf_log  "  Stopping and disabling $service..."
     Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
     Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0
   }
@@ -311,31 +318,31 @@ function hf_optimize_explorer() {
   Invoke-Expression $hf_log_func
 
   # Use small icons
-  Write-Host -ForegroundColor YELLOW  "-- Use small icons ..."
+  hf_log  "Use small icons ..."
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons  -PropertyType DWORD -Value 1 -Force | Out-Null
   
   # Hide search button
-  Write-Host -ForegroundColor YELLOW  "-- Hide search button ..."
+  hf_log  "Hide search button ..."
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -Force | Out-Null
 
   # Hide task view button
-  Write-Host -ForegroundColor YELLOW  "-- Hide taskview button ..."
+  hf_log  "Hide taskview button ..."
   Remove-Item -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Force -Recurse  -ea 0 | Out-Null
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton  -PropertyType DWORD -Value 0 -Force | Out-Null
 
   # Hide taskbar people icon
-  Write-Host -ForegroundColor YELLOW  "-- Hide people button ..."
+  hf_log  "Hide people button ..."
   if (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People")) {
     New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" | Out-Null
   }
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0
 
   # Disabling file delete confirmation dialog
-  Write-Host -ForegroundColor YELLOW  "-- Disabling file delete confirmation dialog..."
+  hf_log  "Disabling file delete confirmation dialog..."
   Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -ea 0
 
   # Disable action center
-  Write-Host -ForegroundColor YELLOW  "-- Hide action center button ..."
+  hf_log  "Hide action center button ..."
   if (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
     New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
   }
@@ -343,14 +350,14 @@ function hf_optimize_explorer() {
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
   
   # Disable Bing
-  Write-Host -ForegroundColor YELLOW  "-- Disable Bing search ..."
+  hf_log  "Disable Bing search ..."
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-Null
   reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb  /d "0" /t REG_DWORD /f | Out-Null
 
   # Disable Cortana
-  Write-Host -ForegroundColor YELLOW  "-- Disabling Cortana..."
+  hf_log  "Disabling Cortana..."
   If (!(Test-Path "HKCU:\Software\Microsoft\Personalization\Settings")) {
     New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Force | Out-Null
   }
@@ -370,7 +377,7 @@ function hf_optimize_explorer() {
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
 
   # Remove AutoLogger file and restrict directory
-  Write-Host -ForegroundColor YELLOW "-- Removing AutoLogger file and restricting directory..."
+  hf_log "Removing AutoLogger file and restricting directory..."
   $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
   If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
     Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"  | Out-Null
@@ -378,29 +385,29 @@ function hf_optimize_explorer() {
   icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
 
   # Hide icons in desktop
-  Write-Host -ForegroundColor YELLOW  "-- Hide icons in desktop ..."
+  hf_log  "Hide icons in desktop ..."
   $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
   Set-ItemProperty -Path $Path -Name "HideIcons" -Value 1
 
   # Hide recently explorer shortcut
-  Write-Host -ForegroundColor YELLOW  "-- Hide recently explorer shortcut ..."
+  hf_log  "Hide recently explorer shortcut ..."
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 
-  Write-Host -ForegroundColor YELLOW "-- Disable easy access keyboard ..."
+  hf_log "Disable easy access keyboard ..."
   Set-ItemProperty "HKCU:\Control Panel\Accessibility\StickyKeys" "Flags" "506"
   Set-ItemProperty "HKCU:\Control Panel\Accessibility\Keyboard Response" "Flags" "122"
   Set-ItemProperty "HKCU:\Control Panel\Accessibility\ToggleKeys" "Flags" "58"
 
   # Set explorer to open to 'This PC'
-  Write-Host -ForegroundColor YELLOW  "-- Set explorer to open to 'This PC' ..."
+  hf_log  "Set explorer to open to 'This PC' ..."
   New-ItemProperty -ea 0 -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -Force | Out-Null
   
   # Disable show frequent in Quick acess
-  Write-Host -ForegroundColor YELLOW  "-- Disable show frequent in Quick acess ..."
+  hf_log  "Disable show frequent in Quick acess ..."
   New-ItemProperty -ea 0 -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 -PropertyType DWORD -Force | Out-Null
   
   # Remove * from This PC
-  Write-Host -ForegroundColor YELLOW  "-- Removing user folders under This PC ..."
+  hf_log  "Removing user folders under This PC ..."
   
   # Remove Desktop from This PC
   Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0 -Force | Out-Null
@@ -441,20 +448,20 @@ function hf_optimize_explorer() {
   Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0 -Force | Out-Null
 
   # Set explorers how file extensions
-  Write-Host -ForegroundColor YELLOW  "-- Set explorers how file extensions ..."  
+  hf_log  "Set explorers how file extensions ..."  
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -Force | Out-Null
 
   # Disable context menu 'Customize this folder'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context menu Customize this folder ...."  
+  hf_log  "Disable context menu Customize this folder ...."  
   New-Item -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force | Out-Null
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name NoCustomizeThisFolder -Value 1 -PropertyType DWORD -Force | Out-Null
 
   # Disable Windows Defender context menu item'
-  Write-Host -ForegroundColor YELLOW  "-- Disable Windows Defender context menu item ..."
+  hf_log  "Disable Windows Defender context menu item ..."
   Set-Item "HKLM:\SOFTWARE\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" ""
 
   # Disable context menu 'Restore to previous versions'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Restore to previous version'..."  
+  hf_log  "Disable context menu 'Restore to previous version'..."  
   New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
   Remove-Item "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 -Force | Out-Null
   Remove-Item "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 -Force | Out-Null
@@ -462,21 +469,21 @@ function hf_optimize_explorer() {
   Remove-Item "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 -Force | Out-Null
 
   # Disable context menu 'Share with'
-  # Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Share with' ..."  
+  #hf_log  "Disable context menu 'Share with' ..."  
   # Remove-Item "HKCR:\*\shellex\ContextMenuHandlers\ModernSharing" -Recurse -ea 0 
 
   # Disable context menu 'Include in library'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Include in library' ..."  
+  hf_log  "Disable context menu 'Include in library' ..."  
   New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT -ea 0 | Out-Null
   Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0 | Out-Null
   Remove-Item "HKLM:\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0 | Out-Null
 
   # Disable context menu 'Send to'
-  Write-Host -ForegroundColor YELLOW  "-- Disable context menu 'Send to' ..."  
+  hf_log  "Disable context menu 'Send to' ..."  
   Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Force -Recurse -ea 0 | Out-Null
 
   # Disable store search for unknown extensions
-  Write-Host -ForegroundColor YELLOW  "-- Disable store search unknown extensions ..."  
+  hf_log  "Disable store search unknown extensions ..."  
   New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -ea 0 | Out-Null
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
   
@@ -582,18 +589,20 @@ function hf_store_list_installed() {
 }
 
 function hf_store_install($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
-  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
+  Invoke-Expression $hf_log_func" "$name
+  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -ErrorAction Ignore -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
 }
 
+
+
 function hf_store_uninstall_app($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
+  hf_log "${MyInvocation.MyCommand.ToString} $name"
   Get-AppxPackage -allusers $name | Remove-AppxPackage 
 }
 
 function hf_store_uninstall_package($name) {
-  Write-Host $MyInvocation.MyCommand.ToString() -ForegroundColor YELLOW "$name"
-  Get-WindowsPackage -Online | Where-Object PackageName -like "$name" | Remove-WindowsPackage -Online -NoRestart
+  hf_log "$MyInvocation.MyCommand.ToString $name"
+  Get-WindowsPackage -Online | Where-Object PackageName -like $name | Remove-WindowsPackage -Online -NoRestart
 }
 
 function hf_store_install_essentials() {
@@ -721,11 +730,12 @@ function hf_windows_update() {
 # ---------------------------------------
 
 function hf_choco_install() {
-  Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString() $args
+  Invoke-Expression $hf_log_func" "$args
   choco install -y --acceptlicense ($args -join ";")
 }
 
 function hf_choco_uninstall() {
+  Invoke-Expression $hf_log_func" "$args
   choco uninstall -y --acceptlicense ($args -join ";")
 }
 
@@ -797,7 +807,7 @@ function hf_wsl_fix_home_user() {
   wsl -u root usermod -d /mnt/c/Users/$env:UserName $env:UserName
 
   # changing file permissions
-  Write-Host "changing file permissions" -ForegroundColor YELLOW
+  hf_log "Changing file permissions ..."
   wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
   wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/.ssh/*
 }
@@ -807,8 +817,8 @@ function hf_wsl_fix_home_user() {
 # ---------------------------------------
 
 function hf_install_choco() {
+  Invoke-Expression $hf_log_func
   if (-Not (Get-Command 'choco' -ea 0)) {
-    Write-Host -ForegroundColor YELLOW $MyInvocation.MyCommand.ToString()
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -896,19 +906,18 @@ function hf_init_windows_sanity() {
 
 function hf_init_user_nomal() {
   Invoke-Expression $hf_log_func
-  Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
+  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows_sanity"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
 function hf_init_user_bash() {
   Invoke-Expression $hf_log_func
-  Write-Output "-- (1) in other PowerShell terminal, run hf_init_windows_sanity"
-  Write-Output "-- (2) in other PowerShell terminal, run hf_wsl_enable"
-  Write-Output "-- (3) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
-  Write-Output "-- (4) when Ubuntu installed, run hf_wsl_enable"
-  Write-Output "-- (4) when Ubuntu installed, run hf_wsl_set_version2"
-  Write-Output "-- (5) when Ubuntu installed, run hf_wsl_fix_home_user"
+  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows_sanity"
+  hf_log "INFO: (2) in other PowerShell terminal, run hf_wsl_enable"
+  hf_log "INFO: (3) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
+  hf_log "INFO: (4) when Ubuntu installed, run hf_wsl_set_version2"
+  hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_fix_home_user"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vscode gsudo powershell-core
   hf_store_install Microsoft.WindowsTerminal
