@@ -213,6 +213,8 @@ if test -n "$IS_WINDOWS_MINGW"; then
   function hf_msys_fix_home_user() {
     echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | tee /etc/fstab
     echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | tee -a /etc/fstab
+    # also use /mnt/c/ like in WSL
+    echo -e "/c /mnt/c none bind" | tee -a /etc/fstab
   }
 
   function hf_msys_install() {
@@ -314,7 +316,7 @@ function hf_audio_compress() {
 function hf_video_add_srt_track() {
   : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
   hf_log_func
-   ffmpeg -i $1 -i $2 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 $3
+  ffmpeg -i $1 -i $2 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 $3
 }
 
 function hf_video_add_srt_in_picutre() {
