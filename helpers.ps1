@@ -4,9 +4,9 @@
 # load env-cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\env.ps1"
+$SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_DIR = $PSScriptRoot
-$SCRIPT_CFG = "$SCRIPT_DIR\env-cfg.ps1"
+$SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
