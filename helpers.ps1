@@ -26,6 +26,9 @@ $hf_log_func = 'Write-Host -ForegroundColor DarkYellow "--" $MyInvocation.MyComm
 function hf_log() {
   Write-Host -ForegroundColor DarkYellow "--" ($args -join " ")
 }
+function hf_log_l2() {
+  Write-Host -ForegroundColor DarkYellow "--  " ($args -join " ")
+}
 
 # ---------------------------------------
 # go home
@@ -73,7 +76,7 @@ function hf_powershell_profiles_reset() {
 }
 
 function hf_powershell_wait_for_fey {
-  hf_log "Press any key to continue..."
+  hf_log "Press any key to continue"
   [Console]::ReadKey($true) | Out-Null
 }
 
@@ -86,7 +89,7 @@ function hf_system_rename($new_name) {
 }
 
 Function hf_system_restart {
-  hf_log "Restarting..."
+  hf_log "Restarting"
   Restart-Computer
 }
 
@@ -123,7 +126,7 @@ function hf_path_add($addPath) {
     [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
   }
   else {
-    Throw "'$addPath' is not a valid path."
+    Throw "$addPath' is not a valid path."
   }
 }
 
@@ -148,7 +151,7 @@ function hf_optimize_features() {
   Invoke-Expression $hf_log_func
   
   # Visual to performace
-  hf_log  "Visuals to performace ..."
+  hf_log  "Visuals to performace "
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 -PropertyType DWORD -Force | Out-Null
   New-ItemProperty -ea 0 -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0 -PropertyType DWORD -Force | Out-Null
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type String -Value 0 | Out-Null
@@ -162,154 +165,156 @@ function hf_optimize_features() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWord -Value 0 | Out-Null
   
   # Fax
-  hf_log  "Remove Fax ..."
+  hf_log  "Remove Fax "
   Remove-Printer -Name "Fax" -ea 0
 
   # XPS Services
-  hf_log  "Remove XPS ..."
+  hf_log  "Remove XPS "
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
 
   # Work Folders
-  hf_log  "Remove Work Folders ..."
+  hf_log  "Remove Work Folders "
   dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
 
-  # WindowsMediaPlayer
-  hf_log  "Remove WindowsMediaPlayer ..."
-  dism.exe /online /quiet /disable-feature /featurename:WindowsMediaPlayer /norestart
-  
   # Remove Lock screen
-  hf_log  "Remove Lockscreen ..."
+  hf_log  "Remove Lockscreen "
   Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 -ea 0 -Force  | Out-Null
   Set-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Type DWord -Value 1 -ea 0 -Force | Out-Null
   
   # Disable drives Autoplay
-  hf_log "Disabling new drives Autoplay..."
+  hf_log "Disable new drives Autoplay"
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1  | Out-Null
   
   # Disable offering of Malicious Software Removal Tool through Windows Update
-  hf_log "Disabling Malicious Software Removal Tool offering..."
+  hf_log "Disable Malicious Software Removal Tool offering"
   New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -ea 0 -Force | Out-Null
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Type DWord -Value 1  -ea 0 -Force | Out-Null
   
   # Disable Remote Assistance
-  hf_log "Disabling Remote Assistance..."
+  hf_log "Disable Remote Assistance"
   Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0  -ea 0 -Force | Out-Null
   
   # Disable AutoRotation Hotkeys
-  hf_log "Disabling AutoRotation Hotkeys..."
+  hf_log "Disable AutoRotation Hotkeys"
   reg add "HKCU\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
   
-  # Disabling Autorun for all drives
-  hf_log "Disabling Autorun for all drives..."
+  # Disable Autorun for all drives
+  hf_log "Disable Autorun for all drives"
   New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -ea 0 -Force | Out-Null
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 -ea 0 -Force | Out-Null
   
-  # Disable Autorun for all drives
-  hf_log "Disabling Autorun for all drives..."
-  New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -ea 0 -Force | Out-Null
-  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 -ea 0 -Force | Out-Null
-  
   # Disable error reporting
-  hf_log  "Disable error reporting ..."
+  hf_log  "Disable error reporting "
   reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable license checking
-  hf_log  "Disable license checking ..."
+  hf_log  "Disable license checking "
   reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable tips
-  hf_log  "Disable tips ..."
+  hf_log  "Disable tips "
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
   
-  # 'Disabling Accessibility Keys Prompts
-  hf_log 'Disabling Accessibility Keys Prompts ...'
-  $Path = 'HKCU:\Control Panel\Accessibility\'
-  Set-ItemProperty -Path "$Path\StickyKeys" -Name 'Flags' -Type String -Value '506'
-  Set-ItemProperty -Path "$Path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
-  Set-ItemProperty -Path "$Path\Keyboard Response" -Name 'Flags' -Type String -Value '122'
+  # 'Disable Accessibility Keys Prompts
+  hf_log 'Disable Accessibility Keys Prompts ...'
+  $path = 'HKCU:\Control Panel\Accessibility\'
+  Set-ItemProperty -Path "$path\StickyKeys" -Name 'Flags' -Type String -Value '506'
+  Set-ItemProperty -Path "$path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
+  Set-ItemProperty -Path "$path\Keyboard Response" -Name 'Flags' -Type String -Value '122'
   
-  # "Disabling Windows Timeline 
-  hf_log "Disabling Windows Timeline ..."
+  # "Disable Windows Timeline 
+  hf_log "Disable Windows Timeline "
   Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Type DWord -Value 0
   
-  # Disable Telemetry services
-  hf_log  "Disable Telemetry services ..."
-  foreach ($service in @(
-      "*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
-      "*diagsvc*" # Diagnostic Execution Service
-      "*dmwappushservice*" # Device Management WAP Push message Routing Service
-      "*DiagTrack*" # Connected User Experiences and Telemetry
-      "*lfsvc*" # Geolocation Service
-      "*MapsBroker*" # Downloaded Maps Manager
-      "*RetailDemo*" # Retail Demo Service
-      "*RemoteRegistry*" # Remote Registry
-      "*FoxitReaderUpdateService*" # Remote Registry
-      "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
-      "*TrkWks*" # Distributed Link Tracking Client
-      "*XblAuthManager*" # Xbox Live Auth Manager
-      "*XboxNetApiSvc*" # Xbox Live Networking Service
-      "*XblGameSave*" # Xbox Live Game Save
-      "*wisvc*" # Windows Insider Service
-    )) {
-    hf_log  "  Stopping and disabling $service..."
-    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0 
+  # Disable unused services
+  hf_log  "Disable unused services "
+  $services = @("*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
+    "*diagsvc*" # Diagnostic Execution Service
+    "*dmwappushservice*" # Device Management WAP Push message Routing Service
+    "*DiagTrack*" # Connected User Experiences and Telemetry
+    "*lfsvc*" # Geolocation Service
+    "*MapsBroker*" # Downloaded Maps Manager
+    "*RetailDemo*" # Retail Demo Service
+    "*RemoteRegistry*" # Remote Registry
+    "*FoxitReaderUpdateService*" # Remote Registry
+    "*RemoteAccess*" # Routing and Remote Access (routing services to businesses in LAN)
+    "*TrkWks*" # Distributed Link Tracking Client
+    "*XblAuthManager*" # Xbox Live Auth Manager
+    "*XboxNetApiSvc*" # Xbox Live Networking Service
+    "*XblGameSave*" # Xbox Live Game Save
+    "*wisvc*" # Windows Insider Service
+  )
+  
+  $services | ForEach-Object {
+    hf_log_l2  "Stop and disable $_"
+    Get-Service -Name $_ | Stop-Service -WarningAction SilentlyContinue 
+    Get-Service -Name $_ | Set-Service -StartupType Disabled -ea 0 
   }
+  
+  # Disable unused windows packages
+  hf_log  "Disable windows packages "
+  $pkgs = @(
+    '*QuickAssist*'
+    '*Hello-Face*'
+    '*phone*'
+  )
+  hf_winpackage_uninstall_like @pkgs 
 }
   
 function hf_optimize_features_advanced() {
   Invoke-Expression $hf_log_func
   # Disable services
-  hf_log  "Disable services ..."
-  foreach ($service in @(
-      "*TermService*" # Remote Desktop Services
-      "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
-      "*SessionEnv*" # Remote Desktop Configuration
-      
-      "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
-      # "*Bonjour Service*" # bootcamp: Bonjour Service
-      # "*BootCampService*" # bootcamp: Boot Camp Service
-      
-      "*Phone*" # Foxit Reader Update Service
-      "*gupdate*" # Google Update Service
-      "*gupdatem*" # Google Update Service
-      
-      "*PcaSvc*" # Program Compatibility Assistant Service
-      "*wercplsupport*" # Problem Reports Control Panel Support
-      "*WerSvc*" # Windows Error Reporting Service
-      
-      "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service   
-      "*PhoneSvc*" # Phone Service
-      "*Themes*" # Themes (Provides user experience theme management.)
-      "*WbioSrvc*" # Windows Biometric Service
-      "*Sense*" # Windows Defender Advanced Threat Protection Service
+  hf_log  "Disable services "
+  $services = @(
+    "*TermService*" # Remote Desktop Services
+    "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
+    "*SessionEnv*" # Remote Desktop Configuration
+    
+    "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
+    # "*Bonjour Service*" # bootcamp: Bonjour Service
+    # "*BootCampService*" # bootcamp: Boot Camp Service
+    
+    "*Phone*" # Foxit Reader Update Service
+    "*gupdate*" # Google Update Service
+    "*gupdatem*" # Google Update Service
+    
+    "*PcaSvc*" # Program Compatibility Assistant Service
+    "*wercplsupport*" # Problem Reports Control Panel Support
+    "*WerSvc*" # Windows Error Reporting Service
+    
+    "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service   
+    "*PhoneSvc*" # Phone Service
+    "*Themes*" # Themes (Provides user experience theme management.)
+    "*WbioSrvc*" # Windows Biometric Service
+    "*Sense*" # Windows Defender Advanced Threat Protection Service
 
-      "*SysMain*" # SysMain (Maintains and improves system performance)
-      "*MicrosoftEdgeElevationService*" # Edge Update Service 
-      "*edgeupdate*" # Edge Update Service 
-      "*edgeupdatem*" # Edge Update Service
-      
-      # "*SecurityHealthService*"
-      # "*AppVClient*" # Microsoft App-V Client
-      # "*AxInstSV*" # ActiveX Installer
-      # "*SharedAccess*" # Internet Connection Sharing (ICS)
-      # "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
-      
-      # craches
-      # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. OBS crashes WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
-      # "*ClickToRunSvc*" # Office Click-to-Run Service.
-      # "*shpamsvc*" # Shared PC Account Manager
-      # "*HomeGroupListener*" 
-      # "*UserManager*" # User Manager
-    )) {
-    hf_log "  Stopping and disabling $service..."
-    Get-Service -Name $service | Stop-Service -WarningAction SilentlyContinue 
-    Get-Service -Name $service | Set-Service -StartupType Disabled -ea 0
+    "*SysMain*" # SysMain (Maintains and improves system performance)
+    "*MicrosoftEdgeElevationService*" # Edge Update Service 
+    "*edgeupdate*" # Edge Update Service 
+    "*edgeupdatem*" # Edge Update Service
+    
+    # "*SecurityHealthService*"
+    # "*AppVClient*" # Microsoft App-V Client
+    # "*AxInstSV*" # ActiveX Installer
+    # "*SharedAccess*" # Internet Connection Sharing (ICS)
+    # "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
+    
+    # craches
+    # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. OBS crashes WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
+    # "*ClickToRunSvc*" # Office Click-to-Run Service.
+    # "*shpamsvc*" # Shared PC Account Manager
+    # "*HomeGroupListener*" 
+    # "*UserManager*" # User Manager
+  )
+  $services | ForEach-Object {
+    hf_log_l2 "Stop and disable $_"
+    Get-Service -Name $_ | Stop-Service -WarningAction SilentlyContinue 
+    Get-Service -Name $_ | Set-Service -StartupType Disabled -ea 0
   }
 }
 
@@ -320,241 +325,237 @@ function hf_optimize_explorer() {
   New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT -ea 0 | Out-Null
   
   # Use small icons
-  hf_log "Use small icons ..."
-  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons -PropertyType DWORD -Value 1 -ea 0| Out-null
+  hf_log "Use small icons "
+  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons -PropertyType DWORD -Value 1 -ea 0 | Out-null
  
   # Hide search button
-  hf_log "Hide search button ..."
-  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -ea 0| Out-null
+  hf_log "Hide search button "
+  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -PropertyType DWORD -Value 0 -ea 0 | Out-null
  
   # Hide task view button
-  hf_log "Hide taskview button ..."
-  Remove-Item -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Recurse -ea 0| Out-null
-  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -PropertyType DWORD -Value 0 -ea 0| Out-null
+  hf_log "Hide taskview button "
+  Remove-Item -Path "HKCR:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultiTaskingView\AllUpView" -Recurse -ea 0 | Out-null
+  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -PropertyType DWORD -Value 0 -ea 0 | Out-null
  
   # Hide taskbar people icon
-  hf_log "Hide people button ..."
-  New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People"  -ea 0| Out-null
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0  -ea 0| Out-null
+  hf_log "Hide people button "
+  New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People"  -ea 0 | Out-null
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0  -ea 0 | Out-null
  
-  # Disabling file delete confirmation dialog
-  hf_log "Disabling file delete confirmation dialog..."
-  Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -ea 0| Out-null
+  # Disable file delete confirmation dialog
+  hf_log "Disable file delete confirmation dialog"
+  Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -ea 0 | Out-null
  
   # Disable action center
-  hf_log "Hide action center button ..."
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1 -ea 0| Out-null
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -ea 0| Out-null
+  hf_log "Hide action center button "
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1 -ea 0 | Out-null
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 -ea 0 | Out-null
  
   # Disable Bing
-  hf_log "Disable Bing search ..."
+  hf_log "Disable Bing search "
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f  | Out-null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-null
   reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb /d "0" /t REG_DWORD /f | Out-null
  
   # Disable Cortana
-  hf_log "Disabling Cortana..."
-  New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings"  -ea 0| Out-null
+  hf_log "Disable Cortana"
+  New-Item -Path "HKCU:\Software\Microsoft\Personalization\Settings"  -ea 0 | Out-null
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0
-  New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization"  -ea 0| Out-null
+  New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization"  -ea 0 | Out-null
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1
-  New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore"   -ea 0| Out-null
+  New-Item -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore"   -ea 0 | Out-null
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Type DWord -Value 0
-  New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"  -ea 0| Out-null
-  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -ea 0| Out-null
+  New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"  -ea 0 | Out-null
+  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 -ea 0 | Out-null
  
   # Remove AutoLogger file and restrict directory
-  hf_log "Removing AutoLogger file and restricting directory..."
+  hf_log "Remove AutoLogger file and restricting directory"
   $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-  Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"  -ea 0| Out-null
+  Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"  -ea 0 | Out-null
  
   # Hide icons in desktop
-  hf_log "Hide icons in desktop ..."
-  $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-  Set-ItemProperty -Path $Path -Name "HideIcons" -Value 1  -ea 0| Out-null
+  hf_log "Hide icons in desktop "
+  $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+  Set-ItemProperty -Path $path -Name "HideIcons" -Value 1  -ea 0 | Out-null
  
   # Hide recently explorer shortcut
-  hf_log "Hide recently explorer shortcut ..."
-  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0  -ea 0| Out-null
+  hf_log "Hide recently explorer shortcut "
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0  -ea 0 | Out-null
  
   # Set explorer to open to 'This PC'
-  hf_log "Set explorer to open to 'This PC' ..."
-  New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -ea 0| Out-null
+  hf_log "Set explorer to open to 'This PC "
+  New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -PropertyType DWORD -Value 1 -ea 0 | Out-null
  
   # Disable show frequent in Quick acess
-  hf_log "Disable show frequent in Quick acess ..."
-  New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 -PropertyType DWORD -ea 0| Out-null
+  hf_log "Disable show frequent in Quick acess "
+  New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 -PropertyType DWORD -ea 0 | Out-null
  
-  # Set explorers how file extensions
-  hf_log "Set explorers how file extensions ..." 
-  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -ea 0| Out-null
+  # Set explorer how file extensions
+  hf_log "Set explorer show file extensions " 
+  New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -PropertyType DWORD -Value 0 -ea 0 | Out-null
   
   # Disable store search for unknown extensions
-  hf_log "Disable store search unknown extensions ..." 
-  New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -ea 0| Out-null
-  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1 -ea 0| Out-null
+  hf_log "Disable store search unknown extensions " 
+  New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -ea 0 | Out-null
+  Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1 -ea 0 | Out-null
  
-  # 'Hiding Most used Apps in Start Menu...'
-  hf_log 'Hiding Most used Apps in Start Menu...'
-  Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_TrackProgs' -Type DWord -Value 0 -ea 0| Out-null
+  # 'Hide Most used Apps in Start Menu...'
+  hf_log 'Hide Most used Apps in Start Menu...'
+  Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_TrackProgs' -Type DWord -Value 0 -ea 0 | Out-null
  
   # Remove * from This PC
   # ----------------------------------------
-  hf_log "Removing user folders under This PC ..."
+  hf_log "Remove user folders under This PC "
   # Remove Desktop from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0 | Out-null
   # Remove Documents from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -ea 0 | Out-null
   # Remove Downloads from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}" -ea 0 | Out-null
   # Remove Music from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -ea 0 | Out-null
   # Remove Pictures from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}" -ea 0 | Out-null
   # Remove Videos from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -ea 0 | Out-null
   # Remove 3D Objects from This PC
-  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0| Out-null
-  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0| Out-null
+  Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0 | Out-null
+  Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0 | Out-null
  
-  # Remove unused context menu
+  # Remove unused context menus
   # ----------------------------------------
-  hf_log "Removing unused context menu ..."
-  # Disable context menu 'Restore to previous versions'
-  hf_log "Disable context menu 'Restore to previous version'..." 
-  Remove-Item "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0| Out-null
-  Remove-Item "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0| Out-null
-  Remove-Item "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0| Out-null
-  Remove-Item "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0| Out-null
-  # Disable context menu 'Share with'
-  hf_log "Disable context menu 'Share with' ..." 
-  Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0| Out-null
-  # Disable context menu for git bash
-  hf_log "Disable context menu for git bash ..." 
-  Remove-Item "HKCR:\Directory\shell\git_gui" -Recurse -ea 0| Out-null
-  Remove-Item "HKCR:\Directory\shell\git_shell" -Recurse -ea 0| Out-null
-  Remove-Item "HKCR:\Directory\background\shell\git_gui" -Recurse -ea 0| Out-null
-  Remove-Item "HKCR:\Directory\background\shell\git_shell" -Recurse -ea 0| Out-null
-  # Disable context menu for gitg bash
-  Remove-Item "HKCR:\Directory\Background\shell\gitg" -Recurse -ea 0| Out-null
-  # Disable context menu Pin To Start 
-  hf_log "Disable context menu Pin To Start ..."
-  Remove-Item -LiteralPath 'HKCR:\*\shellex\OpenWithList' -ea 0| Out-null
-  # Disable context menu Pin To Start 
-  hf_log "Disable context menu Pin To Start ..."
-  Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}' -ea 0| Out-null
-  Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}' -ea 0| Out-null
-  Remove-Item 'HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen' -ea 0| Out-null
-  # Disable context menu 'Include in library'
-  hf_log "Disable context menu 'Include in library' ..." 
-  Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0| Out-null
-  Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0| Out-null
-  # Disable context menu 'Send to'
-  hf_log "Disable context menu 'Send to' ..." 
-  Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Recurse -ea 0| Out-null
-  # Disable Windows Defender context menu item'
-  hf_log "Disable Windows Defender context menu item ..."
-  Set-Item "HKCR:\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" -ea 0| Out-null
+  hf_log "Remove unused context menu"
+  # 'Restore to previous versions'
+  hf_log_l2 "Restore to previous version" 
+  Remove-Item "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 | Out-null
+  Remove-Item "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 | Out-null
+  Remove-Item "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 | Out-null
+  Remove-Item "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0 | Out-null
+  # 'Share with'
+  hf_log_l2 "Share with " 
+  Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  # for git bash
+  hf_log_l2 "Git bash" 
+  Remove-Item "HKCR:\Directory\shell\git_gui" -Recurse -ea 0 | Out-null
+  Remove-Item "HKCR:\Directory\shell\git_shell" -Recurse -ea 0 | Out-null
+  Remove-Item "HKCR:\Directory\background\shell\git_gui" -Recurse -ea 0 | Out-null
+  Remove-Item "HKCR:\Directory\background\shell\git_shell" -Recurse -ea 0 | Out-null
+  # for gitg bash
+  Remove-Item "HKCR:\Directory\Background\shell\gitg" -Recurse -ea 0 | Out-null
+  # "Open With" 
+  hf_log_l2 "Open With "
+  Remove-Item -LiteralPath 'HKCR:\*\shellex\OpenWithList' -ea 0 | Out-null
+  # Pin To Start 
+  hf_log_l2 "Pin To Start "
+  Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}' -ea 0 | Out-null
+  Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}' -ea 0 | Out-null
+  Remove-Item 'HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen' -ea 0 | Out-null
+  # 'Include in library'
+  hf_log_l2 "Include in library " 
+  Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0 | Out-null
+  Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0 | Out-null
+  # 'Send to'
+  hf_log_l2 "Send to " 
+  Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Recurse -ea 0 | Out-null
+  # Disable Windows Defender'
+  hf_log_l2 "Windows Defender "
+  Set-Item "HKCR:\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" -ea 0 | Out-null
   
   # restart explorer
   hf_explorer_restart
 }
 
-function hf_optimize_store_apps() {
+function hf_optimize_appx() {
   Invoke-Expression $hf_log_func
-  
   # windows
-  $pkgs = '
-  A278AB0D.MarchofEmpires
-  king.com.BubbleWitch3Saga
-  king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32
-  Microsoft.3DBuilder
-  Microsoft.Appconnector
-  Microsoft.BingNews
-  Microsoft.BingSports
-  Microsoft.BingWeather
-  Microsoft.CommsPhone
-  Microsoft.ConnectivityStore
-  Microsoft.DesktopAppInstaller
-  Microsoft.GetHelp
-  Microsoft.Getstarted
-  Microsoft.Messaging
-  Microsoft.Microsoft3DViewer
-  Microsoft.MicrosoftEdge.Stable
-  Microsoft.MicrosoftOfficeHub
-  Microsoft.MicrosoftSolitaireCollection
-  Microsoft.MicrosoftStickyNotes
-  Microsoft.MinecraftUWP
-  Microsoft.MixedReality.Portal
-  Microsoft.MSPaint
-  Microsoft.Office.Desktop
-  Microsoft.Office.OneNote
-  Microsoft.Office.Sway
-  Microsoft.MicrosoftOfficeHub
-  Microsoft.OneConnect
-  Microsoft.People
-  Microsoft.Print3D
-  Microsoft.StorePurchaseApp
-  Microsoft.Wallet
-  Microsoft.WindowsAlarms
-  Microsoft.windowscommunicationsapps
-  Microsoft.WindowsFeedbackHub
-  Microsoft.WindowsMaps
-  Microsoft.WindowsPhone
-  Microsoft.Xbox.TCUI
-  Microsoft.XboxApp
-  Microsoft.XboxGameOverlay
-  Microsoft.XboxGamingOverlay
-  Microsoft.XboxIdentityProvider
-  Microsoft.XboxSpeechToTextOverlay
-  Microsoft.ZuneMusic
-  Microsoft.ZuneVideo
-  '
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_app $_ }
+  $pkgs = @(
+    'Microsoft.3DBuilder'
+    'Microsoft.Appconnector'
+    'Microsoft.BingNews'
+    'Microsoft.BingSports'
+    'Microsoft.BingWeather'
+    'Microsoft.CommsPhone'
+    'Microsoft.ConnectivityStore'
+    'Microsoft.DesktopAppInstaller'
+    'Microsoft.GetHelp'
+    'Microsoft.Getstarted'
+    'Microsoft.Messaging'
+    'Microsoft.Microsoft3DViewer'
+    'Microsoft.MicrosoftEdge.Stable'
+    'Microsoft.MicrosoftOfficeHub'
+    'Microsoft.MicrosoftSolitaireCollection'
+    'Microsoft.MicrosoftStickyNotes'
+    'Microsoft.MinecraftUWP'
+    'Microsoft.MixedReality.Portal'
+    'Microsoft.MSPaint'
+    'Microsoft.Office.Desktop'
+    'Microsoft.Office.OneNote'
+    'Microsoft.Office.Sway'
+    'Microsoft.MicrosoftOfficeHub'
+    'Microsoft.OneConnect'
+    'Microsoft.People'
+    'Microsoft.Print3D'
+    'Microsoft.StorePurchaseApp'
+    'Microsoft.Wallet'
+    'Microsoft.WindowsAlarms'
+    'Microsoft.windowscommunicationsapps'
+    'Microsoft.WindowsFeedbackHub'
+    'Microsoft.WindowsMaps'
+    'Microsoft.WindowsPhone'
+    'Microsoft.Xbox.TCUI'
+    'Microsoft.XboxApp'
+    'Microsoft.XboxGameOverlay'
+    'Microsoft.XboxGamingOverlay'
+    'Microsoft.XboxIdentityProvider'
+    'Microsoft.XboxSpeechToTextOverlay'
+    'Microsoft.ZuneMusic'
+    'Microsoft.ZuneVideo'
+  )
+  hf_appx_uninstall_app @pkgs
 
   # others
-  $pkgs = 'Facebook.Facebook
-  SpotifyAB.SpotifyMusic
-  9E2F88E3.Twitter
-  A278AB0D.DisneyMagicKingdoms
-  king.com.CandyCrushFriends
-  king.com.BubbleWitch3Saga
-  king.com.CandyCrushSodaSaga
-  king.com.FarmHeroesSaga
-  7EE7776C.LinkedInforWindows
-  king.com.CandyCrushSaga
-  NORDCURRENT.COOKINGFEVER'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_app $_ }
-  
-  $pkgs = 'App.Support.QuickAssist 
-  *Hello-Face*
-  *phone*'
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_uninstall_package $_ }
+  $pkgs = @(
+    '7EE7776C.LinkedInforWindows'
+    '9E2F88E3.Twitter'
+    'A278AB0D.DisneyMagicKingdoms'
+    'A278AB0D.MarchofEmpires'
+    'Facebook.Facebook'
+    'king.com.BubbleWitch3Saga'
+    'king.com.BubbleWitch3Saga'
+    'king.com.CandyCrushFriends'
+    'king.com.CandyCrushSaga'
+    'king.com.CandyCrushSodaSaga'
+    'king.com.FarmHeroesSaga_5.34.8.0_x86__kgqvnymyfvs32'
+    'king.com.FarmHeroesSaga'
+    'NORDCURRENT.COOKINGFEVER'
+    'SpotifyAB.SpotifyMusic'
+  )
+  hf_appx_uninstall_app @pkgs
 }
 
 # ---------------------------------------
@@ -574,45 +575,60 @@ function hf_link_create($desntination, $source) {
 }
 
 # ---------------------------------------
-# store functions
+# winpackage functions
 # ---------------------------------------
 
-function hf_store_list_installed() {
+function hf_winpackage_uninstall_like() {
+  Invoke-Expression $hf_log_func" "$args
+  foreach ($name in $args) {
+    $pkgs = Get-WindowsPackage -Online | Where-Object PackageState -like Installed | Where-Object PackageName -like $name
+    if ($pkgs) {
+      Invoke-Expression $hf_log_func" "$name
+      $pkgs | ForEach-Object { Remove-WindowsPackage -Online -NoRestart $_ }
+    }
+  }
+}
+
+# ---------------------------------------
+# appx functions
+# ---------------------------------------
+
+function hf_appx_list_installed() {
   Invoke-Expression $hf_log_func
   Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
-function hf_store_install($name) {
-  Invoke-Expression $hf_log_func" "$name
-  Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -ea 0 -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
+function hf_appx_install() {
+  Invoke-Expression $hf_log_func" "$args
+  foreach ($name in $args) {
+    if ( !(Get-AppxPackage -Name $name)) {
+      Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -ea 0 -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
+    }
+  }
 }
 
-function hf_store_uninstall_app($name) {
-  hf_log "${MyInvocation.MyCommand.ToString} $name"
-  Get-AppxPackage -allusers $name | Remove-AppxPackage 
+function hf_appx_uninstall_app() {
+  Invoke-Expression $hf_log_func" "$args
+  foreach ($name in $args) {
+    if (Get-AppxPackage -Name $name) {
+      Invoke-Expression $hf_log_func" "$name
+      Get-AppxPackage -allusers $name | Remove-AppxPackage 
+    }
+  }
 }
 
-function hf_store_uninstall_package($name) {
-  hf_log "$MyInvocation.MyCommand.ToString $name"
-  Get-WindowsPackage -Online | Where-Object PackageName -like $name | Remove-WindowsPackage -Online -NoRestart
-}
-
-function hf_store_install_essentials() {
+function hf_appx_install_essentials() {
   Invoke-Expression $hf_log_func
-  $pkgs = '
-  Microsoft.WindowsStore
-  Microsoft.WindowsCalculator
-  Microsoft.Windows.Photos
-  Microsoft.WindowsFeedbackHub
-  Microsoft.WindowsTerminal
-  Microsoft.WindowsCamera
-  Microsoft.WindowsSoundRecorder
-  '
-  $pkgs -split '\s+|,\s*' -ne '' | ForEach-Object { hf_store_install $_ }
-}
-
-function hf_store_reinstall_all() {
-  Get-AppXPackage -AllUsers | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
+  $pkgs = @(
+    'Microsoft.WindowsStore'
+    'Microsoft.WindowsCalculator'
+    'Microsoft.Windows.Photos'
+    'Microsoft.WindowsFeedbackHub'
+    'Microsoft.WindowsTerminal'
+    'Microsoft.WindowsCamera'
+    'Microsoft.WindowsSoundRecorder'
+  )
+  hf_appx_install @pkgs
 }
 
 # ---------------------------------------
@@ -800,7 +816,7 @@ function hf_wsl_fix_home_user() {
   wsl -u root usermod -d /mnt/c/Users/$env:UserName $env:UserName
 
   # changing file permissions
-  hf_log "Changing file permissions ..."
+  hf_log "Changing file permissions "
   wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
   wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/.ssh/*
 }
@@ -893,7 +909,7 @@ function hf_init_windows_sanity() {
   hf_clean_unused_folders
   hf_system_disable_password_policy
   hf_optimize_features
-  hf_optimize_store_apps
+  hf_optimize_appx
   hf_optimize_explorer
 }
 
@@ -913,7 +929,6 @@ function hf_init_user_bash() {
   hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_fix_home_user"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vscode pwsh gsudo
-  hf_store_install Microsoft.WindowsTerminal
-  hf_store_install CanonicalGroupLimited.UbuntuonWindows
+  hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }
