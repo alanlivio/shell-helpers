@@ -459,14 +459,17 @@ function hf_optimize_explorer() {
   Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
   Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
   Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Value '' -ea 0 | Out-null
+  # for gitg
+  hf_log_l2 "gitg" 
+  Remove-Item "HKCR:\Directory\shell\gitg" -Recurse -ea 0 | Out-null
+  # for add/play with vlc
+  hf_log_l2 "Add/play with vlc" 
+  Remove-Item "HKCR:\Directory\shell\AddToPlaylistVLC" -Recurse -ea 0 | Out-null
+  Remove-Item "HKCR:\Directory\shell\PlayWithVLC" -Recurse -ea 0 | Out-null
   # for git bash
   hf_log_l2 "Git bash" 
   Remove-Item "HKCR:\Directory\shell\git_gui" -Recurse -ea 0 | Out-null
   Remove-Item "HKCR:\Directory\shell\git_shell" -Recurse -ea 0 | Out-null
-  Remove-Item "HKCR:\Directory\background\shell\git_gui" -Recurse -ea 0 | Out-null
-  Remove-Item "HKCR:\Directory\background\shell\git_shell" -Recurse -ea 0 | Out-null
-  # for gitg bash
-  Remove-Item "HKCR:\Directory\Background\shell\gitg" -Recurse -ea 0 | Out-null
   # "Open With" 
   hf_log_l2 "Open With "
   Remove-Item -LiteralPath 'HKCR:\*\shellex\OpenWithList' -ea 0 | Out-null
@@ -492,7 +495,7 @@ function hf_optimize_explorer() {
 
 function hf_optimize_appx() {
   Invoke-Expression $hf_log_func
-  # windows
+  # microsoft
   $pkgs = @(
     'Microsoft.3DBuilder'
     'Microsoft.Appconnector'
@@ -506,7 +509,6 @@ function hf_optimize_appx() {
     'Microsoft.Getstarted'
     'Microsoft.Messaging'
     'Microsoft.Microsoft3DViewer'
-    'Microsoft.MicrosoftEdge.Stable'
     'Microsoft.MicrosoftOfficeHub'
     'Microsoft.MicrosoftSolitaireCollection'
     'Microsoft.MicrosoftStickyNotes'
@@ -516,7 +518,6 @@ function hf_optimize_appx() {
     'Microsoft.Office.Desktop'
     'Microsoft.Office.OneNote'
     'Microsoft.Office.Sway'
-    'Microsoft.MicrosoftOfficeHub'
     'Microsoft.OneConnect'
     'Microsoft.People'
     'Microsoft.Print3D'
