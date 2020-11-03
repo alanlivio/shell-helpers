@@ -1,12 +1,13 @@
 #!/bin/powershell
 
 # ---------------------------------------
-# load env-cfg
+# load helpers-cfg
 # ---------------------------------------
 
-$SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_DIR = $PSScriptRoot
+$SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
+
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
 }
@@ -221,7 +222,7 @@ function hf_optimize_features() {
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
   
   # 'Disable Accessibility Keys Prompts
-  hf_log 'Disable Accessibility Keys Prompts ...'
+  hf_log 'Disable Accessibility Keys Prompts '
   $path = 'HKCU:\Control Panel\Accessibility\'
   Set-ItemProperty -Path "$path\StickyKeys" -Name 'Flags' -Type String -Value '506'
   Set-ItemProperty -Path "$path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
@@ -401,9 +402,13 @@ function hf_optimize_explorer() {
   New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -ea 0 | Out-null
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1 -ea 0 | Out-null
  
-  # 'Hide Most used Apps in Start Menu...'
-  hf_log 'Hide Most used Apps in Start Menu...'
+  # 'Hide Most used Apps in Start Menu'
+  hf_log 'Hide Most used Apps in Start Menu'
   Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_TrackProgs' -Type DWord -Value 0 -ea 0 | Out-null
+
+  # 'Hide Recently used Apps in Start Menu'
+  hf_log 'Hide Recently used Apps in Start Menu'
+  Set-ItemProperty -Path 'HKLM:\Software\Policies\Microsoft\Windows\Explorer' -Name 'HideRecentlyAddedApps' -Type DWord -Value 1 -ea 0 | Out-null
  
   # Remove * from This PC
   # ----------------------------------------

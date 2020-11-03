@@ -1,14 +1,9 @@
 #!/bin/bash
 
 # ---------------------------------------
-# variables/alias
+# detect OS
 # ---------------------------------------
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
-SCRIPT_CFG="$SCRIPT_DIR/helpers-cfg.sh"
-
-# detect OS
 case "$(uname -s)" in
 Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
@@ -17,8 +12,6 @@ CYGWIN* | MINGW* | MSYS*)
   IS_WINDOWS_MINGW=1
   ;;
 esac
-
-# detect WSL
 if test $IS_LINUX; then
   case "$(uname -r)" in
   *icrosoft*) # (M/m)icrosoft
@@ -28,12 +21,15 @@ if test $IS_LINUX; then
     ;;
   esac
 fi
-
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 
 # ---------------------------------------
-# load env-cfg.sh
+# load helpers-cfg
 # ---------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
+SCRIPT_CFG="$SCRIPT_DIR/helpers-cfg.sh"
 
 if test -f $SCRIPT_CFG; then
   source $SCRIPT_CFG
@@ -1171,7 +1167,7 @@ function hf_diff_vscode() {
 # ---------------------------------------
 
 function hf_vscode_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ... >"}
   hf_log_func
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
@@ -1461,7 +1457,7 @@ function hf_system_list_gpu() {
 # ---------------------------------------
 
 function hf_npm_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ... >"}
   hf_log_func
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
@@ -1494,7 +1490,7 @@ function hf_npm_install_packages() {
 # ---------------------------------------
 
 function hf_ruby_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ...>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ... >"}
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
@@ -2020,7 +2016,7 @@ function hf_apt_fetch_install() {
 # ---------------------------------------
 
 function hf_compression_zip_files() {
-  : ${2?"Usage: ${FUNCNAME[0]} <zip-name> <files...>"}
+  : ${2?"Usage: ${FUNCNAME[0]} <zip-name> <files... >"}
   zipname=$1
   shift
   zip "$zipname" -r "$@"
