@@ -114,9 +114,9 @@ if test -n "$IS_WINDOWS"; then
   alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
 
   # hf_env_ps_call
-  HELPERS_PS_WIN_PATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
+  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
   function hf_env_ps_call() {
-    powershell.exe -command "& { . $HELPERS_PS_WIN_PATH; $* }"
+    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
   }
 fi
 

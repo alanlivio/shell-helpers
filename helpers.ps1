@@ -37,7 +37,7 @@ function hf_log_l2() {
 Set-Location ~
 
 # ---------------------------------------
-# profile functions
+# profile funcs
 # ---------------------------------------
 
 function hf_profile_install() {
@@ -53,22 +53,33 @@ function hf_profile_import($path) {
 }
 
 # ---------------------------------------
-# powershell functions
+# ps funcs
 # ---------------------------------------
 
-function hf_powershell_show_function($name) {
+function hf_ps_enable_PSWindowsUpdate() {
+  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
+    Install-Module -Confirm PSWindowsUpdate 
+  }
+  Import-Module -Force -Global PSWindowsUpdate 
+}
+
+function hf_ps_show_module_commands($name) {
+  Get-Command -module $name
+}
+
+function hf_ps_show_function($name) {
   Get-Content Function:\$name
 }
 
-function hf_powershell_enable_scripts() {
+function hf_ps_enable_scripts() {
   Set-ExecutionPolicy unrestricted
 }
 
-function hf_powershell_profiles_list() {
+function hf_ps_profiles_list() {
   $profile | Select-Object -Property *
 }
 
-function hf_powershell_profiles_reset() {
+function hf_ps_profiles_reset() {
   Invoke-Expression $hf_log_func
   $profile.AllUsersAllHosts = "\Windows\System32\WindowsPowerShell\v1.0\profile.ps1"
   $profile.AllUsersCurrentHost = "\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
@@ -76,13 +87,13 @@ function hf_powershell_profiles_reset() {
   $profile.CurrentUserCurrentHost = "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 }
 
-function hf_powershell_wait_for_fey {
+function hf_ps_wait_for_fey {
   hf_log "Press any key to continue"
   [Console]::ReadKey($true) | Out-Null
 }
 
 # ---------------------------------------
-# system functions
+# system funcs
 # ---------------------------------------
 
 function hf_system_rename($new_name) {
@@ -115,7 +126,7 @@ function hf_system_disable_password_policy {
 }
 
 # ---------------------------------------
-# path functions
+# path funcs
 # ---------------------------------------
 function hf_path_add($addPath) {
   if (Test-Path $addPath) {
@@ -145,7 +156,7 @@ function hf_path_add_choco_tools() {
 }
 
 # ---------------------------------------
-# optimize functions
+# optimize funcs
 # ---------------------------------------
 
 function hf_optimize_features() {
@@ -565,7 +576,7 @@ function hf_optimize_appx() {
 }
 
 # ---------------------------------------
-# network functions
+# network funcs
 # ---------------------------------------
 
 function hf_network_list_wifi_SSIDs() {
@@ -573,7 +584,7 @@ function hf_network_list_wifi_SSIDs() {
 }
 
 # ---------------------------------------
-# link functions
+# link funcs
 # ---------------------------------------
 
 function hf_link_create($desntination, $source) {
@@ -581,7 +592,7 @@ function hf_link_create($desntination, $source) {
 }
 
 # ---------------------------------------
-# winpackage functions
+# winpackage funcs
 # ---------------------------------------
 
 function hf_winpackage_uninstall_like() {
@@ -596,7 +607,7 @@ function hf_winpackage_uninstall_like() {
 }
 
 # ---------------------------------------
-# appx functions
+# appx funcs
 # ---------------------------------------
 
 function hf_appx_list_installed() {
@@ -638,7 +649,7 @@ function hf_appx_install_essentials() {
 }
 
 # ---------------------------------------
-# clean functions
+# clean funcs
 # ---------------------------------------
 
 function hf_clean_unused_folders() {
@@ -676,7 +687,7 @@ function hf_clean_choco() {
 }
 
 # ---------------------------------------
-# explorer functions
+# explorer funcs
 # ---------------------------------------
 
 function hf_explorer_hide_dotfiles() {
@@ -708,7 +719,7 @@ function hf_explorer_restart() {
 }
 
 # ---------------------------------------
-# customize functions
+# customize funcs
 # ---------------------------------------
 
 function hf_enable_dark_mode() {
@@ -717,7 +728,7 @@ function hf_enable_dark_mode() {
 }
 
 # ---------------------------------------
-# permissions functions
+# permissions funcs
 # ---------------------------------------
 
 function hf_adminstrator_user_enable() {
@@ -728,16 +739,6 @@ function hf_adminstrator_user_enable() {
 function hf_adminstrator_user_disable() {
   Invoke-Expression $hf_log_func
   net user administrator /active:no
-}
-
-# ---------------------------------------
-# update functions
-# ---------------------------------------
-
-function hf_windows_update() {
-  Invoke-Expression $hf_log_func
-  control update
-  wuauclt /detectnow /updatenow
 }
 
 # ---------------------------------------
@@ -755,10 +756,12 @@ function hf_choco_uninstall() {
 }
 
 function hf_choco_upgrade() {
+  Invoke-Expression $hf_log_func
   choco upgrade -y --acceptlicense all
 }
 
 function hf_choco_list_installed() {
+  Invoke-Expression $hf_log_func
   choco list -l
 }
 
@@ -891,7 +894,7 @@ function hf_uninstall_onedrive() {
 }
 
 # ---------------------------------------
-# config functions
+# config funcs
 # ---------------------------------------
 
 function hf_config_install_wt($path) {
@@ -907,8 +910,43 @@ function hf_config_wt_open() {
 }
 
 # ---------------------------------------
-# init functions
+# winupdate funcs
 # ---------------------------------------
+
+function hf_winupdate_list() {
+  Invoke-Expression $hf_log_func
+  hf_ps_enable_PSWindowsUpdate
+  Get-WindowsUpdate
+}
+
+function hf_winupdate_list_last_installed() {
+  Invoke-Expression $hf_log_func
+  hf_ps_enable_PSWindowsUpdate
+  Get-WUHistory -Last 10 | Select-Object Date, Title, Result
+}
+
+function hf_winupdate_update() {
+  Invoke-Expression $hf_log_func
+  hf_ps_enable_PSWindowsUpdate
+  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_ -ne "" }
+  hf_log "RequireReboot: $(Get-WURebootStatus -Silent)"
+}
+
+function hf_winupdate_update_hidden() {
+  Invoke-Expression $hf_log_func
+  hf_ps_enable_PSWindowsUpdate
+  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot -Hide) | Where-Object { $_ -ne "" }
+  hf_log "RequireReboot=$(Get-WURebootStatus -Silent)"
+}
+
+# ---------------------------------------
+# init funcs
+# ---------------------------------------
+function hf_sync {
+  hf_choco_upgrade
+  hf_clean_choco
+  hf_winupdate_update
+}
 
 function hf_init_windows_sanity() {
   Invoke-Expression $hf_log_func
