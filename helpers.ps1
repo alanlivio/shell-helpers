@@ -872,6 +872,14 @@ function hf_install_luacheck() {
   }
 }
 
+function hf_install_latexindent() {
+  Invoke-Expression $hf_log_func
+  $latexindent_path = "C:\tools\latexindent.exe"
+  If (!(Test-Path $latexindent_path)) {
+    Invoke-WebRequest https://github.com/cmhughes/latexindent.pl/releases/download/V3.8.2/latexindent.exe -OutFile $latexindent_path
+  }
+}
+
 function hf_install_onedrive() {
   Invoke-Expression $hf_log_func
   $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
