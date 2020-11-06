@@ -75,6 +75,7 @@ if test -n "$IS_WINDOWS"; then
   # WSL or MINGW
   if test -n "$IS_WINDOWS_WSL"; then
     alias unixpath='wslpath'
+    alias winpath='wslpath -w'
     alias start="cmd.exe /c start"
     # fix writting permissions
     if [[ "$(umask)" = "0000" ]]; then
@@ -99,6 +100,7 @@ if test -n "$IS_WINDOWS"; then
     }
   elif test -n "$IS_WINDOWS_MINGW"; then
     alias unixpath='cygpath'
+    alias winpath='cygpath -w'
     alias sudo=''
     # if in a elevated shell, this force run code in non-admin
     # fix mingw tmp
