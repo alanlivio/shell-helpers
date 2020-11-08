@@ -553,7 +553,7 @@ function hf_optimize_appx() {
     'Microsoft.ZuneMusic'
     'Microsoft.ZuneVideo'
   )
-  hf_appx_uninstall_app @pkgs
+  hf_appx_uninstall @pkgs
 
   # others
   $pkgs = @(
@@ -572,7 +572,7 @@ function hf_optimize_appx() {
     'NORDCURRENT.COOKINGFEVER'
     'SpotifyAB.SpotifyMusic'
   )
-  hf_appx_uninstall_app @pkgs
+  hf_appx_uninstall @pkgs
 }
 
 # ---------------------------------------
@@ -624,11 +624,11 @@ function hf_appx_install() {
   }
 }
 
-function hf_appx_uninstall_app() {
+function hf_appx_uninstall() {
   Invoke-Expression $hf_log_func" "$args
   foreach ($name in $args) {
     if (Get-AppxPackage -Name $name) {
-      Invoke-Expression $hf_log_func" "$name
+      hf_log "uninstall $name"
       Get-AppxPackage -allusers $name | Remove-AppxPackage 
     }
   }
@@ -859,6 +859,15 @@ function hf_install_choco() {
   }
 }
 
+function hf_install_winget() {
+  Invoke-Expression $hf_log_func
+  $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
+  If (!(Test-Path $appx_pkg)) {
+    Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.2941/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
+  }
+  Add-AppPackage $appx_pkg
+}
+
 function hf_install_battle_steam_stramio() {
   Invoke-Expression $hf_log_func
   hf_choco_install battle.net steam stremio
@@ -980,6 +989,7 @@ function hf_init_user_bash() {
   hf_log "INFO: (4) when Ubuntu installed, run hf_wsl_set_version2"
   hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_fix_home_user"
   hf_install_choco
+  hf_install_winget
   hf_choco_install google-backup-and-sync googlechrome vscode pwsh gsudo
   hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
