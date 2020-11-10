@@ -520,7 +520,6 @@ function hf_optimize_appx() {
     'Microsoft.BingWeather'
     'Microsoft.CommsPhone'
     'Microsoft.ConnectivityStore'
-    'Microsoft.DesktopAppInstaller'
     'Microsoft.GetHelp'
     'Microsoft.Getstarted'
     'Microsoft.Messaging'
