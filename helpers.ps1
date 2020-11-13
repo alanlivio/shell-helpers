@@ -867,6 +867,12 @@ function hf_install_winget() {
   Add-AppPackage $appx_pkg
 }
 
+function hf_install_pwsh() {
+  Invoke-Expression $hf_log_func
+  Invoke-WebRequest -Uri "https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi" -Outfile $env:TEMP\pwsh_x64.msi
+  msiexec.exe /I "$env:TEMP\pwsh_x64"
+}
+
 function hf_install_battle_steam_stramio() {
   Invoke-Expression $hf_log_func
   hf_choco_install battle.net steam stremio

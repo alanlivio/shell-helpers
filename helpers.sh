@@ -1643,7 +1643,7 @@ function hf_install_powershell() {
   hf_apt_install_packages liblttng-ust0
   hf_apt_fetch_install http://mirrors.edge.kernel.org/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.4_amd64.deb
   hf_apt_fetch_install http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu60_60.2-3ubuntu3.1_amd64.deb
-  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.ubuntu.18.04_amd64.deb
+  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.ubuntu.20.04_amd64.deb
 }
 
 function hf_install_luarocks() {
