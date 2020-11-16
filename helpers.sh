@@ -88,13 +88,12 @@ if test -n "$IS_WINDOWS"; then
     export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export LIBGL_ALWAYS_INDIRECT=1
 
-
-    function hf_wsl_pulseaudio_enable(){
+    function hf_wsl_pulseaudio_enable() {
       sudo apt-get install pulseaudio
       echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
       echo -e "exit-idle-time = -1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
     }
-    
+
     function hf_wsl_x_pulseaudio_start() {
       hf_wsl_x_pulseaudio_kill
       $(unixpath C:\\ProgramData\\chocolatey\\bin\\pulseaudio.exe) &
@@ -105,7 +104,36 @@ if test -n "$IS_WINDOWS"; then
       cmd.exe /c "taskkill /IM pulseaudio.exe /F"
       cmd.exe /c "taskkill /IM vcxsrv.exe /F"
     }
-  elif test -n "$IS_WINDOWS_MINGW"; then
+
+    function hf_wsl_ssh_config() {
+      # https://github.com/JetBrains/clion-wsl/blob/master/ubuntu_setup_env.sh
+      SSHD_LISTEN_ADDRESS=127.0.0.1
+      SSHD_PORT=2222
+      SSHD_FILE=/etc/ssh/sshd_config
+      SUDOERS_FILE=/etc/sudoers
+      sudo apt install -y openssh-server
+      sudo cp $SSHD_FILE ${SSHD_FILE}.$(date '+%Y-%m-%d_%H-%M-%S').back
+      sudo sed -i '/^Port/ d' $SSHD_FILE
+      sudo sed -i '/^ListenAddress/ d' $SSHD_FILE
+      sudo sed -i '/^UsePrivilegeSeparation/ d' $SSHD_FILE
+      sudo sed -i '/^PasswordAuthentication/ d' $SSHD_FILE
+      echo "# configured by CLion" | sudo tee -a $SSHD_FILE
+      echo "ListenAddress ${SSHD_LISTEN_ADDRESS}" | sudo tee -a $SSHD_FILE
+      echo "Port ${SSHD_PORT}" | sudo tee -a $SSHD_FILE
+      echo "UsePrivilegeSeparation no" | sudo tee -a $SSHD_FILE
+      echo "PasswordAuthentication yes" | sudo tee -a $SSHD_FILE
+      echo "%sudo ALL=(ALL) NOPASSWD: /usr/sbin/service ssh --full-restart" | sudo tee -a $SUDOERS_FILE
+    }
+
+    function hf_wsl_ssh_start() {
+      sshd_status=$(service ssh status)
+      if [[ $sshd_status = *"is not running"* ]]; then
+        sudo service ssh --full-restart
+      fi
+    }
+  elif
+    test -n "$IS_WINDOWS_MINGW"
+  then
     alias unixpath='cygpath'
     alias winpath='cygpath -w'
     alias sudo=''
