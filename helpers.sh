@@ -88,9 +88,16 @@ if test -n "$IS_WINDOWS"; then
     export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
     export LIBGL_ALWAYS_INDIRECT=1
 
+
+    function hf_wsl_pulseaudio_enable(){
+      sudo apt-get install pulseaudio
+      echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
+      echo -e "exit-idle-time = -1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
+    }
+    
     function hf_wsl_x_pulseaudio_start() {
-      hf_windows_x_pulseaudio_kill
-      $(unixpath C:\\tools\\pulseaudio\\bin\\pulseaudio.exe) &
+      hf_wsl_x_pulseaudio_kill
+      $(unixpath C:\\ProgramData\\chocolatey\\bin\\pulseaudio.exe) &
       "$(unixpath 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
     }
 
