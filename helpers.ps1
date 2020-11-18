@@ -873,7 +873,7 @@ function hf_install_pwsh() {
   msiexec.exe /I "$env:TEMP\pwsh_x64"
 }
 
-function hf_install_battle_steam_stramio() {
+function hf_install_battle_steam_stremio() {
   Invoke-Expression $hf_log_func
   hf_choco_install battle.net steam stremio
 }
@@ -970,7 +970,7 @@ function hf_sync {
   hf_winupdate_update
 }
 
-function hf_init_windows_sanity() {
+function hf_init_windows() {
   Invoke-Expression $hf_log_func
   hf_clean_unused_folders
   hf_system_disable_password_policy
@@ -981,21 +981,21 @@ function hf_init_windows_sanity() {
 
 function hf_init_user_nomal() {
   Invoke-Expression $hf_log_func
-  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows_sanity"
+  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
 function hf_init_user_bash() {
   Invoke-Expression $hf_log_func
-  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows_sanity"
-  hf_log "INFO: (2) in other PowerShell terminal, run hf_wsl_enable"
-  hf_log "INFO: (3) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
-  hf_log "INFO: (4) when Ubuntu installed, run hf_wsl_set_version2"
-  hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_fix_home_user"
+  hf_log "INFO: (1) also run hf_init_windows"
+  hf_log "INFO: (2) also run hf_wsl_enable"
+  hf_log "INFO: (3), after sign in WindowStore, also run hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows"
+  hf_log "INFO: (4) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
+  hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_set_version2"
+  hf_log "INFO: (6) when Ubuntu installed, run hf_wsl_fix_home_user"
   hf_install_choco
   hf_install_winget
   hf_choco_install google-backup-and-sync googlechrome vscode pwsh gsudo
-  hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
 }
