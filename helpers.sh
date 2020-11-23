@@ -60,7 +60,35 @@ if test -n "$IS_MAC"; then
   }
 fi
 
+# ---------------------------------------
+# alias path
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS_WSL"; then
+  # fix writting permissions
+  if [[ "$(umask)" = "0000" ]]; then
+    umask 0022
+  fi
+  alias unixpath='wslpath'
+  alias winpath='wslpath -w'
+elif test -n "$IS_WINDOWS_MINGW"; then
+  alias unixpath='cygpath'
+  alias winpath='cygpath -w'
+  alias sudo=''
+  # fix mingw tmp
+  unset temp
+  unset tmp
+fi
+
+# ---------------------------------------
+# helper.ps1
+# ---------------------------------------
+
 if test -n "$IS_WINDOWS"; then
+  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
+  function hf_env_ps_call() {
+    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
+  }
   function hf_init_windows() {
     hf_env_ps_call
     hf_env_ps_call "hf_init_user_bash"
@@ -68,92 +96,101 @@ if test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# windows/wsl
+# alias ls/grep/start/others
+# ---------------------------------------
+
+if test -n "$IS_LINUX"; then
+  alias ls='ls --color=auto'
+  alias grep='grep --color=auto'
+  alias start='xdg-open'
+elif test -n "$IS_WINDOWS_WSL"; then
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
+  alias grep='grep --color=auto'
+  alias start="cmd.exe /c start"
+  # hide windows user files when ls home
+  alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
+  alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
+  alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+fi
+
+# ---------------------------------------
+# alias code
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-  # WSL or MINGW
+  # this is used for hf_vscode_install_packages
+  function codewin() {
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
+  }
+  function codewin_open_path() {
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
+  }
   if test -n "$IS_WINDOWS_WSL"; then
-    alias unixpath='wslpath'
-    alias winpath='wslpath -w'
-    alias start="cmd.exe /c start"
-    # fix writting permissions
-    if [[ "$(umask)" = "0000" ]]; then
-      umask 0022
-    fi
-
-    # x,pulseaudio server
-    # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
-    export DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
-    export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
-    export LIBGL_ALWAYS_INDIRECT=1
-
-    function hf_wsl_pulseaudio_enable() {
-      sudo apt-get install pulseaudio
-      echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
-      echo -e "exit-idle-time = -1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
-    }
-
-    function hf_wsl_x_pulseaudio_start() {
-      hf_wsl_x_pulseaudio_kill
-      $(unixpath C:\\ProgramData\\chocolatey\\bin\\pulseaudio.exe) &
-      "$(unixpath 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
-    }
-
-    function hf_wsl_x_pulseaudio_kill() {
-      cmd.exe /c "taskkill /IM pulseaudio.exe /F"
-      cmd.exe /c "taskkill /IM vcxsrv.exe /F"
-    }
-
-    function hf_wsl_ssh_config() {
-      # https://github.com/JetBrains/clion-wsl/blob/master/ubuntu_setup_env.sh
-      SSHD_LISTEN_ADDRESS=127.0.0.1
-      SSHD_PORT=2222
-      SSHD_FILE=/etc/ssh/sshd_config
-      SUDOERS_FILE=/etc/sudoers
-      sudo apt install -y openssh-server
-      sudo cp $SSHD_FILE ${SSHD_FILE}.$(date '+%Y-%m-%d_%H-%M-%S').back
-      sudo sed -i '/^Port/ d' $SSHD_FILE
-      sudo sed -i '/^ListenAddress/ d' $SSHD_FILE
-      sudo sed -i '/^UsePrivilegeSeparation/ d' $SSHD_FILE
-      sudo sed -i '/^PasswordAuthentication/ d' $SSHD_FILE
-      echo "# configured by CLion" | sudo tee -a $SSHD_FILE
-      echo "ListenAddress ${SSHD_LISTEN_ADDRESS}" | sudo tee -a $SSHD_FILE
-      echo "Port ${SSHD_PORT}" | sudo tee -a $SSHD_FILE
-      echo "UsePrivilegeSeparation no" | sudo tee -a $SSHD_FILE
-      echo "PasswordAuthentication yes" | sudo tee -a $SSHD_FILE
-      echo "%sudo ALL=(ALL) NOPASSWD: /usr/sbin/service ssh --full-restart" | sudo tee -a $SUDOERS_FILE
-    }
-
-    function hf_wsl_ssh_start() {
-      sshd_status=$(service ssh status)
-      if [[ $sshd_status = *"is not running"* ]]; then
-        sudo service ssh --full-restart
-      fi
-    }
-  elif
-    test -n "$IS_WINDOWS_MINGW"
-  then
-    alias unixpath='cygpath'
-    alias winpath='cygpath -w'
-    alias sudo=''
-    # if in a elevated shell, this force run code in non-admin
-    # fix mingw tmp
-    unset temp
-    unset tmp
+    alias code=codewin_open_path
   fi
+elif test -n "$IS_MAC"; then
+  alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
+fi
 
-  # hide windows user files when ls home
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
+# ---------------------------------------
+# wsl x_pulseaudio
+# ---------------------------------------
 
-  # gsudo/choco alias
-  alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-  alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+if test -n "$IS_WINDOWS_WSL"; then
+  # x,pulseaudio server
+  # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
+  export DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
+  export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
+  export LIBGL_ALWAYS_INDIRECT=1
 
-  # hf_env_ps_call
-  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
-  function hf_env_ps_call() {
-    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
+  function hf_wsl_pulseaudio_enable() {
+    sudo apt-get install pulseaudio
+    echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
+    echo -e "exit-idle-time = -1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
+  }
+
+  function hf_wsl_x_pulseaudio_start() {
+    hf_wsl_x_pulseaudio_kill
+    $(unixpath C:\\ProgramData\\chocolatey\\bin\\pulseaudio.exe) &
+    "$(unixpath 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
+  }
+
+  function hf_wsl_x_pulseaudio_kill() {
+    cmd.exe /c "taskkill /IM pulseaudio.exe /F"
+    cmd.exe /c "taskkill /IM vcxsrv.exe /F"
+  }
+fi
+
+# ---------------------------------------
+# wsl ssh
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS_WSL"; then
+  function hf_wsl_ssh_config() {
+    # https://github.com/JetBrains/clion-wsl/blob/master/ubuntu_setup_env.sh
+    SSHD_LISTEN_ADDRESS=127.0.0.1
+    SSHD_PORT=2222
+    SSHD_FILE=/etc/ssh/sshd_config
+    SUDOERS_FILE=/etc/sudoers
+    sudo apt install -y openssh-server
+    sudo cp $SSHD_FILE ${SSHD_FILE}.$(date '+%Y-%m-%d_%H-%M-%S').back
+    sudo sed -i '/^Port/ d' $SSHD_FILE
+    sudo sed -i '/^ListenAddress/ d' $SSHD_FILE
+    sudo sed -i '/^UsePrivilegeSeparation/ d' $SSHD_FILE
+    sudo sed -i '/^PasswordAuthentication/ d' $SSHD_FILE
+    echo "# configured by CLion" | sudo tee -a $SSHD_FILE
+    echo "ListenAddress ${SSHD_LISTEN_ADDRESS}" | sudo tee -a $SSHD_FILE
+    echo "Port ${SSHD_PORT}" | sudo tee -a $SSHD_FILE
+    echo "UsePrivilegeSeparation no" | sudo tee -a $SSHD_FILE
+    echo "PasswordAuthentication yes" | sudo tee -a $SSHD_FILE
+    echo "%sudo ALL=(ALL) NOPASSWD: /usr/sbin/service ssh --full-restart" | sudo tee -a $SUDOERS_FILE
+  }
+
+  function hf_wsl_ssh_start() {
+    sshd_status=$(service ssh status)
+    if [[ $sshd_status = *"is not running"* ]]; then
+      sudo service ssh --full-restart
+    fi
   }
 fi
 
@@ -1206,9 +1243,10 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ... >"}
   hf_log_func
+  CODE4INST=$(if test -n "$IS_WINDOWS"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
-  code --list-extensions >$INSTALLED_LIST_TMP_FILE
+  $CODE4INST --list-extensions >$INSTALLED_LIST_TMP_FILE
   for i in "$@"; do
     grep -i "^$i" &>/dev/null <$INSTALLED_LIST_TMP_FILE
     if test $? != 0; then
@@ -1218,7 +1256,7 @@ function hf_vscode_install_packages() {
   if ! test -z $PKGS_TO_INSTALL; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     for i in $PKGS_TO_INSTALL; do
-      code --install-extension $i
+      $CODE4INST --install-extension $i
     done
   fi
 }

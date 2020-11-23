@@ -112,6 +112,11 @@ function hf_system_rename($new_name) {
 function hf_system_info() {
   cmd.exe /c systeminfo
 }
+
+function hf_system_taskmgr() {
+  cmd.exe /c Taskmgr.exe
+}
+
 function hf_system_env() {
   [Environment]::GetEnvironmentVariables()
 }
@@ -988,9 +993,9 @@ function hf_init_user_nomal() {
 
 function hf_init_user_bash() {
   Invoke-Expression $hf_log_func
-  hf_log "INFO: (1) also run hf_init_windows"
-  hf_log "INFO: (2) also run hf_wsl_enable"
-  hf_log "INFO: (3), after sign in WindowStore, also run hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows"
+  hf_log "INFO: (1) run hf_init_windows"
+  hf_log "INFO: (2) run hf_wsl_enable"
+  hf_log "INFO: (3) when sign in WindowStore, run hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows"
   hf_log "INFO: (4) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
   hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_set_version2"
   hf_log "INFO: (6) when Ubuntu installed, run hf_wsl_fix_home_user"
