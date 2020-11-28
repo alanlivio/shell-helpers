@@ -53,9 +53,9 @@ function hf_profile_import($path) {
 
 function hf_ps_enable_PSWindowsUpdate() {
   if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
-    Install-Module -Confirm PSWindowsUpdate 
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+    Install-Module PSWindowsUpdate  -AcceptLicense -Confirm:$False 
   }
-  Import-Module -Force -Global PSWindowsUpdate 
 }
 
 function hf_ps_show_module_commands($name) {
