@@ -81,22 +81,7 @@ elif test -n "$IS_WINDOWS_MINGW"; then
 fi
 
 # ---------------------------------------
-# helper.ps1
-# ---------------------------------------
-
-if test -n "$IS_WINDOWS"; then
-  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
-  function hf_env_ps_call() {
-    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
-  }
-  function hf_init_windows() {
-    hf_env_ps_call
-    hf_env_ps_call "hf_init_user_bash"
-  }
-fi
-
-# ---------------------------------------
-# alias ls/grep/start/others
+# alias ls/grep/start/wsl
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
@@ -111,6 +96,24 @@ elif test -n "$IS_WINDOWS_WSL"; then
   alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
   alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
   alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+fi
+
+# ---------------------------------------
+# helper.ps1
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS"; then
+  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
+  function hf_env_ps_call() {
+    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
+  }
+  function hf_env_ps_call_admin() {
+    gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
+  }
+  function hf_init_windows() {
+    hf_env_ps_call
+    hf_env_ps_call "hf_init_user_bash"
+  }
 fi
 
 # ---------------------------------------
