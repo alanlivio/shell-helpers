@@ -862,7 +862,7 @@ function hf_install_winget() {
   Invoke-Expression $hf_log_func
   $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
   If (!(Test-Path $appx_pkg)) {
-    Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.2941/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
+    Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.3162-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
   }
   Add-AppPackage $appx_pkg
 }

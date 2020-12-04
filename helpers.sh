@@ -111,8 +111,7 @@ if test -n "$IS_WINDOWS"; then
     gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
   }
   function hf_init_windows() {
-    hf_env_ps_call
-    hf_env_ps_call "hf_init_user_bash"
+    hf_env_ps_call_admin "hf_init_user_bash"
   }
 fi
 
