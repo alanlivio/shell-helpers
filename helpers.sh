@@ -531,22 +531,18 @@ function hf_git_branch_push() {
   git push -u origin $1
 }
 
-function hf_git_branch_create_origin() {
+function hf_git_branch_create_from_origin() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git checkout -b $1
   git push -u origin $1
 }
 
-function hf_git_branch_delete_local_and_origin() {
-  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
-  git branch -d $1
-  git push origin --delete $1
-}
-
-function hf_git_branch_remote_sync() {
+function hf_git_branch_create_from_origin_all_reset_hard() {
   local CURRENT=$(git branch --show-current)
   git fetch -p origin
   git branch -r | grep -v '\->' | while read -r remote; do
+    git reset --hard
+    git clean -ndf
     hf_log_msg "updating ${remote#origin/}"
     git checkout "${remote#origin/}"
     if test $? != 0; then
@@ -561,6 +557,17 @@ function hf_git_branch_remote_sync() {
   done
   hf_log_msg "returning to branch $CURRENT"
   git checkout $CURRENT
+}
+
+function hf_git_branch_delete_local_and_origin() {
+  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
+  git branch -d $1
+  git push origin --delete $1
+}
+
+function hf_git_branch_clean_origin_deleted() {
+  : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
+  git prune
 }
 
 function hf_git_branch_upstrem_set() {
