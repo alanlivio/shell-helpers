@@ -74,7 +74,7 @@ if test -n "$IS_WINDOWS_WSL"; then
 elif test -n "$IS_WINDOWS_MINGW"; then
   alias unixpath='cygpath'
   alias winpath='cygpath -w'
-  alias sudo=''
+  alias sudo='gsudo'
   # fix mingw tmp
   unset temp
   unset tmp
