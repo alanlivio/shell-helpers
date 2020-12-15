@@ -51,14 +51,30 @@ function hf_profile_import($path) {
 # ps
 # ---------------------------------------
 
-function hf_ps_enable_PSWindowsUpdate() {
+function hf_ps_module_install_PSWindowsUpdate() {
   if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
     Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-    Install-Module PSWindowsUpdate  -AcceptLicense -Confirm:$False 
+    Install-Module PSWindowsUpdate -AcceptLicense -Confirm:$False 
+  }
+}
+function hf_ps_module_install_PSAppx() {
+  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
+    Import-Module -Name Appx -UseWIndowsPowershell
+  }
+}
+function hf_ps_module_install_PSReadLine() {
+  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
+    Install-PackageProvider -Name NuGet -Force
+    Install-Module -Name PowerShellGet -Force
+    Import-Module -Name PsReadLine
   }
 }
 
-function hf_ps_show_module_commands($name) {
+function hf_ps_module_list() {
+  Get-Module
+}
+
+function hf_ps_module_show_commands($name) {
   Get-Command -module $name
 }
 
@@ -937,26 +953,22 @@ function hf_config_wt_open() {
 
 function hf_winupdate_list() {
   Invoke-Expression $hf_log_func
-  hf_ps_enable_PSWindowsUpdate
   Get-WindowsUpdate
 }
 
 function hf_winupdate_list_last_installed() {
   Invoke-Expression $hf_log_func
-  hf_ps_enable_PSWindowsUpdate
   Get-WUHistory -Last 10 | Select-Object Date, Title, Result
 }
 
 function hf_winupdate_update() {
   Invoke-Expression $hf_log_func
-  hf_ps_enable_PSWindowsUpdate
   $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_ -ne "" }
   hf_log "RequireReboot: $(Get-WURebootStatus -Silent)"
 }
 
 function hf_winupdate_update_hidden() {
   Invoke-Expression $hf_log_func
-  hf_ps_enable_PSWindowsUpdate
   $(Install-WindowsUpdate -AcceptAll -IgnoreReboot -Hide) | Where-Object { $_ -ne "" }
   hf_log "RequireReboot=$(Get-WURebootStatus -Silent)"
 }
@@ -987,6 +999,8 @@ function hf_init_user_nomal() {
   Invoke-Expression $hf_log_func
   hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows"
   hf_install_choco
+  hf_ps_module_install_PSWindowsUpdate
+  hf_ps_module_install_PSAppx
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
@@ -998,6 +1012,8 @@ function hf_init_user_bash() {
   hf_log "INFO: (4) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
   hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_set_version2 Ubuntu"
   hf_log "INFO: (6) when Ubuntu installed, run hf_wsl_fix_home_user"
+  hf_ps_module_install_PSWindowsUpdate
+  hf_ps_module_install_PSAppx
   hf_install_choco
   hf_install_winget
   hf_choco_install google-backup-and-sync googlechrome vscode pwsh gsudo
