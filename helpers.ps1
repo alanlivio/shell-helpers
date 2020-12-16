@@ -51,22 +51,33 @@ function hf_profile_import($path) {
 # ps
 # ---------------------------------------
 
-function hf_ps_module_install_PSWindowsUpdate() {
-  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
-    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-    Install-Module PSWindowsUpdate -AcceptLicense -Confirm:$False 
+function hf_ps_essentials() {
+  if (-Not (Get-Module PsReadLine)) {
+    Install-Module PsReadLine -AcceptLicense -WarningAction Ignore
+  }
+  if (-Not (Get-Module PowerShellGet)) {
+    Set-PSRepository 'PSGallery' -InstallationPolicy Trusted
+    Install-Module -Name PowerShellGet -Force 
+    Write-Output "Import-Module PowerShellGet" >> $Profile.AllUsersAllHosts
+  }
+  if (-Not (Get-Module PackageManagement)) {
+    Install-Module -Name PackageManagement -Force  -WarningAction Ignore
+    Write-Output "Import-Module PackageManagement" >> $Profile.AllUsersAllHosts
+  }
+  if (-Not (Get-Module -Name PSWindowsUpdate )) {
+    Install-Module PSWindowsUpdate -Force -WarningAction Ignore
+    Write-Output "Import-Module PSWindowsUpdate" >> $Profile.AllUsersAllHosts
+  }
+  if (-Not (Get-Module Get-ChildItemColor)) {
+    hf_choco_install get-childitemcolor
+    Import-Module Get-ChildItemColor -WarningAction Ignore
+    Write-Output "Import-Module Get-ChildItemColor" >> $Profile.AllUsersAllHosts
   }
 }
-function hf_ps_module_install_PSAppx() {
-  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
-    Import-Module -Name Appx -UseWIndowsPowershell
-  }
-}
-function hf_ps_module_install_PSReadLine() {
-  if (-Not (Get-Package -Name PSWindowsUpdate -ea 0)) {
-    Install-PackageProvider -Name NuGet -Force
-    Install-Module -Name PowerShellGet -Force
-    Import-Module -Name PsReadLine
+
+function hf_ps_core_enable_appx() {
+  if (-Not (Get-Module Appx)) {
+    Import-Module -Name Appx -UseWIndowsPowershell -WarningAction Ignore
   }
 }
 
@@ -883,7 +894,7 @@ function hf_install_winget() {
   Add-AppPackage $appx_pkg
 }
 
-function hf_install_pwsh() {
+function hf_install_ps_core() {
   Invoke-Expression $hf_log_func
   Invoke-WebRequest -Uri "https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi" -Outfile $env:TEMP\pwsh_x64.msi
   msiexec.exe /I "$env:TEMP\pwsh_x64"
@@ -999,8 +1010,6 @@ function hf_init_user_nomal() {
   Invoke-Expression $hf_log_func
   hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows"
   hf_install_choco
-  hf_ps_module_install_PSWindowsUpdate
-  hf_ps_module_install_PSAppx
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
@@ -1012,10 +1021,9 @@ function hf_init_user_bash() {
   hf_log "INFO: (4) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
   hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_set_version2 Ubuntu"
   hf_log "INFO: (6) when Ubuntu installed, run hf_wsl_fix_home_user"
-  hf_ps_module_install_PSWindowsUpdate
-  hf_ps_module_install_PSAppx
   hf_install_choco
   hf_install_winget
-  hf_choco_install google-backup-and-sync googlechrome vscode pwsh gsudo
+  hf_choco_install google-backup-and-sync googlechrome vscode gsudo 
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  hf_ps_essentials
 }

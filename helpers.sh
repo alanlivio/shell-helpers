@@ -1720,7 +1720,7 @@ function hf_install_node() {
   sudo apt install -y nodejs
 }
 
-function hf_install_powershell() {
+function hf_install_ps_core() {
   hf_log_func
   hf_apt_install_packages liblttng-ust0
   hf_apt_fetch_install http://mirrors.edge.kernel.org/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.4_amd64.deb
