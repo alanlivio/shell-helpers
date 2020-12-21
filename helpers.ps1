@@ -579,6 +579,7 @@ function hf_optimize_appx() {
     'Microsoft.XboxSpeechToTextOverlay'
     'Microsoft.ZuneMusic'
     'Microsoft.ZuneVideo'
+    'Microsoft.549981C3F5F10' # cortana
   )
   hf_appx_uninstall @pkgs
 
