@@ -52,23 +52,24 @@ function hf_profile_import($path) {
 # ---------------------------------------
 
 function hf_ps_essentials() {
-  if (-Not (Get-Module PsReadLine)) {
+  hf_profile_install
+  if (!(Get-Module PsReadLine)) {
     Install-Module PsReadLine -AcceptLicense -WarningAction Ignore
   }
-  if (-Not (Get-Module PowerShellGet)) {
+  if (!(Get-Module PowerShellGet)) {
     Set-PSRepository 'PSGallery' -InstallationPolicy Trusted
     Install-Module -Name PowerShellGet -Force 
     Write-Output "Import-Module PowerShellGet" >> $Profile.AllUsersAllHosts
   }
-  if (-Not (Get-Module PackageManagement)) {
+  if (!(Get-Module PackageManagement)) {
     Install-Module -Name PackageManagement -Force  -WarningAction Ignore
     Write-Output "Import-Module PackageManagement" >> $Profile.AllUsersAllHosts
   }
-  if (-Not (Get-Module -Name PSWindowsUpdate )) {
+  if (!(Get-Module -Name PSWindowsUpdate)) {
     Install-Module PSWindowsUpdate -Force -WarningAction Ignore
     Write-Output "Import-Module PSWindowsUpdate" >> $Profile.AllUsersAllHosts
   }
-  if (-Not (Get-Module Get-ChildItemColor)) {
+  if (!(Get-Module Get-ChildItemColor)) {
     hf_choco_install get-childitemcolor
     Import-Module Get-ChildItemColor -WarningAction Ignore
     Write-Output "Import-Module Get-ChildItemColor" >> $Profile.AllUsersAllHosts
@@ -76,7 +77,7 @@ function hf_ps_essentials() {
 }
 
 function hf_ps_core_enable_appx() {
-  if (-Not (Get-Module Appx)) {
+  if (!(Get-Module Appx)) {
     Import-Module -Name Appx -UseWIndowsPowershell -WarningAction Ignore
   }
 }
@@ -830,7 +831,6 @@ function hf_wsl_set_version2() {
 
 function hf_wsl_fix_home_user() {
   Invoke-Expression $hf_log_func
-
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
   # https://github.com/Microsoft/WSL/issues/3138
@@ -862,7 +862,7 @@ function hf_wsl_fix_home_user() {
 
 function hf_install_choco() {
   Invoke-Expression $hf_log_func
-  if (-Not (Get-Command 'choco' -ea 0)) {
+  if (!(Get-Command 'choco' -ea 0)) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -888,10 +888,12 @@ function hf_install_choco() {
 function hf_install_winget() {
   Invoke-Expression $hf_log_func
   $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
-  If (!(Test-Path $appx_pkg)) {
-    Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.3162-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
+  if (!(Get-Command winget)) {
+    if (!(Test-Path $appx_pkg)) {
+      Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.3162-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
+    }
+    Add-AppPackage $appx_pkg
   }
-  Add-AppPackage $appx_pkg
 }
 
 function hf_install_ps_core() {
@@ -908,7 +910,7 @@ function hf_install_battle_steam_stremio() {
 function hf_install_luacheck() {
   Invoke-Expression $hf_log_func
   $luacheck_path = "C:\tools\luacheck.exe"
-  If (!(Test-Path $luacheck_path)) {
+  if (!(Test-Path $luacheck_path)) {
     Invoke-WebRequest https://github.com/mpeterv/luacheck/releases/download/0.23.0/luacheck.exe -OutFile $luacheck_path
   }
 }
@@ -916,7 +918,7 @@ function hf_install_luacheck() {
 function hf_install_latexindent() {
   Invoke-Expression $hf_log_func
   $latexindent_path = "C:\tools\latexindent.exe"
-  If (!(Test-Path $latexindent_path)) {
+  if (!(Test-Path $latexindent_path)) {
     Invoke-WebRequest https://github.com/cmhughes/latexindent.pl/releases/download/V3.8.2/latexindent.exe -OutFile $latexindent_path
   }
 }
@@ -924,7 +926,7 @@ function hf_install_latexindent() {
 function hf_install_onedrive() {
   Invoke-Expression $hf_log_func
   $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-  If (!(Test-Path $onedrive)) {
+  if (!(Test-Path $onedrive)) {
     $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
   }
   Start-Process $onedrive -NoNewWindow -Wait
@@ -935,7 +937,7 @@ function hf_uninstall_onedrive() {
   Stop-Process -Name "OneDrive*"
   Start-Sleep 2
   $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-  If (!(Test-Path $onedrive)) {
+  if (!(Test-Path $onedrive)) {
     $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
   }
   Start-Process $onedrive "/uninstall" -NoNewWindow -Wait
@@ -943,19 +945,11 @@ function hf_uninstall_onedrive() {
 }
 
 # ---------------------------------------
-# config
+# wt
 # ---------------------------------------
 
-function hf_config_install_wt($path) {
+function hf_wt_config($path) {
   Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
-}
-
-function hf_config_installvscode($path) {
-  Copy-Item $path .\AppData\Roaming\Code\User\settings.json
-}
-
-function hf_config_wt_open() {
-  code $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 # ---------------------------------------
@@ -1004,26 +998,23 @@ function hf_init_windows() {
   hf_optimize_features
   hf_optimize_appx
   hf_optimize_explorer
-}
-
-function hf_init_user_nomal() {
-  Invoke-Expression $hf_log_func
-  hf_log "INFO: (1) in other PowerShell terminal, run hf_init_windows"
   hf_install_choco
   hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
 }
 
-function hf_init_user_bash() {
+function hf_init_bash_and_wt() {
   Invoke-Expression $hf_log_func
-  hf_log "INFO: (1) run hf_init_windows"
-  hf_log "INFO: (2) run hf_wsl_enable"
-  hf_log "INFO: (3) when sign in WindowStore, run hf_appx_install Microsoft.WindowsTerminal CanonicalGroupLimited.UbuntuonWindows"
-  hf_log "INFO: (4) when WindowsTerminal installed, run hf_config_install_wt <profiles.jon>"
-  hf_log "INFO: (5) when Ubuntu installed, run hf_wsl_set_version2 Ubuntu"
-  hf_log "INFO: (6) when Ubuntu installed, run hf_wsl_fix_home_user"
-  hf_install_choco
-  hf_install_winget
-  hf_choco_install google-backup-and-sync googlechrome vscode gsudo 
-  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
   hf_ps_essentials
+  hf_install_winget
+  hf_choco_install vscode gsudo 
+  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  if (!(Get-Command 'wt.exe' -ea 0)) {
+    winget install Microsoft.WindowsTerminal 
+    hf_log "INFO: after install WindowsTerminal, run hf_config_install_wt <profiles.jon>"
+  }
+  if (!(Get-Command 'ubuntu.exe' -ea 0)) {
+    winget install Microsoft.WindowsTerminal 
+    hf_wsl_set_version2 Ubuntu
+    hf_wsl_fix_home_user
+  }
 }
