@@ -312,7 +312,7 @@ fi
 if test -n "$IS_MAC"; then
   function hf_mac_install_brew() {
     hf_log_func
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   }
 
   function hf_mac_install_bash() {
@@ -322,11 +322,12 @@ if test -n "$IS_MAC"; then
   }
 
   function hf_brew_install() {
-    brew install "$@"
+    sudo brew install "$@"
   }
 
   function hf_brew_upgrade() {
-    brew update && brew upgrade
+    sudo brew update
+    sudo brew upgrade
   }
 fi
 
