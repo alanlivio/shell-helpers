@@ -882,20 +882,11 @@ function hf_latex_build_pdflatex() {
 # cpp
 # ---------------------------------------
 
-function hf_cpp_find_code_files() {
-  find . -print0 -name "*.h" -o -name "*.cc" -o -name "*.cpp" -o -name "*.c"
-}
-
-function hf_cpp_find_autotools_files() {
-  find . -print0 -name "*.am" -o -name "*.ac"
-}
-
-function hf_cpp_delete_binary_files() {
-  find . -print0 -type -f -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "*.log" -o -name "*.tmp" | xargs rm -r
-}
-
-function hf_cpp_delete_cmake_files() {
-  find . -print0 -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs rm -r
+function hf_cpp_clean() {
+  # autootools
+  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "config.log" |xargs -r rm -r
+  # cmake
+  find . -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
 }
 
 # ---------------------------------------
@@ -1601,7 +1592,7 @@ function hf_ruby_install_packages() {
 # ---------------------------------------
 
 function hf_python_clean() {
-  find . -print0-iname .idea -o -iname .ipynb_checkpoints -o -iname __pycache__ | xargs rm -r
+  find . -name .ipynb_checkpoints -o -name __pycache__ | xargs -r rm -r
 }
 
 function hf_python_set_python3_default() {
