@@ -175,9 +175,6 @@ function hf_path_print($addPath) {
   Write-Output $path
 }
 
-function hf_path_add_msys() {
-  hf_path_add 'C:\tools\msys64\mingw64\bin'
-}
 function hf_path_add_choco_tools() {
   $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
   hf_path_add $chocotools
@@ -895,6 +892,11 @@ function hf_install_winget() {
     }
     Add-AppPackage $appx_pkg
   }
+}
+
+function hf_install_msys2() {
+  hf_choco_install msys2
+  hf_path_add 'C:\tools\msys64\mingw64\bin'
 }
 
 function hf_install_ps_core() {
