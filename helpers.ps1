@@ -110,7 +110,7 @@ function hf_ps_profiles_reset() {
   $profile.CurrentUserCurrentHost = "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 }
 
-function hf_ps_wait_for_fey {
+function hf_ps_wait_for_key {
   hf_log "Press any key to continue"
   [Console]::ReadKey($true) | Out-Null
 }
@@ -720,22 +720,22 @@ function hf_explorer_hide_dotfiles() {
 }
 
 function hf_explorer_open_start_menu_folder() {
-  explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
+  Start-Process explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
 }
 
 function hf_explorer_open_task_bar_folder() {
-  explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
+  Start-Process explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
 }
 
 function hf_explorer_open_startup_folder() {
-  explorer 'shell:startup'
+  Start-Process explorer 'shell:startup'
 }
 
 function hf_explorer_open_home_folder() {
-  explorer $env:userprofile
+  Start-Process explorer $env:userprofile
 }
 function hf_explorer_open_trash() {
-  explorer shell:recyclebinfolder
+  Start-Process explorer shell:recyclebinfolder
 }
 
 function hf_explorer_restart() {
@@ -897,6 +897,7 @@ function hf_install_winget() {
 function hf_install_msys2() {
   hf_choco_install msys2
   hf_path_add 'C:\tools\msys64\mingw64\bin'
+  hf_path_add 'C:\tools\msys64\usr\bin'
 }
 
 function hf_install_ps_core() {
