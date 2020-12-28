@@ -279,7 +279,7 @@ if test -n "$IS_WINDOWS_MINGW"; then
 
   function hf_msys_search() {
     hf_log_func
-    pacman -Ss --noconfirm "$@"
+    sudo pacman -Ss --noconfirm "$@"
   }
 
   function hf_msys_fix_home_user() {
@@ -291,17 +291,22 @@ if test -n "$IS_WINDOWS_MINGW"; then
 
   function hf_msys_install() {
     hf_log_func
-    pacman -Su --needed --noconfirm "$@"
+    sudo pacman -Su --needed --noconfirm "$@"
   }
-
+  
   function hf_msys_uninstall() {
     hf_log_func
-    pacman -R --noconfirm "$@"
+    sudo pacman -R --noconfirm "$@"
   }
 
   function hf_msys_upgrade() {
     hf_log_func
-    pacman -Su --noconfirm
+    sudo pacman -Su --noconfirm
+  }
+  
+    function hf_msys_fix_lock() {
+    hf_log_func
+    sudo rm /var/lib/pacman/db.lck
   }
 fi
 
@@ -886,7 +891,7 @@ function hf_cpp_clean() {
   # autootools
   find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "config.log" |xargs -r rm -r
   # cmake
-  find . -name "CMakeFiles" -o -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
+  find . -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" -o -name "CMakeFiles"  | xargs -r rm -r
 }
 
 # ---------------------------------------
