@@ -111,7 +111,7 @@ if test -n "$IS_WINDOWS"; then
     gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
   }
   function hf_init_windows() {
-    hf_env_ps_call_admin "hf_init_user_bash"
+    hf_env_ps_call_admin "hf_init_windows"
   }
 fi
 
@@ -169,6 +169,7 @@ fi
 
 if test -n "$IS_WINDOWS_WSL"; then
   function hf_wsl_ssh_config() {
+    sudo apt install -y openssh-server
     # https://github.com/JetBrains/clion-wsl/blob/master/ubuntu_setup_env.sh
     SSHD_LISTEN_ADDRESS=127.0.0.1
     SSHD_PORT=2222
@@ -183,9 +184,9 @@ if test -n "$IS_WINDOWS_WSL"; then
     echo "# configured by CLion" | sudo tee -a $SSHD_FILE
     echo "ListenAddress ${SSHD_LISTEN_ADDRESS}" | sudo tee -a $SSHD_FILE
     echo "Port ${SSHD_PORT}" | sudo tee -a $SSHD_FILE
-    echo "UsePrivilegeSeparation no" | sudo tee -a $SSHD_FILE
     echo "PasswordAuthentication yes" | sudo tee -a $SSHD_FILE
     echo "%sudo ALL=(ALL) NOPASSWD: /usr/sbin/service ssh --full-restart" | sudo tee -a $SUDOERS_FILE
+    sudo service ssh --full-restart
   }
 
   function hf_wsl_ssh_start() {
@@ -293,7 +294,7 @@ if test -n "$IS_WINDOWS_MINGW"; then
     hf_log_func
     sudo pacman -Su --needed --noconfirm "$@"
   }
-  
+
   function hf_msys_uninstall() {
     hf_log_func
     sudo pacman -R --noconfirm "$@"
@@ -303,8 +304,8 @@ if test -n "$IS_WINDOWS_MINGW"; then
     hf_log_func
     sudo pacman -Su --noconfirm
   }
-  
-    function hf_msys_fix_lock() {
+
+  function hf_msys_fix_lock() {
     hf_log_func
     sudo rm /var/lib/pacman/db.lck
   }
@@ -873,7 +874,7 @@ function hf_latex_apt_essentials() {
 function hf_latex_gitignore() {
   hf_git_gitignore_create latex >.gitignore
   echo "main.pdf" >>.gitignore
-  echo "_main.pdf" >>.gitignore
+  echo "_main*.pdf" >>.gitignore
 }
 
 function hf_latex_build_pdflatex() {
@@ -889,9 +890,9 @@ function hf_latex_build_pdflatex() {
 
 function hf_cpp_clean() {
   # autootools
-  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "config.log" |xargs -r rm -r
+  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure"  -o -name "config.status" | xargs -r rm -r
   # cmake
-  find . -name "CMakeCache.txt" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" -o -name "CMakeFiles"  | xargs -r rm -r
+  find . -name "CMakeCache.txt" -o -name "CMakeFiles" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
 }
 
 # ---------------------------------------
