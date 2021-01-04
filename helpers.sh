@@ -895,6 +895,14 @@ function hf_cmake_install() {
   sudo cmake --install . --prefix "/usr/local"
 }
 
+function hf_cmake_uninstall() {
+  MANIFEST=./install_manifest.txt
+  if test -f $MANIFEST; then
+    cat $MANIFEST | sudo xargs rm
+    cat $MANIFEST | xargs -L1 dirname | sudo xargs rmdir -p
+  fi
+}
+
 # ---------------------------------------
 # image
 # ---------------------------------------
