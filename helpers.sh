@@ -99,6 +99,19 @@ elif test -n "$IS_WINDOWS_WSL"; then
 fi
 
 # ---------------------------------------
+# alias code
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS"; then
+  # this is used for hf_vscode_install_packages
+  function codewin() {
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
+  }
+elif test -n "$IS_MAC"; then
+  alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
+fi
+
+# ---------------------------------------
 # helper.ps1
 # ---------------------------------------
 
@@ -113,25 +126,6 @@ if test -n "$IS_WINDOWS"; then
   function hf_init_windows() {
     hf_env_ps_call_admin "hf_init_windows"
   }
-fi
-
-# ---------------------------------------
-# alias code
-# ---------------------------------------
-
-if test -n "$IS_WINDOWS"; then
-  # this is used for hf_vscode_install_packages
-  function codewin() {
-    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
-  }
-  function codewin_open_path() {
-    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
-  }
-  if test -n "$IS_WINDOWS_WSL"; then
-    alias code=codewin_open_path
-  fi
-elif test -n "$IS_MAC"; then
-  alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
 
 # ---------------------------------------
