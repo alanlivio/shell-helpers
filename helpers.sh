@@ -1067,12 +1067,8 @@ function hf_network_wait_for_conectivity() {
   watch -g -n 1 ping -c 1 google.com
 }
 
-function hf_network_ports_tcp_listening() {
-  ss -lt
-}
-
-function hf_network_ports_udp_listening() {
-  ss -lu
+function hf_network_ports() {
+  netstat -a -n -o
 }
 
 function hf_network_ports_list_using() {
