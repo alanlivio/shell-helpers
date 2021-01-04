@@ -141,13 +141,13 @@ if test -n "$IS_WINDOWS_WSL"; then
     # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
     sudo apt-get install pulseaudio
     echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | gsudo sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
-    echo -e "exit-idle-time = -1" | gsudo  sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
-    
+    echo -e "exit-idle-time = -1" | gsudo sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
+
     # configure .profile
     if ! grep -q "PULSE_SERVER" $HOME/.profile; then
-      echo -e "\nexport DISPLAY=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile 
-      echo "export PULSE_SERVER=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile 
-      echo "export LIBGL_ALWAYS_INDIRECT=1" | tee -a $HOME/.profile 
+      echo -e "\nexport DISPLAY=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile
+      echo "export PULSE_SERVER=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile
+      echo "export LIBGL_ALWAYS_INDIRECT=1" | tee -a $HOME/.profile
     fi
   }
 
@@ -882,9 +882,17 @@ function hf_latex_build_pdflatex() {
 
 function hf_cpp_clean() {
   # autootools
-  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure"  -o -name "config.status" | xargs -r rm -r
+  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure" -o -name "config.status" | xargs -r rm -r
   # cmake
   find . -name "CMakeCache.txt" -o -name "CMakeFiles" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
+}
+
+# ---------------------------------------
+# cmake
+# ---------------------------------------
+
+function hf_cmake_install() {
+  sudo cmake --install . --prefix "/usr/local"
 }
 
 # ---------------------------------------
