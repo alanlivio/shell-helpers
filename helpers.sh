@@ -757,16 +757,8 @@ function hf_git_subfolders_reset_clean() {
 }
 
 # ---------------------------------------
-# editors
+# eclipse
 # ---------------------------------------
-
-function hf_qtcreator_project_from_git() {
-  project_name="${PWD##*/}"
-  touch "$project_name.config"
-  echo -e "[General]\n" >"$project_name.creator"
-  echo -e "src\n" >"$project_name.includes"
-  git ls-files >"$project_name.files"
-}
 
 function hf_eclipse_list_installed() {
   eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
