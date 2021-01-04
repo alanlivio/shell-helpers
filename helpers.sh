@@ -1000,6 +1000,11 @@ function hf_pdf_count_words() {
   pdftotext $1 - | wc -w
 }
 
+function hf_pdf_to_images() {
+  : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
+  pdftoppm -png $1 ${1%.*}
+}
+
 # ---------------------------------------
 # convert
 # ---------------------------------------
