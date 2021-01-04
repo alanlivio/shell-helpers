@@ -140,15 +140,21 @@ fi
 
 if test -n "$IS_WINDOWS_WSL"; then
   # x,pulseaudio server
-  # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
-  export DISPLAY="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
-  export PULSE_SERVER="$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0"
-  export LIBGL_ALWAYS_INDIRECT=1
 
-  function hf_wsl_pulseaudio_enable() {
+  function hf_wsl_x_pulseaudio_enable() {
+    hf_env_ps_call_admin "hf_choco_install pulseaudio vcxsrv"
+
+    # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
     sudo apt-get install pulseaudio
-    echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
-    echo -e "exit-idle-time = -1" | sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
+    echo -e "load-module module-native-protocol-tcp auth-anonymous=1" | gsudo sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\default.pa)
+    echo -e "exit-idle-time = -1" | gsudo  sudo tee -a $(unixpath C:\\ProgramData\\chocolatey\\lib\\pulseaudio\\tools\\etc\\pulse\\daemon.conf)
+    
+    # configure .profile
+    if ! grep -q "PULSE_SERVER" $HOME/.profile; then
+      echo -e "\nexport DISPLAY=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile 
+      echo "export PULSE_SERVER=\"$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0\"" | tee -a $HOME/.profile 
+      echo "export LIBGL_ALWAYS_INDIRECT=1" | tee -a $HOME/.profile 
+    fi
   }
 
   function hf_wsl_x_pulseaudio_start() {
@@ -157,7 +163,7 @@ if test -n "$IS_WINDOWS_WSL"; then
     "$(unixpath 'C:\Program Files\VcXsrv\vcxsrv.exe')" :0 -multiwindow -clipboard -wgl -ac -silent-dup-error &
   }
 
-  function hf_wsl_x_pulseaudio_kill() {
+  function hf_wsl_x_pulseaudio_stop() {
     cmd.exe /c "taskkill /IM pulseaudio.exe /F"
     cmd.exe /c "taskkill /IM vcxsrv.exe /F"
   }
