@@ -102,7 +102,7 @@ fi
 # alias code
 # ---------------------------------------
 
-if test -n "$IS_WINDOWS"; then
+if test -n "$IS_WINDOWS_WSL"; then
   # this is used for hf_vscode_install_packages
   function codewin() {
     cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
@@ -1259,7 +1259,7 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ... >"}
   hf_log_func
-  CODE4INST=$(if test -n "$IS_WINDOWS"; then echo "codewin"; else echo "code"; fi)
+  CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
   $CODE4INST --list-extensions >$INSTALLED_LIST_TMP_FILE
