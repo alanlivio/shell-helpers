@@ -730,11 +730,6 @@ function hf_clean_unused_folders() {
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
 
-function hf_clean_choco() {
-  Invoke-Expression $hf_log_func
-  gsudo \tools\BCURRAN3\choco-cleaner.ps1 | Out-Null
-}
-
 # ---------------------------------------
 # explorer
 # ---------------------------------------
@@ -812,6 +807,11 @@ function hf_choco_upgrade() {
 function hf_choco_list_installed() {
   Invoke-Expression $hf_log_func
   choco list -l
+}
+
+function hf_choco_clean() {
+  Invoke-Expression $hf_log_func
+  gsudo \tools\BCURRAN3\choco-cleaner.ps1 | Out-Null
 }
 
 # ---------------------------------------
@@ -1011,7 +1011,7 @@ function hf_winupdate_update_hidden() {
 # ---------------------------------------
 function hf_sync {
   hf_choco_upgrade
-  hf_clean_choco
+  hf_choco_clean
   hf_winupdate_update
 }
 
