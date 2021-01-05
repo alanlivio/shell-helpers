@@ -117,14 +117,14 @@ fi
 
 if test -n "$IS_WINDOWS"; then
   SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
-  function hf_env_ps_call() {
+  function hf_ps_call() {
     powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
   }
-  function hf_env_ps_call_admin() {
+  function hf_ps_call_admin() {
     gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
   }
   function hf_init_windows() {
-    hf_env_ps_call_admin "hf_init_windows"
+    hf_ps_call_admin "hf_init_windows"
   }
 fi
 
@@ -136,7 +136,7 @@ if test -n "$IS_WINDOWS_WSL"; then
   # x,pulseaudio server
 
   function hf_wsl_x_pulseaudio_enable() {
-    hf_env_ps_call_admin "hf_choco_install pulseaudio vcxsrv"
+    hf_ps_call_admin "hf_choco_install pulseaudio vcxsrv"
 
     # https://wiki.ubuntu.com/WSL#Running_Graphical_Applications
     sudo apt-get install pulseaudio
