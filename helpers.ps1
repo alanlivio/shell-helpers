@@ -701,6 +701,20 @@ function hf_appx_install_essentials() {
 # clean
 # ---------------------------------------
 
+function hf_clean_unused_shortcuts() {
+  Invoke-Expression $hf_log_func
+  $path = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs"
+  $shortcuts = @(
+    "$path\Access.lnk" 
+    "$path\Chocolatey Cleaner.lnk" 
+    "$path\OneNote.lnk" 
+    "$path\Outlook.lnk" 
+    "$path\Publisher.lnk" 
+    "$path\Microsoft Office Tools\" 
+  )
+  $shortcuts | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
+}
+
 function hf_clean_unused_folders() {
   Invoke-Expression $hf_log_func
   $folders = @(
@@ -724,8 +738,6 @@ function hf_clean_unused_folders() {
     'Saved Games'
     'Searches'
     'SendTo'
-    # 'Documents'
-    # 'Pictures/'
   )
   $folders | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
@@ -1012,6 +1024,9 @@ function hf_winupdate_update_hidden() {
 function hf_sync {
   hf_choco_upgrade
   hf_choco_clean
+  hf_clean_unused_folders
+  hf_clean_unused_shortcuts
+  hf_explorer_hide_dotfiles
   hf_winupdate_update
 }
 
