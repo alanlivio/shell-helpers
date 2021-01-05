@@ -74,7 +74,7 @@ if test -n "$IS_WINDOWS_WSL"; then
 elif test -n "$IS_WINDOWS_MINGW"; then
   alias unixpath='cygpath'
   alias winpath='cygpath -w'
-  alias sudo='gsudo'
+  alias sudo=''
   # fix mingw tmp
   unset temp
   unset tmp
@@ -882,7 +882,7 @@ function hf_latex_build_pdflatex() {
 
 function hf_cpp_clean() {
   # autootools
-  find . -name .libs -name "*.a" -o -name "*.o" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure" -o -name "config.status" | xargs -r rm -r
+  find . -name "Makefile" -o -name ".libs" -o -name "*.a" -o -name "*.o" -name "*.lo" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure" -o -name "config.status" | xargs -r rm -r
   # cmake
   find . -name "CMakeCache.txt" -o -name "CMakeFiles" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
 }
@@ -891,15 +891,21 @@ function hf_cpp_clean() {
 # cmake
 # ---------------------------------------
 
+function hf_cmake_build() {
+  cmake --build .
+}
+
 function hf_cmake_install() {
-  sudo cmake --install . --prefix "/usr/local"
+  PREFIX="/usr/"
+  if ! test -z $1; then PREFIX=$1; fi
+  sudo cmake --install . --prefix $PREFIX
 }
 
 function hf_cmake_uninstall() {
   MANIFEST=./install_manifest.txt
   if test -f $MANIFEST; then
     cat $MANIFEST | while read -r i; do
-      if test -f $i; then echo rm -f $i; fi
+      if test -f $i; then sudo rm -f $i; fi
     done
   fi
 }

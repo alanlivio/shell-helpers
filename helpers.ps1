@@ -934,6 +934,7 @@ function hf_install_msys2() {
   hf_choco_install msys2
   hf_path_add 'C:\tools\msys64\mingw64\bin'
   hf_path_add 'C:\tools\msys64\usr\bin'
+  hf_path_add 'C:\tools\msys64\usr\local\bin'
 }
 
 function hf_install_ps_core() {
@@ -1045,7 +1046,7 @@ function hf_init_bash_and_wt() {
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal 
-    hf_log "INFO: after install WindowsTerminal, run hf_config_install_wt <profiles.jon>"
+    hf_log "INFO: after install WindowsTerminal, run hf_wt_config <profiles.jon>"
   }
   if (!(Get-Command 'ubuntu.exe' -ea 0)) {
     winget install CanonicalGroupLimited.UbuntuonWindows 
