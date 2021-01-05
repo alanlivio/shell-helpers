@@ -898,8 +898,9 @@ function hf_cmake_install() {
 function hf_cmake_uninstall() {
   MANIFEST=./install_manifest.txt
   if test -f $MANIFEST; then
-    cat $MANIFEST | sudo xargs rm
-    cat $MANIFEST | xargs -L1 dirname | sudo xargs rmdir -p
+    cat $MANIFEST | while read -r i; do
+      if test -f $i; then echo rm -f $i; fi
+    done
   fi
 }
 
