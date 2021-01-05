@@ -517,6 +517,7 @@ function hf_optimize_appx() {
   # microsoft
   $pkgs = @(
     'Microsoft.3DBuilder'
+    'Microsoft.549981C3F5F10' # cortana
     'Microsoft.Appconnector'
     'Microsoft.BingNews'
     'Microsoft.BingSports'
@@ -552,9 +553,9 @@ function hf_optimize_appx() {
     'Microsoft.XboxGamingOverlay'
     'Microsoft.XboxIdentityProvider'
     'Microsoft.XboxSpeechToTextOverlay'
+    'Microsoft.YourPhone'
     'Microsoft.ZuneMusic'
     'Microsoft.ZuneVideo'
-    'Microsoft.549981C3F5F10' # cortana
   )
   hf_appx_uninstall @pkgs
 
@@ -610,7 +611,7 @@ function hf_scheduledtask_list_enabled() {
 function hf_scheduledtask_disable() {
   foreach ($name in $args) {
     Invoke-Expression $hf_log_func" "$name
-    Disable-ScheduledTask -TaskName $name
+    Disable-ScheduledTask -TaskName $name | Out-null
   }
 }
 
@@ -690,7 +691,6 @@ function hf_appx_install_essentials() {
     'Microsoft.WindowsCalculator'
     'Microsoft.Windows.Photos'
     'Microsoft.WindowsFeedbackHub'
-    'Microsoft.WindowsTerminal'
     'Microsoft.WindowsCamera'
     'Microsoft.WindowsSoundRecorder'
   )
@@ -1019,44 +1019,36 @@ function hf_winupdate_update_hidden() {
 }
 
 # ---------------------------------------
-# sync
-# ---------------------------------------
-function hf_sync {
-  hf_choco_upgrade
-  hf_choco_clean
-  hf_clean_unused_folders
-  hf_clean_unused_shortcuts
-  hf_explorer_hide_dotfiles
-  hf_winupdate_update
-}
-
-# ---------------------------------------
 # init
 # ---------------------------------------
 
 function hf_init_windows() {
   Invoke-Expression $hf_log_func
+  hf_install_choco
   hf_clean_unused_folders
   hf_system_disable_password_policy
   hf_optimize_features
   hf_optimize_appx
   hf_optimize_explorer
-  hf_install_choco
-  hf_choco_install google-backup-and-sync googlechrome vlc 7zip ccleaner FoxitReader
+  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
+  hf_explorer_hide_dotfiles
+  hf_clean_unused_folders
+  hf_clean_unused_shortcuts
 }
 
 function hf_init_bash_and_wt() {
   Invoke-Expression $hf_log_func
+  hf_install_choco
   hf_ps_essentials
   hf_install_winget
-  hf_choco_install vscode gsudo 
+  hf_choco_install google-backup-and-sync gsudo 
   hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal 
     hf_log "INFO: after install WindowsTerminal, run hf_config_install_wt <profiles.jon>"
   }
   if (!(Get-Command 'ubuntu.exe' -ea 0)) {
-    winget install Microsoft.WindowsTerminal 
+    winget install CanonicalGroupLimited.UbuntuonWindows 
     hf_wsl_set_version2 Ubuntu
     hf_wsl_fix_home_user
   }

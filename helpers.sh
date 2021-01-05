@@ -341,13 +341,13 @@ fi
 # ubuntu-on-mac
 # ---------------------------------------
 
-function hf_mac_ubuntu_keyboard_fn() {
+function hf_mac_ubuntu_keyboard_fixes() {
   hf_log_func
-  echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
-}
 
-function hf_mac_ubuntu_keyboard_fix() {
-  hf_log_func
+  # enable fn keys
+  echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
+
+  # configure layout
   # alternative: setxkbmap -layout us -variant intl
   gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
 
