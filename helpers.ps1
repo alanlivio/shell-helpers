@@ -286,12 +286,7 @@ function hf_optimize_features() {
     "*XblGameSave*" # Xbox Live Game Save
     "*wisvc*" # Windows Insider Service
   )
-  
-  $services | ForEach-Object {
-    hf_log_l2  "Stop and disable $_"
-    Get-Service -Name $_ | Stop-Service -WarningAction SilentlyContinue 
-    Get-Service -Name $_ | Set-Service -StartupType Disabled -ea 0 
-  }
+  hf_service_disable $services
   
   # Disable unused windows packages
   hf_log  "Disable windows packages "
@@ -300,59 +295,42 @@ function hf_optimize_features() {
     '*Hello-Face*'
     '*phone*'
   )
-  hf_winpackage_uninstall_like @pkgs 
+  hf_winpackage_disable @pkgs 
+
+  # Disable scheduled tasks
+  hf_log  "Disable scheduled tasks "
+  $tasks = @(
+    'CCleaner Update'
+    'CCleanerSkipUAC'
+  )
+  hf_scheduledtask_disable @tasks
 }
   
-function hf_optimize_features_advanced() {
+function hf_optimize_features_experimental() {
   Invoke-Expression $hf_log_func
-  # Disable services
-  hf_log  "Disable services "
   $services = @(
     "*TermService*" # Remote Desktop Services
     "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
     "*SessionEnv*" # Remote Desktop Configuration
-    
-    "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
+    # "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
     # "*Bonjour Service*" # bootcamp: Bonjour Service
     # "*BootCampService*" # bootcamp: Boot Camp Service
-    
-    "*Phone*" # Foxit Reader Update Service
     "*gupdate*" # Google Update Service
     "*gupdatem*" # Google Update Service
-    
     "*PcaSvc*" # Program Compatibility Assistant Service
     "*wercplsupport*" # Problem Reports Control Panel Support
     "*WerSvc*" # Windows Error Reporting Service
-    
     "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service   
     "*PhoneSvc*" # Phone Service
     "*Themes*" # Themes (Provides user experience theme management.)
     "*WbioSrvc*" # Windows Biometric Service
     "*Sense*" # Windows Defender Advanced Threat Protection Service
-
     "*SysMain*" # SysMain (Maintains and improves system performance)
     "*MicrosoftEdgeElevationService*" # Edge Update Service 
     "*edgeupdate*" # Edge Update Service 
     "*edgeupdatem*" # Edge Update Service
-    
-    # "*SecurityHealthService*"
-    # "*AppVClient*" # Microsoft App-V Client
-    # "*AxInstSV*" # ActiveX Installer
-    # "*SharedAccess*" # Internet Connection Sharing (ICS)
-    # "*UevAgentService*" # User Experience Virtualization Service (application and OS settings roaming)
-    
-    # craches
-    # "*TabletInputService*" # Touch Keyboard and Handwriting Panel Service. OBS crashes WindowsTerminal input https://github.com/microsoft/terminal/issues/4448
-    # "*ClickToRunSvc*" # Office Click-to-Run Service.
-    # "*shpamsvc*" # Shared PC Account Manager
-    # "*HomeGroupListener*" 
-    # "*UserManager*" # User Manager
   )
-  $services | ForEach-Object {
-    hf_log_l2 "Stop and disable $_"
-    Get-Service -Name $_ | Stop-Service -WarningAction SilentlyContinue 
-    Get-Service -Name $_ | Set-Service -StartupType Disabled -ea 0
-  }
+  hf_service_disable $services
 }
 
 function hf_optimize_explorer() {
@@ -616,11 +594,57 @@ function hf_link_create($desntination, $source) {
   cmd /c mklink /D $desntination $source
 }
 
+
+# ---------------------------------------
+# scheduledtask
+# ---------------------------------------
+
+function hf_scheduledtask_list_enabled() {
+  Get-ScheduledTask | Where-Object { $_.State -eq "Ready" }
+}
+
+function hf_scheduledtask_list_enabled() {
+  Get-ScheduledTask | Where-Object { $_.State -eq "Disabled" }
+}
+
+function hf_scheduledtask_disable() {
+  foreach ($name in $args) {
+    Invoke-Expression $hf_log_func" "$name
+    Disable-ScheduledTask -TaskName $name
+  }
+}
+
+# ---------------------------------------
+# service
+# ---------------------------------------
+
+function hf_service_list_running() {
+  Get-Service | Where-Object { $_.Status -eq "Running" }
+}
+function hf_service_list_enabled() {
+  Get-Service | Where-Object { $_.StartType -eq "Automatic" }
+}
+function hf_service_list_disabled() {
+  Get-Service | Where-Object { $_.StartType -eq "Disabled" }
+}
+function hf_service_disable($name) {
+  foreach ($name in $args) {
+    Invoke-Expression $hf_log_func" "$name
+    Get-Service -Name $name | Stop-Service -WarningAction SilentlyContinue 
+    Get-Service -Name $ame | Set-Service -StartupType Disabled -ea 0 
+  }
+}
+
+
 # ---------------------------------------
 # winpackage
 # ---------------------------------------
 
-function hf_winpackage_uninstall_like() {
+function hf_winpackage_list_enabled() {
+  Get-WindowsPackage -Online | Where-Object PackageState -like Installed | ForEach-Object { $_.PackageName }
+}
+
+function hf_winpackage_disable() {
   Invoke-Expression $hf_log_func" "$args
   foreach ($name in $args) {
     $pkgs = Get-WindowsPackage -Online | Where-Object PackageState -like Installed | Where-Object PackageName -like $name
