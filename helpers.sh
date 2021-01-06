@@ -88,8 +88,8 @@ if test -n "$IS_LINUX"; then
   alias ls='ls --color=auto'
   alias grep='grep --color=auto'
   alias start='xdg-open'
-elif test -n "$IS_WINDOWS_WSL"; then
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=IntelGraphicsProfiles*'
+elif test -n "$IS_WINDOWS"; then
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=AppData --hide=IntelGraphicsProfiles*'
   alias grep='grep --color=auto'
   alias start="cmd.exe /c start"
   # hide windows user files when ls home
