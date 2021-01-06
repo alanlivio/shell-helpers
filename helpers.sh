@@ -41,6 +41,7 @@ fi
 
 function hf_init_gnome() {
   hf_log_func
+  hf_clean_unused_folders
   hf_gnome_dark
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
@@ -49,7 +50,6 @@ function hf_init_gnome() {
   hf_install_chrome
   hf_install_vscode
   hf_install_insync
-  hf_clean_unused_folders
 }
 
 if test -n "$IS_MAC"; then
@@ -1428,7 +1428,7 @@ function hf_gnome_sanity() {
 
 function hf_gnome_disable_unused_apps_in_search() {
   hf_log_func
-  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' -iname '*java*' -or -name '*JB*' -or -iname '*policy*' -or -iname '*icedtea*' -or -iname '*uxterm*' -or -iname '*display-im6*' -or -iname '*unity*' -or -iname '*webbrowser-app*' -or -iname '*amazon*' -or -iname '*icedtea*' -or -iname '*xdiagnose*' -or -iname yelp.desktop -or -iname '*brasero*')
+  APPS_TO_HIDE=$(find /usr/share/applications/ -iname '*im6*' -iname '*java*' -o -iname '*JB*' -o -iname '*policy*' -o -iname '*icedtea*' -o -iname '*uxterm*' -o -iname '*display-im6*' -o -iname '*unity*' -o -iname '*webbrowser-app*' -o -iname '*amazon*' -o -iname '*icedtea*' -o -iname '*xdiagnose*' -o -iname yelp.desktop -o -iname '*brasero*')
   for i in $APPS_TO_HIDE; do
     sudo sh -c " echo 'NoDisplay=true' >> $i"
   done

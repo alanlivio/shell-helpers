@@ -747,6 +747,7 @@ function hf_clean_unused_folders() {
 # ---------------------------------------
 
 function hf_explorer_hide_dotfiles() {
+  Invoke-Expression $hf_log_func
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
@@ -802,8 +803,19 @@ function hf_adminstrator_user_disable() {
 # ---------------------------------------
 
 function hf_choco_install() {
-  Invoke-Expression $hf_log_func" "$args
-  choco install -y --acceptlicense ($args -join ";")
+  Invoke-Expression $hf_log_func
+  foreach ($name in $args) {
+    $pkgs_to_install=""
+    $pkgs = choco list -l
+    if (!($pkgs -Match "$name")) {
+      $pkgs_to_install= "$pkgs_to_install $name"
+      choco install -y --acceptlicense $name
+    }
+    if($pkgs_to_install){
+      Invoke-Expression $hf_log_func" "$pkgs_to_install
+      choco install -y --acceptlicense ($pkgs_to_install -join ";")
+    }
+  }
 }
 
 function hf_choco_uninstall() {
@@ -813,7 +825,11 @@ function hf_choco_uninstall() {
 
 function hf_choco_upgrade() {
   Invoke-Expression $hf_log_func
-  choco upgrade -y --acceptlicense all
+  choco outdated | Out-Null
+  # 2: outdated packages have been found
+  if ($LastExitCode -eq 2) { 
+    choco upgrade -y --acceptlicense all
+  }
 }
 
 function hf_choco_list_installed() {
@@ -1010,7 +1026,7 @@ function hf_winupdate_list_last_installed() {
 function hf_winupdate_update() {
   Invoke-Expression $hf_log_func
   $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_ -ne "" }
-  hf_log "RequireReboot: $(Get-WURebootStatus -Silent)"
+  # hf_log_l2 "RequireReboot: $(Get-WURebootStatus -Silent)"
 }
 
 function hf_winupdate_update_hidden() {
@@ -1025,16 +1041,15 @@ function hf_winupdate_update_hidden() {
 
 function hf_init_windows() {
   Invoke-Expression $hf_log_func
-  hf_install_choco
   hf_clean_unused_folders
+  hf_clean_unused_shortcuts
+  hf_explorer_hide_dotfiles
+  hf_install_choco
   hf_system_disable_password_policy
   hf_optimize_features
   hf_optimize_appx
   hf_optimize_explorer
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
-  hf_explorer_hide_dotfiles
-  hf_clean_unused_folders
-  hf_clean_unused_shortcuts
 }
 
 function hf_init_bash_and_wt() {
