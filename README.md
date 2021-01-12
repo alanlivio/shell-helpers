@@ -1,6 +1,6 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers different helpers functions for both `bash` and `pwsh`.
+This project offers different helpers functions for both `bash` and `pwsh` .
 In particular, it supports creating a minimal developer environment in different operating systems by configure:
 
 | cmd shells | graphical shells | terminals | code editors |
@@ -53,25 +53,27 @@ Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell-helpers/mast
 
 Other projects were used as inspiration and reference.
 
-For bash:
+sh helpers:
 
 * https://github.com/mdo/config
 * https://github.com/jenkins-x/dev-env
 * https://github.com/jsutcodes/.bashrc_helper
 * https://github.com/aspiers/shell-env
 
-For powershell:
+ps hepers:
 
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
 * https://gitlab.com/sgur/powershellrc/
 
-For powershell windows optimization:
+* optimize services
+  + https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
+  + https://github.com/adolfintel/Windows10-Privacy
+  + https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
+  + https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
 
-* https://github.com/adolfintel/Windows10-Privacy
-* https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
-* https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
-* https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
-* https://github.com/madbomb122/Win10Script/blob/master/Win10-Menu.ps1
-* https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
-* https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
+* optimize explorer
+  + https://github.com/madbomb122/Win10Script/blob/master/Win10-Menu.ps1
+  + https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
+  + https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
+  + https://github.com/Disassembler0/Win10-Initial-Setup-Script/blob/master/Win10.psm1
