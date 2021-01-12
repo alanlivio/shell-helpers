@@ -64,6 +64,7 @@ function hf_ps_drives() {
 }
 
 function hf_ps_essentials() {
+  Invoke-Expression $hf_log_func
   hf_profile_install
   if (!(Get-Module PsReadLine)) {
     Install-Module PsReadLine -AcceptLicense -WarningAction Ignore
@@ -126,6 +127,7 @@ function hf_ps_wait_for_key {
   hf_log "Press any key to continue"
   [Console]::ReadKey($true) | Out-Null
 }
+
 function hf_ps_new_path {
   $path = $args[0]
   if (-not (Test-Path $path)) {
@@ -178,8 +180,7 @@ function hf_path_add($addPath) {
   if (Test-Path $addPath) {
     $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
     $regexAddPath = [regex]::Escape($addPath)
-    $arrPath = $path -split ';' | Where-Object { $_ -notMatch 
-      "^$regexAddPath\\?" }
+    $arrPath = $path -split ';' | Where-Object { $_ -notMatch "^$regexAddPath\\?" }
     $newpath = ($arrPath + $addPath) -join ';'
     [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
   }
@@ -220,19 +221,19 @@ function hf_optimize_services() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value 0 
   
   # Fax
-  hf_log  "Remove Fax "
+  hf_log "Remove Fax "
   Remove-Printer -Name "Fax" -ea 0
 
   # XPS Services
-  hf_log  "Remove XPS "
+  hf_log "Remove XPS "
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
 
   # Work Folders
-  hf_log  "Remove Work Folders "
+  hf_log "Remove Work Folders "
   dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
 
   # Remove Lock screen
-  hf_log  "Remove Lockscreen "
+  hf_log "Remove Lockscreen "
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Value 1 
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Value 1
   
@@ -259,16 +260,16 @@ function hf_optimize_services() {
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Value 255 
   
   # Disable error reporting
-  hf_log  "Disable error reporting "
+  hf_log "Disable error reporting "
   reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable license checking
-  hf_log  "Disable license checking "
+  hf_log "Disable license checking "
   reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
   
   # Disable tips
-  hf_log  "Disable tips "
+  hf_log "Disable tips "
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
@@ -287,7 +288,7 @@ function hf_optimize_services() {
   Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Value 0
   
   # Disable unused services
-  hf_log  "Disable unused services "
+  hf_log "Disable unused services "
   $services = @("*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
     "*diagsvc*" # Diagnostic Execution Service
     "*dmwappushservice*" # Device Management WAP Push message Routing Service
@@ -307,7 +308,7 @@ function hf_optimize_services() {
   hf_service_disable $services
   
   # Disable unused windows packages
-  hf_log  "Disable windows packages "
+  hf_log "Disable windows packages "
   $pkgs = @(
     '*QuickAssist*'
     '*Hello-Face*'
@@ -316,7 +317,7 @@ function hf_optimize_services() {
   hf_winpackage_disable @pkgs 
 
   # Disable scheduled tasks
-  hf_log  "Disable scheduled tasks "
+  hf_log "Disable scheduled tasks "
   $tasks = @(
     'CCleaner Update'
     'CCleanerSkipUAC'
@@ -1018,6 +1019,19 @@ function hf_uninstall_onedrive() {
 }
 
 # ---------------------------------------
+# input
+# ---------------------------------------
+
+function hf_inputlang_open_($path) {
+  cmd /c "rundll32.exe Shell32,Control_RunDLL input.dll,,{C07337D3-DB2C-4D0B-9A93-B722A6C106E2}"
+}
+
+function hf_inputlang_disable_shorcuts($path) {
+  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name HotKey -Value 3
+  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name "Language Hotkey" -Value 3
+}
+
+# ---------------------------------------
 # wt
 # ---------------------------------------
 
@@ -1065,6 +1079,7 @@ function hf_init_windows() {
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer
+  hf_inputlang_disable_shorcuts
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
 }
 
