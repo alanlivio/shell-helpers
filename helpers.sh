@@ -533,6 +533,10 @@ function hf_git_services_test() {
   ssh -T git@github.com
 }
 
+function hf_git_revert_last_commit() {
+  git revert HEAD
+}
+
 function hf_git_branch_push() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git push -u origin $1
@@ -2251,7 +2255,6 @@ function hf_clean_unused_folders() {
   FOLDERS=(
     "Images"
     "Movies"
-    "Music"
     "Public"
     "Templates"
     "Videos"
