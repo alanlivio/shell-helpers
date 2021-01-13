@@ -89,10 +89,10 @@ if test -n "$IS_LINUX"; then
   alias grep='grep --color=auto'
   alias start='xdg-open'
 elif test -n "$IS_WINDOWS"; then
+  # hide windows user files when ls home
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=AppData --hide=IntelGraphicsProfiles*'
   alias grep='grep --color=auto'
   alias start="cmd.exe /c start"
-  # hide windows user files when ls home
   alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
   alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
   alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
@@ -106,6 +106,9 @@ if test -n "$IS_WINDOWS_WSL"; then
   # this is used for hf_vscode_install_packages
   function codewin() {
     cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
+  }
+  function codewin_folder() {
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
   }
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
@@ -577,8 +580,7 @@ function hf_git_branch_delete_local_and_origin() {
 }
 
 function hf_git_branch_clean_origin_deleted() {
-  : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
-  git prune
+  git fetch --prune
 }
 
 function hf_git_branch_upstrem_set() {
