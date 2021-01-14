@@ -963,13 +963,6 @@ function hf_install_winget() {
   }
 }
 
-function hf_install_msys2() {
-  hf_choco_install msys2
-  hf_path_add 'C:\tools\msys64\mingw64\bin'
-  hf_path_add 'C:\tools\msys64\usr\bin'
-  hf_path_add 'C:\tools\msys64\usr\local\bin'
-}
-
 function hf_install_ps_core() {
   Invoke-Expression $hf_log_func
   Invoke-WebRequest -Uri "https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi" -Outfile $env:TEMP\pwsh_x64.msi
@@ -1080,6 +1073,10 @@ function hf_init_windows() {
   hf_optimize_appx
   hf_optimize_explorer
   hf_inputlang_disable_shorcuts
+}
+
+function hf_init_common_user_software() {
+  hf_init_windows
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
 }
 
@@ -1099,4 +1096,11 @@ function hf_init_bash_and_wt() {
     hf_wsl_set_version2 Ubuntu
     hf_wsl_fix_home_user
   }
+}
+
+function hf_init_msys2() {
+  hf_choco_install msys2
+  hf_path_add 'C:\tools\msys64\mingw64\bin'
+  hf_path_add 'C:\tools\msys64\usr\bin'
+  hf_path_add 'C:\tools\msys64\usr\local\bin'
 }
