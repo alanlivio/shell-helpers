@@ -220,6 +220,10 @@ function hf_optimize_services() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 0 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value 0 
   
+  # Disable system sounds
+  hf_log "Disable system sounds "
+  Set-ItemProperty -Path HKCU:\AppEvents\Schemes -Name "(Default)" -Value ".None"
+
   # Fax
   hf_log "Remove Fax "
   Remove-Printer -Name "Fax" -ea 0
