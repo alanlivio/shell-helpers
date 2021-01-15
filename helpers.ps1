@@ -949,6 +949,9 @@ function hf_install_choco() {
     choco feature enable -n failOnAutoUninstaller 
     choco feature enable -n removePackageInformationOnUninstall
     choco feature enable -n useRememberedArgumentsForUpgrades
+    
+    # enable use without restarting Powershell
+    refreshenv  
   }
 }
 
