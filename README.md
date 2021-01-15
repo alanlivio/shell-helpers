@@ -15,8 +15,8 @@ In particular, there are helpers to support create a minimal developer environme
 
 * In windows, the main powershell helpers are:
   + `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode)
-  + `hf_init_bash_and_wt`: install windows terminal and WSL (version 2, fixed home)
   + `hf_init_common_user_software`: install windows software (e.g., googlechrome, vlc, ccleaner, FoxitReader).
+  + `hf_init_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal
   + `hf_init_msys2`: install msys2 bash to build GNU-based win32 applications
 
 * In macOS, the main bash helpers are:
@@ -57,6 +57,8 @@ powershell references:
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
 * https://gitlab.com/sgur/powershellrc/
+* wsl
+  + https://github.com/TylerLeonhardt/PSWsl
 * optimize services
   + https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
   + https://github.com/adolfintel/Windows10-Privacy

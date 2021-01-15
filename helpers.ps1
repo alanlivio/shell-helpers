@@ -872,32 +872,31 @@ function hf_wsl_root() {
 }
 
 function hf_wsl_list() {
-  wsl --list -v
+  [System.Text.Encoding]::Unicode.GetString([System.Text.Encoding]::UTF8.GetBytes((wsl -l))) -split '\s\s+' | Select-Object -Skip 1 -Unique | Where-Object { $_ -ne "" }
+}
+
+function hf_wsl_list_version() {
+  wsl -l -v 
 }
 
 function hf_wsl_list_running() {
-  wsl --list --running
+  [System.Text.Encoding]::Unicode.GetString([System.Text.Encoding]::UTF8.GetBytes((wsl -l --running))) -split '\s\s+' | Select-Object -Skip 1 -Unique | Where-Object { $_ -ne "" }
 }
 
-function hf_wsl_terminate_running() {
-  wsl -t ((wsl --list --running -split [System.Environment]::NewLine)[3]).split(' ')[0]
+function hf_wsl_get_default() {
+  hf_wsl_list | ForEach-Object {
+    if ($_.Contains('(')) {
+      return $_.Split(' ')[0]
+    }
+  }
 }
 
-function hf_wsl_ubuntu_set_default_user() {
-  ubuntu.exe config --default-user alan
-}
-
-function hf_wsl_enable() {
-  Invoke-Expression $hf_log_func
-  # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-  Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
-  msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
+function hf_wsl_terminate() {
+  wsl -t (hf_wsl_get_default)
 }
 
 function hf_wsl_set_version2() {
-  wsl --set-version Ubuntu 2
+  wsl --set-version (hf_wsl_get_default) 2
 }
 
 function hf_wsl_fix_home_user() {
@@ -911,7 +910,8 @@ function hf_wsl_fix_home_user() {
   wsl -u root bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
-  wsl -t Ubuntu
+  
+  hf_wsl_terminate
 
   # ensure sudoer
   wsl -u root usermod -aG sudo "$env:UserName"
@@ -924,7 +924,6 @@ function hf_wsl_fix_home_user() {
   # changing file permissions
   hf_log "Changing file permissions "
   wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
-  wsl -u root chown -R $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/.ssh/*
 }
 
 # ---------------------------------------
@@ -1084,22 +1083,47 @@ function hf_init_windows() {
 
 function hf_init_common_user_software() {
   hf_init_windows
-  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader
+  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
 }
 
-function hf_init_bash_and_wt() {
+function hf_init_ubuntu_and_windowsterminal() {
   Invoke-Expression $hf_log_func
-  hf_install_choco
-  hf_ps_essentials
-  hf_install_winget
-  hf_choco_install google-backup-and-sync gsudo 
-  hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  # install winget
+  if (!(Get-Command 'choco.exe' -ea 0)) {
+    hf_install_choco
+  }
+  # install winget
+  if (!(Get-Command 'winget.exe' -ea 0)) {
+    hf_install_winget
+  }
+  # install gsudo
+  if (!(Get-Command 'gsudo.exe' -ea 0)) {
+    hf_choco_install gsudo 
+    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  }
+  # install windows terminal
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal 
-    hf_log "INFO: after install WindowsTerminal, run hf_wt_config <profiles.jon>"
   }
-  if (!(Get-Command 'ubuntu.exe' -ea 0)) {
-    winget install CanonicalGroupLimited.UbuntuonWindows 
+  # enable wsl feature (require restart)
+  if (!(Get-Command 'wsl.exe' -ea 0)) {
+    # https://docs.microsoft.com/en-us/windows/wsl/install-win10
+    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+    hf_log "INFO: restart windows and run hf_init_ubuntu_and_windowsterminal again"
+    exit
+  }
+  # enable wsl 2
+  $str = wsl uname -r | Out-String
+  if (!($str.StartsWith("4.19"))) {
+    # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+    Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
+    msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
+  }
+  # install ubuntu distro
+  if (!((hf_wsl_get_default).StartsWith("Ubuntu"))) {
+    winget install Canonical.Ubuntu
+    refreshenv
     hf_wsl_set_version2 Ubuntu
     hf_wsl_fix_home_user
   }
