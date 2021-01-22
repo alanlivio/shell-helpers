@@ -1084,7 +1084,11 @@ function hf_network_ports() {
   netstat -a -n -o
 }
 
-function hf_network_ports_list_using() {
+function hf_network_ports_list() {
+  lsof -i
+}
+
+function hf_network_ports_list_one() {
   : ${1?"Usage: ${FUNCNAME[0]} <port>"}
   sudo lsof -i:$1
 }
@@ -1099,10 +1103,6 @@ function hf_network_ports_kill_using() {
 
 function hf_network_domain_info() {
   whois $1
-}
-
-function hf_network_open_connections() {
-  lsof -i
 }
 
 function hf_network_ip() {
