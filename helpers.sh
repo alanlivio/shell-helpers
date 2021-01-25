@@ -102,14 +102,16 @@ fi
 # alias code
 # ---------------------------------------
 
-if test -n "$IS_WINDOWS"; then
+if test -n "$IS_WINDOWS_WSL"; then
   # this is used for hf_vscode_install_packages
   function codewin() {
-    cmd.exe /c '/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe' $@
+    cmd.exe /c 'c:\Program Files\Microsoft VS Code/Code.exe' $@
   }
   function codewin_folder() {
-    cmd.exe /c '/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe' $(winpath $1)
+    cmd.exe /c 'c:\Program Files\Microsoft VS Code/Code.exe' $(winpath $1)
   }
+elif test -n "$IS_WINDOWS_MINGW"; then
+  alias code="/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe"
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
@@ -675,6 +677,14 @@ function hf_git_gitignore_create_cpp() {
 
 function hf_git_list_large_files() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
+}
+
+function hf_git_formated_patch_last() {
+  git format-patch HEAD^1
+}
+
+function hf_git_formated_patch_apply() {
+  git am <"$@"
 }
 
 function hf_git_folder_tree() {
