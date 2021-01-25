@@ -1129,9 +1129,12 @@ function hf_init_ubuntu_and_windowsterminal() {
   }
 }
 
-function hf_init_msys2() {
+function hf_init_msys() {
   hf_choco_install msys2
+  C:\tools\msys64\usr\bin\bash.exe -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
+  C:\tools\msys64\usr\bin\bash.exe -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
+  # use /mnt/c/ like in WSL
+  C:\tools\msys64\usr\bin\bash.exe -c ' echo /c /mnt/c none bind >> /etc/fstab'
   hf_path_add 'C:\tools\msys64\mingw64\bin'
   hf_path_add 'C:\tools\msys64\usr\bin'
-  hf_path_add 'C:\tools\msys64\usr\local\bin'
 }

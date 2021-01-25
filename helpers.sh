@@ -102,13 +102,13 @@ fi
 # alias code
 # ---------------------------------------
 
-if test -n "$IS_WINDOWS_WSL"; then
+if test -n "$IS_WINDOWS"; then
   # this is used for hf_vscode_install_packages
   function codewin() {
-    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
+    cmd.exe /c '/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe' $@
   }
   function codewin_folder() {
-    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
+    cmd.exe /c '/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe' $(winpath $1)
   }
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
@@ -286,16 +286,19 @@ if test -n "$IS_WINDOWS_MINGW"; then
     sudo pacman -Ss --noconfirm "$@"
   }
 
-  function hf_msys_fix_home_user() {
-    echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | tee /etc/fstab
-    echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | tee -a /etc/fstab
-    # also use /mnt/c/ like in WSL
-    echo -e "/c /mnt/c none bind" | tee -a /etc/fstab
+  function hf_msys_list_installed() {
+    hf_log_func
+    sudo pacman -Qqe
   }
 
   function hf_msys_install() {
     hf_log_func
     sudo pacman -Su --needed --noconfirm "$@"
+  }
+
+  function hf_msys_install_force() {
+    hf_log_func
+    sudo pacman -Sy --noconfirm "$@"
   }
 
   function hf_msys_uninstall() {
@@ -305,6 +308,7 @@ if test -n "$IS_WINDOWS_MINGW"; then
 
   function hf_msys_upgrade() {
     hf_log_func
+    sudo pacman --needed -S bash pacman pacman-mirrors msys2-runtime
     sudo pacman -Su --noconfirm
   }
 
@@ -312,6 +316,14 @@ if test -n "$IS_WINDOWS_MINGW"; then
     hf_log_func
     sudo rm /var/lib/pacman/db.lck
   }
+
+  function hf_msys_fix_home() {
+    echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | tee /etc/fstab
+    echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | tee -a /etc/fstab
+    # use /mnt/c/ like in WSL
+    echo -e "/c /mnt/c none bind" | tee -a /etc/fstab
+  }
+
 fi
 
 # ---------------------------------------

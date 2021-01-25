@@ -17,7 +17,7 @@ In particular, there are helpers to support create a minimal developer environme
   + `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode)
   + `hf_init_common_user_software`: install windows software (e.g., googlechrome, vlc, ccleaner, FoxitReader).
   + `hf_init_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal
-  + `hf_init_msys2`: install msys2 bash to build GNU-based win32 applications
+  + `hf_init_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
 
 * In macOS, the main bash helpers are:
   + `hf_init_mac`: install essential software (brew, bash last version)
