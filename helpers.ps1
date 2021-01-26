@@ -1124,7 +1124,7 @@ function hf_init_ubuntu_and_windowsterminal() {
   if (!((hf_wsl_get_default).StartsWith("Ubuntu"))) {
     winget install Canonical.Ubuntu
     refreshenv
-    hf_wsl_set_version2 Ubuntu
+    hf_wsl_set_version2 hf_wsl_get_default
     hf_wsl_fix_home_user
   }
 }
