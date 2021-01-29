@@ -41,24 +41,90 @@ fi
 # init functions
 # ---------------------------------------
 
-function hf_init_gnome() {
+function hf_init_ubunt_gnome() {
   hf_log_func
+  hf_user_permissions_sudo
   hf_clean_unused_folders
   hf_gnome_dark
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
-  hf_install_curl
-  hf_install_chrome
   hf_install_vscode
-  hf_install_insync
+  hf_apt_upgrade
+  # vim/git/essentials
+  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+  # python
+  PKGS+="python3 python3-pip "
+  hf_apt_install_packages $PKGS
+}
+
+function hf_init_wsl() {
+  hf_user_permissions_sudo
+  hf_apt_upgrade
+  # vim/git/essentials
+  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+  # python
+  PKGS+="python3 python3-pip "
+  hf_apt_install_packages $PKGS
+}
+
+function hf_init_msys() {
+  hf_user_permissions_sudo
+  # essentials
+  PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime "
+  # python
+  PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
+  hf_msys_install $PKGS
 }
 
 if test -n "$IS_MAC"; then
   function hf_init_mac() {
     hf_log_func
+    hf_user_permissions_sudo
     hf_mac_install_brew
-    hf_mac_install_bash
+    hf_brew_upgrade
+    # essentials
+    PKGS="vim git diffutils curl wget bash "
+    # python
+    PKGS+="python python-pip "
+    hf_brew_install $PKGS
+  }
+fi
+
+# ---------------------------------------
+# PKGS
+# ---------------------------------------
+# The following funcs requeres variables with PKGS_ prefix.
+# Such variables can be configured in helpers-cfg.sh.
+
+function hf_pkgs_ubunt_gnome() {
+  hf_snap_install_packages $PKGS_SNAP
+  hf_snap_install_packages_classic $PKGS_SNAP_CLASSIC
+  hf_snap_upgrade
+  hf_apt_install_packages $PKGS_APT
+  hf_apt_upgrade
+  hf_apt_remove_packages $PKGS_REMOVE_APT
+  hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
+  hf_python_install_packages $PKGS_PYTHON
+}
+
+function hf_pkgs_wsl() {
+  hf_apt_install_packages $PKGS_APT
+  hf_apt_remove_packages $PKGS_REMOVE_APT
+  hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
+  hf_apt_upgrade
+  hf_python_install_packages $PKGS_PYTHON
+}
+
+function hf_pkgs_msys() {
+  hf_msys_upgrade
+  hf_msys_install $PKGS_MSYS
+}
+
+if test -n "$IS_MAC"; then
+  function hf_pkgs_mac() {
+    hf_brew_install $PKGS_BREW
+    hf_brew_upgrade
   }
 fi
 
@@ -329,12 +395,6 @@ if test -n "$IS_MAC"; then
   function hf_mac_install_brew() {
     hf_log_func
     sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-  }
-
-  function hf_mac_install_bash() {
-    hf_log_func
-    hf_brew_install bash
-    bash --version
   }
 
   function hf_brew_install() {
@@ -1759,14 +1819,6 @@ function hf_install_node() {
   sudo apt install -y nodejs
 }
 
-function hf_install_ps_core() {
-  hf_log_func
-  hf_apt_install_packages liblttng-ust0
-  hf_apt_fetch_install http://mirrors.edge.kernel.org/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.4_amd64.deb
-  hf_apt_fetch_install http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu60_60.2-3ubuntu3.1_amd64.deb
-  hf_apt_fetch_install https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.ubuntu.20.04_amd64.deb
-}
-
 function hf_install_luarocks() {
   hf_log_func
   if ! type luarocks &>/dev/null; then
@@ -1781,13 +1833,6 @@ function hf_install_bb_warsaw() {
   hf_log_func
   if ! type warsaw &>/dev/null; then
     hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
-  fi
-}
-
-function hf_install_curl() {
-  hf_log_func
-  if ! type curl &>/dev/null; then
-    sudo apt install -y curl
   fi
 }
 
@@ -2033,6 +2078,7 @@ function hf_zotero_symbolic_link() {
 function hf_apt_upgrade() {
   hf_log_func
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
+    sudo apt -y update
     sudo apt -y upgrade
   fi
 }
