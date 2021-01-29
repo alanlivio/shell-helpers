@@ -56,6 +56,8 @@ function hf_init_ubuntu_gnome() {
   # python
   PKGS+="python3 python3-pip "
   hf_apt_install_packages $PKGS
+  # set python3 as default
+  hf_python_set_python3_default
 }
 
 function hf_init_wsl() {
@@ -66,6 +68,8 @@ function hf_init_wsl() {
   # python
   PKGS+="python3 python3-pip "
   hf_apt_install_packages $PKGS
+  # set python3 as default
+  hf_python_set_python3_default
 }
 
 function hf_init_msys() {
@@ -75,6 +79,7 @@ function hf_init_msys() {
   # python
   PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
   hf_msys_install $PKGS
+  # python3 is already default in msys
 }
 
 if test -n "$IS_MAC"; then
@@ -88,6 +93,9 @@ if test -n "$IS_MAC"; then
     # python
     PKGS+="python python-pip "
     hf_brew_install $PKGS
+    # set python3 as default
+    alias python='/usr/local/Cellar/python@3.8/3.8.5/bin/python3'
+    alias pip='/usr/local/Cellar/python@3.8/3.8.5/libexec/bin/pip'
   }
 fi
 
