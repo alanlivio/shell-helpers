@@ -22,6 +22,7 @@ if test $IS_LINUX; then
   esac
 fi
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+alias hf_test_exist_command='type $1 || return;'
 
 # ---------------------------------------
 # load helpers-cfg
@@ -1294,6 +1295,7 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ... >"}
   hf_log_func
+  hf_test_exist_command code
   CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
@@ -1661,11 +1663,8 @@ function hf_python_list_installed() {
 function hf_python_install_packages() {
   : ${1?"Usage: ${FUNCNAME[0]} <pip_package ... >"}
   hf_log_func
-  if ! type pip &>/dev/null; then
-    hf_log_error "pip not found."
-    sudo pip install --no-cache-dir --disable-pip-version-check --upgrade pip &>/dev/null
-  fi
-
+  hf_test_exist_command pip
+  
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
   for i in "$@"; do
