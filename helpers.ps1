@@ -1017,6 +1017,65 @@ function hf_uninstall_onedrive() {
   Start-Sleep 2
 }
 
+
+function hf_install_common_user_software() {
+  hf_init_windows
+  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
+}
+
+function hf_install_wsl_ubuntu_and_windowsterminal() {
+  Invoke-Expression $hf_log_func
+  # install winget
+  if (!(Get-Command 'choco.exe' -ea 0)) {
+    hf_install_choco
+  }
+  # install winget
+  if (!(Get-Command 'winget.exe' -ea 0)) {
+    hf_install_winget
+  }
+  # install gsudo
+  if (!(Get-Command 'gsudo.exe' -ea 0)) {
+    hf_choco_install gsudo 
+    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  }
+  # install windows terminal
+  if (!(Get-Command 'wt.exe' -ea 0)) {
+    winget install Microsoft.WindowsTerminal 
+  }
+  # enable wsl feature (require restart)
+  if (!(Get-Command 'wsl.exe' -ea 0)) {
+    # https://docs.microsoft.com/en-us/windows/wsl/install-win10
+    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+    hf_log "INFO: restart windows and run hf_init_ubuntu_and_windowsterminal again"
+    exit
+  }
+  # enable wsl 2
+  $str = wsl uname -r | Out-String
+  if (!($str.StartsWith("4.19"))) {
+    # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+    Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
+    msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
+  }
+  # install ubuntu distro
+  if (!((hf_wsl_get_default).StartsWith("Ubuntu"))) {
+    winget install Canonical.Ubuntu
+    refreshenv
+    hf_wsl_set_version2 hf_wsl_get_default
+    hf_wsl_fix_home_user
+  }
+}
+
+function hf_install_msys() {
+  hf_choco_install msys2
+  C:\tools\msys64\usr\bin\bash.exe -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
+  C:\tools\msys64\usr\bin\bash.exe -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
+  # use /mnt/c/ like in WSL
+  C:\tools\msys64\usr\bin\bash.exe -c ' echo /c /mnt/c none bind >> /etc/fstab'
+  hf_path_add 'C:\tools\msys64\mingw64\bin'
+  hf_path_add 'C:\tools\msys64\usr\bin'
+}
+
 # ---------------------------------------
 # input
 # ---------------------------------------
@@ -1079,62 +1138,4 @@ function hf_init_windows() {
   hf_optimize_appx
   hf_optimize_explorer
   hf_inputlang_disable_shorcuts
-}
-
-function hf_init_common_user_software() {
-  hf_init_windows
-  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
-}
-
-function hf_init_ubuntu_and_windowsterminal() {
-  Invoke-Expression $hf_log_func
-  # install winget
-  if (!(Get-Command 'choco.exe' -ea 0)) {
-    hf_install_choco
-  }
-  # install winget
-  if (!(Get-Command 'winget.exe' -ea 0)) {
-    hf_install_winget
-  }
-  # install gsudo
-  if (!(Get-Command 'gsudo.exe' -ea 0)) {
-    hf_choco_install gsudo 
-    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
-  }
-  # install windows terminal
-  if (!(Get-Command 'wt.exe' -ea 0)) {
-    winget install Microsoft.WindowsTerminal 
-  }
-  # enable wsl feature (require restart)
-  if (!(Get-Command 'wsl.exe' -ea 0)) {
-    # https://docs.microsoft.com/en-us/windows/wsl/install-win10
-    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-    hf_log "INFO: restart windows and run hf_init_ubuntu_and_windowsterminal again"
-    exit
-  }
-  # enable wsl 2
-  $str = wsl uname -r | Out-String
-  if (!($str.StartsWith("4.19"))) {
-    # https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-    Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
-    msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
-  }
-  # install ubuntu distro
-  if (!((hf_wsl_get_default).StartsWith("Ubuntu"))) {
-    winget install Canonical.Ubuntu
-    refreshenv
-    hf_wsl_set_version2 hf_wsl_get_default
-    hf_wsl_fix_home_user
-  }
-}
-
-function hf_init_msys() {
-  hf_choco_install msys2
-  C:\tools\msys64\usr\bin\bash.exe -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
-  C:\tools\msys64\usr\bin\bash.exe -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
-  # use /mnt/c/ like in WSL
-  C:\tools\msys64\usr\bin\bash.exe -c ' echo /c /mnt/c none bind >> /etc/fstab'
-  hf_path_add 'C:\tools\msys64\mingw64\bin'
-  hf_path_add 'C:\tools\msys64\usr\bin'
 }

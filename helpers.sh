@@ -41,7 +41,7 @@ fi
 # init functions
 # ---------------------------------------
 
-function hf_init_ubunt_gnome() {
+function hf_init_ubuntu_gnome() {
   hf_log_func
   hf_user_permissions_sudo
   hf_clean_unused_folders
@@ -97,34 +97,45 @@ fi
 # The following funcs requeres variables with PKGS_ prefix.
 # Such variables can be configured in helpers-cfg.sh.
 
-function hf_pkgs_ubunt_gnome() {
+function hf_pkgs_ubuntu_gnome() {
+  # snap
   hf_snap_install_packages $PKGS_SNAP
   hf_snap_install_packages_classic $PKGS_SNAP_CLASSIC
   hf_snap_upgrade
-  hf_apt_install_packages $PKGS_APT
   hf_apt_upgrade
+  # apt
+  hf_apt_install_packages $PKGS_APT
   hf_apt_remove_packages $PKGS_REMOVE_APT
+  hf_apt_autoremove
   hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
+  # python
   hf_python_install_packages $PKGS_PYTHON
 }
 
 function hf_pkgs_wsl() {
+  # apt
+  hf_apt_upgrade
   hf_apt_install_packages $PKGS_APT
+  hf_apt_autoremove
   hf_apt_remove_packages $PKGS_REMOVE_APT
   hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
-  hf_apt_upgrade
+  # python
   hf_python_install_packages $PKGS_PYTHON
 }
 
 function hf_pkgs_msys() {
+  # msys
   hf_msys_upgrade
   hf_msys_install $PKGS_MSYS
 }
 
 if test -n "$IS_MAC"; then
   function hf_pkgs_mac() {
+    # brew
     hf_brew_install $PKGS_BREW
     hf_brew_upgrade
+    # python
+    hf_python_install_packages $PKGS_PYTHON
   }
 fi
 
@@ -1265,7 +1276,7 @@ function hf_user_send_ssh_keys() {
 function hf_snap_install_packages() {
   hf_log_func
   hf_return_when_noargs
-  
+
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1285,7 +1296,7 @@ function hf_snap_install_packages() {
 function hf_snap_install_packages_classic() {
   hf_log_func
   hf_return_when_noargs
-  
+
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1305,7 +1316,7 @@ function hf_snap_install_packages_classic() {
 function hf_snap_install_packages_edge() {
   hf_log_func
   hf_return_when_noargs
-  
+
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1348,7 +1359,7 @@ function hf_vscode_install_packages() {
   hf_log_func
   hf_return_when_noargs
   hf_test_exist_command code
-  
+
   CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
@@ -1640,7 +1651,7 @@ function hf_system_list_gpu() {
 function hf_npm_install_packages() {
   hf_log_func
   hf_return_when_noargs
-  
+
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
   for i in "$@"; do
@@ -1719,7 +1730,7 @@ function hf_python_install_packages() {
   hf_log_func
   hf_return_when_noargs
   hf_test_exist_command pip
-  
+
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
   for i in "$@"; do
@@ -1793,7 +1804,7 @@ function hf_jupyter_dark_theme() {
 function hf_eclipse_install_packages() {
   hf_log_func
   hf_return_when_noargs
-  
+
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, org.eclipse.dltk.sh.feature.group
   eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
@@ -2103,7 +2114,7 @@ function hf_apt_fixes() {
 function hf_apt_install_packages() {
   hf_log_func
   hf_return_when_noargs
-  
+
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
