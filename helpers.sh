@@ -22,6 +22,7 @@ if test $IS_LINUX; then
   esac
 fi
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+alias hf_return_when_noargs='if test $# -ne 1; then return; fi'
 alias hf_test_exist_command='type $1 || return;'
 
 # ---------------------------------------
@@ -234,15 +235,6 @@ function hf_log_ok() {
 function hf_log_try() {
   "$@"
   if test $? -ne 0; then hf_log_error "$1" && exit 1; fi
-}
-
-function hf_test_exist_command() {
-  if ! type "$1" &>/dev/null; then
-    hf_log_error "$1 not found."
-    return 1
-  else
-    return 0
-  fi
 }
 
 # ---------------------------------------
@@ -513,7 +505,6 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
   hf_test_exist_command pygmentize
-
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
@@ -1212,10 +1203,10 @@ function hf_user_send_ssh_keys() {
 # ---------------------------------------
 
 function hf_snap_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
+  hf_return_when_noargs
+  
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
@@ -1232,10 +1223,10 @@ function hf_snap_install_packages() {
 }
 
 function hf_snap_install_packages_classic() {
-  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
+  hf_return_when_noargs
+  
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
@@ -1252,8 +1243,9 @@ function hf_snap_install_packages_classic() {
 }
 
 function hf_snap_install_packages_edge() {
-  : ${1?"Usage: ${FUNCNAME[0]} <snap_package ... >"}
   hf_log_func
+  hf_return_when_noargs
+  
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -1293,9 +1285,10 @@ function hf_diff_vscode() {
 # ---------------------------------------
 
 function hf_vscode_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <vscode_package ... >"}
   hf_log_func
+  hf_return_when_noargs
   hf_test_exist_command code
+  
   CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
@@ -1585,8 +1578,9 @@ function hf_system_list_gpu() {
 # ---------------------------------------
 
 function hf_npm_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ... >"}
   hf_log_func
+  hf_return_when_noargs
+  
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
   for i in "$@"; do
@@ -1618,7 +1612,8 @@ function hf_npm_install_packages() {
 # ---------------------------------------
 
 function hf_ruby_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <npm_package ... >"}
+  hf_log_func
+  hf_return_when_noargs
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
@@ -1661,8 +1656,8 @@ function hf_python_list_installed() {
 }
 
 function hf_python_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pip_package ... >"}
   hf_log_func
+  hf_return_when_noargs
   hf_test_exist_command pip
   
   PKGS_TO_INSTALL=""
@@ -1736,6 +1731,9 @@ function hf_jupyter_dark_theme() {
 # ---------------------------------------
 
 function hf_eclipse_install_packages() {
+  hf_log_func
+  hf_return_when_noargs
+  
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, org.eclipse.dltk.sh.feature.group
   eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
 }
@@ -1800,6 +1798,7 @@ function hf_install_git_lfs() {
     sudo apt-get install git-lfs
   fi
 }
+
 function hf_install_gitkraken() {
   hf_log_func
   if ! type gitkraken &>/dev/null; then
@@ -2056,8 +2055,9 @@ function hf_apt_fixes() {
 }
 
 function hf_apt_install_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <apt_packages ... >"}
   hf_log_func
+  hf_return_when_noargs
+  
   PKGS_TO_INSTALL=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
@@ -2090,8 +2090,8 @@ function hf_apt_autoremove() {
 }
 
 function hf_apt_remove_packages() {
-  : ${1?"Usage: ${FUNCNAME[0]} <apt_package ... >"}
   hf_log_func
+  hf_return_when_noargs
   PKGS_TO_REMOVE=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
