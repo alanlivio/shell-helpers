@@ -105,10 +105,10 @@ fi
 if test -n "$IS_WINDOWS_WSL"; then
   # this is used for hf_vscode_install_packages
   function codewin() {
-    cmd.exe /c 'c:\Program Files\Microsoft VS Code/Code.exe' $@
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $@
   }
   function codewin_folder() {
-    cmd.exe /c 'c:\Program Files\Microsoft VS Code/Code.exe' $(winpath $1)
+    cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
   }
 elif test -n "$IS_WINDOWS_MINGW"; then
   alias code="/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe"
