@@ -82,6 +82,11 @@ function hf_init_msys() {
   # python3 is already default in msys
 }
 
+function hf_init_windows() {
+  # windows
+  hf_ps_call_admin "hf_init_windows "
+}
+
 if test -n "$IS_MAC"; then
   function hf_init_mac() {
     hf_log_func
@@ -135,6 +140,14 @@ function hf_pkgs_msys() {
   # msys
   hf_msys_upgrade
   hf_msys_install $PKGS_MSYS
+}
+
+function hf_pkgs_windows() {
+  # windows
+  hf_ps_call_admin "hf_winupdate_update"
+  hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
+  hf_ps_call_admin "hf_choco_upgrade"
+  hf_ps_call_admin "hf_choco_clean"
 }
 
 if test -n "$IS_MAC"; then

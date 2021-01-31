@@ -1019,7 +1019,6 @@ function hf_uninstall_onedrive() {
 
 
 function hf_install_common_user_software() {
-  hf_init_windows
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
 }
 
