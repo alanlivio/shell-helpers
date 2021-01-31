@@ -11,26 +11,39 @@ In particular, there are helpers to support create a minimal developer environme
 | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/2/20/Bash_Logo_black_and_white_icon_only.svg"><img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png"> | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Gnome-start-here.svg/1024px-Gnome-start-here.svg.png"> <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png"> | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/0/01/Windows_Terminal_Logo_256x256.png"> <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/GNOME_Terminal_icon_2019.svg/1024px-GNOME_Terminal_icon_2019.svg.png"> |  <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Visual_Studio_Code_1.18_icon.svg">
 
 * in Ubuntu (Gnome-based) bash, the main helpers are:
-  + `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software.
-  + `hf_pkgs_ubuntu_gnome`: configure/upgrade packges using variables from env or in helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT).
+  + `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
 
 * In windows powershell, the main helpers are:
-  + `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g. choco)
-  + `hf_install_common_user_software`: install windows software (e.g., googlechrome, vlc, ccleaner, FoxitReader).
-  + `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal
+  + `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g. choco, vscode).
+  + `hf_install_common_user_software`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
+  + `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. It require system restart then run it again.
   + `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
 
 * In windows wsl bash, the main helpers are:
   + `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
-  + `hf_pkgs_wsl`: configure/upgrade packges using variables from env or in helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT.
+  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT)  in .bashrc or helpers-cfg.sh, and cleanup.
 
 * In windows msys bash, the main helpers are:
   + `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
-  + `hf_pkgs_msys`: configure/upgrade packges using variables from env or in helpers-cfg.sh (PKGS_MSYS).
+  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
 
 * In macOS bash, the main helpers are:
-  + `hf_init_mac`: install essential software (brew, bash last version)
-  + `hf_pkgs_mac`: configure/upgrade packges using following variables from env or in helpers-cfg.sh (PKGS_BREW)
+  + `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
+  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_BREW)  in .bashrc or helpers-cfg.sh, and cleanup.
+
+## Recomendedd Windows/WSL steps
+
+In admin powershell run:
+  1. `hf_init_windows`
+  2. `hf_install_common_user_software`
+  3. `hf_install_wsl_ubuntu_and_windowsterminal` (it requeri restart then run it again)
+  4. Run Ubuntu in WindowsTerminal and configure your user name/password.
+
+in Ubuntu in WindowsTerminal, run:
+ 1. `hf_init_wsl`
+ 2. Configure variables at .bashrc or helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT)
+ 3. `hf_update_clean` (usually to mainten a updated system)
 
 ## How to install
 

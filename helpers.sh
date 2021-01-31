@@ -43,49 +43,55 @@ fi
 
 function hf_init_ubuntu_gnome() {
   hf_log_func
+  # sudo nopasswd
   hf_user_permissions_sudo
-  hf_clean_unused_folders
+  # shell configure
   hf_gnome_dark
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
+  # vim/git/essentials
+  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+  # python
+  PKGS+="python3 python3-pip "
+  hf_apt_install_packages $PKGS
+  # set python3 as default
+  hf_python_set_python3_default
+  # install vscode
   hf_install_vscode
-  hf_apt_upgrade
-  # vim/git/essentials
-  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
-  # python
-  PKGS+="python3 python3-pip "
-  hf_apt_install_packages $PKGS
-  # set python3 as default
-  hf_python_set_python3_default
 }
 
-function hf_init_wsl() {
-  hf_user_permissions_sudo
-  hf_apt_upgrade
-  # vim/git/essentials
-  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
-  # python
-  PKGS+="python3 python3-pip "
-  hf_apt_install_packages $PKGS
-  # set python3 as default
-  hf_python_set_python3_default
-}
+if test -n "$IS_WINDOWS"; then
+  function hf_init_wsl() {
+    # sudo nopasswd
+    hf_user_permissions_sudo
+    # vim/git/essentials
+    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+    # python
+    PKGS+="python3 python3-pip "
+    hf_apt_install_packages $PKGS
+    # set python3 as default
+    hf_python_set_python3_default
+  }
 
-function hf_init_msys() {
-  hf_user_permissions_sudo
-  # essentials
-  PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime "
-  # python
-  PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
-  hf_msys_install $PKGS
-  # python3 is already default in msys
-}
+  function hf_init_msys() {
+    hf_user_permissions_sudo
+    # essentials
+    PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime "
+    # python
+    PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
+    hf_msys_install $PKGS
+    # python3 is already default in msys
+  }
 
-function hf_init_windows() {
-  # windows
-  hf_ps_call_admin "hf_init_windows "
-}
+  function hf_init_windows() {
+    # windows
+    hf_ps_call_admin "hf_init_windows "
+    # install vscode
+    hf_ps_call_admin "hf_choco_install vscode"
+  }
+
+fi
 
 if test -n "$IS_MAC"; then
   function hf_init_mac() {
@@ -101,16 +107,18 @@ if test -n "$IS_MAC"; then
     # set python3 as default
     alias python='/usr/local/Cellar/python@3.8/3.8.5/bin/python3'
     alias pip='/usr/local/Cellar/python@3.8/3.8.5/libexec/bin/pip'
+    # install vscode
+    sudo brew install --cask visual-studio-code
   }
 fi
 
 # ---------------------------------------
-# PKGS
+# update_clean
 # ---------------------------------------
 # The following funcs requeres variables with PKGS_ prefix.
-# Such variables can be configured in helpers-cfg.sh.
+# Such variables can be configured in .bashrc or helpers-cfg.sh.
 
-function hf_pkgs_ubuntu_gnome() {
+function hf_update_clean_ubuntu_gnome() {
   # snap
   hf_snap_install_packages $PKGS_SNAP
   hf_snap_install_packages_classic $PKGS_SNAP_CLASSIC
@@ -123,43 +131,74 @@ function hf_pkgs_ubuntu_gnome() {
   hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
   # python
   hf_python_install_packages $PKGS_PYTHON
+  # vscode
+  hf_vscode_install_packages $PKGS_VSCODE
+  # clean
+  hf_clean_unused_folders
 }
 
-function hf_pkgs_wsl() {
-  # apt
-  hf_apt_upgrade
-  hf_apt_install_packages $PKGS_APT
-  hf_apt_autoremove
-  hf_apt_remove_packages $PKGS_REMOVE_APT
-  hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
-  # python
-  hf_python_install_packages $PKGS_PYTHON
-}
+if test -n "$IS_WINDOWS"; then
+  function hf_update_clean_wsl() {
+    # apt
+    hf_apt_upgrade
+    hf_apt_install_packages $PKGS_APT
+    hf_apt_autoremove
+    hf_apt_remove_packages $PKGS_REMOVE_APT
+    hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
+    # python
+    hf_python_install_packages $PKGS_PYTHON
+    # vscode
+    hf_vscode_install_packages $PKGS_VSCODE
+    # clean
+    hf_clean_unused_folders
+  }
 
-function hf_pkgs_msys() {
-  # msys
-  hf_msys_upgrade
-  hf_msys_install $PKGS_MSYS
-}
+  function hf_update_clean_msys() {
+    # msys
+    hf_msys_upgrade
+    hf_msys_install $PKGS_MSYS
+  }
 
-function hf_pkgs_windows() {
-  # windows
-  hf_ps_call_admin "hf_winupdate_update"
-  hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
-  hf_ps_call_admin "hf_choco_upgrade"
-  hf_ps_call_admin "hf_choco_clean"
-}
+  function hf_update_clean_windows() {
+    # windows
+    hf_ps_call_admin "hf_winupdate_update"
+    hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
+    hf_ps_call_admin "hf_choco_upgrade"
+    hf_ps_call_admin "hf_choco_clean"
+    hf_ps_call hf_clean_unused_shortcuts
+    hf_ps_call hf_explorer_hide_dotfiles
+  }
+fi
 
 if test -n "$IS_MAC"; then
-  function hf_pkgs_mac() {
+  function hf_update_clean_mac() {
     # brew
     hf_brew_install $PKGS_BREW
     hf_brew_upgrade
     # python
     hf_python_install_packages $PKGS_PYTHON
+    # vscode
+    hf_vscode_install_packages $PKGS_VSCODE
   }
 fi
 
+function hf_update_clean() {
+  # Ubuntu
+  if test "$1" = "windows"; then
+    hf_update_clean_windows
+  elif test -n "$IS_LINUX"; then
+    hf_update_clean_ubuntu_gnome
+  # Ubuntu WSL
+  elif test -n "$IS_LINUX" -o -n "$IS_WINDOWS_WSL"; then
+    hf_update_clean_wsl
+  # mingw
+  elif test -n "$IS_WINDOWS_MINGW"; then
+    hf_update_clean_msys
+  # mac
+  elif test -n "$IS_MAC"; then
+    hf_update_clean_mac
+  fi
+}
 # ---------------------------------------
 # alias path
 # ---------------------------------------
@@ -227,9 +266,6 @@ if test -n "$IS_WINDOWS"; then
   }
   function hf_ps_call_admin() {
     gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
-  }
-  function hf_init_windows() {
-    hf_ps_call_admin "hf_init_windows"
   }
 fi
 
