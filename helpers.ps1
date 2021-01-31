@@ -18,6 +18,9 @@ if (Test-Path $SCRIPT_CFG) {
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
+Set-Alias -Name env -Value hf_system_env
+Set-Alias -Name path -Value hf_path_print
+Set-Alias -Name trash -Value hf_explorer_open_trash
 
 # ---------------------------------------
 # log
@@ -28,7 +31,7 @@ function hf_log() {
   Write-Host -ForegroundColor DarkYellow "--" ($args -join " ")
 }
 function hf_log_l2() {
-  Write-Host -ForegroundColor DarkYellow "--  " ($args -join " ")
+  Write-Host -ForegroundColor DarkYellow "-- " ($args -join " ")
 }
 
 # ---------------------------------------
@@ -123,11 +126,6 @@ function hf_ps_profiles_reset() {
   $profile.CurrentUserCurrentHost = "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 }
 
-function hf_ps_wait_for_key {
-  hf_log "Press any key to continue"
-  [Console]::ReadKey($true) | Out-Null
-}
-
 function hf_ps_new_path {
   $path = $args[0]
   if (-not (Test-Path $path)) {
@@ -138,10 +136,6 @@ function hf_ps_new_path {
 # ---------------------------------------
 # system
 # ---------------------------------------
-
-function hf_system_rename($new_name) {
-  Rename-Computer -NewName "$new_name"
-}
 
 Function hf_system_restart {
   hf_log "Restarting"
@@ -154,10 +148,6 @@ function hf_system_rename($new_name) {
 
 function hf_system_info() {
   cmd.exe /c systeminfo
-}
-
-function hf_system_taskmgr() {
-  cmd.exe /c Taskmgr.exe
 }
 
 function hf_system_env() {
@@ -194,20 +184,15 @@ function hf_path_print($addPath) {
   Write-Output $path
 }
 
-function hf_path_add_choco_tools() {
-  $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
-  hf_path_add $chocotools
-}
-
 # ---------------------------------------
 # optimize
 # ---------------------------------------
 
 function hf_optimize_services() {
   Invoke-Expression $hf_log_func
-  
+
   # Visual to performace
-  hf_log "Visuals to performace "
+  hf_log "Visuals to performace" 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Value 0
@@ -219,7 +204,13 @@ function hf_optimize_services() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewShadow" -Value 0
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 0 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value 0 
-  
+
+  # Enable dark mode
+  hf_log "Enable dark mode "
+  Set-ItemProperty -Path HKCU:\AppEvents\Schemes -Name "(Default)" -Value ".None"
+  Invoke-Expression $hf_log_func
+  reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
+
   # Disable system sounds
   hf_log "Disable system sounds "
   Set-ItemProperty -Path HKCU:\AppEvents\Schemes -Name "(Default)" -Value ".None"
@@ -240,38 +231,38 @@ function hf_optimize_services() {
   hf_log "Remove Lockscreen "
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Value 1 
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Value 1
-  
+
   # Disable drives Autoplay
   hf_log "Disable new drives Autoplay"
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Value 1 
-  
+
   # Disable offering of Malicious Software Removal Tool through Windows Update
   hf_log "Disable Malicious Software Removal Tool offering"
   New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -ea 0
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Value 1 
-  
+
   # Disable Remote Assistance
   hf_log "Disable Remote Assistance"
   Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Value 0 
-  
+
   # Disable AutoRotation Hotkeys
   hf_log "Disable AutoRotation Hotkeys"
   reg add "HKCU\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
-  
+
   # Disable Autorun for all drives
   hf_log "Disable Autorun for all drives"
   hf_ps_new_path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Value 255 
-  
+
   # Disable error reporting
   hf_log "Disable error reporting "
   reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
-  
+
   # Disable license checking
   hf_log "Disable license checking "
   reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
-  
+
   # Disable tips
   hf_log "Disable tips "
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
@@ -279,18 +270,18 @@ function hf_optimize_services() {
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\DataCollection" /v DoNotShowFeedbackNotifications /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
-  
+
   # 'Disable Accessibility Keys Prompts
   hf_log 'Disable Accessibility Keys Prompts '
   $path = 'HKCU:\Control Panel\Accessibility\'
   Set-ItemProperty -Path "$path\StickyKeys" -Name 'Flags' -Type String -Value '506'
   Set-ItemProperty -Path "$path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
   Set-ItemProperty -Path "$path\Keyboard Response" -Name 'Flags' -Type String -Value '122'
-  
+
   # "Disable Windows Timeline 
   hf_log "Disable Windows Timeline "
   Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Value 0
-  
+
   # Disable unused services
   hf_log "Disable unused services "
   $services = @("*diagnosticshub.standardcollector.service*" # Diagnostics Hub 
@@ -310,7 +301,7 @@ function hf_optimize_services() {
     "*wisvc*" # Windows Insider Service
   )
   hf_service_disable $services
-  
+
   # Disable unused windows packages
   hf_log "Disable windows packages "
   $pkgs = @(
@@ -328,7 +319,7 @@ function hf_optimize_services() {
   )
   hf_scheduledtask_disable @tasks
 }
-  
+
 function hf_optimize_services_experimental() {
   Invoke-Expression $hf_log_func
   $services = @(
@@ -343,7 +334,7 @@ function hf_optimize_services_experimental() {
     "*PcaSvc*" # Program Compatibility Assistant Service
     "*wercplsupport*" # Problem Reports Control Panel Support
     "*WerSvc*" # Windows Error Reporting Service
-    "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service   
+    "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service 
     "*PhoneSvc*" # Phone Service
     "*Themes*" # Themes (Provides user experience theme management.)
     "*WbioSrvc*" # Windows Biometric Service
@@ -355,11 +346,11 @@ function hf_optimize_services_experimental() {
   )
   hf_service_disable $services
 }
-  
+
 function hf_optimize_explorer() {
   Invoke-Expression $hf_log_func
   hf_ps_drives
-  
+
   # Use small icons
   hf_log "Use small icons "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons -Value 1
@@ -395,12 +386,12 @@ function hf_optimize_explorer() {
  
   # Disable Cortana
   hf_log "Disable Cortana"
-  
+
   hf_ps_new_path "HKCU:\Software\Microsoft\Personalization\Settings"
   hf_ps_new_path "HKCU:\Software\Microsoft\InputPersonalization"
   hf_ps_new_path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore"
   hf_ps_new_path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" 
-  
+
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value 0
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 1
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 1
@@ -424,11 +415,11 @@ function hf_optimize_explorer() {
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0 
  
   # Set explorer how file extensions
-  hf_log "Set explorer show file extensions " 
+  hf_log "Set explorer show file extensions" 
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -Value 0 
-  
+
   # Disable store search for unknown extensions
-  hf_log "Disable store search unknown extensions " 
+  hf_log "Disable store search unknown extensions" 
   hf_ps_new_path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
   Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Value 1
  
@@ -474,7 +465,7 @@ function hf_optimize_explorer() {
   # Remove 3D Objects from This PC
   Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0
   Remove-Item "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -ea 0
-  
+
   # Remove unused context menus
   # ----------------------------------------
   hf_log "Remove unused context menu"
@@ -484,10 +475,10 @@ function hf_optimize_explorer() {
   Remove-Item "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
   Remove-Item "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
   Remove-Item "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
-  
+
   # 'Share with'
   # ----------------------------------------
-  hf_log_l2 "Share with " 
+  hf_log_l2 "Share with" 
   Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -ea 0
   Remove-Item -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -ea 0
   Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -ea 0
@@ -512,16 +503,16 @@ function hf_optimize_explorer() {
   Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}' -ea 0
   Remove-Item 'HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen' -ea 0
   # 'Include in library'
-  hf_log_l2 "Include in library " 
+  hf_log_l2 "Include in library" 
   Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0
   Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0
   # 'Send to'
-  hf_log_l2 "Send to " 
+  hf_log_l2 "Send to" 
   Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Recurse -ea 0
   # Disable Windows Defender'
   hf_log_l2 "Windows Defender "
   Set-Item "HKCR:\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" -ea 0
-  
+
   # restart explorer
   hf_explorer_restart
 }
@@ -609,7 +600,6 @@ function hf_link_create($desntination, $source) {
   cmd /c mklink /D $desntination $source
 }
 
-
 # ---------------------------------------
 # scheduledtask
 # ---------------------------------------
@@ -649,7 +639,6 @@ function hf_service_disable($name) {
     Get-Service -Name $ame | Set-Service -StartupType Disabled -ea 0 
   }
 }
-
 
 # ---------------------------------------
 # winpackage
@@ -715,52 +704,48 @@ function hf_appx_install_essentials() {
 # clean
 # ---------------------------------------
 
+$CLEAN_SHORTCUTS = @(
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Chrome Apps\" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Access.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Chocolatey Cleaner.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneNote.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Outlook.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Publisher.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Foxit Reader\Uninstall Foxit Reader.lnk" 
+  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office Tools\" 
+  "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\\Chrome Apps\" 
+)
+
 function hf_clean_unused_shortcuts() {
   Invoke-Expression $hf_log_func
-  $path = "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\"
-  $shortcuts = @(
-    "$path\Chrome Apps\" 
-  )
-  $shortcuts | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
-  $path = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\"
-  $shortcuts = @(
-    "$path\Chrome Apps\" 
-    "$path\Access.lnk" 
-    "$path\Chocolatey Cleaner.lnk" 
-    "$path\OneNote.lnk" 
-    "$path\Outlook.lnk" 
-    "$path\Publisher.lnk" 
-    "$path\Foxit Reader\Uninstall Foxit Reader.lnk" 
-    "$path\Microsoft Office Tools\" 
-  )
-  $shortcuts | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
+  $CLEAN_SHORTCUTS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
 
+$CLEAN_FOLDERS = @(
+  'Application Data'
+  'Cookies'
+  'Local Settings'
+  'Start Menu'
+  '3D Objects'
+  'Contacts'
+  'Cookies'
+  'Favorites'
+  'Favorites'
+  'Intel'
+  'IntelGraphicsProfiles'
+  'Links'
+  'MicrosoftEdgeBackups'
+  'My Documents'
+  'NetHood'
+  'PrintHood'
+  'Recent'
+  'Saved Games'
+  'Searches'
+  'SendTo'
+)
 function hf_clean_unused_folders() {
   Invoke-Expression $hf_log_func
-  $folders = @(
-    'Application Data'
-    'Cookies'
-    'Local Settings'
-    'Start Menu'
-    '3D Objects'
-    'Contacts'
-    'Cookies'
-    'Favorites'
-    'Favorites'
-    'Intel'
-    'IntelGraphicsProfiles'
-    'Links'
-    'MicrosoftEdgeBackups'
-    'My Documents'
-    'NetHood'
-    'PrintHood'
-    'Recent'
-    'Saved Games'
-    'Searches'
-    'SendTo'
-  )
-  $folders | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
+  $CLEAN_FOLDERS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
 
 # ---------------------------------------
@@ -772,21 +757,6 @@ function hf_explorer_hide_dotfiles() {
   Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
-function hf_explorer_open_start_menu_folder() {
-  Start-Process explorer '%ProgramData%\Microsoft\Windows\Start Menu\Programs'
-}
-
-function hf_explorer_open_task_bar_folder() {
-  Start-Process explorer '%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar'
-}
-
-function hf_explorer_open_startup_folder() {
-  Start-Process explorer 'shell:startup'
-}
-
-function hf_explorer_open_home_folder() {
-  Start-Process explorer $env:userprofile
-}
 function hf_explorer_open_trash() {
   Start-Process explorer shell:recyclebinfolder
 }
@@ -794,15 +764,6 @@ function hf_explorer_open_trash() {
 function hf_explorer_restart() {
   taskkill /f /im explorer.exe | Out-Null
   Start-Process explorer.exe
-}
-
-# ---------------------------------------
-# customize
-# ---------------------------------------
-
-function hf_enable_dark_mode() {
-  Invoke-Expression $hf_log_func
-  reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 }
 
 # ---------------------------------------
@@ -910,7 +871,7 @@ function hf_wsl_fix_home_user() {
   wsl -u root bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
-  
+
   hf_wsl_terminate
 
   # ensure sudoer
@@ -934,9 +895,11 @@ function hf_install_choco() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'choco' -ea 0)) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    Set-Variable "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+    hf_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
-
+    $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
+    hf_path_add $chocotools
+  
     choco feature disable -n checksumFiles
     choco feature disable -n showDownloadProgress
     choco feature disable -n showNonElevatedWarnings
@@ -952,9 +915,9 @@ function hf_install_choco() {
     choco feature enable -n failOnAutoUninstaller 
     choco feature enable -n removePackageInformationOnUninstall
     choco feature enable -n useRememberedArgumentsForUpgrades
-    
+  
     # enable use without restarting Powershell
-    refreshenv  
+    refreshenv
   }
 }
 
@@ -969,31 +932,9 @@ function hf_install_winget() {
   }
 }
 
-function hf_install_ps_core() {
+function hf_install_battle_steam() {
   Invoke-Expression $hf_log_func
-  Invoke-WebRequest -Uri "https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi" -Outfile $env:TEMP\pwsh_x64.msi
-  msiexec.exe /I "$env:TEMP\pwsh_x64"
-}
-
-function hf_install_battle_steam_stremio() {
-  Invoke-Expression $hf_log_func
-  hf_choco_install battle.net steam stremio
-}
-
-function hf_install_luacheck() {
-  Invoke-Expression $hf_log_func
-  $luacheck_path = "C:\tools\luacheck.exe"
-  if (!(Test-Path $luacheck_path)) {
-    Invoke-WebRequest https://github.com/mpeterv/luacheck/releases/download/0.23.0/luacheck.exe -OutFile $luacheck_path
-  }
-}
-
-function hf_install_latexindent() {
-  Invoke-Expression $hf_log_func
-  $latexindent_path = "C:\tools\latexindent.exe"
-  if (!(Test-Path $latexindent_path)) {
-    Invoke-WebRequest https://github.com/cmhughes/latexindent.pl/releases/download/V3.8.2/latexindent.exe -OutFile $latexindent_path
-  }
+  hf_choco_install battle.net steam
 }
 
 function hf_install_onedrive() {
@@ -1128,11 +1069,11 @@ function hf_winupdate_update_hidden() {
 
 function hf_init_windows() {
   Invoke-Expression $hf_log_func
+  hf_system_disable_password_policy
   hf_clean_unused_folders
   hf_clean_unused_shortcuts
   hf_explorer_hide_dotfiles
   hf_install_choco
-  hf_system_disable_password_policy
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer

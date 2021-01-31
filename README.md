@@ -19,6 +19,7 @@ In particular, there are helpers to support create a minimal developer environme
   + `hf_install_common_user_software`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
   + `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. It require system restart then run it again.
   + `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
+  + `hf_install_battle_steam`: install Battle.net and Steam
 
 * In windows wsl bash, the main helpers are:
   + `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
