@@ -721,7 +721,7 @@ function hf_clean_unused_shortcuts() {
   $CLEAN_SHORTCUTS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
 
-$CLEAN_FOLDERS = @(
+$HF_CLEAN_DIRS = @(
   'Application Data'
   'Cookies'
   'Local Settings'
@@ -743,9 +743,9 @@ $CLEAN_FOLDERS = @(
   'Searches'
   'SendTo'
 )
-function hf_clean_unused_folders() {
+function hf_clean_unused_dirs() {
   Invoke-Expression $hf_log_func
-  $CLEAN_FOLDERS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
+  $HF_CLEAN_DIRS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
 }
 
 # ---------------------------------------
@@ -1070,7 +1070,7 @@ function hf_winupdate_update_hidden() {
 function hf_init_windows() {
   Invoke-Expression $hf_log_func
   hf_system_disable_password_policy
-  hf_clean_unused_folders
+  hf_clean_unused_dirs
   hf_clean_unused_shortcuts
   hf_explorer_hide_dotfiles
   hf_install_choco

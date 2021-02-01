@@ -140,7 +140,7 @@ function hf_update_clean_ubuntu_gnome() {
   # vscode
   hf_vscode_install_packages $PKGS_VSCODE
   # clean
-  hf_clean_unused_folders
+  hf_clean_unused_dirs
 }
 
 if test -n "$IS_WINDOWS"; then
@@ -156,7 +156,7 @@ if test -n "$IS_WINDOWS"; then
     # vscode
     hf_vscode_install_packages $PKGS_VSCODE
     # clean
-    hf_clean_unused_folders
+    hf_clean_unused_dirs
   }
 
   function hf_update_clean_msys() {
@@ -195,7 +195,7 @@ function hf_update_clean() {
   elif test -n "$IS_LINUX"; then
     hf_update_clean_ubuntu_gnome
   # Ubuntu WSL
-  elif test -n "$IS_LINUX" -o -n "$IS_WINDOWS_WSL"; then
+  elif test -n "$IS_WINDOWS_WSL"; then
     hf_update_clean_wsl
   # mingw
   elif test -n "$IS_WINDOWS_MINGW"; then
@@ -2393,59 +2393,54 @@ function hf_x11_properties_of_window() {
 # clean
 # ---------------------------------------
 
-function hf_clean_unused_folders() {
-  hf_log_func
-  FOLDERS=(
-    "Images"
-    "Movies"
-    "Public"
-    "Templates"
-    "Videos"
+HF_CLEAN_DIRS=(
+  "Images"
+  "Movies"
+  "Public"
+  "Templates"
+  "Videos"
+)
+
+if test -n "$IS_LINUX"; then
+  HF_CLEAN_DIRS+=(
+    "Documents" # sensible data in Windows
+    "Pictures"
+    ".android"
+    ".gimp-*"
+    ".gradle"
+    ".java"
   )
+fi
 
-  if test -n "$IS_LINUX"; then
-    FOLDERS+=(
-      "Documents" # sensible data in Windows
-      "Pictures"
-      ".android"
-      ".apport-ignore.xml "
-      ".bash_logout"
-      ".gimp-*"
-      ".gradle/"
-      ".java/"
-      ".thumbnails"
-      ".viminfo"
-    )
-  fi
+if test -n "$IS_WINDOWS"; then
+  HF_CLEAN_DIRS+=(
+    'Application Data'
+    'Cookies'
+    'Local Settings'
+    'Start Menu'
+    '3D Objects'
+    'Contacts'
+    'Cookies'
+    'Favorites'
+    'Favorites'
+    'Intel'
+    'IntelGraphicsProfiles'
+    'Links'
+    'MicrosoftEdgeBackups'
+    'My Documents'
+    'NetHood'
+    'PrintHood'
+    'Recent'
+    'Saved Games'
+    'Searches'
+    'SendTo'
+  )
+fi
 
-  if test -n "$IS_WINDOWS"; then
-    FOLDERS+=(
-      'Application Data'
-      'Cookies'
-      'Local Settings'
-      'Start Menu'
-      '3D Objects'
-      'Contacts'
-      'Cookies'
-      'Favorites'
-      'Favorites'
-      'Intel'
-      'IntelGraphicsProfiles'
-      'Links'
-      'MicrosoftEdgeBackups'
-      'My Documents'
-      'NetHood'
-      'PrintHood'
-      'Recent'
-      'Saved Games'
-      'Searches'
-      'SendTo'
-      # "Documents"
-      # "Pictures/"
-    )
-  fi
+function hf_clean_unused_dirs() {
+  hf_log_func
 
-  for i in "${FOLDERS[@]}"; do
+  for i in "${HF_CLEAN_DIRS[@]}"; do
     if test -d "$HOME/$i"; then
       if test -n "$IS_MAC"; then
         sudo rm -rf "$HOME/${i:?}" >/dev/null
