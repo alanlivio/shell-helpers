@@ -190,9 +190,7 @@ fi
 
 function hf_update_clean() {
   # Ubuntu
-  if test "$1" = "windows"; then
-    hf_update_clean_windows
-  elif test -n "$IS_LINUX"; then
+  if test -n "$IS_LINUX"; then
     hf_update_clean_ubuntu_gnome
   # Ubuntu WSL
   elif test -n "$IS_WINDOWS_WSL"; then
