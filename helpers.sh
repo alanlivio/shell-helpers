@@ -22,8 +22,6 @@ if test $IS_LINUX; then
   esac
 fi
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
-alias hf_return_when_noargs='if test $# -ne 1; then return; fi'
-alias hf_test_exist_command='type $1 || return;'
 
 # ---------------------------------------
 # load helpers-cfg
@@ -36,6 +34,14 @@ SCRIPT_CFG="$SCRIPT_DIR/helpers-cfg.sh"
 if test -f $SCRIPT_CFG; then
   source $SCRIPT_CFG
 fi
+
+# ---------------------------------------
+# test functions
+# ---------------------------------------
+
+alias hf_test_noargs_then_return='if test $# -ne 1; then return; fi'
+alias hf_test_command_then_return='type $1 || return;'
+alias hf_test_var_then_return='if test -z "$1"; then return; fi'
 
 # ---------------------------------------
 # init functions
@@ -632,7 +638,7 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
-  hf_test_exist_command pygmentize
+  hf_test_command_then_return pygmentize
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
@@ -1074,31 +1080,31 @@ function hf_image_resize() {
 
 function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_exist_command tesseract
+  hf_test_command_then_return tesseract
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hf_image_reconize_text_pt() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_exist_command tesseract
+  hf_test_command_then_return tesseract
   tesseract -l por "$1" "$1.txt"
 }
 
 function hf_image_reconize_stdout() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_exist_command tesseract
+  hf_test_command_then_return tesseract
   tesseract "$1" stdout
 }
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_exist_command pngquant
+  hf_test_command_then_return pngquant
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hf_imagem_compress_hard() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_exist_command jpegoptim
+  hf_test_command_then_return jpegoptim
 
   jpegoptim -d . $1.jpeg
 }
@@ -1118,26 +1124,26 @@ function hf_pdf_find_duplicates() {
 
 function hf_pdf_remove_annotations() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_exist_command rewritepdf
+  hf_test_command_then_return rewritepdf
   rewritepdf "$1" "-no-annotations-$1"
 }
 
 function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_exist_command pdfgrep
+  hf_test_command_then_return pdfgrep
   pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
 function hf_pdf_remove_password() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_exist_command qpdf
+  hf_test_command_then_return qpdf
 
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
 function hf_pdf_remove_watermark() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_exist_command pdftk
+  hf_test_command_then_return pdftk
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
@@ -1174,13 +1180,13 @@ function hf_pdf_to_images() {
 
 function hf_convert_to_markdown() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_exist_command pandoc
+  hf_test_command_then_return pandoc
   pandoc -s $1 -t markdown -o ${1%.*}.md
 }
 
 function hf_convert_to_pdf() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_exist_command pandoc
+  hf_test_command_then_return pandoc
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
@@ -1190,7 +1196,7 @@ function hf_convert_to_pdf() {
 
 function hf_rename_to_lowercase_with_underscore() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_exist_command rename || return
+  hf_test_command_then_return rename || return
   echo "rename to lowercase with underscore"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1199,7 +1205,7 @@ function hf_rename_to_lowercase_with_underscore() {
 
 function hf_rename_to_lowercase_with_dash() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_exist_command rename || return
+  hf_test_command_then_return rename || return
   echo "rename to lowercase with dash"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1252,13 +1258,13 @@ function hf_network_ip() {
 }
 
 function hf_network_arp_scan() {
-  hf_test_exist_command arp-scan
+  hf_test_command_then_return arp-scan
   sudo arp-scan --localnet
 }
 
 function hf_network_arp_scan_for_interface() {
   : ${1?"Usage: ${FUNCNAME[0]} <network_interface>"}
-  hf_test_exist_command arp-scan
+  hf_test_command_then_return arp-scan
   sudo arp-scan --localnet --interface=$1
 }
 
@@ -1332,7 +1338,7 @@ function hf_user_send_ssh_keys() {
 
 function hf_snap_install_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
@@ -1352,7 +1358,7 @@ function hf_snap_install_packages() {
 
 function hf_snap_install_packages_classic() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
@@ -1372,7 +1378,7 @@ function hf_snap_install_packages_classic() {
 
 function hf_snap_install_packages_edge() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
   PKGS_TO_INSTALL=""
@@ -1414,8 +1420,8 @@ function hf_diff_vscode() {
 
 function hf_vscode_install_packages() {
   hf_log_func
-  hf_return_when_noargs
-  hf_test_exist_command code
+  hf_test_noargs_then_return
+  hf_test_command_then_return code
 
   CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
@@ -1707,7 +1713,7 @@ function hf_system_list_gpu() {
 
 function hf_npm_install_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
@@ -1741,7 +1747,7 @@ function hf_npm_install_packages() {
 
 function hf_ruby_install_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
@@ -1785,8 +1791,8 @@ function hf_python_list_installed() {
 
 function hf_python_install_packages() {
   hf_log_func
-  hf_return_when_noargs
-  hf_test_exist_command pip
+  hf_test_noargs_then_return
+  hf_test_command_then_return pip
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
@@ -1860,7 +1866,7 @@ function hf_jupyter_dark_theme() {
 
 function hf_eclipse_install_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   # usage: hf_eclipse_install_packages org.eclipse.ldt.feature.group, org.eclipse.dltk.sh.feature.group
   eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
@@ -2170,7 +2176,7 @@ function hf_apt_fixes() {
 
 function hf_apt_install_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
 
   PKGS_TO_INSTALL=""
   for i in "$@"; do
@@ -2205,7 +2211,7 @@ function hf_apt_autoremove() {
 
 function hf_apt_remove_packages() {
   hf_log_func
-  hf_return_when_noargs
+  hf_test_noargs_then_return
   PKGS_TO_REMOVE=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
