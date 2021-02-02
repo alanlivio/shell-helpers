@@ -46,7 +46,7 @@ function hf_profile_reload() {
   powershell -nologo
 }
 
-function hf_profile_import($path) {
+function hf_profile_load($path) {
   Write-Output "RUN: Import-Module -Force -Global $path"
 }
 
@@ -77,11 +77,14 @@ function hf_ps_essentials() {
     Install-Module PSWindowsUpdate -Force -WarningAction Ignore
     Write-Output "Import-Module PSWindowsUpdate" >> $Profile.AllUsersAllHosts
   }
-  if (!(Get-Module Get-ChildItemColor)) {
-    hf_choco_install get-childitemcolor
-    Import-Module Get-ChildItemColor -WarningAction Ignore
-    Write-Output "Import-Module Get-ChildItemColor" >> $Profile.AllUsersAllHosts
-  }
+  # if (!(Get-Module Get-ChildItemColor)) {
+  #   hf_choco_install get-childitemcolor
+  #   Import-Module Get-ChildItemColor -WarningAction Ignore
+  #   Write-Output "Import-Module Get-ChildItemColor" >> $Profile.AllUsersAllHosts
+  # }
+  # https://github.com/joonro/Get-ChildItemColor/issues/36
+  # possible fix
+  # $Global:GetChildItemColorVerticalSpace = 0
 }
 
 function hf_ps_core_enable_appx() {
@@ -1065,14 +1068,8 @@ function hf_winupdate_list_last_installed() {
 
 function hf_winupdate_update() {
   Invoke-Expression $hf_log_func
-  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_ -ne "" }
+  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object {$_.trim() -ne "" }
   # hf_log_l2 "RequireReboot: $(Get-WURebootStatus -Silent)"
-}
-
-function hf_winupdate_update_hidden() {
-  Invoke-Expression $hf_log_func
-  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot -Hide) | Where-Object { $_ -ne "" }
-  hf_log "RequireReboot=$(Get-WURebootStatus -Silent)"
 }
 
 # ---------------------------------------
