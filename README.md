@@ -51,7 +51,8 @@ In msys bash:
 To do that, fetch helpers.sh and insert the following command at the end of your `~/.bashrc` :
 
 ``` bash
-  wget -O ~/.config/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
+  mkdir ~/.helpers/
+  wget -O ~/.helpers/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
   echo "source ~/.config/helpers.sh" >> ~/.bashrc &&\
   source ~/.bashrc
   ```
@@ -61,10 +62,10 @@ To do that, fetch helpers.sh and insert the following command at the end of your
 To do that, fetch helpers.ps1 and import it as powershell module:
 
 ``` powershell
-  Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
+  mkdir ~/.helpers/;`
+  Invoke-WebRequest -O ~/.helpers/helpers.ps1 https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1;`
   Set-ExecutionPolicy unrestricted -force;`
-  Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
-  hf_profile_install
+  Write-Output "Import-Module -Force -Global ~/.helpers/helpers.ps1" > $Profile.AllUsersAllHosts
   ```
 
 ## References
