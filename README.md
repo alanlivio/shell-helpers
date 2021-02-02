@@ -1,66 +1,66 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers different helpers functions for both `bash` and `pwsh` to support: configure OS, install software, media convertion, git, etc.
+This project offers different helper functions for both `bash` and `pwsh` to support: configure OS, install software, media convertion, git, etc.
 
-## helpers for configure OS
+## helpers for Gnome-based Ubuntu
 
-In particular, there are helpers to support create a minimal developer environment in different OSs:
+* `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+* `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
 
-| cmd shells | graphical shells | terminals | code editors |
-| :-: | :-: | :-: | :-: |
-| <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/2/20/Bash_Logo_black_and_white_icon_only.svg"><img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png"> | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Gnome-start-here.svg/1024px-Gnome-start-here.svg.png"> <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png"> | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/0/01/Windows_Terminal_Logo_256x256.png"> <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/GNOME_Terminal_icon_2019.svg/1024px-GNOME_Terminal_icon_2019.svg.png"> | <img width="56" height="56" src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Visual_Studio_Code_1.18_icon.svg">
+## helpers for macOS
 
-* in Ubuntu (Gnome-based) bash, the main helpers are:
-  + `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
-  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+* `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
+* `hf_update_clean`: configure/upgrade packges using variables (PKGS_BREW) in .bashrc or helpers-cfg.sh, and cleanup.
 
-* In windows powershell, the main helpers are:
-  + `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g. choco, vscode).
-  + `hf_install_common_user_software`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
-  + `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. It require system restart then run it again.
-  + `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
-  + `hf_install_battle_steam`: install Battle.net and Steam
+## helpers for Windows
 
-* In windows wsl bash, the main helpers are:
-  + `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
-  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+In Windows Powershell:
 
-* In windows msys bash, the main helpers are:
-  + `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
-  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
+* `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g., choco, vscode).
+* `hf_install_common_user_software`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
+* `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. It requires system restart then run it again.
+* `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
+* `hf_install_battle_steam`: install Battle.net and Steam
 
-* In macOS bash, the main helpers are:
-  + `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
-  + `hf_update_clean`: configure/upgrade packges using variables (PKGS_BREW) in .bashrc or helpers-cfg.sh, and cleanup.
+In wsl bash:
 
-## Recomendedd Windows/WSL steps
+* `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
+* `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
 
-In admin powershell run:
-  1. `hf_init_windows`
-  2. `hf_install_common_user_software`
-  3. `hf_install_wsl_ubuntu_and_windowsterminal` (it requeres restart and, when done, run it again)
-  4. Run Ubuntu in WindowsTerminal and configure your user name/password.
+In msys bash:
 
-in Ubuntu in WindowsTerminal, run:
- 1. `hf_init_wsl`
- 2. Configure variables at .bashrc or helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT)
- 3. `hf_update_clean` (usually to mainten a updated system)
+* `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
+* `hf_update_clean`: configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
+
+### Recommended  Windows/WSL steps
+
+1. In admin powershell, run:  
+  1.1) `hf_init_windows`  
+  1.2) `hf_install_common_user_software`  
+  1.3) `hf_install_wsl_ubuntu_and_windowsterminal` (it requeres restart and, when done, run it again)  
+2. Run the Ubuntu app and configure your user name/password.  
+3. In Ubuntu in WindowsTerminal, run:  
+  3.1) `hf_init_wsl`  
+  3.2) Configure variables at .bashrc or helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT)  
+  3.3) `hf_update_clean` (usually run to mainten the system updated)
 
 ## How to install
 
 * To enable helpers in bash (Ubuntu, macOS, or WSL), the shell-helpers can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
+
 To do that, fetch helpers.sh and insert the following command at the end of your `~/.bashrc` :
 
-  ``` bash
+``` bash
   wget -O ~/.config/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
   echo "source ~/.config/helpers.sh" >> ~/.bashrc &&\
   source ~/.bashrc
   ```
 
 * To enable helpers in powershell (Windows), the shell-helpers can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).
+
 To do that, fetch helpers.ps1 and import it as powershell module:
 
-  ``` powershell
+``` powershell
   Invoke-WebRequest https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1 -OutFile C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
   Set-ExecutionPolicy unrestricted -force;`
   Import-Module -Force -Global C:\Windows\System32\WindowsPowerShell\v1.0\helpers.ps1;`
@@ -72,12 +72,14 @@ To do that, fetch helpers.ps1 and import it as powershell module:
 Other github projects were used as inspiration and reference.
 
 bash references:
+
 * https://github.com/mdo/config
 * https://github.com/jenkins-x/dev-env
 * https://github.com/jsutcodes/.bashrc_helper
 * https://github.com/aspiers/shell-env
 
 powershell references:
+
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
 * https://gitlab.com/sgur/powershellrc/
