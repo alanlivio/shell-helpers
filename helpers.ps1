@@ -1068,7 +1068,7 @@ function hf_winupdate_list_last_installed() {
 
 function hf_winupdate_update() {
   Invoke-Expression $hf_log_func
-  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object {$_.trim() -ne "" }
+  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) }
   # hf_log_l2 "RequireReboot: $(Get-WURebootStatus -Silent)"
 }
 
