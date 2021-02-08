@@ -1567,18 +1567,14 @@ function hf_gnome_sanity() {
   gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
   gsettings set org.gnome.nautilus.list-view use-tree-view true
   gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
-  gsettings set org.gnome.nautilus.window-state initial-size '(890, 544)'
   gsettings set org.gnome.nautilus.window-state maximized false
   gsettings set org.gnome.nautilus.window-state sidebar-width 180
   # dock
-  gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
-  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 34
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
+  gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 24
+  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
+  gsettings set org.gnome.shell.extensions.dash-to-dock autohide false
   gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false
   gsettings set org.gnome.shell.extensions.dash-to-dock show-show-apps-button false
-  gsettings set org.gnome.shell.extensions.desktop-icons show-home false
-  gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
 }
 
 function hf_gnome_disable_unused_apps_in_search() {
