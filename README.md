@@ -53,7 +53,7 @@ To do that, fetch helpers.sh and insert the following command at the end of your
 ``` bash
   mkdir ~/.helpers/
   wget -O ~/.helpers/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
-  echo "source ~/.config/helpers.sh" >> ~/.bashrc &&\
+  echo "source ~/.helpers/helpers.sh" >> ~/.bashrc &&\
   source ~/.bashrc
   ```
 
