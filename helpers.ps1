@@ -939,7 +939,7 @@ function hf_install_choco() {
 function hf_install_winget() {
   Invoke-Expression $hf_log_func
   $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
-  if (!(Get-Command winget)) {
+  if (!(Get-Command winget -ea 0)) {
     if (!(Test-Path $appx_pkg)) {
       Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.3162-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
     }
@@ -1003,7 +1003,7 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
     dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
     hf_log "INFO: restart windows and run hf_init_ubuntu_and_windowsterminal again"
-    exit
+    return
   }
   # enable wsl 2
   $str = wsl uname -r | Out-String
