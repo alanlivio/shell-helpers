@@ -665,8 +665,12 @@ function hf_git_overleaf_push_commit_all() {
   git push
 }
 
-function hf_git_kraken_folder() {
-  gitkraken -z -p . >/dev/null &
+function hf_git_assume_unchanged() {
+  git update-index --assume-unchanged $1
+}
+
+function hf_git_assume_unchanged_disable() {
+  git update-index --no-assume-unchanged $1
 }
 
 function hf_git_services_test() {
