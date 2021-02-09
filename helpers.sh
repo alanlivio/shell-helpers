@@ -39,7 +39,7 @@ fi
 # test functions
 # ---------------------------------------
 
-alias hf_test_noargs_then_return='if test $# -ne 1; then return; fi'
+alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
 alias hf_test_command_then_return='type $1 || return;'
 alias hf_test_var_then_return='if test -z "$1"; then return; fi'
 
@@ -2149,6 +2149,11 @@ function hf_apt_upgrade() {
     sudo apt -y update
     sudo apt -y upgrade
   fi
+}
+
+function hf_apt_update() {
+  hf_log_func
+  sudo apt -y update
 }
 
 function hf_apt_ppa_remove() {
