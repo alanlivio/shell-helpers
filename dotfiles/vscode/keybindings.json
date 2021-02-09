@@ -1,5 +1,4 @@
 [
-  // duplicate lines
   {
     "key": "shift+alt+down",
     "command": "editor.action.copyLinesDownAction",
@@ -10,13 +9,11 @@
     "command": "editor.action.copyLinesUpAction",
     "when": "editorTextFocus && !editorReadonly"
   },
-  // text lines
   {
     "key": "ctrl+d",
     "command": "editor.action.deleteLines",
     "when": "editorTextFocus && !editorReadonly"
   },
-  // collumn selection togle focus
   {
     "key": "ctrl+shift+alt+down",
     "command": "cursorColumnSelectDown",
@@ -83,5 +80,15 @@
   {
     "key": "ctrl+oem_comma",
     "command": "-workbench.action.openSettings"
+  },
+  {
+    "key": "ctrl+k ctrl+alt+s",
+    "command": "-git.stageSelectedRanges",
+    "when": "isInDiffEditor"
+  },
+  {
+    "key": "shift+alt+s",
+    "command": "git.stageSelectedRanges",
+    "when": "isInDiffEditor"
   },
 ]

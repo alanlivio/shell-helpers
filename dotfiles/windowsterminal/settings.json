@@ -9,7 +9,7 @@
   "defaultProfile": "{07b52e3e-de2c-5db4-bd2d-ba144ed6c273}",
   "disabledProfileSources": [
     "Windows.Terminal.Azure",
-    "Windows.Terminal.PowershellCore",
+    "Windows.Terminal.PowershellCore"
   ],
   "copyOnSelect": false,
   "copyFormatting": false,

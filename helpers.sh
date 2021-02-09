@@ -688,6 +688,10 @@ function hf_git_revert_last_commit() {
   git revert HEAD
 }
 
+function hf_git_stash_untracked() {
+  git stash save --include-untracked
+}
+
 function hf_git_branch_push() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git push -u origin $1
@@ -719,6 +723,10 @@ function hf_git_branch_create_from_origin_all_reset_hard() {
   done
   hf_log_msg "returning to branch $CURRENT"
   git checkout $CURRENT
+}
+
+function hf_git_branch_show_remotes() {
+  git remote show origin
 }
 
 function hf_git_branch_delete_local_and_origin() {
