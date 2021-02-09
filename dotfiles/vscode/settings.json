@@ -1,0 +1,133 @@
+{
+  // ---------------------------------------
+  // intergrated terminal
+  // ---------------------------------------
+  "terminal.integrated.automationShell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "terminal.integrated.cursorStyle": "block",
+  "terminal.integrated.scrollback": 5000,
+  "terminal.integrated.shell.windows": "C:\\Windows\\System32\\bash.exe",
+  "terminal.integrated.shellArgs.windows": [
+    "--login",
+    "-i"
+  ],
+  // ---------------------------------------
+  // powershell
+  // ---------------------------------------
+  "powershell.integratedConsole.showOnStartup": false,
+  "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",
+  // ---------------------------------------
+  // editor, fonts and theme
+  // ---------------------------------------
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.detectIndentation": true,
+  "editor.fontFamily": "Consolas",
+  "editor.fontSize": 14,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.insertSpaces": true,
+  "editor.minimap.enabled": false,
+  "editor.quickSuggestionsDelay": 30,
+  "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "all",
+  "editor.suggestFontSize": 14,
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.suggestSelection": "first",
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": false,
+  "editor.quickSuggestions": false,
+  "editor.acceptSuggestionOnEnter": "off",
+  "editor.wordBasedSuggestions": false,
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 90,
+  "markdown.preview.fontSize": 14,
+  "rewrap.autoWrap.enabled": false,
+  "terminal.integrated.fontFamily": "Consolas",
+  "terminal.integrated.fontSize": 14,
+  // ---------------------------------------
+  // explorer/outline/problems/workbench
+  // ---------------------------------------
+  "window.zoomLevel": 0,
+  "explorer.autoReveal": false,
+  "workbench.colorTheme": "Visual Studio Dark",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.decorations.badges": false,
+  "explorer.decorations.colors": false,
+  "explorer.openEditors.visible": 0,
+  "outline.icons": false,
+  "outline.problems.badges": false,
+  "outline.problems.colors": false,
+  "outline.problems.enabled": false,
+  "problems.showCurrentInStatus": true,
+  "window.closeWhenEmpty": false,
+  "window.menuBarVisibility": "hidden",
+  "window.newWindowDimensions": "maximized",
+  "window.openFilesInNewWindow": "off",
+  "window.openWithoutArgumentsInNewWindow": "on",
+  "window.restoreWindows": "all",
+  "window.title": "${rootName}",
+  "window.titleBarStyle": "native",
+  "workbench.activityBar.visible": true,
+  "workbench.editor.centeredLayoutAutoResize": true,
+  "workbench.editor.closeOnFileDelete": true,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.labelFormat": "short",
+  "workbench.editor.showTabs": false,
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.editor.openPositioning": "last",
+  "workbench.enableExperiments": false,
+  "workbench.iconTheme": "vs-minimal",
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.sideBar.location": "left",
+  "workbench.startupEditor": "none",
+  // ---------------------------------------
+  // files
+  // ---------------------------------------
+  "files.autoSave": "off",
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": false,
+  // ---------------------------------------
+  // statusBar
+  // ---------------------------------------
+  "workbench.statusBar.visible": true,
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#303030",
+    "statusBar.noFolderBackground": "#222225",
+    "statusBar.debuggingBackground": "#511f1f"
+  },
+  // ---------------------------------------
+  // debug
+  // ---------------------------------------
+  "debug.focusWindowOnBreak": true,
+  "debug.openExplorerOnEnd": true,
+  "debug.console.wordWrap": true,
+  // ---------------------------------------
+  // update, telemetry and extensions
+  // ---------------------------------------
+  "extensions.autoUpdate": true,
+  "extensions.ignoreRecommendations": true,
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false,
+  "update.mode": "none",
+  // ---------------------------------------
+  // search
+  // ---------------------------------------
+  "search.useIgnoreFiles": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.git": true
+  },
+  // ---------------------------------------
+  // git
+  // ---------------------------------------
+  "scm.diffDecorations": "none",
+  "git.ignoreMissingGitWarning": true,
+  "git.decorations.enabled": false,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.countBadge": "off",
+  "git.autofetch": false,
+  "git.fetchOnPull": false,
+  "git.enabled": true
+}
