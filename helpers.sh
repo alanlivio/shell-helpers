@@ -40,8 +40,14 @@ fi
 # ---------------------------------------
 
 alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
-alias hf_test_command_then_return='type $1 || return;'
-alias hf_test_var_then_return='if test -z "$1"; then return; fi'
+alias hf_test_arg1_then_return='if test -z "$1"; then return; fi'
+function hf_test_command() {
+  if ! type "$1" &>/dev/null; then
+    return 1
+  else
+    return 0
+  fi
+}
 
 # ---------------------------------------
 # init functions
@@ -636,7 +642,7 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
 
 function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
-  hf_test_command_then_return pygmentize
+  hf_test_command pygmentize || return
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -O full,style=default -f html -l xml -o $i.html $i
   done
@@ -1082,31 +1088,31 @@ function hf_image_resize() {
 
 function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command_then_return tesseract
+  hf_test_command tesseract || return
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hf_image_reconize_text_pt() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command_then_return tesseract
+  hf_test_command tesseract || return
   tesseract -l por "$1" "$1.txt"
 }
 
 function hf_image_reconize_stdout() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command_then_return tesseract
+  hf_test_command tesseract || return
   tesseract "$1" stdout
 }
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command_then_return pngquant
+  hf_test_command pngquant || return
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hf_imagem_compress_hard() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command_then_return jpegoptim
+  hf_test_command jpegoptim || return
 
   jpegoptim -d . $1.jpeg
 }
@@ -1126,26 +1132,26 @@ function hf_pdf_find_duplicates() {
 
 function hf_pdf_remove_annotations() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command_then_return rewritepdf
+  hf_test_command rewritepdf || return
   rewritepdf "$1" "-no-annotations-$1"
 }
 
 function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command_then_return pdfgrep
+  hf_test_command pdfgrep || return
   pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
 function hf_pdf_remove_password() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command_then_return qpdf
+  hf_test_command qpdf || return
 
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
 function hf_pdf_remove_watermark() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command_then_return pdftk
+  hf_test_command pdftk || return
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
@@ -1182,13 +1188,13 @@ function hf_pdf_to_images() {
 
 function hf_convert_to_markdown() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command_then_return pandoc
+  hf_test_command pandoc || return
   pandoc -s $1 -t markdown -o ${1%.*}.md
 }
 
 function hf_convert_to_pdf() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command_then_return pandoc
+  hf_test_command pandoc || return
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
@@ -1198,7 +1204,7 @@ function hf_convert_to_pdf() {
 
 function hf_rename_to_lowercase_with_underscore() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command_then_return rename || return
+  hf_test_command rename || return || return
   echo "rename to lowercase with underscore"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1207,7 +1213,7 @@ function hf_rename_to_lowercase_with_underscore() {
 
 function hf_rename_to_lowercase_with_dash() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command_then_return rename || return
+  hf_test_command rename || return || return
   echo "rename to lowercase with dash"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1260,13 +1266,13 @@ function hf_network_ip() {
 }
 
 function hf_network_arp_scan() {
-  hf_test_command_then_return arp-scan
+  hf_test_command arp-scan || return
   sudo arp-scan --localnet
 }
 
 function hf_network_arp_scan_for_interface() {
   : ${1?"Usage: ${FUNCNAME[0]} <network_interface>"}
-  hf_test_command_then_return arp-scan
+  hf_test_command arp-scan || return
   sudo arp-scan --localnet --interface=$1
 }
 
@@ -1423,8 +1429,7 @@ function hf_diff_vscode() {
 function hf_vscode_install_packages() {
   hf_log_func
   hf_test_noargs_then_return
-  hf_test_command_then_return code
-
+  hf_test_command code || return
   CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
@@ -1790,7 +1795,7 @@ function hf_python_list_installed() {
 function hf_python_install_packages() {
   hf_log_func
   hf_test_noargs_then_return
-  hf_test_command_then_return pip
+  hf_test_command pip || return
 
   PKGS_TO_INSTALL=""
   PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
