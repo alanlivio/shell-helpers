@@ -864,7 +864,7 @@ function hf_wsl_get_default() {
 }
 
 function hf_wsl_get_default_version() {
-  Foreach ($i in (wsl -l -v)){
+  Foreach ($i in (wsl -l -v)) {
     if ($i.Contains('*')) {
       return $i.Split(' ')[-1]
     }
@@ -904,6 +904,55 @@ function hf_wsl_fix_home_user() {
   # changing file permissions
   hf_log "Changing file permissions "
   wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
+}
+
+
+# ---------------------------------------
+# keyboard
+# ---------------------------------------
+
+function hf_keyboard_lang_stgs_open() {
+  cmd /c "rundll32.exe Shell32,Control_RunDLL input.dll,,{C07337D3-DB2C-4D0B-9A93-B722A6C106E2}"
+}
+
+function hf_keyboard_disable_shortcut_lang{
+  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name HotKey -Value 3
+  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name "Language Hotkey" -Value 3
+}
+
+function hf_keyboard_disable_shortcut_altgr() {
+  Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout" -Name "Scancode Map" -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x38,0x00,0x38,0xe0,0x00,0x00,0x00,0x00))
+}
+
+# ---------------------------------------
+# wt
+# ---------------------------------------
+
+function hf_wt_config($path) {
+  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+}
+
+# ---------------------------------------
+# winupdate
+# ---------------------------------------
+
+function hf_winupdate_list() {
+  Invoke-Expression $hf_log_func
+  Get-WindowsUpdate
+}
+
+function hf_winupdate_list_last_installed() {
+  Invoke-Expression $hf_log_func
+  Get-WUHistory -Last 10 | Select-Object Date, Title, Result
+}
+
+function hf_winupdate_update() {
+  Invoke-Expression $hf_log_func
+  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { 
+    if ($_ -ne $null ) {
+      $_.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) 
+    } 
+  }
 }
 
 # ---------------------------------------
@@ -1016,11 +1065,10 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
     winget install Canonical.Ubuntu
   }
   # configure ubuntu distro
-  $str = wsl uname -r | Out-String
   if (!((hf_wsl_get_default))) {
     hf_log "INFO: Ubuntu is not configured, running..."
     refreshenv
-    Invoke-Expression ((hf_wsl_get_default).Replace('.','').Replace('-','') + ".exe")
+    Invoke-Expression ((hf_wsl_get_default).Replace('.', '').Replace('-', '') + ".exe")
   }
   # enable wsl 2
   wsl -l -v | Out-null
@@ -1049,46 +1097,6 @@ function hf_install_msys() {
   hf_path_add 'C:\tools\msys64\usr\bin'
 }
 
-# ---------------------------------------
-# input
-# ---------------------------------------
-
-function hf_inputlang_open_($path) {
-  cmd /c "rundll32.exe Shell32,Control_RunDLL input.dll,,{C07337D3-DB2C-4D0B-9A93-B722A6C106E2}"
-}
-
-function hf_inputlang_disable_shorcuts($path) {
-  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name HotKey -Value 3
-  Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name "Language Hotkey" -Value 3
-}
-
-# ---------------------------------------
-# wt
-# ---------------------------------------
-
-function hf_wt_config($path) {
-  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
-}
-
-# ---------------------------------------
-# winupdate
-# ---------------------------------------
-
-function hf_winupdate_list() {
-  Invoke-Expression $hf_log_func
-  Get-WindowsUpdate
-}
-
-function hf_winupdate_list_last_installed() {
-  Invoke-Expression $hf_log_func
-  Get-WUHistory -Last 10 | Select-Object Date, Title, Result
-}
-
-function hf_winupdate_update() {
-  Invoke-Expression $hf_log_func
-  $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { $_.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) }
-  # hf_log_l2 "RequireReboot: $(Get-WURebootStatus -Silent)"
-}
 
 # ---------------------------------------
 # init
@@ -1100,9 +1108,11 @@ function hf_init_windows() {
   hf_clean_unused_dirs
   hf_clean_unused_shortcuts
   hf_explorer_hide_dotfiles
-  hf_install_choco
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer
-  hf_inputlang_disable_shorcuts
+  hf_keyboard_disable_shortcut_lang
+  hf_keyboard_disable_shortcut_altgr
+  hf_install_choco
+  hf_choco_install_vscode
 }
