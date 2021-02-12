@@ -7,6 +7,8 @@
 $SCRIPT_DIR = $PSScriptRoot
 $SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
+$DOTFILES_WT = "$SCRIPT_DIR\dotfiles\windowsterminal"
+$DOTFILES_VSCODE = "$SCRIPT_DIR\dotfiles\vscode"
 
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
@@ -925,11 +927,20 @@ function hf_keyboard_disable_shortcut_altgr() {
 }
 
 # ---------------------------------------
-# wt
+# windowsterminal
 # ---------------------------------------
 
-function hf_wt_config($path) {
+function hf_windowsterminal_install_stgs($path) {
   Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+}
+
+# ---------------------------------------
+# vscode
+# ---------------------------------------
+
+function hf_vscode_install_config_files($path) {
+  Copy-Item $path\settings.json $env:userprofile\AppData\Roaming\Code\User\
+  Copy-Item $path\keybindings.json $env:userprofile\AppData\Roaming\Code\User\
 }
 
 # ---------------------------------------
@@ -1027,6 +1038,13 @@ function hf_uninstall_onedrive() {
 }
 
 
+function hf_install_vscode() {
+  hf_choco_install vscode
+  if(Test-Path $DOTFILES_VSCODE){
+    hf_vscode_install_config_files($DOTFILES_VSCODE)
+  }
+}
+
 function hf_install_common_user_software() {
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
 }
@@ -1049,6 +1067,9 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
   # install windows terminal
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal
+    if (Test-Path $DOTFILES_WT) {
+      hf_windowsterminal_install_stgs $DOTFILES_WT\settings.json
+    }
   }
   # enable wsl feature (require restart)
   if (!(Get-Command 'wsl.exe' -ea 0)) {
@@ -1114,5 +1135,5 @@ function hf_init_windows() {
   hf_keyboard_disable_shortcut_lang
   hf_keyboard_disable_shortcut_altgr
   hf_install_choco
-  hf_choco_install_vscode
+  hf_install_vscode
 }
