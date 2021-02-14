@@ -2065,7 +2065,7 @@ function hf_install_flutter() {
   hf_log_func
   if ! test -d $HELPERS_INSTALL_OPT/tor; then
     URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz
-    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/flutter-linux/
+    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
@@ -2321,7 +2321,7 @@ function hf_compression_extract_from_url() {
 
   if test ! -f $FILE_NAME; then
     echo "fetching $FILE_NAME"
-    # cd /tmp/
+    cd /tmp/
     wget --continue $1
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
     cd -
