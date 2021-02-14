@@ -859,6 +859,8 @@ function hf_wsl_fix_home_user() {
   wsl -u root bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
+  # enable use /Users in path for both windows and wsl
+  wsl -u root bash -c 'if ! test -d /Users; then sudo ln -s /mnt/c/Users /Users; fi'
 
   hf_wsl_terminate
 
