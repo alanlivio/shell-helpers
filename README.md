@@ -1,54 +1,10 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers different helper functions for both `bash` and `pwsh` to support: configure OS, install software, media convertion, git, etc.
+This project offers different helper functions for both `bash` and `powershell` to support: configure OS, install software, media convertion, git, etc.
 
-## helpers for Gnome-based Ubuntu
+# How to install
 
-* `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
-* `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
-
-## helpers for macOS
-
-* `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
-* `hf_update_clean`: configure/upgrade packges using variables (PKGS_BREW) in .bashrc or helpers-cfg.sh, and cleanup.
-
-## helpers for Windows
-
-In Windows Powershell:
-
-* `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g., choco, vscode).
-* `hf_install_common_user_software`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
-* `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. It requires system restart then run it again.
-* `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
-* `hf_install_battle_steam`: install Battle.net and Steam
-
-In wsl bash:
-
-* `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
-* `hf_update_clean`: configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
-
-In msys bash:
-
-* `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
-* `hf_update_clean`: configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
-
-### Recommended  Windows/WSL steps
-
-1. In admin powershell, run:  
-  1.1) `hf_init_windows`  
-  1.2) `hf_install_common_user_software`  
-  1.3) `hf_install_wsl_ubuntu_and_windowsterminal` (it requeres restart and, when done, run it again)  
-2. Run the Ubuntu app and configure your user name/password.  
-3. In Ubuntu in WindowsTerminal, run:  
-  3.1) `hf_init_wsl`  
-  3.2) Configure variables at .bashrc or helpers-cfg.sh (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT)  
-  3.3) `hf_update_clean` (usually run to mainten the system updated)
-
-## How to install
-
-* To enable helpers in bash (Ubuntu, macOS, or WSL), the shell-helpers can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html).
-
-To do that, fetch helpers.sh and insert the following command at the end of your `~/.bashrc` :
+To enable helpers in bash (Ubuntu, macOS, or WSL), the shell-helpers can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html). To do that, run the followings commands for fetch helpers.sh and load at `~/.bashrc` :
 
 ``` bash
   mkdir ~/.helpers/
@@ -57,9 +13,7 @@ To do that, fetch helpers.sh and insert the following command at the end of your
   source ~/.bashrc
   ```
 
-* To enable helpers in powershell (Windows), the shell-helpers can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7).
-
-To do that, fetch helpers.ps1 and import it as powershell module:
+To enable helpers in powershell (Windows), the shell-helpers can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7). To do that, run the followings commands for fetch helpers.ps1 and import it as powershell module:
 
 ``` powershell
   mkdir ~/.helpers/;`
@@ -67,6 +21,43 @@ To do that, fetch helpers.ps1 and import it as powershell module:
   Set-ExecutionPolicy unrestricted -force;`
   Write-Output "Import-Module -Force -Global ~/.helpers/helpers.ps1" > $Profile.AllUsersAllHosts
   ```
+
+# Usage
+
+## init Gnome-based Ubuntu
+
+1. bash `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+
+## init macOS
+
+1. bash `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in .bashrc or helpers-cfg.sh, and cleanup.
+
+## init Windows
+
+1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g., choco, vscode).
+2. powershell `hf_install_common_user_software` (optional): install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
+3. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
+
+## init WSL in Windows
+
+1. powershell `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. This helpers automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
+  1.1. After run, it requeres restart windows and run it again.  
+  1.2. It aso require run Ubuntu app and configure your user name/password.  
+  1.1. Then run it again.
+2. wsl bash `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
+3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+
+## init msys in Windows
+
+1. powershell `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
+2. msys bash `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
+3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
+
+## other usage
+
+There are other herpers, to see them see [helpers.ps1](helpers.ps1) and [helpers.sh](helpers.sh).
 
 ## References
 
