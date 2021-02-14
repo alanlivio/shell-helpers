@@ -20,7 +20,7 @@ if (Test-Path $SCRIPT_CFG) {
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
-Set-Alias -Name env -Value hf_system_env
+Set-Alias -Name env -Value hf_env
 Set-Alias -Name path -Value hf_path_print
 Set-Alias -Name trash -Value hf_explorer_open_trash
 
@@ -188,6 +188,10 @@ function hf_system_disable_beep() {
 # ---------------------------------------
 # path
 # ---------------------------------------
+
+function hf_env_refresh() {
+  refreshenv 
+}
 
 function hf_env_add($name, $value) {
   [Environment]::SetEnvironmentVariable($name, $value, 'Machine')
@@ -891,13 +895,13 @@ function hf_keyboard_lang_stgs_open() {
   cmd /c "rundll32.exe Shell32,Control_RunDLL input.dll,,{C07337D3-DB2C-4D0B-9A93-B722A6C106E2}"
 }
 
-function hf_keyboard_disable_shortcut_lang{
+function hf_keyboard_disable_shortcut_lang {
   Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name HotKey -Value 3
   Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Toggle' -Name "Language Hotkey" -Value 3
 }
 
 function hf_keyboard_disable_shortcut_altgr() {
-  Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout" -Name "Scancode Map" -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x38,0x00,0x38,0xe0,0x00,0x00,0x00,0x00))
+  Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout" -Name "Scancode Map" -Value ([byte[]](0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x38, 0x00, 0x38, 0xe0, 0x00, 0x00, 0x00, 0x00))
 }
 
 # ---------------------------------------
@@ -1022,7 +1026,7 @@ function hf_uninstall_onedrive() {
 
 function hf_install_vscode() {
   hf_choco_install vscode
-  if(Test-Path $DOTFILES_VSCODE){
+  if (Test-Path $DOTFILES_VSCODE) {
     hf_vscode_install_config_files($DOTFILES_VSCODE)
   }
 }

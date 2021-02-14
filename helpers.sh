@@ -2063,7 +2063,7 @@ function hf_install_foxit() {
 
 function hf_install_flutter() {
   hf_log_func
-  if ! test -d $HELPERS_INSTALL_OPT/tor; then
+  if ! test -d $HELPERS_INSTALL_OPT/flutter; then
     URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz
     hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
   fi
