@@ -163,10 +163,6 @@ function hf_system_info() {
   cmd.exe /c systeminfo
 }
 
-function hf_system_env() {
-  [Environment]::GetEnvironmentVariables()
-}
-
 function hf_system_ver() {
   [Environment]::OSVersion.Version.ToString()
 }
@@ -192,7 +188,12 @@ function hf_system_disable_beep() {
 # ---------------------------------------
 # path
 # ---------------------------------------
-function hf_path_add($addPath) {
+
+function hf_env_add($name, $value) {
+  [Environment]::SetEnvironmentVariable($name, $value, 'Machine')
+}
+
+function hf_env_path_add($addPath) {
   if (Test-Path $addPath) {
     $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
     $regexAddPath = [regex]::Escape($addPath)
@@ -205,9 +206,13 @@ function hf_path_add($addPath) {
   }
 }
 
-function hf_path_print($addPath) {
+function hf_env_path_print($addPath) {
   $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
   Write-Output $path
+}
+
+function hf_env() {
+  [Environment]::GetEnvironmentVariables()
 }
 
 # ---------------------------------------
@@ -943,10 +948,10 @@ function hf_install_choco() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'choco.exe' -ea 0)) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    hf_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
+    hf_env_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
     $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
-    hf_path_add $chocotools
+    hf_env_path_add $chocotools
 
     choco feature disable -n checksumFiles
     choco feature disable -n showDownloadProgress
@@ -973,7 +978,7 @@ function hf_install_gsudo() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'gsudo.exe' -ea 0)) {
     hf_choco_install gsudo
-    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+    hf_env_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
   }
 }
 
@@ -1083,8 +1088,8 @@ function hf_install_msys() {
   C:\tools\msys64\usr\bin\bash.exe -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
   # use /mnt/c/ like in WSL
   C:\tools\msys64\usr\bin\bash.exe -c ' echo /c /mnt/c none bind >> /etc/fstab'
-  hf_path_add 'C:\tools\msys64\mingw64\bin'
-  hf_path_add 'C:\tools\msys64\usr\bin'
+  hf_env_path_add 'C:\tools\msys64\mingw64\bin'
+  hf_env_path_add 'C:\tools\msys64\usr\bin'
 }
 
 
