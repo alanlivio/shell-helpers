@@ -181,6 +181,15 @@ function hf_system_disable_password_policy {
 }
 
 # ---------------------------------------
+# sounds
+# ---------------------------------------
+
+function hf_system_disable_beep() {
+  Invoke-Expression $hf_log_func
+  net stop beep
+}
+
+# ---------------------------------------
 # path
 # ---------------------------------------
 function hf_path_add($addPath) {
@@ -335,33 +344,6 @@ function hf_optimize_services() {
     'CCleanerSkipUAC'
   )
   hf_scheduledtask_disable @tasks
-}
-
-function hf_optimize_services_experimental() {
-  Invoke-Expression $hf_log_func
-  $services = @(
-    "*TermService*" # Remote Desktop Services
-    "*UmRdpService*" # Remote Desktop Services UserMode Port Redirector
-    "*SessionEnv*" # Remote Desktop Configuration
-    # "*AppleOSSMgr*" # bootcamp: Apple OS Switch Manager
-    # "*Bonjour Service*" # bootcamp: Bonjour Service
-    # "*BootCampService*" # bootcamp: Boot Camp Service
-    "*gupdate*" # Google Update Service
-    "*gupdatem*" # Google Update Service
-    "*PcaSvc*" # Program Compatibility Assistant Service
-    "*wercplsupport*" # Problem Reports Control Panel Support
-    "*WerSvc*" # Windows Error Reporting Service
-    "*NetTcpPortSharing*" # Net.Tcp Port Sharing Service
-    "*PhoneSvc*" # Phone Service
-    "*Themes*" # Themes (Provides user experience theme management.)
-    "*WbioSrvc*" # Windows Biometric Service
-    "*Sense*" # Windows Defender Advanced Threat Protection Service
-    "*SysMain*" # SysMain (Maintains and improves system performance)
-    "*MicrosoftEdgeElevationService*" # Edge Update Service
-    "*edgeupdate*" # Edge Update Service
-    "*edgeupdatem*" # Edge Update Service
-  )
-  hf_service_disable $services
 }
 
 function hf_optimize_explorer() {
