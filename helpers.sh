@@ -686,6 +686,10 @@ function hf_git_overleaf_push_commit_all() {
   git push
 }
 
+function hf_git_file_options_untrack() {
+  git config core.fileMode false
+}
+
 function hf_git_assume_unchanged() {
   git update-index --assume-unchanged $1
 }
