@@ -1009,6 +1009,30 @@ function hf_android_install_package() {
 }
 
 # ---------------------------------------
+# flutter
+# ---------------------------------------
+
+function hf_flutter_project_dependecies() {
+  flutter pub get
+}
+
+function hf_flutter_doctor() {
+  flutter doctor -v
+}
+
+function hf_flutter_run() {
+  flutter run
+}
+
+function hf_flutter_clean() {
+  flutter clean
+}
+
+function hf_flutter_scanfoold() {
+  flutter create --sample=material.Scaffold.2 mysample
+}
+
+# ---------------------------------------
 # http
 # ---------------------------------------
 
