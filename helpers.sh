@@ -39,6 +39,17 @@ if test -f $HELPERS_CFG; then
 fi
 
 # ---------------------------------------
+# HELPERS_INSTALL_OPT
+# ---------------------------------------
+# if $HELPERS_CFG not defined use from same dir 
+if test -z "$HELPERS_INSTALL_OPT"; then
+  HELPERS_INSTALL_OPT="$HOME/opt"
+fi
+if test -d "$HELPERS_INSTALL_OPT"; then
+  mkdir -p $HELPERS_INSTALL_OPT
+fi
+
+# ---------------------------------------
 # test functions
 # ---------------------------------------
 
@@ -2039,87 +2050,51 @@ function hf_install_foxit() {
     hf_compression_extract_from_url $URL /tmp/
     sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
   fi
-  if ! test -d $HOME/opt/foxitsoftware; then
-    sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
-    sudo desktop-file-install $HOME/opt/foxitsoftware/foxitreader/FoxitReader.desktop
-  fi
-}
-
-function hf_install_stremio() {
-  hf_log_func
-  if ! type stremio &>/dev/null; then
-    hf_apt_install_packages libmpv1 libqt5qml5
-    hf_apt_fetch_install https://dl.strem.io/linux/v4.4.106/stremio_4.4.106-1_amd64.deb
+  if ! test -d $HELPERS_INSTALL_OPT/foxitsoftware; then
+    sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
+    sudo desktop-file-install $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
   fi
 }
 
 function hf_install_flutter() {
   hf_log_func
-  if ! test -d $HOME/opt/tor; then
-    URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.17.3-stable.tar.xz
-    hf_compression_extract_from_url $URL $HOME/opt/
+  if ! test -d $HELPERS_INSTALL_OPT/tor; then
+    URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz
+    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/flutter-linux/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
 
 function hf_install_tor() {
   hf_log_func
-  if ! test -d $HOME/opt/tor; then
+  if ! test -d $HELPERS_INSTALL_OPT/tor; then
     URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
-    hf_compression_extract_from_url $URL $HOME/opt/
+    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
   fi
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-  mv $HOME/opt/tor-browser_en-US $HOME/opt/tor/
-  sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HOME/opt/tor/start-tor-browser.desktop
-  sudo desktop-file-install "$HOME/opt/tor/start-tor-browser.desktop"
+  mv $HELPERS_INSTALL_OPT/tor-browser_en-US $HELPERS_INSTALL_OPT/tor/
+  sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop
+  sudo desktop-file-install "$HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop"
 }
 
-function hf_install_zotero_apt() {
+function hf_install_zotero() {
   hf_log_func
-  if ! test -d $HOME/opt/zotero; then
+  if ! test -d $HELPERS_INSTALL_OPT/zotero; then
     URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
     hf_compression_extract_from_url $URL /tmp/
-    mv /tmp/Zotero_linux-x86_64 $HOME/opt/zotero
+    mv /tmp/Zotero_linux-x86_64 $HELPERS_INSTALL_OPT/zotero
   fi
   {
     echo '[Desktop Entry]'
     echo 'Version=1.0'
     echo 'Name=Zotero'
     echo 'Type=Application'
-    echo "Exec=$HOME/opt/zotero/zotero"
-    echo "Icon=$HOME/opt/zotero/chrome/icons/default/default48.png"
-  } >$HOME/opt/zotero/zotero.desktop
-  sudo desktop-file-install $HOME/opt/zotero/zotero.desktop
+    echo "Exec=$HELPERS_INSTALL_OPT/zotero/zotero"
+    echo "Icon=$HELPERS_INSTALL_OPT/zotero/chrome/icons/default/default48.png"
+  } >$HELPERS_INSTALL_OPT/zotero/zotero.desktop
+  sudo desktop-file-install $HELPERS_INSTALL_OPT/zotero/zotero.desktop
 }
 
-function hf_install_shellcheck() {
-  hf_log_func
-  if test -f /usr/local/bin/shellcheck; then return; fi
-  URL=https://github.com/koalaman/shellcheck/archive/v0.6.0.tar.gz
-  hf_compression_extract_from_url $URL /tmp/
-  sudo install /tmp/shellcheck-0.6.0/shellcheck /usr/local/bin/
-}
-
-function hf_install_tizen_studio() {
-  hf_log_func
-  if ! test -d $HOME/opt/tizen-studio; then
-    URL=http://usa.sdk-dl.tizen.org/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
-    wget $URL -P /tmp/
-    chmod +x /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
-    /tmp/web-ide_Tizen_Studio_1.1.1_usa_ubuntu-64.bin
-  fi
-}
-
-function hf_install_vp() {
-  hf_log_func
-  if ! test -d $HOME/opt/vp; then
-    URL=https://usa6.visual-paradigm.com/visual-paradigm/vpce14.1/20170805/Visual_Paradigm_CE_14_1_20170805_Linux64.sh
-    hf_compression_extract_from_url $URL /tmp/
-    sudo bash "/tmp/$(basename $URL)"
-    sudo chown $USER:$USER $HOME/opt/vp/
-    sudo rm /usr/share/applications/Visual_Paradigm_for_Eclipse_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Update_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_NetBeans_14.1-0.desktop /usr/share/applications/Visual_Paradigm_for_IntelliJ_14.1-0.desktop /usr/share/applications/Visual_Paradigm_Product_Selector_14.1-0.desktop
-  fi
-}
 
 function hf_install_vidcutter_apt() {
   hf_log_func
@@ -2337,18 +2312,17 @@ function hf_compression_extract() {
 
 function hf_compression_extract_from_url() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
-  local BASE_NAME=$(basename $1)
-  FILE_NAME=$(echo $BASE_NAME | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e)
+  FILE_NAME="/tmp/$(basename $1)"
 
-  if test ! -f /tmp/$FILE_NAME; then
+  if test ! -f $FILE_NAME; then
     echo "fetching $FILE_NAME"
-    cd /tmp/
+    # cd /tmp/
     wget --continue $1
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    echo "extracting $FILE_NAME"
-    hf_compression_extract $FILE_NAME $2
     cd -
   fi
+  echo "extracting $FILE_NAME to $2"
+  hf_compression_extract $FILE_NAME $2
 }
 
 # ---------------------------------------
