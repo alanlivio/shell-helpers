@@ -941,7 +941,7 @@ function hf_winupdate_update() {
 
 function hf_install_choco() {
   Invoke-Expression $hf_log_func
-  if (!(Get-Command 'choco' -ea 0)) {
+  if (!(Get-Command 'choco.exe' -ea 0)) {
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     hf_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
@@ -969,12 +969,20 @@ function hf_install_choco() {
   }
 }
 
+function hf_install_gsudo() {
+  Invoke-Expression $hf_log_func
+  if (!(Get-Command 'gsudo.exe' -ea 0)) {
+    hf_choco_install gsudo
+    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+  }
+}
+
 function hf_install_winget() {
   Invoke-Expression $hf_log_func
   $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
-  if (!(Get-Command winget -ea 0)) {
+  if (!(Get-Command 'winget.exe' -ea 0)) {
     if (!(Test-Path $appx_pkg)) {
-      Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v0.2.3162-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
+      Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v-0.2.10191-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
     }
     Add-AppPackage $appx_pkg
   }
@@ -1022,18 +1030,11 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
   # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   Invoke-Expression $hf_log_func
   # install winget
-  if (!(Get-Command 'choco.exe' -ea 0)) {
-    hf_install_choco
-  }
+  hf_install_choco
   # install winget
-  if (!(Get-Command 'winget.exe' -ea 0)) {
-    hf_install_winget
-  }
+  hf_install_winget
   # install gsudo
-  if (!(Get-Command 'gsudo.exe' -ea 0)) {
-    hf_choco_install gsudo
-    hf_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
-  }
+  hf_install_gsudo
   # install windows terminal
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal
