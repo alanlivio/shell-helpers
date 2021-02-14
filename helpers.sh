@@ -624,14 +624,14 @@ function hf_pkg_config_show() {
 # pygmentize
 # ---------------------------------------
 
-function hf_code_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
+function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
   : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
     pygmentize -f jpeg -l xml -o $i.jpg $i
   done
 }
 
-function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
+function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
   : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
@@ -640,7 +640,7 @@ function hf_code_pygmentize_folder_xml_files_by_extensions_to_rtf() {
   done
 }
 
-function hf_code_pygmentize_folder_xml_files_by_extensions_to_html() {
+function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
   : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
   hf_test_command pygmentize || return
   find . -maxdepth 1 -name "*.xml" | while read -r i; do
@@ -1422,17 +1422,14 @@ function hf_snap_hide_home_folder() {
 }
 
 # ---------------------------------------
-# diff
-# ---------------------------------------
-
-function hf_diff_vscode() {
-  : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
-  code --diff "$1" "$2"
-}
-
-# ---------------------------------------
 # vscode
 # ---------------------------------------
+
+function hf_vscode_diff() {
+  : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
+  code --wait --diff "$1" "$2"
+}
+
 
 function hf_vscode_install_packages() {
   hf_log_func
