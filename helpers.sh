@@ -21,18 +21,21 @@ if test $IS_LINUX; then
     ;;
   esac
 fi
+
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 
 # ---------------------------------------
 # load helpers-cfg
 # ---------------------------------------
+# if $HELPERS_CFG not defined use from same dir 
+if test -z "$HELPERS_CFG"; then
+  HELPERS_CFG="$SCRIPT_DIR/helpers-cfg.sh"
+fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
-SCRIPT_CFG="$SCRIPT_DIR/helpers-cfg.sh"
-
-if test -f $SCRIPT_CFG; then
-  source $SCRIPT_CFG
+if test -f $HELPERS_CFG; then
+  source $HELPERS_CFG
 fi
 
 # ---------------------------------------
