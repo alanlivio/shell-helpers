@@ -1,6 +1,6 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers different helper functions for both `bash` and `powershell` to support: configure OS, install software, media convertion, git, etc.
+This project offers different helper functions for both `bash` and `powershell` to support: configure OS, install software, git, utilities, etc.
 
 # How to install
 
@@ -27,37 +27,37 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 ## init Gnome-based Ubuntu
 
 1. bash `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in your .bashrc or helpers-cfg.sh, and cleanup.
 
 ## init macOS
 
 1. bash `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in .bashrc or helpers-cfg.sh, and cleanup.
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in your .bashrc or helpers-cfg.sh, and cleanup.
 
 ## init Windows
 
-1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and essential suftware (e.g., choco, vscode).
+1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, vscode).
 2. powershell `hf_install_common_user_software` (optional): install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
 3. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
 
 ## init WSL in Windows
 
-1. powershell `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. This helpers automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
+1. powershell `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
   1.1. After run, it requeres restart windows and run it again.  
-  1.2. It aso require run Ubuntu app and configure your user name/password.  
+  1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
 2. wsl bash `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
-3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in .bashrc or helpers-cfg.sh, and cleanup.
+3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in your .bashrc or helpers-cfg.sh, and cleanup.
 
 ## init msys in Windows
 
 1. powershell `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
 2. msys bash `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
-3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in .bashrc or helpers-cfg.sh, and cleanup.
+3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in your .bashrc or helpers-cfg.sh, and cleanup.
 
-## other usage
+## Other helpers
 
-There are other herpers, to see them see [helpers.ps1](helpers.ps1) and [helpers.sh](helpers.sh).
+There are other herpers related with install software (hf_install_\*), git (hf_git_\*), pdf manipulation (hf_pdf_\*), files compression (hf_compress_\*), etc. To see them, take a look at [helpers.ps1](helpers.ps1) and [helpers.sh](helpers.sh).
 
 ## References
 
@@ -87,3 +87,5 @@ powershell references:
   + https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
   + https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
   + https://github.com/Disassembler0/Win10-Initial-Setup-Script/blob/master/Win10.psm1
+
+
