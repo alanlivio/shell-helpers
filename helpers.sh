@@ -29,11 +29,12 @@ SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 # ---------------------------------------
 # load helpers-cfg
 # ---------------------------------------
-# if $HELPERS_CFG not defined use from same dir 
-if test -z "$HELPERS_CFG"; then
-  HELPERS_CFG="$SCRIPT_DIR/helpers-cfg.sh"
+# if not "$HOME/.helpers-cfg.sh" load sample
+if test -f "$HOME/.helpers-cfg.sh"; then
+  HELPERS_CFG="$HOME/.helpers-cfg.sh"
+else
+  HELPERS_CFG="$SCRIPT_DIR/dotfiles/.helpers-cfg.sh"
 fi
-
 if test -f $HELPERS_CFG; then
   source $HELPERS_CFG
 fi

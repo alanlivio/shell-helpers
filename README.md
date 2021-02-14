@@ -27,12 +27,12 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 ## init Gnome-based Ubuntu
 
 1. bash `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in your .bashrc or helpers-cfg.sh, and cleanup.
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## init macOS
 
 1. bash `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in your .bashrc or helpers-cfg.sh, and cleanup.
+2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## init Windows
 
@@ -47,13 +47,13 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
   1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
 2. wsl bash `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
-3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in your .bashrc or helpers-cfg.sh, and cleanup.
+3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## init msys in Windows
 
 1. powershell `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
 2. msys bash `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
-3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in your .bashrc or helpers-cfg.sh, and cleanup.
+3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## Other helpers
 

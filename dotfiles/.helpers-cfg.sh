@@ -1,5 +1,4 @@
 #!/bin/bash
-
 PKGS_VSCODE=""
 PKGS_SNAP=""
 PKGS_SNAP_CLASSIC=""
