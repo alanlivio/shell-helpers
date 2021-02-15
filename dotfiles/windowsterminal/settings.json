@@ -13,6 +13,7 @@
   "confirmCloseAllTabs": false,
   "useTabSwitcher": false,
   "tabWidthMode": "equal",
+  "bellStyle": "none",
   "largePasteWarning": false,
   "profiles": {
     "defaults": {

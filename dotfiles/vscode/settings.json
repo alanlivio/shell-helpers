@@ -10,44 +10,43 @@
   //   "-i"
   // ],
   // ---------------------------------------
-  // powershell
+  // editing
   // ---------------------------------------
-  "powershell.integratedConsole.focusConsoleOnExecute": false,
-  "powershell.integratedConsole.suppressStartupBanner": true,
-  "powershell.integratedConsole.showOnStartup": false,
-  "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",
-  // ---------------------------------------
-  // editor, fonts and theme
-  // ---------------------------------------
-  "diffEditor.ignoreTrimWhitespace": false,
-  "editor.detectIndentation": true,
-  "editor.fontFamily": "Consolas",
-  "editor.fontSize": 14,
   "editor.formatOnPaste": false,
   "editor.formatOnType": false,
   "editor.insertSpaces": true,
-  "editor.minimap.enabled": false,
-  "editor.quickSuggestionsDelay": 30,
-  "editor.renderControlCharacters": true,
-  "editor.renderWhitespace": "all",
-  "editor.suggestFontSize": 14,
   "editor.suggestOnTriggerCharacters": false,
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": false,
-  "editor.quickSuggestions": false,
   "editor.acceptSuggestionOnEnter": "off",
+  "editor.quickSuggestionsDelay": 30,
+  "files.autoSave": "afterDelay",
   "editor.wordBasedSuggestions": false,
   "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 90,
+  "editor.quickSuggestions": false,
+  "files.eol": "\n",
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.detectIndentation": true,
+  // ---------------------------------------
+  // font and text
+  // ---------------------------------------
+  "editor.fontFamily": "Consolas",
+  "editor.fontSize": 14,
+  "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "all",
+  "editor.suggestFontSize": 14,
   "markdown.preview.fontSize": 14,
-  "rewrap.autoWrap.enabled": false,
   "terminal.integrated.fontFamily": "Consolas",
   "terminal.integrated.fontSize": 14,
   // ---------------------------------------
   // explorer/outline/problems/workbench
   // ---------------------------------------
   "window.zoomLevel": 0,
+  "editor.minimap.enabled": false,
   "explorer.autoReveal": false,
   "workbench.colorTheme": "Visual Studio Dark",
   "explorer.confirmDelete": false,
@@ -81,12 +80,6 @@
   "workbench.panel.defaultLocation": "bottom",
   "workbench.sideBar.location": "left",
   "workbench.startupEditor": "none",
-  // ---------------------------------------
-  // files
-  // ---------------------------------------
-  "files.autoSave": "off",
-  "files.eol": "\n",
-  "files.trimTrailingWhitespace": false,
   // ---------------------------------------
   // statusBar
   // ---------------------------------------
@@ -130,5 +123,5 @@
   "git.countBadge": "off",
   "git.autofetch": false,
   "git.fetchOnPull": false,
-  "git.enabled": true
+  "git.enabled": true,
 }

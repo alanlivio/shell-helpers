@@ -49,10 +49,6 @@
     "command": "-workbench.action.closeWindow"
   },
   {
-    "key": "ctrl+shift+w",
-    "command": "workbench.action.closeOtherEditors"
-  },
-  {
     "key": "ctrl+shift+a",
     "command": "-editor.action.blockComment",
     "when": "editorTextFocus && !editorReadonly"
@@ -91,4 +87,12 @@
     "command": "git.stageSelectedRanges",
     "when": "isInDiffEditor"
   },
+  {
+    "key": "ctrl+shift+w",
+    "command": "workbench.action.closeAllEditors"
+  },
+  {
+    "key": "ctrl+k ctrl+w",
+    "command": "-workbench.action.closeAllEditors"
+  }
 ]
