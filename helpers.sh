@@ -42,7 +42,7 @@ fi
 # ---------------------------------------
 # HELPERS_INSTALL_OPT
 # ---------------------------------------
-# if $HELPERS_CFG not defined use from same dir 
+# if $HELPERS_CFG not defined use from same dir
 if test -z "$HELPERS_INSTALL_OPT"; then
   HELPERS_INSTALL_OPT="$HOME/opt"
 fi
@@ -1012,8 +1012,12 @@ function hf_android_install_package() {
 # flutter
 # ---------------------------------------
 
-function hf_flutter_project_dependecies() {
+function hf_flutter_pkgs_get() {
   flutter pub get
+}
+
+function hf_flutter_pkgs_upgrade() {
+  flutter packages pub upgrade
 }
 
 function hf_flutter_doctor() {
@@ -1472,7 +1476,6 @@ function hf_vscode_diff() {
   : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
   code --wait --diff "$1" "$2"
 }
-
 
 function hf_vscode_install_packages() {
   hf_log_func
@@ -1954,40 +1957,9 @@ function hf_install_luarocks() {
   fi
 }
 
-function hf_install_bb_warsaw() {
-  hf_log_func
-  if ! type warsaw &>/dev/null; then
-    hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
-  fi
-}
-
-function hf_install_git_lfs() {
-  hf_log_func
-  if ! type git-lfs &>/dev/null; then
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-    sudo apt-get install git-lfs
-  fi
-}
-
-function hf_install_gitkraken() {
-  hf_log_func
-  if ! type gitkraken &>/dev/null; then
-    sudo apt install gconf2 gconf-service libgtk2.0-0
-    hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
-  fi
-}
-
-function hf_install_chrome() {
-  hf_log_func
-  if ! type google-chrome-stable &>/dev/null; then
-    hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  fi
-}
-
 function hf_install_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
-    # required to full python3.5.7
     sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
     CWD=$(pwd)
     cd /tmp
@@ -2000,91 +1972,6 @@ function hf_install_python35() {
   fi
 }
 
-function hf_install_neo4j() {
-  hf_log_func
-  if ! type neo4j &>/dev/null; then
-    wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
-    echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
-    sudo apt update
-    sudo apt install neo4j
-  fi
-}
-
-function hf_install_sqlworkbench() {
-  hf_log_func
-  dpkg --status mysql-workbench-community &>/dev/null
-  if test $? != 0; then
-    sudo apt install libzip5
-    hf_apt_fetch_install https://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community_8.0.17-1ubuntu19.04_amd64.deb
-  fi
-}
-
-function hf_install_slack_deb() {
-  hf_log_func
-  dpkg --status slack-desktop &>/dev/null
-  if test $? != 0; then
-    sudo apt install -y libappindicator1
-    hf_apt_fetch_install https://downloads.slack-edge.com/linux_releases/slack-desktop-4.0.2-amd64.deb
-  fi
-}
-
-function hf_install_java_oraclejdk_apt() {
-  hf_log_func
-  dpkg --status oracle-java14-installer &>/dev/null
-  if test $? != 0; then
-    sudo rm /etc/apt/sources.list.d/linuxuprising*
-    sudo add-apt-repository ppa:linuxuprising/java
-    sudo apt update
-    sudo apt install oracle-java14-installer
-  fi
-}
-
-function hf_install_simplescreenrercoder_apt() {
-  hf_log_func
-  if ! type simplescreenrecorder &>/dev/null; then
-    sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
-    sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
-    sudo apt update
-    sudo apt install -y simplescreenrecorder
-  fi
-}
-
-function hf_install_vscode() {
-  hf_log_func
-  if ! type code &>/dev/null; then
-    sudo rm /etc/apt/sources.list.d/vscode*
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/tmp/microsoft.gpg
-    sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
-    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-    sudo apt update
-    sudo apt install -y code
-  fi
-}
-
-function hf_install_insync() {
-  hf_log_func
-  dpkg --status insync &>/dev/null
-  if test $? != 0; then
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
-    echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
-    sudo apt update
-    sudo apt install -y insync insync-nautilus
-  fi
-}
-
-function hf_install_foxit() {
-  hf_log_func
-  if ! type FoxitReader &>/dev/null; then
-    URL=https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
-    hf_compression_extract_from_url $URL /tmp/
-    sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
-  fi
-  if ! test -d $HELPERS_INSTALL_OPT/foxitsoftware; then
-    sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
-    sudo desktop-file-install $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
-  fi
-}
-
 function hf_install_flutter() {
   hf_log_func
   if ! test -d $HELPERS_INSTALL_OPT/flutter; then
@@ -2094,71 +1981,168 @@ function hf_install_flutter() {
   if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 }
 
-function hf_install_tor() {
-  hf_log_func
-  if ! test -d $HELPERS_INSTALL_OPT/tor; then
-    URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
-    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
-  fi
-  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-  mv $HELPERS_INSTALL_OPT/tor-browser_en-US $HELPERS_INSTALL_OPT/tor/
-  sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop
-  sudo desktop-file-install "$HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop"
-}
-
-function hf_install_zotero() {
-  hf_log_func
-  if ! test -d $HELPERS_INSTALL_OPT/zotero; then
-    URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
-    hf_compression_extract_from_url $URL /tmp/
-    mv /tmp/Zotero_linux-x86_64 $HELPERS_INSTALL_OPT/zotero
-  fi
-  {
-    echo '[Desktop Entry]'
-    echo 'Version=1.0'
-    echo 'Name=Zotero'
-    echo 'Type=Application'
-    echo "Exec=$HELPERS_INSTALL_OPT/zotero/zotero"
-    echo "Icon=$HELPERS_INSTALL_OPT/zotero/chrome/icons/default/default48.png"
-  } >$HELPERS_INSTALL_OPT/zotero/zotero.desktop
-  sudo desktop-file-install $HELPERS_INSTALL_OPT/zotero/zotero.desktop
-}
-
-
-function hf_install_vidcutter_apt() {
-  hf_log_func
-  dpkg --status vidcutter &>/dev/null
-  if test $? != 0; then
-    sudo rm /etc/apt/sources.list.d/ozmartian*
-    sudo add-apt-repository -y ppa:ozmartian/apps
-    sudo apt update
-    sudo apt install -y python3-dev vidcutter
-  fi
-}
-
-function hf_install_peek_apt() {
-  hf_log_func
-  dpkg --status peek &>/dev/null
-  if test $? != 0; then
-    sudo rm /etc/apt/sources.list.d/peek-developers*
-    sudo add-apt-repository -y ppa:peek-developers/stable
-    sudo apt update
-    sudo apt install -y peek
-  fi
-}
-
 # ---------------------------------------
-# zotero
+# install_gnome
 # ---------------------------------------
 
-function hf_zotero_symbolic_link() {
-  if test -n "$IS_WINDOWS"; then
-    cmd.exe /c "mklink /D \users\$USER\Zotero\storage \users\$USER\gdrive\zotero_storage"
-  else
-    rm -rf $HOME/Zotero/storage/
-    ln -s $HOME/gdrive/zotero-storage $HOME/Zotero/storage
-  fi
-}
+if test $IS_LINUX; then
+
+  function hf_install_gnome_bb_warsaw() {
+    hf_log_func
+    if ! type warsaw &>/dev/null; then
+      hf_apt_fetch_install https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb
+    fi
+  }
+
+  function hf_install_gnome_git_lfs() {
+    hf_log_func
+    if ! type git-lfs &>/dev/null; then
+      curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      sudo apt-get install git-lfs
+    fi
+  }
+
+  function hf_install_gnome_gitkraken() {
+    hf_log_func
+    if ! type gitkraken &>/dev/null; then
+      sudo apt install gconf2 gconf-service libgtk2.0-0
+      hf_apt_fetch_install https://release.axocdn.com/linux/gitkraken-amd64.deb
+    fi
+  }
+
+  function hf_install_gnome_neo4j() {
+    hf_log_func
+    if ! type neo4j &>/dev/null; then
+      wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+      echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
+      sudo apt update
+      sudo apt install neo4j
+    fi
+  }
+
+  function hf_install_gnome_sqlworkbench() {
+    hf_log_func
+    dpkg --status mysql-workbench-community &>/dev/null
+    if test $? != 0; then
+      sudo apt install libzip5
+      hf_apt_fetch_install https://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community_8.0.17-1ubuntu19.04_amd64.deb
+    fi
+  }
+
+  function hf_install_gnome_slack_deb() {
+    hf_log_func
+    dpkg --status slack-desktop &>/dev/null
+    if test $? != 0; then
+      sudo apt install -y libappindicator1
+      hf_apt_fetch_install https://downloads.slack-edge.com/linux_releases/slack-desktop-4.0.2-amd64.deb
+    fi
+  }
+
+  function hf_install_gnome_simplescreenrercoder_apt() {
+    hf_log_func
+    if ! type simplescreenrecorder &>/dev/null; then
+      sudo rm /etc/apt/sources.list.d/maarten-baert-ubuntu-simplescreenrecorder*
+      sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
+      sudo apt update
+      sudo apt install -y simplescreenrecorder
+    fi
+  }
+
+  function hf_install_gnome_vscode() {
+    hf_log_func
+    if ! type code &>/dev/null; then
+      sudo rm /etc/apt/sources.list.d/vscode*
+      curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/tmp/microsoft.gpg
+      sudo install -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/trusted.gpg.d/
+      sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+      sudo apt update
+      sudo apt install -y code
+    fi
+  }
+
+  function hf_install_gnome_insync() {
+    hf_log_func
+    dpkg --status insync &>/dev/null
+    if test $? != 0; then
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C
+      echo "deb http://apt.insynchq.com/ubuntu bionic non-free contrib" | sudo tee /etc/apt/sources.list.d/insync.list
+      sudo apt update
+      sudo apt install -y insync insync-nautilus
+    fi
+  }
+
+  function hf_install_gnome_foxit() {
+    hf_log_func
+    if ! type FoxitReader &>/dev/null; then
+      URL=https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/linux/2.x/2.4/en_us/FoxitReader.enu.setup.2.4.4.0911.x64.run.tar.gz
+      hf_compression_extract_from_url $URL /tmp/
+      sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
+    fi
+    if ! test -d $HELPERS_INSTALL_OPT/foxitsoftware; then
+      sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
+      sudo desktop-file-install $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
+    fi
+  }
+
+  function hf_install_gnome_chrome() {
+    hf_log_func
+    if ! type google-chrome-stable &>/dev/null; then
+      hf_apt_fetch_install https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    fi
+  }
+
+  function hf_install_gnome_tor() {
+    hf_log_func
+    if ! test -d $HELPERS_INSTALL_OPT/tor; then
+      URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
+      hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
+    fi
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    mv $HELPERS_INSTALL_OPT/tor-browser_en-US $HELPERS_INSTALL_OPT/tor/
+    sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop
+    sudo desktop-file-install "$HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop"
+  }
+
+  function hf_install_gnome_zotero() {
+    hf_log_func
+    if ! test -d $HELPERS_INSTALL_OPT/zotero; then
+      URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
+      hf_compression_extract_from_url $URL /tmp/
+      mv /tmp/Zotero_linux-x86_64 $HELPERS_INSTALL_OPT/zotero
+    fi
+    {
+      echo '[Desktop Entry]'
+      echo 'Version=1.0'
+      echo 'Name=Zotero'
+      echo 'Type=Application'
+      echo "Exec=$HELPERS_INSTALL_OPT/zotero/zotero"
+      echo "Icon=$HELPERS_INSTALL_OPT/zotero/chrome/icons/default/default48.png"
+    } >$HELPERS_INSTALL_OPT/zotero/zotero.desktop
+    sudo desktop-file-install $HELPERS_INSTALL_OPT/zotero/zotero.desktop
+  }
+
+  function hf_install_gnome_vidcutter() {
+    hf_log_func
+    dpkg --status vidcutter &>/dev/null
+    if test $? != 0; then
+      sudo rm /etc/apt/sources.list.d/ozmartian*
+      sudo add-apt-repository -y ppa:ozmartian/apps
+      sudo apt update
+      sudo apt install -y python3-dev vidcutter
+    fi
+  }
+
+  function hf_install_gnome_peek() {
+    hf_log_func
+    dpkg --status peek &>/dev/null
+    if test $? != 0; then
+      sudo rm /etc/apt/sources.list.d/peek-developers*
+      sudo add-apt-repository -y ppa:peek-developers/stable
+      sudo apt update
+      sudo apt install -y peek
+    fi
+  }
+fi
 
 # ---------------------------------------
 # apt
