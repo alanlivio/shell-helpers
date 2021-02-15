@@ -1472,19 +1472,36 @@ function hf_snap_hide_home_folder() {
 # vscode
 # ---------------------------------------
 
+function hf_diff() {
+  : ${2?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
+  diff "$1" "$2"
+}
+
+function hf_diff_apply() {
+  : ${2?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
+  patch apply "$1" "$2"
+}
+
+# ---------------------------------------
+# vscode
+# ---------------------------------------
+
 function hf_vscode_diff() {
   : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
-  code --wait --diff "$1" "$2"
+  diff "$1" "$2" &>/dev/null
+  if test $? -eq 1; then
+      code --wait --diff "$1" "$2"
+  fi
 }
 
 function hf_vscode_install_packages() {
   hf_log_func
   hf_test_noargs_then_return
   hf_test_command code || return
-  CODE4INST=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
+  CODETMP=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   PKGS_TO_INSTALL=""
   INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
-  $CODE4INST --list-extensions >$INSTALLED_LIST_TMP_FILE
+  $CODETMP --list-extensions >$INSTALLED_LIST_TMP_FILE
   for i in "$@"; do
     grep -i "^$i" &>/dev/null <$INSTALLED_LIST_TMP_FILE
     if test $? != 0; then
@@ -1494,14 +1511,9 @@ function hf_vscode_install_packages() {
   if ! test -z $PKGS_TO_INSTALL; then
     echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
     for i in $PKGS_TO_INSTALL; do
-      $CODE4INST --install-extension $i
+      $CODETMP --install-extension $i
     done
   fi
-}
-
-function hf_vscode_uninstall_all_packages() {
-  INSTALLED_LIST="$(code --list-extensions)"
-  for i in $INSTALLED_LIST; do code --uninstall-extension $i; done
 }
 
 # ---------------------------------------
