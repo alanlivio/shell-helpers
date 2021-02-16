@@ -9,6 +9,8 @@ $SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
 $DOTFILES_WT = "$SCRIPT_DIR\dotfiles\windowsterminal"
 $DOTFILES_VSCODE = "$SCRIPT_DIR\dotfiles\vscode"
+$MSYS_HOME = "$env:ChocolateyToolsLocation\msys64"
+$MSYS_BASH = "$MSYS_HOME\usr\bin\bash.exe"
 
 if (Test-Path $SCRIPT_CFG) {
   Import-Module -Force -Global $SCRIPT_CFG
@@ -814,7 +816,7 @@ function hf_choco_list_installed() {
 
 function hf_choco_clean() {
   Invoke-Expression $hf_log_func
-  gsudo \tools\BCURRAN3\choco-cleaner.ps1 | Out-Null
+  gsudo "$env:ChocolateyToolsLocation\BCURRAN3\choco-cleaner.ps1" | Out-Null
 }
 
 # ---------------------------------------
@@ -1083,12 +1085,14 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
 
 function hf_install_msys() {
   hf_choco_install msys2
-  C:\tools\msys64\usr\bin\bash.exe -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
-  C:\tools\msys64\usr\bin\bash.exe -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
-  # use /mnt/c/ like in WSL
-  C:\tools\msys64\usr\bin\bash.exe -c ' echo /c /mnt/c none bind >> /etc/fstab'
-  hf_env_path_add 'C:\tools\msys64\mingw64\bin'
-  hf_env_path_add 'C:\tools\msys64\usr\bin'
+  if (!(Test-Path $MSYS_BASH)){
+    Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
+    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
+    # use /mnt/c/ like in WSL
+    Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
+    hf_env_path_add "$MSYS_HOME\mingw64\bin"
+    hf_env_path_add "$MSYS_HOME\usr\bin"
+  }
 }
 
 
