@@ -816,7 +816,7 @@ function hf_choco_list_installed() {
 
 function hf_choco_clean() {
   Invoke-Expression $hf_log_func
-  gsudo "$env:ChocolateyToolsLocation\BCURRAN3\choco-cleaner.ps1" | Out-Null
+  Invoke-Expression "$env:ChocolateyToolsLocation\BCURRAN3\choco-cleaner.ps1" | Out-Null
 }
 
 # ---------------------------------------
@@ -1027,11 +1027,6 @@ function hf_uninstall_onedrive() {
   Start-Sleep 2
 }
 
-
-function hf_install_common_user_software() {
-  hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
-}
-
 function hf_install_wsl_ubuntu_and_windowsterminal() {
   # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   Invoke-Expression $hf_log_func
@@ -1083,9 +1078,24 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
   }
 }
 
+function hf_install_git() {
+  Invoke-Expression $hf_log_func
+  if (!(Test-Path "c:\Program Files\git\")) {
+    choco install git --params "/NoShellIntegration /NoGuiHereIntegration  /NoShellHereIntegration"
+  }
+}
+
+function hf_install_vscode() {
+  Invoke-Expression $hf_log_func
+  if (!(Test-Path "c:\Program Files\Microsoft VS Code\")) {
+    choco install vscode --params "/NoDesktopIcon /NoQuicklaunchIcon /NoContextMenuFiles /NoContextMenuFolders "
+  }
+}
+
 function hf_install_msys() {
-  hf_choco_install msys2
-  if (!(Test-Path $MSYS_BASH)){
+  Invoke-Expression $hf_log_func
+  if (!(Test-Path $MSYS_BASH)) {
+    choco install msys2 --params "/NoUpdate"
     Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
     Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
     # use /mnt/c/ like in WSL
@@ -1100,23 +1110,35 @@ function hf_install_msys() {
 # init
 # ---------------------------------------
 
-function hf_init_windows() {
+function hf_init_windows_sanity() {
   Invoke-Expression $hf_log_func
-  # disable passwd
-  hf_system_disable_password_policy
-  # shell configure
   hf_explorer_hide_dotfiles
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer
   hf_keyboard_disable_shortcut_lang
   hf_keyboard_disable_shortcut_altgr
-  # cleanup folders
+}
+
+function hf_init_common_user() {
+  Invoke-Expression $hf_log_func
+  hf_init_windows_sanity
+  hf_choco_install googlechrome vlc 7zip ccleaner
+}
+
+function hf_init_windows() {
+  Invoke-Expression $hf_log_func
+  hf_init_windows_sanity
+  # disable passwd
+  hf_system_disable_password_policy
+  # cleanup unused
   hf_clean_unused_dirs
   hf_clean_unused_shortcuts
-  # install choco
+  # install git, bash, vscode
   hf_install_choco
-  # install vscode
-  hf_choco_install vscode
+  hf_install_gsudo
+  hf_install_git
+  hf_install_msys
+  hf_install_vscode
   hf_vscode_install_config_files
 }

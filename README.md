@@ -34,11 +34,14 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 1. bash `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
+## init Windows for common users
+
+1. powershell `hf_init_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
+2. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
+
 ## init Windows
 
-1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, vscode).
-2. powershell `hf_install_common_user_software` (optional): install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
-3. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
+1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, msys2 bash vscode).
 
 ## init WSL in Windows
 
