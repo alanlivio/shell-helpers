@@ -26,7 +26,7 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## init Gnome-based Ubuntu
 
-1. bash `hf_init_ubuntu_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+1. bash `hf_init_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## init macOS
@@ -87,5 +87,3 @@ powershell references:
   + https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
   + https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
   + https://github.com/Disassembler0/Win10-Initial-Setup-Script/blob/master/Win10.psm1
-
-

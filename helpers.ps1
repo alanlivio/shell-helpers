@@ -916,9 +916,11 @@ function hf_windowsterminal_install_stgs($path) {
 # vscode
 # ---------------------------------------
 
-function hf_vscode_install_config_files($path) {
-  Copy-Item $path\settings.json $env:userprofile\AppData\Roaming\Code\User\
-  Copy-Item $path\keybindings.json $env:userprofile\AppData\Roaming\Code\User\
+function hf_vscode_install_config_files() {
+  if (Test-Path $DOTFILES_VSCODE) {
+    Copy-Item $DOTFILES_VSCODE\settings.json $env:userprofile\AppData\Roaming\Code\User\
+    Copy-Item $DOTFILES_VSCODE\keybindings.json $env:userprofile\AppData\Roaming\Code\User\
+  }
 }
 
 # ---------------------------------------
@@ -1024,13 +1026,6 @@ function hf_uninstall_onedrive() {
 }
 
 
-function hf_install_vscode() {
-  hf_choco_install vscode
-  if (Test-Path $DOTFILES_VSCODE) {
-    hf_vscode_install_config_files($DOTFILES_VSCODE)
-  }
-}
-
 function hf_install_common_user_software() {
   hf_choco_install googlechrome vlc 7zip ccleaner FoxitReader google-backup-and-sync
 }
@@ -1103,15 +1098,21 @@ function hf_install_msys() {
 
 function hf_init_windows() {
   Invoke-Expression $hf_log_func
+  # disable passwd
   hf_system_disable_password_policy
-  hf_clean_unused_dirs
-  hf_clean_unused_shortcuts
+  # shell configure
   hf_explorer_hide_dotfiles
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer
   hf_keyboard_disable_shortcut_lang
   hf_keyboard_disable_shortcut_altgr
+  # cleanup folders
+  hf_clean_unused_dirs
+  hf_clean_unused_shortcuts
+  # install choco
   hf_install_choco
-  hf_install_vscode
+  # install vscode
+  hf_choco_install vscode
+  hf_vscode_install_config_files
 }

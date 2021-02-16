@@ -25,6 +25,7 @@ fi
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
+DOTFILES_VSCODE="$SCRIPT_DIR/dotfiles/vscode"
 
 # ---------------------------------------
 # load helpers-cfg
@@ -68,7 +69,7 @@ function hf_test_command() {
 # init functions
 # ---------------------------------------
 
-function hf_init_ubuntu_gnome() {
+function hf_init_gnome() {
   hf_log_func
   # sudo nopasswd
   hf_user_permissions_sudo
@@ -77,6 +78,8 @@ function hf_init_ubuntu_gnome() {
   hf_gnome_sanity
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
+  # cleanup
+  hf_clean_unused_dirs
   # vim/git/essentials
   PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
   # python
@@ -86,6 +89,7 @@ function hf_init_ubuntu_gnome() {
   hf_python_set_python3_default
   # install vscode
   hf_install_vscode
+  hf_vscode_install_config_files
 }
 
 if test -n "$IS_WINDOWS"; then
@@ -145,7 +149,7 @@ fi
 # The following funcs requeres variables with PKGS_ prefix.
 # Such variables can be configured in .bashrc or helpers-cfg.sh.
 
-function hf_update_clean_ubuntu_gnome() {
+function hf_update_clean_gnome() {
   # snap
   hf_snap_install_packages $PKGS_SNAP
   hf_snap_install_packages_classic $PKGS_SNAP_CLASSIC
@@ -160,7 +164,7 @@ function hf_update_clean_ubuntu_gnome() {
   hf_python_install_packages $PKGS_PYTHON
   # vscode
   hf_vscode_install_packages $PKGS_VSCODE
-  # clean
+  # cleanup
   hf_clean_unused_dirs
 }
 
@@ -176,7 +180,7 @@ if test -n "$IS_WINDOWS"; then
     hf_python_install_packages $PKGS_PYTHON
     # vscode
     hf_vscode_install_packages $PKGS_VSCODE
-    # clean
+    # cleanup
     hf_clean_unused_dirs
   }
 
@@ -212,7 +216,7 @@ fi
 function hf_update_clean() {
   # Ubuntu
   if test -n "$IS_LINUX"; then
-    hf_update_clean_ubuntu_gnome
+    hf_update_clean_gnome
   # Ubuntu WSL
   elif test -n "$IS_WINDOWS_WSL"; then
     hf_update_clean_wsl
@@ -1469,7 +1473,7 @@ function hf_snap_hide_home_folder() {
 }
 
 # ---------------------------------------
-# vscode
+# diff
 # ---------------------------------------
 
 function hf_diff() {
@@ -1486,11 +1490,18 @@ function hf_diff_apply() {
 # vscode
 # ---------------------------------------
 
+function hf_vscode_install_config_files() {
+  if test -d $DOTFILES_VSCODE; then
+    cp $DOTFILES_VSCODE/settings.json $HOME/.config/Code/User
+    cp $DOTFILES_VSCODE/keybindings.json $HOME/.config/Code/User
+  fi
+}
+
 function hf_vscode_diff() {
   : ${1?"Usage: ${FUNCNAME[0]} <old_file> <new_file>"}
   diff "$1" "$2" &>/dev/null
   if test $? -eq 1; then
-      code --wait --diff "$1" "$2"
+    code --wait --diff "$1" "$2"
   fi
 }
 
@@ -2405,7 +2416,7 @@ function hf_x11_properties_of_window() {
 }
 
 # ---------------------------------------
-# clean
+# cleanup
 # ---------------------------------------
 
 HF_CLEAN_DIRS=(
