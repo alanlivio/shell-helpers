@@ -940,7 +940,7 @@ function hf_winupdate_list_last_installed() {
 function hf_winupdate_update() {
   Invoke-Expression $hf_log_func
   $(Install-WindowsUpdate -AcceptAll -IgnoreReboot) | Where-Object { 
-    if ($_ -ne $null ) {
+    if ($_ -is [string]) {
       $_.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) 
     } 
   }
