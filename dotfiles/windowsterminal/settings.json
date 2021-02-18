@@ -1,6 +1,6 @@
 {
   "$schema": "https://aka.ms/terminal-profiles-schema",
-  "defaultProfile": "{07b52e3e-de2c-5db4-bd2d-ba144ed6c273}",
+  "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f519}",
   "disabledProfileSources": [
     "Windows.Terminal.Azure",
     "Windows.Terminal.PowershellCore"
@@ -36,7 +36,7 @@
       {
         "guid": "{2c4de342-38b7-51cf-b940-2309a097f519}",
         "name": "msys2",
-        "commandline": "cmd.exe /c \"set MSYSTEM=MINGW64 && set MSYS2_PATH_TYPE=inherit\"&& C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start",
+        "commandline": "C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path",
         "icon": "C:\\tools\\msys64\\msys2.ico",
         "hidden": false
       },

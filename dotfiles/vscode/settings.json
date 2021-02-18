@@ -2,8 +2,15 @@
   // ---------------------------------------
   // intergrated terminal
   // ---------------------------------------
-  "terminal.integrated.shell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-  "terminal.integrated.automationShell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  // "terminal.integrated.automationShell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  // "terminal.integrated.shell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "terminal.integrated.shell.windows": "C:\\tools\\msys64\\msys2_shell.cmd",
+  "terminal.integrated.shellArgs.windows": [
+    "-defterm",
+    "-mingw64",
+    "-no-start",
+    "-use-full-path"
+  ],
   // "terminal.integrated.shell.windows": "C:\\Windows\\System32\\bash.exe",
   // "terminal.integrated.shellArgs.windows": [
   //   "--login",
@@ -19,7 +26,7 @@
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": false,
-  "editor.acceptSuggestionOnEnter": "off",
+  "editor.acceptSuggestionOnEnter": "on",
   "editor.quickSuggestionsDelay": 30,
   "files.autoSave": "afterDelay",
   "editor.wordBasedSuggestions": false,
