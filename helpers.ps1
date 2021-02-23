@@ -55,6 +55,17 @@ function hf_profile_load($path) {
 }
 
 # ---------------------------------------
+# HELPERS_INSTALL_OPT
+# ---------------------------------------
+# if $HELPERS_CFG not defined use from same dir
+if (-not ($HELPERS_INSTALL_OPT)) {
+  $HELPERS_INSTALL_OPT = "$env:userprofile\opt\win"
+  if ( -not (Test-Path $HELPERS_INSTALL_OPT)) {
+    New-Item -ItemType Directory -Path $HELPERS_INSTALL_OPT
+  }
+}
+
+# ---------------------------------------
 # ps
 # ---------------------------------------
 
@@ -777,7 +788,7 @@ function hf_explorer_restart() {
 }
 
 # ---------------------------------------
-# choco function
+# choco
 # ---------------------------------------
 
 function hf_choco_install() {
@@ -820,7 +831,7 @@ function hf_choco_clean() {
 }
 
 # ---------------------------------------
-# wsl function
+# wsl
 # ---------------------------------------
 
 function hf_wsl_root() {
@@ -949,7 +960,7 @@ function hf_winupdate_update() {
 }
 
 # ---------------------------------------
-# install function
+# install
 # ---------------------------------------
 
 function hf_install_choco() {
@@ -1013,18 +1024,6 @@ function hf_install_onedrive() {
     $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
   }
   Start-Process $onedrive -NoNewWindow -Wait
-}
-
-function hf_uninstall_onedrive() {
-  Invoke-Expression $hf_log_func
-  Stop-Process -Name "OneDrive*"
-  Start-Sleep 2
-  $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-  if (!(Test-Path $onedrive)) {
-    $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
-  }
-  Start-Process $onedrive "/uninstall" -NoNewWindow -Wait
-  Start-Sleep 2
 }
 
 function hf_install_wsl_ubuntu_and_windowsterminal() {
@@ -1105,6 +1104,21 @@ function hf_install_msys() {
   }
 }
 
+# ---------------------------------------
+# uninstall
+# ---------------------------------------
+
+function hf_uninstall_onedrive() {
+  Invoke-Expression $hf_log_func
+  Stop-Process -Name "OneDrive*"
+  Start-Sleep 2
+  $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
+  if (!(Test-Path $onedrive)) {
+    $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
+  }
+  Start-Process $onedrive "/uninstall" -NoNewWindow -Wait
+  Start-Sleep 2
+}
 
 # ---------------------------------------
 # init
