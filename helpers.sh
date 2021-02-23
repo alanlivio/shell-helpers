@@ -41,14 +41,12 @@ if test -f $HELPERS_CFG; then
 fi
 
 # ---------------------------------------
-# HELPERS_INSTALL_OPT
+# HELPERS_OPT
 # ---------------------------------------
 # if $HELPERS_CFG not defined use from same dir
-if test -z "$HELPERS_INSTALL_OPT"; then
-  HELPERS_INSTALL_OPT="$HOME/opt"
-fi
-if test -d "$HELPERS_INSTALL_OPT"; then
-  mkdir -p $HELPERS_INSTALL_OPT
+if test -z "$HELPERS_OPT"; then
+  HELPERS_OPT="$HOME/opt"
+  mkdir -p $HELPERS_OPT
 fi
 
 # ---------------------------------------
@@ -118,8 +116,6 @@ if test -n "$IS_WINDOWS"; then
   function hf_init_windows() {
     # windows
     hf_ps_call_admin "hf_init_windows "
-    # install vscode
-    hf_ps_call_admin "hf_choco_install vscode"
   }
 
 fi
@@ -1961,16 +1957,16 @@ function hf_eclipse_uninstall_packages() {
 }
 
 # ---------------------------------------
-# install
+# install_linux
 # ---------------------------------------
 
-function hf_install_node() {
+function hf_install_linux_node() {
   hf_log_funch
   curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
   sudo apt install -y nodejs
 }
 
-function hf_install_luarocks() {
+function hf_install_linux__luarocks() {
   hf_log_func
   if ! type luarocks &>/dev/null; then
     wget https://luarocks.org/releases/luarocks-3.3.0.tar.gz
@@ -1980,7 +1976,7 @@ function hf_install_luarocks() {
   fi
 }
 
-function hf_install_python35() {
+function hf_install_linux_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
@@ -1995,13 +1991,71 @@ function hf_install_python35() {
   fi
 }
 
-function hf_install_flutter() {
+function hf_install_linux_android_flutter() {
   hf_log_func
-  if ! test -d $HELPERS_INSTALL_OPT/flutter; then
-    URL=https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz
-    hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
+  OPT_DST="$HELPERS_OPT/linux"
+
+  # android cmd and sdk
+  ANDROID_SDK_DIR="$OPT_DST/android"
+  ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
+  ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
+  if ! test -d $ANDROID_CMD_DIR; then
+    mkdir -p $ANDROID_CMD_DIR
+    hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    hf_env_path_add $ANDROID_CMD_DIR/bin/
   fi
-  if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+  if ! test -d $ANDROID_SDK_DIR/platforms; then
+    $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
+    yes | $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --licenses
+    hf_env_add ANDROID_HOME $ANDROID_SDK_DIR
+    hf_env_add ANDROID_SDK_ROOT $ANDROID_SDK_DIR
+    hf_env_path_add $ANDROID_SDK_DIR/platform-tools
+  fi
+
+  # flutter
+  FLUTTER_SDK_DIR="$OPT_DST/flutter"
+  FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
+  if ! test -d $FLUTTER_SDK_DIR; then
+    hf_compression_extract_from_url $FLUTTER_SDK_URL $OPT_DST
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    hf_env_path_add $FLUTTER_SDK_DIR/bin
+  fi
+}
+
+# ---------------------------------------
+# install_windows
+# ---------------------------------------
+
+function hf_install_windows_android_flutter() {
+  hf_log_func
+  OPT_DST="$HELPERS_OPT/win/"
+
+  # android cmd and sdk
+  ANDROID_SDK_DIR="$OPT_DST/android"
+  ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
+  ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip"
+  if ! test -d $ANDROID_CMD_DIR; then
+    hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_CMD_DIR/bin)"
+  fi
+  if ! test -d $ANDROID_SDK_DIR/platforms; then
+    $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
+    yes | $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --licenses
+    hf_ps_call_admin "hf_env_add ANDROID_HOME $(winpath $ANDROID_SDK_DIR)"
+    hf_ps_call_admin "hf_env_add ANDROID_SDK_ROOT $(winpath $ANDROID_SDK_DIR)"
+    hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_SDK_DIR/platform-tools)"
+  fi
+
+  # flutter
+  FLUTTER_SDK_DIR="$OPT_DST/flutter"
+  FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
+  if ! test -d $FLUTTER_SDK_DIR; then
+    hf_compression_extract_from_url $FLUTTER_SDK_URL $HELPERS_OPT
+    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+    hf_ps_call_admin "hf_env_path_add $(winpath $FLUTTER_SDK_DIR/bin)"
+  fi
 }
 
 # ---------------------------------------
@@ -2101,9 +2155,9 @@ if test $IS_LINUX; then
       hf_compression_extract_from_url $URL /tmp/
       sudo /tmp/FoxitReader.enu.setup.2.4.4.0911\(r057d814\).x64.run
     fi
-    if ! test -d $HELPERS_INSTALL_OPT/foxitsoftware; then
-      sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
-      sudo desktop-file-install $HELPERS_INSTALL_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
+    if ! test -d $HELPERS_OPT/foxitsoftware; then
+      sudo sed -i 's/^Icon=.*/Icon=\/usr\/share\/icons\/hicolor\/64x64\/apps\/FoxitReader.png/g' $HELPERS_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
+      sudo desktop-file-install $HELPERS_OPT/foxitsoftware/foxitreader/FoxitReader.desktop
     fi
   }
 
@@ -2116,32 +2170,32 @@ if test $IS_LINUX; then
 
   function hf_install_gnome_tor() {
     hf_log_func
-    if ! test -d $HELPERS_INSTALL_OPT/tor; then
+    if ! test -d $HELPERS_OPT/tor; then
       URL=https://dist.torproject.org/torbrowser/9.5/tor-browser-linux64-9.5_en-US.tar.xz
-      hf_compression_extract_from_url $URL $HELPERS_INSTALL_OPT/
+      hf_compression_extract_from_url $URL $HELPERS_OPT/
     fi
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    mv $HELPERS_INSTALL_OPT/tor-browser_en-US $HELPERS_INSTALL_OPT/tor/
-    sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop
-    sudo desktop-file-install "$HELPERS_INSTALL_OPT/tor/start-tor-browser.desktop"
+    mv $HELPERS_OPT/tor-browser_en-US $HELPERS_OPT/tor/
+    sed -i "s|^Exec=.*|Exec=${HOME}/opt/tor/Browser/start-tor-browser|g" $HELPERS_OPT/tor/start-tor-browser.desktop
+    sudo desktop-file-install "$HELPERS_OPT/tor/start-tor-browser.desktop"
   }
 
   function hf_install_gnome_zotero() {
     hf_log_func
-    if ! test -d $HELPERS_INSTALL_OPT/zotero; then
+    if ! test -d $HELPERS_OPT/zotero; then
       URL=https://download.zotero.org/client/release/5.0.82/Zotero-5.0.82_linux-x86_64.tar.bz2
       hf_compression_extract_from_url $URL /tmp/
-      mv /tmp/Zotero_linux-x86_64 $HELPERS_INSTALL_OPT/zotero
+      mv /tmp/Zotero_linux-x86_64 $HELPERS_OPT/zotero
     fi
     {
       echo '[Desktop Entry]'
       echo 'Version=1.0'
       echo 'Name=Zotero'
       echo 'Type=Application'
-      echo "Exec=$HELPERS_INSTALL_OPT/zotero/zotero"
-      echo "Icon=$HELPERS_INSTALL_OPT/zotero/chrome/icons/default/default48.png"
-    } >$HELPERS_INSTALL_OPT/zotero/zotero.desktop
-    sudo desktop-file-install $HELPERS_INSTALL_OPT/zotero/zotero.desktop
+      echo "Exec=$HELPERS_OPT/zotero/zotero"
+      echo "Icon=$HELPERS_OPT/zotero/chrome/icons/default/default48.png"
+    } >$HELPERS_OPT/zotero/zotero.desktop
+    sudo desktop-file-install $HELPERS_OPT/zotero/zotero.desktop
   }
 
   function hf_install_gnome_vidcutter() {
@@ -2166,6 +2220,22 @@ if test $IS_LINUX; then
     fi
   }
 fi
+
+# ---------------------------------------
+# env
+# ---------------------------------------
+
+function hf_env_add() {
+  if test $# -eq 2 && ! grep -q "export $1=$2" $HOME/.bashrc; then
+    echo "export $1=$2" >>$HOME/.bashrc
+  fi
+}
+
+function hf_env_path_add() {
+  if [[ ! "$PATH" =~ (^|:)"$1"(|/)(:|$) ]]; then
+    echo "export PATH=\$PATH:$1" >>$HOME/.bashrc
+  fi
+}
 
 # ---------------------------------------
 # apt
@@ -2220,7 +2290,7 @@ function hf_apt_install_packages() {
   fi
 }
 
-function hfl_apt_lastest_pkgs_names() {
+function hf_apt_lastest_pkgs_names() {
   local PKGS_NAMES=""
   for i in "$@"; do
     PKGS_NAMES+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
