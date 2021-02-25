@@ -890,7 +890,7 @@ function hf_git_log_history_file() {
 }
 
 function hf_git_diff_one_commit() {
-  git diff $1$HOME $1
+  git diff HEAD^1
 }
 
 function hf_git_subfolders_push() {
