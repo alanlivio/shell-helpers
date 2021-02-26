@@ -9,8 +9,10 @@
     "-defterm",
     "-mingw64",
     "-no-start",
-    "-use-full-path"
+    "-use-full-path",
+    "-here"
   ],
+  "terminal.external.windowsExec": "wt.exe",
   // "terminal.integrated.shell.windows": "C:\\Windows\\System32\\bash.exe",
   // "terminal.integrated.shellArgs.windows": [
   //   "--login",

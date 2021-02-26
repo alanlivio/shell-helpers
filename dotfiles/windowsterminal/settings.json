@@ -36,7 +36,7 @@
       {
         "guid": "{2c4de342-38b7-51cf-b940-2309a097f519}",
         "name": "msys2",
-        "commandline": "C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path",
+        "commandline": "C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path -here",
         "icon": "C:\\tools\\msys64\\msys2.ico",
         "hidden": false
       },
