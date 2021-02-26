@@ -1108,8 +1108,12 @@ function hf_cpp_clean() {
 # cmake
 # ---------------------------------------
 
+function hf_cmake_configure() {
+  cmake .. -G Ninja 
+}
+
 function hf_cmake_build() {
-  cmake --build .
+  cmake --build . --config Debug -j3
 }
 
 function hf_cmake_install() {
