@@ -79,7 +79,7 @@ function hf_init_gnome() {
   # cleanup
   hf_clean_unused_dirs
   # vim/git/essentials
-  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools jq "
   # python
   PKGS+="python3 python3-pip "
   hf_apt_install_packages $PKGS
@@ -95,7 +95,7 @@ if test -n "$IS_WINDOWS"; then
     # sudo nopasswd
     hf_user_permissions_sudo
     # vim/git/essentials
-    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools "
+    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools jq "
     # python
     PKGS+="python3 python3-pip "
     hf_apt_install_packages $PKGS
@@ -106,10 +106,10 @@ if test -n "$IS_WINDOWS"; then
   function hf_init_msys() {
     hf_user_permissions_sudo
     # essentials
-    PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime "
+    PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime mingw64/mingw-w64-x86_64-jq "
     # python
     PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
-    hf_msys_install $PKGS
+    hf_msys_install_force $PKGS
     # python3 is already default in msys
   }
 
@@ -127,7 +127,7 @@ if test -n "$IS_MAC"; then
     hf_mac_install_brew
     hf_brew_upgrade
     # essentials
-    PKGS="vim git diffutils curl wget bash "
+    PKGS="vim git diffutils curl wget bash jq"
     # python
     PKGS+="python python-pip "
     hf_brew_install $PKGS
@@ -452,7 +452,7 @@ if test -n "$IS_WINDOWS_MINGW"; then
 
   function hf_msys_install_force() {
     hf_log_func
-    sudo pacman -Sy --noconfirm "$@"
+    sudo pacman -Syu --noconfirm "$@"
   }
 
   function hf_msys_uninstall() {
