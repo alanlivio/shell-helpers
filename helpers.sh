@@ -105,11 +105,13 @@ if test -n "$IS_WINDOWS"; then
 
   function hf_init_msys() {
     hf_user_permissions_sudo
+    # update runtime and bash
+    PKGS="pacman pacman-mirrors msys2-runtime bash "
     # essentials
-    PKGS="vim git diffutils curl wget bash pacman pacman-mirrors msys2-runtime mingw64/mingw-w64-x86_64-jq "
+    PKGS+="vim git diffutils curl wget mingw64/mingw-w64-x86_64-jq "
     # python
     PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
-    hf_msys_install_force $PKGS
+    hf_msys_install $PKGS
     # python3 is already default in msys
   }
 
