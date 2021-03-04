@@ -711,8 +711,17 @@ function hf_git_revert_last_commit() {
   git revert HEAD
 }
 
-function hf_git_stash_untracked() {
+function hf_git_reset_hard() {
+  git reset --hard
+}
+
+function hf_git_stash_list() {
   git stash save --include-untracked
+}
+
+function hf_git_branch_merge_without_merge_commit() {
+  : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
+  git merge --ff-only $1
 }
 
 function hf_git_branch_push() {
@@ -895,6 +904,15 @@ function hf_git_log_history_file() {
 
 function hf_git_diff_one_commit() {
   git diff HEAD^1
+}
+
+function hf_git_diff_files_one_commit() {
+  git diff --stat HEAD^1
+}
+
+function hf_git_diff_files() {
+  : ${1?"Usage: ${FUNCNAME[0]} <commit>"}
+  git diff --stat $1
 }
 
 function hf_git_subfolders_push() {
@@ -1112,12 +1130,21 @@ function hf_cpp_clean() {
 # cmake
 # ---------------------------------------
 
+function hf_cmake_create_build_folder_and_configure() {
+  mkdir _build-Debug-"$WSL_DISTRO_NAME$OS"
+  cmake --build ./_build-Debug-"$WSL_DISTRO_NAME$OS" --config Debug -- -j 3
+}
+
 function hf_cmake_configure() {
-  cmake .. -G Ninja 
+  cmake .. -G Ninja --config Debug 
 }
 
 function hf_cmake_build() {
-  cmake --build . --config Debug -j3
+  cmake --build . -j3 --target all 
+}
+
+function hf_cmake_check() {
+  cmake --build . -j3 --target check
 }
 
 function hf_cmake_install() {
