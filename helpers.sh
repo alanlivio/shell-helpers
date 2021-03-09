@@ -771,8 +771,11 @@ function hf_git_branch_delete_local_and_origin() {
   git push origin --delete $1
 }
 
-function hf_git_branch_clean_origin_deleted() {
+function hf_git_branch_clean_removed_remotes() {
+  # clean removed remotes 
   git fetch --prune
+  # clean banchs with removed upstreams 
+  git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -d
 }
 
 function hf_git_branch_upstrem_set() {
@@ -1260,7 +1263,7 @@ function hf_pdf_concat() {
 }
 
 function hf_pdf_find_duplicates() {
-  find . -iname "*.pdf" -not -empty -type f -printf "%s\n" | sort -rn | uniq -d | xargs -I{} -n1 find . -type f -size {}c -print0 | xargs -0 md5sum | sort | uniq -w32 --all-repeated=separate
+  find . -iname "*.pdf" -not -empty -type f -printf "%s\n" | sort -rn | uniq -d | xargs -I{} -n1 find . -type f -size {}c -print0 | xargs -r -0 md5sum | sort | uniq -w32 --all-repeated=separate
 }
 
 function hf_pdf_remove_annotations() {
