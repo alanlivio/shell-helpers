@@ -186,6 +186,8 @@ if test -n "$IS_WINDOWS"; then
     # msys
     hf_msys_upgrade
     hf_msys_install $PKGS_MSYS
+    # cleanup
+    hf_clean_unused_dirs
   }
 
   function hf_update_clean_windows() {
@@ -196,6 +198,8 @@ if test -n "$IS_WINDOWS"; then
     hf_ps_call_admin "hf_choco_clean"
     hf_ps_call hf_clean_unused_shortcuts
     hf_ps_call hf_explorer_hide_dotfiles
+    # cleanup
+    hf_clean_unused_dirs
   }
 fi
 
