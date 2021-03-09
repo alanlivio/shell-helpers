@@ -1099,9 +1099,10 @@ function hf_install_msys() {
   if (!(Test-Path $MSYS_BASH)) {
     choco install msys2 --params "/NoUpdate"
     Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
-    Invoke-Expression "$MSYS_BASH -c 'sudo sed -i \'s/dbhome: .*/db_home: windows/g\' /etc/nsswitch.conf'"
+    # use windows home
+    Invoke-Expression "$MSYS_BASH -c 'echo db_home: windows >> /etc/nsswitch.conf'"
     # use /mnt/c/ like in WSL
-    Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
+    Invoke-Expression "$MSYS_BASH -c 'echo /c /mnt/c none bind >> /etc/fstab'"
   }
 }
 
