@@ -1102,8 +1102,6 @@ function hf_install_msys() {
     Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
     # use /mnt/c/ like in WSL
     Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
-    hf_env_path_add "$MSYS_HOME\mingw64\bin"
-    hf_env_path_add "$MSYS_HOME\usr\bin"
   }
 }
 
