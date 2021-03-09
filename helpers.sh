@@ -2321,8 +2321,8 @@ function hf_env_path_add() {
 
 function hf_apt_upgrade() {
   hf_log_func
+  sudo apt -y update
   if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
-    sudo apt -y update
     sudo apt -y upgrade
   fi
 }
