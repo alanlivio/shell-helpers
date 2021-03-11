@@ -1137,21 +1137,13 @@ function hf_cpp_clean() {
 # meson
 # ---------------------------------------
 
-function hf_meson_create_dir_and_configure() {
-  mkdir _build-Debug-"$WSL_DISTRO_NAME$OS"
-  if ! test -d $DIR; then mkdir $DIR; fi
-  cd $DIR
-  meson .. --buildtype=debug
-}
-
-function hf_meson_create_dir_and_configure_release() {
-  DIR="_build-Release-$WSL_DISTRO_NAME$OS"
-  if ! test -d $DIR; then mkdir $DIR; fi
-  cd $DIR
-  meson .. --buildtype=release
-}
-
 function hf_meson_configure() {
+  # if in project root create build folder
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  if test -f meson.build; then 
+    mkdir $DIR
+    cd $DIR
+  fi
   meson .. --buildtype=debug
 }
 
@@ -1167,22 +1159,14 @@ function hf_meson_install() {
 # cmake
 # ---------------------------------------
 
-function hf_cmake_create_dir_and_configure() {
-  mkdir _build-Debug-"$WSL_DISTRO_NAME$OS"
-  if ! test -d $DIR; then mkdir $DIR; fi
-  cd $DIR
-  make .. -G Ninja --config Debug
-}
-
-function hf_cmake_create_dir_and_configure_release() {
-  DIR="_build-Release-$WSL_DISTRO_NAME$OS"
-  if ! test -d $DIR; then mkdir $DIR; fi
-  cd $DIR
-  cmake .. -G Ninja --config Release
-}
-
 function hf_cmake_configure() {
-  cmake .. -G Ninja --config Debug
+  # if in project root create build folder
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  if test -f CMakeLists.txt; then 
+    mkdir $DIR
+    cd $DIR
+  fi
+  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
 }
 
 function hf_cmake_build() {
