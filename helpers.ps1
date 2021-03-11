@@ -140,7 +140,7 @@ function hf_ps_profiles_reset() {
 # reg
 # ---------------------------------------
 
-function hf_reg_new_path ($path){
+function hf_reg_new_path ($path) {
   if (-not (Test-Path $path)) {
     New-Item -Path $path -ItemType Directory -Force | Out-Null
   }
@@ -1103,6 +1103,8 @@ function hf_install_msys() {
     Invoke-Expression "$MSYS_BASH -c 'echo db_home: windows >> /etc/nsswitch.conf'"
     # use /mnt/c/ like in WSL
     Invoke-Expression "$MSYS_BASH -c 'echo /c /mnt/c none bind >> /etc/fstab'"
+    hf_env_path_add "$MSYS_HOME\mingw64\bin"
+    hf_env_path_add "$MSYS_HOME\usr\bin"
   }
 }
 
