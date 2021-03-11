@@ -2047,7 +2047,7 @@ function hf_install_linux_node() {
   sudo apt install -y nodejs
 }
 
-function hf_install_linux__luarocks() {
+function hf_install_linux_luarocks() {
   hf_log_func
   if ! type luarocks &>/dev/null; then
     wget https://luarocks.org/releases/luarocks-3.3.0.tar.gz
@@ -2434,6 +2434,18 @@ function hf_apt_fetch_install() {
 
   fi
   sudo dpkg -i /tmp/$apt_NAME
+}
+
+# ---------------------------------------
+# wget
+# ---------------------------------------
+
+function hf_wget_header() {
+  wget --server-response $1
+}
+
+function hf_wget_continue() {
+  wget --continue $1
 }
 
 # ---------------------------------------
