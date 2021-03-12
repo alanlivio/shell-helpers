@@ -2424,8 +2424,16 @@ function hf_apt_fetch_install() {
 # wget
 # ---------------------------------------
 
-function hf_wget_header() {
-  wget --server-response $1
+function hf_wget_get_headers() {
+  wget --server-response -O- $1
+}
+
+function hf_wget_post_json() {
+  wget --server-response -O- $1 --post-data="$2" --header='Content-Type:application/json'
+}
+
+function hf_wget_post_file() {
+  wget --server-response -O- $1 --post-file="$2" --header='Content-Type:application/json'
 }
 
 function hf_wget_continue() {
