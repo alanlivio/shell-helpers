@@ -9,7 +9,7 @@ Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
 CYGWIN* | MINGW* | MSYS*)
   IS_WINDOWS=1
-  IS_WINDOWS_MINGW=1
+  IS_WINDOWS_MSYS=1
   ;;
 esac
 if test $IS_LINUX; then
@@ -223,7 +223,7 @@ function hf_update_clean() {
   elif test -n "$IS_WINDOWS_WSL"; then
     hf_update_clean_wsl
   # mingw
-  elif test -n "$IS_WINDOWS_MINGW"; then
+  elif test -n "$IS_WINDOWS_MSYS"; then
     hf_update_clean_msys
   # mac
   elif test -n "$IS_MAC"; then
@@ -241,7 +241,7 @@ if test -n "$IS_WINDOWS_WSL"; then
   fi
   alias unixpath='wslpath'
   alias winpath='wslpath -w'
-elif test -n "$IS_WINDOWS_MINGW"; then
+elif test -n "$IS_WINDOWS_MSYS"; then
   alias unixpath='cygpath'
   alias winpath='cygpath -w'
   alias sudo=''
@@ -280,7 +280,7 @@ if test -n "$IS_WINDOWS_WSL"; then
   function codewin_folder() {
     cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
   }
-elif test -n "$IS_WINDOWS_MINGW"; then
+elif test -n "$IS_WINDOWS_MSYS"; then
   alias code="/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe"
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
@@ -439,7 +439,7 @@ function hf_profile_reload() {
 # msys
 # ---------------------------------------
 
-if test -n "$IS_WINDOWS_MINGW"; then
+if test -n "$IS_WINDOWS_MSYS"; then
 
   function hf_msys_search() {
     hf_log_func
@@ -1382,7 +1382,7 @@ function hf_network_domain_info() {
 }
 
 function hf_network_ip() {
-  if test -n "$IS_WINDOWS_MINGW"; then
+  if test -n "$IS_WINDOWS_MSYS"; then
     ipconfig | grep "IPv4 Address" | awk 'NR==1{print $NF}'
   else
     echo "$(hostname -I | cut -d' ' -f1)"
