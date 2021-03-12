@@ -79,7 +79,7 @@ function hf_init_gnome() {
   # cleanup
   hf_clean_unused_dirs
   # vim/git/essentials
-  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools jq "
+  PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
   # python
   PKGS+="python3 python3-pip "
   hf_apt_install_packages $PKGS
@@ -95,7 +95,7 @@ if test -n "$IS_WINDOWS"; then
     # sudo nopasswd
     hf_user_permissions_sudo
     # vim/git/essentials
-    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools jq "
+    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
     # python
     PKGS+="python3 python3-pip "
     hf_apt_install_packages $PKGS
@@ -108,7 +108,7 @@ if test -n "$IS_WINDOWS"; then
     # update runtime and bash
     PKGS="pacman pacman-mirrors msys2-runtime bash "
     # essentials
-    PKGS+="vim git diffutils curl wget mingw64/mingw-w64-x86_64-jq "
+    PKGS+="vim git diffutils curl wget zip "
     # python
     PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
     hf_msys_install $PKGS
@@ -772,9 +772,9 @@ function hf_git_branch_delete_local_and_origin() {
 }
 
 function hf_git_branch_clean_removed_remotes() {
-  # clean removed remotes 
+  # clean removed remotes
   git fetch --prune
-  # clean banchs with removed upstreams 
+  # clean banchs with removed upstreams
   git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -d
 }
 
@@ -1140,7 +1140,7 @@ function hf_cpp_clean() {
 function hf_meson_configure() {
   # if in project root create build folder
   DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  if test -f meson.build; then 
+  if test -f meson.build; then
     mkdir $DIR
     cd $DIR
   fi
@@ -1162,7 +1162,7 @@ function hf_meson_install() {
 function hf_cmake_configure() {
   # if in project root create build folder
   DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  if test -f CMakeLists.txt; then 
+  if test -f CMakeLists.txt; then
     mkdir $DIR
     cd $DIR
   fi
