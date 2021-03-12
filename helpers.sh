@@ -1382,7 +1382,11 @@ function hf_network_domain_info() {
 }
 
 function hf_network_ip() {
-  echo "$(hostname -I | cut -d' ' -f1)"
+  if test -n "$IS_WINDOWS_MINGW"; then
+    ipconfig | grep "IPv4 Address" | awk 'NR==1{print $NF}'
+  else
+    echo "$(hostname -I | cut -d' ' -f1)"
+  fi
 }
 
 function hf_network_arp_scan() {
