@@ -1105,6 +1105,7 @@ function hf_install_msys() {
     Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
     hf_env_path_add "$MSYS_HOME\mingw64\bin"
     hf_env_path_add "$MSYS_HOME\usr\bin"
+    hf_env_add "LANG" "en_US.UTF-8"
   }
 }
 
