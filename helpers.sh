@@ -1166,7 +1166,17 @@ function hf_cmake_configure() {
     mkdir $DIR
     cd $DIR
   fi
-  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF
+}
+
+function hf_cmake_configure_shared() {
+  # if in project root create build folder
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  if test -f CMakeLists.txt; then
+    mkdir $DIR
+    cd $DIR
+  fi
+  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF
 }
 
 function hf_cmake_build() {
