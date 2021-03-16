@@ -1006,8 +1006,8 @@ function hf_install_gsudo() {
 
 function hf_install_winget() {
   Invoke-Expression $hf_log_func
-  $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
   if (!(Get-Command 'winget.exe' -ea 0)) {
+    $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
     if (!(Test-Path $appx_pkg)) {
       Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v-0.2.10191-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
     }
@@ -1029,44 +1029,45 @@ function hf_install_onedrive() {
   Start-Process $onedrive -NoNewWindow -Wait
 }
 
-function hf_install_wsl_ubuntu_and_windowsterminal() {
-  # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
-  Invoke-Expression $hf_log_func
-  # install winget
-  hf_install_choco
-  # install winget
+function hf_install_wt() {
   hf_install_winget
-  # install gsudo
-  hf_install_gsudo
-  # install windows terminal
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal
     if (Test-Path $DOTFILES_WT) {
       hf_windowsterminal_install_stgs $DOTFILES_WT\settings.json
     }
   }
+}
+
+function hf_install_wsl_ubuntu() {
+  # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
+  Invoke-Expression $hf_log_func
+
+  # require winget
+  hf_install_winget
+  
   # enable wsl feature (require restart)
   if (!(Get-Command 'wsl.exe' -ea 0)) {
     hf_log "INFO: Windows features for WSL not enabled, enabling..."
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
     dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-    hf_log "INFO: restart windows and run hf_init_ubuntu_and_windowsterminal again"
+    hf_log "INFO: restart windows and run hf_init_ubuntu again"
     return
   }
-  # configure ubuntu distro
-  if (!((hf_wsl_get_default).StartsWith("Ubuntu"))) {
-    hf_log "INFO: Ubuntu not installed, installing..."
+  # install ubuntu
+  if (!(Get-Command "ubuntu*.exe" -ea 0)) {
+    hf_log "INFO: Ubuntu is not installed, installing..."
     winget install Canonical.Ubuntu
-  }
+  } 
   # configure ubuntu distro
-  if (!((hf_wsl_get_default))) {
+  wsl -l | Out-null
+  if ($LastExitCode -eq -1) {
     hf_log "INFO: Ubuntu is not configured, running..."
-    refreshenv
-    Invoke-Expression ((hf_wsl_get_default).Replace('.', '').Replace('-', '') + ".exe")
+    Invoke-Expression (Get-Command "ubuntu*.exe").Source
   }
   # enable wsl 2
-  wsl -l -v | Out-null
-  if ($LASTEXITCODE -eq -1) {
+  wsl -l -v | Out-null # -v is only avaliable in wsl 2
+  if ($LastExitCode -eq -1) {
     Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -Outfile $env:TEMP\wsl_update_x64.msi
     msiexec.exe /I "$env:TEMP\wsl_update_x64.msi"
   }
@@ -1083,7 +1084,7 @@ function hf_install_wsl_ubuntu_and_windowsterminal() {
 function hf_install_git() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path "c:\Program Files\git\")) {
-    choco install git --params "/NoShellIntegration /NoGuiHereIntegration  /NoShellHereIntegration"
+    choco install git --params "/NoShellIntegration /NoGuiHereIntegration /NoShellHereIntegration"
   }
 }
 
@@ -1099,10 +1100,9 @@ function hf_install_msys() {
   if (!(Test-Path $MSYS_BASH)) {
     choco install msys2 --params "/NoUpdate"
     Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
-    # use windows home
-    Invoke-Expression "$MSYS_BASH -c 'echo db_home: windows >> /etc/nsswitch.conf'"
+    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
     # use /mnt/c/ like in WSL
-    Invoke-Expression "$MSYS_BASH -c 'echo /c /mnt/c none bind >> /etc/fstab'"
+    Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
     hf_env_path_add "$MSYS_HOME\mingw64\bin"
     hf_env_path_add "$MSYS_HOME\usr\bin"
   }
@@ -1152,11 +1152,13 @@ function hf_init_windows() {
   # cleanup unused
   hf_clean_unused_dirs
   hf_clean_unused_shortcuts
-  # install git, bash, vscode
+  # install choco, gsudo
   hf_install_choco
   hf_install_gsudo
+  # install git, bash, wt, vscode
   hf_install_git
   hf_install_msys
+  hf_install_wt
   hf_install_vscode
   hf_vscode_install_config_files
 }

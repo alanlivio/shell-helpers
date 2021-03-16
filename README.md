@@ -26,7 +26,7 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## init Gnome-based Ubuntu
 
-1. bash `hf_init_gnome`: configure Gnome Shell (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+1. bash `hf_init_gnome`: configure Gnome (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## init macOS
@@ -41,11 +41,11 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## init Windows
 
-1. powershell `hf_init_windows`: configure Windows shell (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, msys2 bash vscode).
+1. powershell `hf_init_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, msys2, bash, vscode, WindowsTerminal).
 
 ## init WSL in Windows
 
-1. powershell `hf_install_wsl_ubuntu_and_windowsterminal`: install WSL/Ubuntu (version 2, fixed home) and Windowserminal. This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
+1. powershell `hf_install_wsl_ubuntu`: install WSL/Ubuntu (version 2, fixed home). This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
   1.1. After run, it requeres restart windows and run it again.  
   1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
