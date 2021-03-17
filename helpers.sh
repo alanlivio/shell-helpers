@@ -873,7 +873,11 @@ function hf_git_list_large_files() {
 }
 
 function hf_git_formated_patch_last() {
-  git format-patch HEAD^1
+  git format-patch HEAD~1
+}
+
+function hf_git_formated_patch_n() {
+  git format-patch HEAD~$1
 }
 
 function hf_git_formated_patch_apply() {
