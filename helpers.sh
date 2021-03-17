@@ -786,6 +786,10 @@ function hf_git_branch_clean_removed_remotes() {
   git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -d
 }
 
+function hf_git_branch_remove_all_local() {
+  git branch | grep -v develop | xargs -r git branch -d
+}
+
 function hf_git_branch_upstrem_set() {
   : ${1?"Usage: ${FUNCNAME[0]} <remote-branch>"}
   git branch --set-upstream-to $1
@@ -2455,8 +2459,7 @@ function hf_curl_post() {
 }
 
 function hf_curl_post_json() {
-  curl -i -s -X POST $1 --header 'Content-Type: application/j
-son' --header 'Accept: application/json' -d "$2"
+  curl -i -s -X POST $1 --header 'Content-Type: application/json' --header 'Accept: application/json' -d "$2"
 }
 
 # ---------------------------------------
