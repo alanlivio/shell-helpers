@@ -1204,7 +1204,9 @@ function hf_cmake_check() {
 }
 
 function hf_cmake_install() {
-  PREFIX="/usr/"
+  if test -n "$IS_WINDOWS_MSYS"; then 
+    PREFIX="/mingw64"
+  fi 
   if ! test -z $1; then PREFIX=$1; fi
   sudo cmake --install . --prefix $PREFIX
 }
