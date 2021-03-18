@@ -40,13 +40,15 @@ if test -f $HELPERS_CFG; then
   source $HELPERS_CFG
 fi
 
-# ---------------------------------------
-# HELPERS_OPT
-# ---------------------------------------
 # if $HELPERS_CFG not defined use from same dir
 if test -z "$HELPERS_OPT"; then
   HELPERS_OPT="$HOME/opt"
   mkdir -p $HELPERS_OPT
+fi
+
+# if $HF_GIT_GUI not defined use gitg
+if test -z "$HF_GIT_GUI"; then
+  HF_GIT_GUI=gitg
 fi
 
 # ---------------------------------------
@@ -697,6 +699,12 @@ function hf_gdb_run_bt_all_threads() {
 # git
 # ---------------------------------------
 
+function hf_git_gui() {
+  hf_test_command $HF_GIT_GUI || return
+  if ! test -d .git; then hf_log_error "There is no git repo in current folder"; return ; fi
+  $HF_GIT_GUI >> /dev/null &
+}
+
 function hf_git_overleaf_push_commit_all() {
   git commit -am "Update from local git"
   git push
@@ -712,11 +720,6 @@ function hf_git_assume_unchanged() {
 
 function hf_git_assume_unchanged_disable() {
   git update-index --no-assume-unchanged $1
-}
-
-function hf_git_services_test() {
-  ssh -T git@gitlab.com
-  ssh -T git@github.com
 }
 
 function hf_git_revert_last_commit() {
