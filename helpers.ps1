@@ -904,6 +904,10 @@ function hf_wsl_fix_home_user() {
   # change default folder to /mnt/c/Users/
   wsl -u root skill -KILL -u $env:UserName
   wsl -u root usermod -d /mnt/c/Users/$env:UserName $env:UserName
+  
+  # delete the folder at /home/ and create a link to one at /mnt/c/Users/
+  wsl -u root rm -rf  /home/$env:UserName
+  wsl -u root ln -s /mnt/c/Users/$env:UserName /home/$env:UserName
 
   # changing file permissions
   hf_log "Changing file permissions "
