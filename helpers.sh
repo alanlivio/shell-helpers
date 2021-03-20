@@ -710,7 +710,7 @@ function hf_git_overleaf_push_commit_all() {
   git push
 }
 
-function hf_git_file_options_untrack() {
+function hf_git_untrack_repo_file_options_changes() {
   git config core.fileMode false
 }
 
