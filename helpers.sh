@@ -699,20 +699,28 @@ function hf_gdb_run_bt_all_threads() {
 # git
 # ---------------------------------------
 
+# gui
+
 function hf_git_gui() {
   hf_test_command $HF_GIT_GUI || return
   if ! test -d .git; then hf_log_error "There is no git repo in current folder"; return ; fi
   $HF_GIT_GUI >> /dev/null &
 }
 
+# overleaf
+
 function hf_git_overleaf_push_commit_all() {
   git commit -am "Update from local git"
   git push
 }
 
+# untrack
+
 function hf_git_untrack_repo_file_options_changes() {
   git config core.fileMode false
 }
+
+# assume
 
 function hf_git_assume_unchanged() {
   git update-index --assume-unchanged $1
@@ -722,17 +730,19 @@ function hf_git_assume_unchanged_disable() {
   git update-index --no-assume-unchanged $1
 }
 
-function hf_git_revert_last_commit() {
-  git revert HEAD
-}
+# reset
 
 function hf_git_reset_hard() {
   git reset --hard
 }
 
+# stash
+
 function hf_git_stash_list() {
   git stash save --include-untracked
 }
+
+# branch
 
 function hf_git_branch_rebase_from_upstream() {
   git rebase upstream/master
@@ -802,18 +812,22 @@ function hf_git_branch_upstrem_set() {
   git branch --set-upstream-to $1
 }
 
-function hf_git_add_partial() {
+# partial_commit
+
+function hf_git_partial_commit() {
   git stash
   git difftool -y stash
 }
 
-function hf_git_add_partial_continue() {
+function hf_git_partial_commit_continue() {
   git difftool -y stash
 }
 
 function hf_git_github_check_ssh() {
   ssh -T git@github.com
 }
+
+# github
 
 function hf_git_github_fix() {
   echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee $HOME/.ssh/config
@@ -832,6 +846,8 @@ function hf_git_github_init() {
   git push -u origin master
 }
 
+# rebase
+
 function hf_git_rebase_reset_author() {
   : ${1?"Usage: ${FUNCNAME[0]} <HEAD^n-commits-backwards>"}
   git rebase -i HEAD^$1 -x "git commit --amend --reset-author"
@@ -841,9 +857,14 @@ function hf_git_rebase_remove_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
+# commit
+
 function hf_git_ammend_all() {
   git commit -a --amend --no-edit
 }
+
+
+# push 
 
 function hf_git_push_ammend_all() {
   git commit -a --amend --no-edit
@@ -857,10 +878,14 @@ function hf_git_push_commit_all() {
   git push
 }
 
-function hf_git_check_if_need_pull() {
+# pull
+
+function hf_git_pull_check_if_need() {
   [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref "@{u}" \
     | sed 's/\// /g') | cut -f1) ] && printf FALSE || printf TRUE
 }
+
+# gitignore
 
 function hf_git_gitignore_create() {
   : ${1?"Usage: ${FUNCNAME[0]} <contexts,..>"}
@@ -875,11 +900,15 @@ function hf_git_gitignore_create_cpp() {
   hf_git_gitignore_create c,c++,qt,autotools,make,ninja,cmake
 }
 
-function hf_git_list_large_files() {
+# large files
+
+function hf_git_large_files_list() {
   git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
-function hf_git_formated_patch_last() {
+# formated_patch
+
+function hf_git_formated_patch_last_commit() {
   git format-patch HEAD~1
 }
 
@@ -890,6 +919,8 @@ function hf_git_formated_patch_n() {
 function hf_git_formated_patch_apply() {
   git am <"$@"
 }
+
+# folder_tree
 
 function hf_git_folder_tree() {
   hf_log_func
@@ -928,22 +959,23 @@ function hf_git_folder_tree() {
   cd $CWD
 }
 
+# log
+
 function hf_git_log_history_file() {
   git log --follow -p --all --first-parent --remotes --reflog --author-date-order -- $1
 }
 
-function hf_git_diff_one_commit() {
-  git diff HEAD^1
-}
+# diff
 
-function hf_git_diff_files_one_commit() {
+function hf_git_diff_files_last_commit() {
   git diff --stat HEAD^1
 }
 
-function hf_git_diff_files() {
-  : ${1?"Usage: ${FUNCNAME[0]} <commit>"}
-  git diff --stat $1
+function hf_git_diff_last_commit() {
+  git diff HEAD^1
 }
+
+# subfolders
 
 function hf_git_subfolders_push() {
   CWD=$(pwd)
