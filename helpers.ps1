@@ -975,6 +975,14 @@ function hf_winupdate_update() {
 }
 
 # ---------------------------------------
+# msys
+# ---------------------------------------
+
+function hf_msys_add_to_path() {
+  hf_env_path_add "$MSYS_HOME\mingw64\bin"
+  hf_env_path_add "$MSYS_HOME\usr\bin"
+}
+# ---------------------------------------
 # install
 # ---------------------------------------
 
@@ -1115,9 +1123,8 @@ function hf_install_msys() {
     Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
     # use /mnt/c/ like in WSL
     Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
-    hf_env_path_add "$MSYS_HOME\mingw64\bin"
-    hf_env_path_add "$MSYS_HOME\usr\bin"
     hf_env_add "LANG" "en_US.UTF-8"
+    hf_msys_add_to_path
   }
 }
 
