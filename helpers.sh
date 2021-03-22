@@ -734,6 +734,10 @@ function hf_git_stash_list() {
   git stash save --include-untracked
 }
 
+function hf_git_branch_rebase_from_upstream() {
+  git rebase upstream/master
+}
+
 function hf_git_branch_merge_without_merge_commit() {
   : ${1?"Usage: ${FUNCNAME[0]} <branch-name>"}
   git merge --ff-only $1
