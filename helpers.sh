@@ -640,7 +640,7 @@ function hf_deb_contents() {
 # pkg-config
 # ---------------------------------------
 
-function hf_pkg_config_find() {
+function hf_pkg_config_search() {
   : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
   pkg-config --list-all | grep --color=auto $1
 }
