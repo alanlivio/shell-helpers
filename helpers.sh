@@ -703,8 +703,11 @@ function hf_gdb_run_bt_all_threads() {
 
 function hf_git_gui() {
   hf_test_command $HF_GIT_GUI || return
-  if ! test -d .git; then hf_log_error "There is no git repo in current folder"; return ; fi
-  $HF_GIT_GUI >> /dev/null &
+  if ! test -d .git; then
+    hf_log_error "There is no git repo in current folder"
+    return
+  fi
+  $HF_GIT_GUI >>/dev/null &
 }
 
 # overleaf
@@ -863,8 +866,7 @@ function hf_git_ammend_all() {
   git commit -a --amend --no-edit
 }
 
-
-# push 
+# push
 
 function hf_git_push_ammend_all() {
   git commit -a --amend --no-edit
@@ -1193,21 +1195,17 @@ function hf_cpp_clean() {
 # ---------------------------------------
 
 function hf_meson_configure() {
-  # if in project root create build folder
   DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  if test -f meson.build; then
-    mkdir $DIR
-    cd $DIR
-  fi
-  meson .. --buildtype=debug
+  meson $DIR --buildtype=debug
 }
 
 function hf_meson_build() {
-  meson compile
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  ninja -C $DIR
 }
 
 function hf_meson_install() {
-  meson install
+  ninja -C $DIR install
 }
 
 # ---------------------------------------
@@ -1215,43 +1213,37 @@ function hf_meson_install() {
 # ---------------------------------------
 
 function hf_cmake_configure() {
-  # if in project root create build folder
   DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  if test -f CMakeLists.txt; then
-    mkdir $DIR
-    cd $DIR
-  fi
-  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF
+  cmake -B $DIR -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF
 }
 
 function hf_cmake_configure_shared() {
-  # if in project root create build folder
   DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  if test -f CMakeLists.txt; then
-    mkdir $DIR
-    cd $DIR
-  fi
-  cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF
+  cmake -B $DIR -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF
 }
 
 function hf_cmake_build() {
-  cmake --build . --target all
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  cmake --build $DIR --target all
 }
 
 function hf_cmake_check() {
-  cmake --build . --target check
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  cmake --build $DIR --target check
 }
 
 function hf_cmake_install() {
-  if test -n "$IS_WINDOWS_MSYS"; then 
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  if test -n "$IS_WINDOWS_MSYS"; then
     PREFIX="/mingw64"
-  fi 
+  fi
   if ! test -z $1; then PREFIX=$1; fi
-  sudo cmake --install . --prefix $PREFIX
+  sudo cmake --install $DIR --prefix $PREFIX
 }
 
 function hf_cmake_uninstall() {
-  MANIFEST=./install_manifest.txt
+  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+  MANIFEST="$DIR/install_manifest.txt"
   if test -f $MANIFEST; then
     cat $MANIFEST | while read -r i; do
       if test -f $i; then sudo rm -f $i; fi
