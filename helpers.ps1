@@ -892,12 +892,12 @@ function hf_wsl_fix_home_user() {
   wsl -u root bash -c 'echo "root=/mnt" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "mountFsTab=false" >> /etc/wsl.conf'
   wsl -u root bash -c 'echo "options=\"metadata,uid=1000,gid=1000,umask=0022,fmask=11\"" >> /etc/wsl.conf'
-  # enable use /Users in path for both windows and wsl
+  # use /Users in path for both windows and wsl
   wsl -u root bash -c 'if ! test -d /Users; then sudo ln -s /mnt/c/Users /Users; fi'
 
   hf_wsl_terminate
 
-  # ensure sudoer
+  # enable sudoer
   wsl -u root usermod -aG sudo "$env:UserName"
   wsl -u root usermod -aG root "$env:UserName"
 
@@ -1120,7 +1120,10 @@ function hf_install_msys() {
   if (!(Test-Path $MSYS_BASH)) {
     choco install msys2 --params "/NoUpdate"
     Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
-    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users /home ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
+     # use /Users in path for both windows and WSL
+    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users/ /Users ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
+    # use /Users/user-name
+    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users/$env:UserName /home/$env:UserName ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
     # use /mnt/c/ like in WSL
     Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
     hf_env_add "LANG" "en_US.UTF-8"
