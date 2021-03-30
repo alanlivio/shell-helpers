@@ -79,7 +79,7 @@ function hf_init_gnome() {
   hf_gnome_disable_unused_apps_in_search
   hf_gnome_disable_super_workspace_change
   # cleanup
-  hf_clean_unused_dirs
+  hf_home_clean_unused_dirs
   # vim/git/essentials
   PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
   # python
@@ -165,7 +165,7 @@ function hf_update_clean_gnome() {
   # vscode
   hf_vscode_install_packages $PKGS_VSCODE
   # cleanup
-  hf_clean_unused_dirs
+  hf_home_clean_unused_dirs
 }
 
 if test -n "$IS_WINDOWS"; then
@@ -181,7 +181,7 @@ if test -n "$IS_WINDOWS"; then
     # vscode
     hf_vscode_install_packages $PKGS_VSCODE
     # cleanup
-    hf_clean_unused_dirs
+    hf_home_clean_unused_dirs
   }
 
   function hf_update_clean_msys() {
@@ -189,7 +189,7 @@ if test -n "$IS_WINDOWS"; then
     hf_msys_upgrade
     hf_msys_install $PKGS_MSYS
     # cleanup
-    hf_clean_unused_dirs
+    hf_home_clean_unused_dirs
   }
 
   function hf_update_clean_windows() {
@@ -198,10 +198,10 @@ if test -n "$IS_WINDOWS"; then
     hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
     hf_ps_call_admin "hf_choco_upgrade"
     hf_ps_call_admin "hf_choco_clean"
-    hf_ps_call hf_clean_unused_shortcuts
-    hf_ps_call hf_explorer_hide_dotfiles
     # cleanup
-    hf_clean_unused_dirs
+    hf_ps_call hf_home_clean_unused_dirs
+    hf_ps_call hf_home_hide_dotfiles
+    hf_ps_call hf_explorer_clean_unused_shortcuts
   }
 fi
 
@@ -2650,7 +2650,7 @@ function hf_x11_properties_of_window() {
 }
 
 # ---------------------------------------
-# cleanup
+# home 
 # ---------------------------------------
 
 HF_CLEAN_DIRS=(
@@ -2697,7 +2697,7 @@ if test -n "$IS_WINDOWS"; then
   )
 fi
 
-function hf_clean_unused_dirs() {
+function hf_home_clean_unused_dirs() {
   hf_log_func
 
   for i in "${HF_CLEAN_DIRS[@]}"; do
