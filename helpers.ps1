@@ -20,6 +20,7 @@ if (Test-Path $SCRIPT_CFG) {
 # alias
 # ---------------------------------------
 Set-Alias -Name grep -Value Select-String
+Set-Alias -Name msysbash -Value C:\tools\msys64\usr\bin\bash.exe # TODO: replace by $MSYS_BASH 
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
 Set-Alias -Name env -Value hf_env
@@ -1118,13 +1119,15 @@ function hf_install_msys() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path $MSYS_BASH)) {
     choco install msys2 --params "/NoUpdate"
-    Invoke-Expression "$MSYS_BASH -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'"
-     # use /Users in path for both windows and WSL
-    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users/ /Users ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
-    # use /Users/user-name
-    Invoke-Expression "$MSYS_BASH -c 'echo C:/Users/$env:UserName /home/$env:UserName ntfs binary,noacl,auto 1 1 >>  /etc/fstab'"
-    # use /mnt/c/ like in WSL
-    Invoke-Expression "$MSYS_BASH -c ' echo /c /mnt/c none bind >> /etc/fstab'"
+    msysbash -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
+    # mount /Users to use in both windows and WSL
+    msysbash -c 'echo C:/Users/ /Users ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
+    # mount /Users/user-name
+    msysbash -c 'echo C:/Users/$env:UserName /home/$env:UserName ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
+    # mount /mnt/c/ like in WSL
+    msysbash -c ' echo /c /mnt/c none bind >> /etc/fstab'
+    # set home as /mnt/c/Users/user-name
+    msysbash -c "sed -i 's|db_home: cygwin desc|db_home: windows|g' /etc/nsswitch.conf"
     hf_env_add "LANG" "en_US.UTF-8"
     hf_msys_add_to_path
   }
