@@ -479,14 +479,6 @@ if test -n "$IS_WINDOWS_MSYS"; then
     sudo rm /var/lib/pacman/db.lck
   }
 
-  function hf_msys_vscode_fix_git() {
-    hf_log_msg 'In vscode settings.json, insert:
-      "git.path": [
-        "$HOME\\.helpers\\msys\\git-wrap.bat",
-        ...,
-      ],'
-  }
-
   function hf_msys_fix_home() {
     echo -e "none / cygdrive binary,posix=0,noacl,user 0 0" | tee /etc/fstab
     echo -e "C:/Users /home ntfs binary,noacl,auto 1 1" | tee -a /etc/fstab
