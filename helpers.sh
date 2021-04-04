@@ -25,7 +25,7 @@ fi
 alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
-DOTFILES_VSCODE="$SCRIPT_DIR/dotfiles/vscode"
+DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
 
 # ---------------------------------------
 # load helpers-cfg
@@ -34,7 +34,7 @@ DOTFILES_VSCODE="$SCRIPT_DIR/dotfiles/vscode"
 if test -f "$HOME/.helpers-cfg.sh"; then
   HELPERS_CFG="$HOME/.helpers-cfg.sh"
 else
-  HELPERS_CFG="$SCRIPT_DIR/dotfiles/.helpers-cfg.sh"
+  HELPERS_CFG="$SCRIPT_DIR/skel/.helpers-cfg.sh"
 fi
 if test -f $HELPERS_CFG; then
   source $HELPERS_CFG
