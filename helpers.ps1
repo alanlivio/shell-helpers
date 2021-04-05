@@ -799,6 +799,26 @@ function hf_explorer_clean_unused_shortcuts() {
 }
 
 # ---------------------------------------
+# winget
+# ---------------------------------------
+
+function hf_winget_install() {
+  Invoke-Expression $hf_log_func
+  foreach ($name in $args) {
+    $pkgs_to_install = ""
+    $pkgs = winget list
+    if (!($pkgs -Match "$name")) {
+      $pkgs_to_install = "$pkgs_to_install $name"
+      winget install $name
+    }
+    if ($pkgs_to_install) {
+      Invoke-Expression $hf_log_func" "$pkgs_to_install
+      winget install ($pkgs_to_install -join ";")
+    }
+  }
+}
+
+# ---------------------------------------
 # choco
 # ---------------------------------------
 

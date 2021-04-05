@@ -196,6 +196,7 @@ if test -n "$IS_WINDOWS"; then
     # windows
     hf_ps_call_admin "hf_winupdate_update"
     hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
+    hf_ps_call_admin "hf_winget_install $PKGS_WINGET"
     hf_ps_call_admin "hf_choco_upgrade"
     hf_ps_call_admin "hf_choco_clean"
     # cleanup
