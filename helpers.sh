@@ -447,12 +447,17 @@ if test -n "$IS_WINDOWS_MSYS"; then
 
   function hf_msys_search() {
     hf_log_func
-    sudo pacman -Ss --noconfirm "$@"
+    pacman -Ss --noconfirm "$@"
+  }
+
+  function hf_msys_show() {
+    hf_log_func
+    pacman -Qi "$@"
   }
 
   function hf_msys_list_installed() {
     hf_log_func
-    sudo pacman -Qqe
+    pacman -Qqe
   }
 
   function hf_msys_install() {
