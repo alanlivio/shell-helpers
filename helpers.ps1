@@ -1027,11 +1027,7 @@ function hf_install_gsudo() {
 function hf_install_winget() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'winget.exe' -ea 0)) {
-    $appx_pkg = "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
-    if (!(Test-Path $appx_pkg)) {
-      Invoke-WebRequest https://github.com/microsoft/winget-cli/releases/download/v-0.2.10191-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle -OutFile $appx_pkg
-    }
-    Add-AppPackage $appx_pkg
+    hf_appx_install Microsoft.DesktopAppInstaller
   }
 }
 
@@ -1063,9 +1059,6 @@ function hf_install_wsl_ubuntu() {
   # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   Invoke-Expression $hf_log_func
 
-  # require winget
-  hf_install_winget
-  
   # enable wsl feature (require restart)
   if (!(Get-Command 'wsl.exe' -ea 0)) {
     hf_log "INFO: Windows features for WSL not enabled, enabling..."
@@ -1166,7 +1159,7 @@ function hf_init_windows_sanity() {
 function hf_init_common_user() {
   Invoke-Expression $hf_log_func
   hf_init_windows_sanity
-  hf_choco_install googlechrome vlc 7zip ccleaner
+  hf_choco_install googlechrome vlc 7zip ccleaner foxitreader
 }
 
 function hf_init_windows() {
@@ -1177,9 +1170,10 @@ function hf_init_windows() {
   # cleanup unused
   hf_home_clean_unused_dirs
   hf_explorer_clean_unused_shortcuts
-  # install choco, gsudo
+  # install choco, gsudo, winget
   hf_install_choco
   hf_install_gsudo
+  hf_install_winget
   # install git, bash, wt, vscode
   hf_install_git
   hf_install_msys

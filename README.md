@@ -36,12 +36,12 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## init Windows for common users
 
-1. powershell `hf_init_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader, google-backup-and-sync).
+1. powershell `hf_init_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
 2. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
 
 ## init Windows
 
-1. powershell `hf_init_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, msys2, bash, vscode, WindowsTerminal).
+1. powershell `hf_init_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, gsudo, winget, git, msys2, WindowsTerminal, vscode).
 
 ## init WSL in Windows
 
