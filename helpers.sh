@@ -725,10 +725,12 @@ function hf_git_untrack_repo_file_options_changes() {
 # assume
 
 function hf_git_assume_unchanged() {
+  : ${1?"Usage: ${FUNCNAME[0]} <file>"}
   git update-index --assume-unchanged $1
 }
 
 function hf_git_assume_unchanged_disable() {
+  : ${1?"Usage: ${FUNCNAME[0]} <file>"}
   git update-index --no-assume-unchanged $1
 }
 
@@ -736,6 +738,15 @@ function hf_git_assume_unchanged_disable() {
 
 function hf_git_reset_hard() {
   git reset --hard
+}
+
+# show
+
+function hf_git_show_file_in_commit() {
+  : ${1?"Usage: ${FUNCNAME[0]} <commit> <file>"}
+  REV=$1
+  FILE=$2
+  git show $REV:$FILE
 }
 
 # stash
@@ -1819,7 +1830,7 @@ function hf_gnome_update_icons() {
   sudo update-icon-caches -v /usr/share/icons/ $HOME/.local/share/icons/
 }
 
-function hf_gnome_show_version() {
+function hf_gnome_version() {
   gnome-shell --version
   mutter --version | head -n 1
   gnome-terminal --version
@@ -2649,7 +2660,7 @@ function hf_x11_properties_of_window() {
 }
 
 # ---------------------------------------
-# home 
+# home
 # ---------------------------------------
 
 HF_CLEAN_DIRS=(
