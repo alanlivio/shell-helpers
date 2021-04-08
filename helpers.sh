@@ -736,6 +736,10 @@ function hf_git_assume_unchanged_disable() {
 
 # reset
 
+function hf_git_reset_last_commit() {
+  git reset HEAD~1
+}
+
 function hf_git_reset_hard() {
   git reset --hard
 }
