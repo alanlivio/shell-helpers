@@ -1084,7 +1084,7 @@ function hf_install_wsl_ubuntu() {
     hf_log "INFO: Windows features for WSL not enabled, enabling..."
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
     dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-    hf_log "INFO: restart windows and run hf_init_ubuntu again"
+    hf_log "INFO: restart windows and run hf_setup_ubuntu again"
     return
   }
   # install ubuntu
@@ -1163,10 +1163,10 @@ function hf_uninstall_onedrive() {
 }
 
 # ---------------------------------------
-# init
+# setup
 # ---------------------------------------
 
-function hf_init_windows_sanity() {
+function hf_setup_windows_sanity() {
   Invoke-Expression $hf_log_func
   hf_home_hide_dotfiles
   hf_optimize_services
@@ -1176,15 +1176,15 @@ function hf_init_windows_sanity() {
   hf_keyboard_disable_shortcut_altgr
 }
 
-function hf_init_common_user() {
+function hf_setup_windows_common_user() {
   Invoke-Expression $hf_log_func
-  hf_init_windows_sanity
+  hf_setup_windows_sanity
   hf_choco_install googlechrome vlc 7zip ccleaner foxitreader
 }
 
-function hf_init_windows() {
+function hf_setup_windows() {
   Invoke-Expression $hf_log_func
-  hf_init_windows_sanity
+  hf_setup_windows_sanity
   # disable passwd
   hf_system_disable_password_policy
   # cleanup unused

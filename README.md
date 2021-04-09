@@ -1,6 +1,6 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers different helper functions for both `bash` and `powershell` to support: configure OS, install software, git, utilities, etc.
+This project offers bash and powershell helper functions to support: configure OS (themes, optimization), install software, git, utilities, etc.
 
 # How to install
 
@@ -24,38 +24,38 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 # Usage
 
-## init Gnome-based Ubuntu
+## setup Gnome-based Ubuntu
 
-1. bash `hf_init_gnome`: configure Gnome (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
+1. bash `hf_setup_gnome`: configure Gnome (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## init macOS
+## setup macOS
 
-1. bash `hf_init_mac`: install essential software (brew, bash last version, python, pip, vscode)
+1. bash `hf_setup_mac`: install essential software (brew, bash last version, python, pip, vscode)
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## init Windows for common users
+## setup Windows for common users
 
-1. powershell `hf_init_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
+1. powershell `hf_setup_windows_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
 2. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
 
-## init Windows
+## setup Windows
 
-1. powershell `hf_init_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, gsudo, winget, git, msys2, WindowsTerminal, vscode).
+1. powershell `hf_setup_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, gsudo, winget, git, msys2, WindowsTerminal, vscode).
 
-## init WSL in Windows
+## setup WSL in Windows
 
 1. powershell `hf_install_wsl_ubuntu`: install WSL/Ubuntu (version 2, fixed home). This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
   1.1. After run, it requeres restart windows and run it again.  
   1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
-2. wsl bash `hf_init_wsl`: install essential software (e.g., git, curl, python, pip).
+2. wsl bash `hf_setup_wsl`: install essential software (e.g., git, curl, python, pip).
 3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## init msys in Windows
+## setup msys in Windows
 
 1. powershell `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
-2. msys bash `hf_init_msys`: install essential software (e.g., git, curl, python, pip).
+2. msys bash `hf_setup_msys`: install essential software (e.g., git, curl, python, pip).
 3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## Other helpers
@@ -70,7 +70,7 @@ bash references:
 
 * https://github.com/mdo/config
 * https://github.com/jenkins-x/dev-env
-* https://github.com/jsutcodes/.bashrc_helper
+* https://github.com/donnemartin/dev-setup
 * https://github.com/aspiers/shell-env
 
 powershell references:
@@ -78,15 +78,12 @@ powershell references:
 * https://github.com/yiskang/PowerShellRc
 * https://github.com/matt-beamish/Oh-My-Powershell
 * https://gitlab.com/sgur/powershellrc/
-* wsl
-  + https://github.com/TylerLeonhardt/PSWsl
-* optimize services
+* optimize services/explorer
   + https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
   + https://github.com/adolfintel/Windows10-Privacy
   + https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
   + https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
-* optimize explorer
   + https://github.com/madbomb122/Win10Script/blob/master/Win10-Menu.ps1
   + https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
   + https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
-  + https://github.com/Disassembler0/Win10-Initial-Setup-Script/blob/master/Win10.psm1
+  + https://github.com/Disassembler0/Win10-setupial-Setup-Script/blob/master/Win10.psm1

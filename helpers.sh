@@ -66,10 +66,10 @@ function hf_test_command() {
 }
 
 # ---------------------------------------
-# init functions
+# setup functions
 # ---------------------------------------
 
-function hf_init_gnome() {
+function hf_setup_gnome() {
   hf_log_func
   # sudo nopasswd
   hf_user_permissions_sudo
@@ -93,7 +93,7 @@ function hf_init_gnome() {
 }
 
 if test -n "$IS_WINDOWS"; then
-  function hf_init_wsl() {
+  function hf_setup_wsl() {
     # sudo nopasswd
     hf_user_permissions_sudo
     # vim/git/essentials
@@ -105,7 +105,7 @@ if test -n "$IS_WINDOWS"; then
     hf_python_set_python3_default
   }
 
-  function hf_init_msys() {
+  function hf_setup_msys() {
     hf_user_permissions_sudo
     # update runtime and bash
     PKGS="pacman pacman-mirrors msys2-runtime bash "
@@ -117,15 +117,15 @@ if test -n "$IS_WINDOWS"; then
     # python3 is already default in msys
   }
 
-  function hf_init_windows() {
+  function hf_setup_windows() {
     # windows
-    hf_ps_call_admin "hf_init_windows "
+    hf_ps_call_admin "hf_setup_windows "
   }
 
 fi
 
 if test -n "$IS_MAC"; then
-  function hf_init_mac() {
+  function hf_setup_mac() {
     hf_log_func
     hf_user_permissions_sudo
     hf_mac_install_brew
@@ -538,7 +538,7 @@ function hf_mac_ubuntu_keyboard_fixes() {
     echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
     # enable fnmode
     echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
-    sudo update-initramfs -u
+    sudo update-setupramfs -u
   fi
 }
 
@@ -850,13 +850,13 @@ function hf_git_github_fix() {
   echo -e "Host github.com\\n  Hostname ssh.github.com\\n  Port 443" | sudo tee $HOME/.ssh/config
 }
 
-function hf_git_github_init() {
+function hf_git_github_setup() {
   : ${1?"Usage: ${FUNCNAME[0]} <github-name>"}
   NAME=$(basename "$1" ".${1##*.}")
-  echo "init github repo $NAME "
+  echo "setup github repo $NAME "
 
   echo "#" $NAME >README.md
-  git init
+  git setup
   git add README.md
   git commit -m "first commit"
   git remote add origin $1
@@ -1700,15 +1700,15 @@ function hf_service_rcd_disable() {
 
 function hf_service_add_script() {
   : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
-  echo "creating /etc/init.d/$1"
-  sudo touch /etc/init.d/$1
-  sudo chmod 755 /etc/init.d/$1
+  echo "creating /etc/setup.d/$1"
+  sudo touch /etc/setup.d/$1
+  sudo chmod 755 /etc/setup.d/$1
   sudo update-rc.d $1 defaults
 }
 
 function hf_service_create_startup_script() {
   : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
-  echo "creating /etc/init.d/$1"
+  echo "creating /etc/setup.d/$1"
   echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
   systemctl daemon-reload
   systemctl enable yourservice.service
@@ -1842,7 +1842,7 @@ function hf_gnome_version() {
 }
 
 function hf_gnome_gdm_restart() {
-  sudo /etc/init.d/gdm3 restart
+  sudo /etc/setup.d/gdm3 restart
 }
 
 function hf_gnome_settings_reset() {
