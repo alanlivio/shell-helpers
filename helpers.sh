@@ -747,6 +747,16 @@ function hf_git_gui() {
   $HF_GIT_GUI >>/dev/null &
 }
 
+# count
+
+function hf_git_count() {
+  git rev-list --all --count
+}
+
+function hf_git_count_by_user() {
+  git shortlog -s -n
+}
+
 # overleaf
 
 function hf_git_overleaf_push_commit_all() {
