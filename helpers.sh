@@ -913,12 +913,37 @@ function hf_git_github_setup() {
 
 # rebase
 
-function hf_git_rebase_reset_author() {
-  : ${1?"Usage: ${FUNCNAME[0]} <HEAD^n-commits-backwards>"}
-  git rebase -i HEAD^$1 -x "git commit --amend --reset-author"
+function hf_git_rebase_name_email() {
+  git filter-branch -f --env-filter '
+    NEW_NAME="$(git config user.name)"
+    NEW_EMAIL="$(git config user.email)"
+    export GIT_AUTHOR_NAME="$NEW_NAME"; 
+    export GIT_AUTHOR_EMAIL="$NEW_EMAIL"; 
+    export GIT_COMMITTER_NAME="$NEW_NAME"; 
+    export GIT_COMMITTER_EMAIL="$NEW_EMAIL"; 
+  ' --tag-name-filter cat -- --branches --tags
 }
 
-function hf_git_rebase_remove_from_tree() {
+function hf_git_rebase_name_email_by_old_email() {
+  : ${3?"Usage: ${FUNCNAME[0]} <old-name> <new-name> <new-email>"}
+  git filter-branch --commit-filter '
+    OLD_EMAIL="$1"
+    NEW_NAME="$1"
+    NEW_EMAIL="$2"
+    if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
+    then
+      export GIT_COMMITTER_NAME="$NEW_NAME"
+      export GIT_COMMITTER_EMAIL="$NEW_EMAIL"
+    fi
+    if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]
+    then
+      export GIT_AUTHOR_NAME="$NEW_NAME"
+      export GIT_AUTHOR_EMAIL="$NEW_EMAIL"
+    fi
+    ' --tag-name-filter cat -- --branches --tags
+}
+
+function hf_git_rebase_remove_file_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
