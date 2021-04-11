@@ -928,8 +928,8 @@ function hf_git_rebase_name_email_by_old_email() {
   : ${3?"Usage: ${FUNCNAME[0]} <old-name> <new-name> <new-email>"}
   git filter-branch --commit-filter '
     OLD_EMAIL="$1"
-    NEW_NAME="$1"
-    NEW_EMAIL="$2"
+    NEW_NAME="$2"
+    NEW_EMAIL="$3"
     if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
     then
       export GIT_COMMITTER_NAME="$NEW_NAME"
@@ -2708,6 +2708,22 @@ function hf_youtubedl_audio() {
 function hf_youtubedl_audio_best_from_txt() {
   : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
   youtube-dl -a "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+}
+
+# ---------------------------------------
+# zotero
+# ---------------------------------------
+
+function hf_zotero_sanity() {
+  if test -n "$IS_LINUX"; then
+    prefs="$HOME/.zotero/zotero/*.default/prefs.js"
+  elif test -n "$IS_WINDOWS"; then
+    prefs="$HOME/AppData/Roaming/Zotero/Zotero/Profiles/*.default/prefs.js"
+  fi
+  echo 'user_pref("extensions.zotero.automaticSnapshots", false);' >>$prefs
+  echo 'user_pref("extensions.zotero.recursiveCollections", true);' >>$prefs
+  echo 'user_pref("extensions.zotero.firstRun.skipFirefoxProfileAccessCheck", true);' >>$prefs
+  echo 'user_pref("extensions.zoteroWinWordIntegration.installed", false);' >>$prefs
 }
 
 # ---------------------------------------
