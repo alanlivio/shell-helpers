@@ -407,6 +407,41 @@ function hf_log_try() {
 }
 
 # ---------------------------------------
+# config
+# ---------------------------------------
+
+function hf_config() {
+  : ${1?"Usage: ${FUNCNAME[0]} backup|install|diff"}
+  hf_log_func
+  declare -a files_array
+  if test -n "$IS_LINUX"; then
+    files_array=($BKP_FILES $BKP_FILES_LINUX)
+  elif test -n "$IS_WINDOWS"; then
+    files_array=($BKP_FILES $BKP_FILES_WIN)
+  elif test -n "$IS_MAC"; then
+    files_array=($BKP_FILES $BKP_FILES_MAC)
+  fi
+  for ((i = 0; i < ${#files_array[@]}; i = i + 2)); do
+    hf_file_test_or_touch ${files_array[$i]}
+    hf_file_test_or_touch ${files_array[$((i + 1))]}
+    if test $1 = "backup"; then
+      cp ${files_array[$i]} ${files_array[$((i + 1))]}
+    elif test $1 = "install"; then
+      cp ${files_array[$((i + 1))]} ${files_array[$i]}
+    elif test $1 = "diff"; then
+      ret=$(diff ${files_array[$i]} ${files_array[$((i + 1))]})
+      if test $? = 1; then
+        hf_log_msg "diff ${files_array[$i]} ${files_array[$((i + 1))]}"
+        echo "$ret"
+      fi
+    fi
+  done
+}
+alias hf_config_install="hf_config install"
+alias hf_config_backup="hf_config backup"
+alias hf_config_diff="hf_config diff"
+
+# ---------------------------------------
 # file
 # ---------------------------------------
 
@@ -417,7 +452,10 @@ function hf_file_md5_compare() {
 
 function hf_file_test_or_touch() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
-  if ! test -f "$1"; then touch "$1"; fi
+  if ! test -f "$1"; then
+    mkdir -p $(dirname $1)
+    touch "$1"
+  fi
 }
 
 # ---------------------------------------
