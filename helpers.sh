@@ -974,42 +974,40 @@ function hf_git_formated_patch_apply() {
   git am <"$@"
 }
 
-# folder_tree
+# dev_folder
 
-function hf_git_folder_tree() {
+function hf_git_dev_folder_tree() {
   hf_log_func
-  DEV_FOLDER=$1
-  REPOS=$2
 
-  if test ! -d $DEV_FOLDER; then
-    hf_log_msg "creating $DEV_FOLDER"
-    mkdir $DEV_FOLDER
+  # create dev dir
+  if test ! -d $DEV_DIR; then
+    hf_log_msg "creating $DEV_DIR"
+    mkdir $DEV_DIR
   fi
   CWD=$(pwd)
-  cd $DEV_FOLDER
 
-  for i in "${!REPOS[@]}"; do
-    if [ "$i" == "0" ]; then continue; fi
-    hf_log_msg "repositories for $DEV_FOLDER/$i folder"
-    if ! test -d $DEV_FOLDER/$i; then
-      hf_log_msg_2nd "creating $DEV_FOLDER/$i folder"
-      mkdir $DEV_FOLDER/$i
+  declare -a repos_array
+  repos_array=($REPOS)
+  for ((i = 0; i < ${#repos_array[@]}; i = i + 2)); do
+    parent=$DEV_DIR/${repos_array[$i]}
+    repo=${repos_array[$((i + 1))]}
+    # create parent
+    if ! test -d $parent; then
+      mkdir -p $parent
     fi
-    cd $DEV_FOLDER/$i
-    for j in ${REPOS[$i]}; do
-      hf_log_msg_2nd "configuring $(basename $j)"
-      if ! test -d "$(basename -s .git $j)"; then
-        hf_log_msg_2nd "clone $j"
-        git clone $j
-      else
-        hf_log_msg_2nd "pull $j"
-        cd "$(basename -s .git $j)"
-        git pull
-        cd ..
-      fi
-    done
+    # clone/pull repo
+    repo_basename="$(basename -s .git $repo)"
+    dst_folder="$parent/$repo_basename"
+    if ! test -d "$dst_folder"; then
+      hf_log_msg_2nd "clone $dst_folder"
+      cd $parent
+      git clone $repo
+    else
+      cd $dst_folder
+      hf_log_msg_2nd "pull $dst_folder"
+      git pull
+    fi
   done
-
   cd $CWD
 }
 
