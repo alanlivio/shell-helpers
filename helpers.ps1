@@ -172,7 +172,7 @@ function hf_reg_drives() {
 # ---------------------------------------
 
 Function hf_system_restart {
-  hf_log "Restarting"
+  Invoke-Expression $hf_log_func
   Restart-Computer
 }
 
@@ -182,6 +182,14 @@ function hf_system_rename($new_name) {
 
 function hf_system_info() {
   cmd.exe /c systeminfo
+}
+
+function hf_system_admin_user_enable() {
+  net user administrator /active:yes
+}
+
+function hf_system_admin_user_disable() {
+  net user administrator /active:no
 }
 
 function hf_system_ver() {
