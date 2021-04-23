@@ -410,7 +410,7 @@ function hf_log_try() {
 # config
 # ---------------------------------------
 
-function hf_config() {
+function hf_config_func() {
   : ${1?"Usage: ${FUNCNAME[0]} backup|install|diff"}
   hf_log_func
   declare -a files_array
@@ -437,9 +437,9 @@ function hf_config() {
     fi
   done
 }
-alias hf_config_install="hf_config install"
-alias hf_config_backup="hf_config backup"
-alias hf_config_diff="hf_config diff"
+alias hf_config_install="hf_config_func install"
+alias hf_config_backup="hf_config_func backup"
+alias hf_config_diff="hf_config_func diff"
 
 # ---------------------------------------
 # file
