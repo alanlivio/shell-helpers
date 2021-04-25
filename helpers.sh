@@ -911,9 +911,16 @@ function hf_git_github_setup() {
   git push -u origin master
 }
 
-# rebase
+# upstream
 
-function hf_git_rebase_name_email() {
+function hf_git_upstream_pull() {
+  git fetch upstream
+  git rebase upstream/master
+}
+
+# edit
+
+function hf_git_edit_name_email() {
   git filter-branch -f --env-filter '
     NEW_NAME="$(git config user.name)"
     NEW_EMAIL="$(git config user.email)"
@@ -924,7 +931,7 @@ function hf_git_rebase_name_email() {
   ' --tag-name-filter cat -- --branches --tags
 }
 
-function hf_git_rebase_name_email_by_old_email() {
+function hf_git_edit_name_email_by_old_email() {
   : ${3?"Usage: ${FUNCNAME[0]} <old-name> <new-name> <new-email>"}
   git filter-branch --commit-filter '
     OLD_EMAIL="$1"
@@ -943,7 +950,7 @@ function hf_git_rebase_name_email_by_old_email() {
     ' --tag-name-filter cat -- --branches --tags
 }
 
-function hf_git_rebase_remove_file_from_tree() {
+function hf_git_edit_remove_file_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
@@ -954,6 +961,10 @@ function hf_git_ammend_all() {
 }
 
 # push
+
+function hf_git_push_force() {
+  git push --force
+}
 
 function hf_git_push_ammend_all() {
   git commit -a --amend --no-edit
@@ -967,9 +978,9 @@ function hf_git_push_commit_all() {
   git push
 }
 
-# pull
+# check
 
-function hf_git_pull_check_if_need() {
+function hf_git_check_if_need_pull() {
   [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref "@{u}" \
     | sed 's/\// /g') | cut -f1) ] && printf FALSE || printf TRUE
 }
