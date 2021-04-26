@@ -176,10 +176,6 @@ if test -n "$IS_WINDOWS"; then
     hf_apt_autoremove
     hf_apt_remove_packages $PKGS_REMOVE_APT
     hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
-    # python
-    hf_python_install_packages $PKGS_PYTHON
-    # vscode
-    hf_vscode_install_packages $PKGS_VSCODE
     # cleanup
     hf_home_clean_unused_dirs
   }
@@ -188,6 +184,10 @@ if test -n "$IS_WINDOWS"; then
     # msys
     hf_msys_upgrade
     hf_msys_install $PKGS_MSYS
+    # python
+    hf_python_install_packages $PKGS_PYTHON
+    # vscode
+    hf_vscode_install_packages $PKGS_VSCODE
     # cleanup
     hf_home_clean_unused_dirs
   }
