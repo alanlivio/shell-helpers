@@ -284,8 +284,6 @@ if test -n "$IS_WINDOWS_WSL"; then
   function codewin_folder() {
     cmd.exe /c 'C:\Program Files\Microsoft VS Code\bin\code' $(winpath $1)
   }
-elif test -n "$IS_WINDOWS_MSYS"; then
-  alias code="/mnt/c/Program\ Files/Microsoft\ VS\ Code/Code.exe"
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 fi
@@ -1289,62 +1287,86 @@ function hf_cpp_clean() {
 # ---------------------------------------
 # meson
 # ---------------------------------------
+MESON_DIR="_build"
 
 function hf_meson_configure() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  meson $DIR --buildtype=debug
+  meson $MESON_DIR --buildtype=debug
 }
 
 function hf_meson_build() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  ninja -C $DIR
+  ninja -C $MESON_DIR
 }
 
 function hf_meson_install() {
-  ninja -C $DIR install
+  ninja -C $MESON_DIR install
 }
 
 # ---------------------------------------
 # cmake
 # ---------------------------------------
 
+CMAKE_DIR="_build"
+CMAKE_DIR_FULLNAME="_build-Debug-$WSL_DISTRO_NAME$OS"
+CMAKE_ARGS_CONFIG="-DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "
+CMAKE_ARGS_DIR="--build $CMAKE_DIR"
+
 function hf_cmake_configure() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  cmake -B $DIR -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF
+  if test "$(basename $CWD)" == "$CMAKE_DIR"; then
+    cmake .. -G Ninja $CMAKE_ARGS_CONFIG
+  else
+    cmake -B $CMAKE_DIR -G Ninja $CMAKE_ARGS_CONFIG
+  fi
 }
 
-function hf_cmake_configure_shared() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  cmake -B $DIR -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF
+function hf_cmake_configure_fullname() {
+  cmake -B $CMAKE_DIR_FULLNAME -G Ninja $CMAKE_ARGS_CONFIG
 }
 
 function hf_cmake_build() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  cmake --build $DIR --target all
+  cmake --build . --target all
+}
+
+function hf_cmake_clean() {
+  cmake --build . --target clean
+}
+
+function hf_cmake_build_target() {
+  cmake --build . --target $1
 }
 
 function hf_cmake_check() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  cmake --build $DIR --target check
+  cmake --build . --target check
 }
 
 function hf_cmake_install() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
   if test -n "$IS_WINDOWS_MSYS"; then
-    PREFIX="/mingw64"
+    gsudo cmake --install .
   fi
-  if ! test -z $1; then PREFIX=$1; fi
-  sudo cmake --install $DIR --prefix $PREFIX
+  sudo cmake --install .
 }
 
 function hf_cmake_uninstall() {
-  DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
-  MANIFEST="$DIR/install_manifest.txt"
+  MANIFEST="install_manifest.txt"
   if test -f $MANIFEST; then
     cat $MANIFEST | while read -r i; do
       if test -f $i; then sudo rm -f $i; fi
     done
+  else
+    hf_log_error "$MANIFEST does not exist"
   fi
+}
+
+# ---------------------------------------
+# ctest
+# ---------------------------------------
+
+function hf_ctest_all() {
+  ctest
+}
+
+function hf_ctest_target() {
+  cmake --build . --target $1
+  ctest -R $1
 }
 
 # ---------------------------------------
