@@ -264,7 +264,7 @@ if test -n "$IS_LINUX"; then
   alias start='xdg-open'
 elif test -n "$IS_WINDOWS"; then
   # hide windows user files when ls home
-  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=AppData --hide=IntelGraphicsProfiles*'
+  alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=AppData --hide=IntelGraphicsProfiles* --hide=MicrosoftEdgeBackups'
   alias grep='grep --color=auto'
   alias start="cmd.exe /c start"
   alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
