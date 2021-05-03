@@ -742,7 +742,7 @@ function hf_git_gui() {
     hf_log_error "There is no git repo in current folder"
     return
   fi
-  $HF_GIT_GUI >>/dev/null &
+  $HF_GIT_GUI 2>>/dev/null &
 }
 
 # count
@@ -1307,13 +1307,31 @@ function hf_meson_install() {
 
 CMAKE_DIR="_build"
 CMAKE_DIR_FULLNAME="_build-Debug-$WSL_DISTRO_NAME$OS"
-CMAKE_CONFIG_ARGS="-DCMAKE_BUILD_TYPE=Debug -DCMAKE_RULE_MESSAGES=OFF -DBUILD_SHARED_LIBS=ON -DSTATIC_LINKING=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "
+CMAKE_CONFIG_ARGS="
+  -DCMAKE_RULE_MESSAGES=OFF 
+  -DCMAKE_TARGET_MESSAGES=OFF 
+  -DSTATIC_LINKING=OFF 
+  -DBUILD_SHARED_LIBS=ON 
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+  "
+
+function hf_cmake_show_configure_args() {
+  echo $CMAKE_CONFIG_ARGS
+}
 
 function hf_cmake_configure() {
   if test "$(basename $CWD)" == "$CMAKE_DIR"; then
-    cmake .. -G Ninja $CMAKE_CONFIG_ARGS
+    cmake .. -G Ninja $CMAKE_CONFIG_ARGS $@
   else
-    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS
+    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS $@
+  fi
+}
+
+function hf_cmake_configure_release() {
+  if test "$(basename $CWD)" == "$CMAKE_DIR"; then
+    cmake .. -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
+  else
+    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
   fi
 }
 
