@@ -26,6 +26,7 @@ alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
+MSYS_CMD="C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path -here"
 
 # ---------------------------------------
 # load helpers-cfg
@@ -481,6 +482,11 @@ function hf_profile_reload() {
 
 if test -n "$IS_WINDOWS_MSYS"; then
 
+  function hf_msys_admin_bash() {
+    hf_log_func
+    gsudo $MSYS_CMD
+  }
+  
   function hf_msys_search() {
     hf_log_func
     pacman -Ss --noconfirm "$@"
