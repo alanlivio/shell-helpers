@@ -359,15 +359,6 @@ function hf_optimize_services() {
   )
   hf_service_disable $services
 
-  # Disable unused windows packages
-  hf_log "Disable windows packages "
-  $pkgs = @(
-    '*QuickAssist*'
-    '*Hello-Face*'
-    '*phone*'
-  )
-  hf_winpackage_disable @pkgs
-
   # XPS Services
   hf_log "Disable XPS "
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
@@ -688,7 +679,7 @@ function hf_winpackage_list_enabled() {
   Get-WindowsPackage -Online | Where-Object PackageState -like Installed | ForEach-Object { $_.PackageName }
 }
 
-function hf_winpackage_disable() {
+function hf_winpackage_disable_like() {
   Invoke-Expression $hf_log_func" "$args
   foreach ($name in $args) {
     $pkgs = Get-WindowsPackage -Online | Where-Object PackageState -like Installed | Where-Object PackageName -like $name
