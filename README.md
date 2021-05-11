@@ -60,7 +60,7 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## Other helpers
 
-There are other herpers related with install software (hf_install_\*), git (hf_git_\*), pdf manipulation (hf_pdf_\*), files compression (hf_compress_\*), etc. To see them, take a look at [helpers.ps1](helpers.ps1) and [helpers.sh](helpers.sh).
+There are other herpers related with install software (`hf_install_`\*), git (`hf_git_`\*), pdf manipulation (`hf_pdf_`\*), files compression (`hf_compress_`\*), etc. To see them, take a look at [helpers.ps1](helpers.ps1) and [helpers.sh](helpers.sh).
 
 ## References
 
