@@ -405,6 +405,8 @@ function hf_log_try() {
   if test $? -ne 0; then hf_log_error "$1" && exit 1; fi
 }
 
+alias hf_log_not_implemented_return="hf_log_error 'Not implemented'; return;"
+
 # ---------------------------------------
 # config
 # ---------------------------------------
@@ -486,7 +488,7 @@ if test -n "$IS_WINDOWS_MSYS"; then
     hf_log_func
     gsudo $MSYS_CMD
   }
-  
+
   function hf_msys_search() {
     hf_log_func
     pacman -Ss --noconfirm "$@"
@@ -1561,15 +1563,24 @@ function hf_network_ports() {
 }
 
 function hf_network_ports_list() {
+  if test -n "$IS_WINDOWS"; then
+    hf_log_not_implemented_return
+  fi
   lsof -i
 }
 
 function hf_network_ports_list_one() {
+  if test -n "$IS_WINDOWS"; then
+    hf_log_not_implemented_return
+  fi
   : ${1?"Usage: ${FUNCNAME[0]} <port>"}
   sudo lsof -i:$1
 }
 
 function hf_network_ports_kill_using() {
+  if test -n "$IS_WINDOWS"; then
+    hf_log_not_implemented_return
+  fi
   : ${1?"Usage: ${FUNCNAME[0]} <port>"}
   pid=$(sudo lsof -t -i:$1)
   if test -n "$pid"; then
