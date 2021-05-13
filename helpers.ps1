@@ -623,6 +623,10 @@ function hf_network_list_wifi_SSIDs() {
   return (netsh wlan show net mode=bssid)
 }
 
+function hf_network_set_max_users_port() {
+  Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\" -Name "MaxUserPort " -Value 0xffffffff
+}
+
 # ---------------------------------------
 # link
 # ---------------------------------------
@@ -791,6 +795,7 @@ $CLEAN_SHORTCUTS = @(
   "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office Tools\"
   "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\\Chrome Apps\"
 )
+
 function hf_explorer_clean_unused_shortcuts() {
   Invoke-Expression $hf_log_func
   $CLEAN_SHORTCUTS | ForEach-Object { Remove-Item -Force -Recurse -ea 0 $_ }
@@ -1134,7 +1139,7 @@ function hf_install_msys() {
     # mount /Users to use in both windows and WSL
     msysbash -c 'echo C:/Users/ /Users ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
     # mount /Users/user-name
-    msysbash -c 'echo C:/Users/$env:UserName /home/$env:UserName ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
+    msysbash -c 'echo C:/Users/$env:UserName /home/$env:UserName ntfs binary,noacl,auto 1 1 >> /etc/fstab'
     # mount /mnt/c/ like in WSL
     msysbash -c ' echo /c /mnt/c none bind >> /etc/fstab'
     # set home as /mnt/c/Users/user-name
@@ -1166,7 +1171,6 @@ function hf_uninstall_onedrive() {
 
 function hf_setup_windows_sanity() {
   Invoke-Expression $hf_log_func
-  hf_home_hide_dotfiles
   hf_optimize_services
   hf_optimize_appx
   hf_optimize_explorer
@@ -1187,6 +1191,7 @@ function hf_setup_windows() {
   hf_system_disable_password_policy
   # cleanup unused
   hf_home_clean_unused_dirs
+  hf_home_hide_dotfiles
   hf_explorer_clean_unused_shortcuts
   # install choco, gsudo, winget
   hf_install_choco

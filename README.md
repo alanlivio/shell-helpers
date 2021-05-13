@@ -34,7 +34,7 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 1. bash `hf_setup_mac`: install essential software (brew, bash last version, python, pip, vscode)
 2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## setup Windows for common users
+## setup Windows for common (non-dev) users
 
 1. powershell `hf_setup_windows_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
 2. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
