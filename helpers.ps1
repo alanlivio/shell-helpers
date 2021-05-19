@@ -1005,6 +1005,7 @@ function hf_msys_add_to_path() {
   hf_env_path_add "$MSYS_HOME\mingw64\bin"
   hf_env_path_add "$MSYS_HOME\usr\bin"
 }
+
 # ---------------------------------------
 # install
 # ---------------------------------------
@@ -1134,7 +1135,7 @@ function hf_install_vscode() {
 function hf_install_msys() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path $MSYS_BASH)) {
-    choco install msys2 --params "/NoUpdate"
+    choco install msys2 --params "/NoUpdate" --force
     msysbash -c 'echo none / cygdrive binary,posix=0,noacl,user 0 0 > /etc/fstab'
     # mount /Users to use in both windows and WSL
     msysbash -c 'echo C:/Users/ /Users ntfs binary,noacl,auto 1 1 >>  /etc/fstab'
@@ -1143,9 +1144,9 @@ function hf_install_msys() {
     # mount /mnt/c/ like in WSL
     msysbash -c ' echo /c /mnt/c none bind >> /etc/fstab'
     # set home as /mnt/c/Users/user-name
-    msysbash -c "sed -i 's|db_home: cygwin desc|db_home: windows|g' /etc/nsswitch.conf"
+    # msysbash -c "sed -i 's|db_home: cygwin desc|db_home: windows|g' /etc/nsswitch.conf"
+    msysbash -c ' echo db_home: windows >> /etc/nsswitch.conf'
     hf_env_add "LANG" "en_US.UTF-8"
-    hf_msys_add_to_path
   }
 }
 

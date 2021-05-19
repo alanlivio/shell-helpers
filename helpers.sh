@@ -1301,20 +1301,28 @@ function hf_meson_configure() {
   meson $MESON_DIR --buildtype=debug
 }
 
+function hf_meson_cd_build() {
+  if test -d $MESON_DIR; then
+    cd $MESON_DIR
+  fi
+}
+
 function hf_meson_build() {
-  ninja -C $MESON_DIR
+  hf_meson_cd_build
+  ninja
 }
 
 function hf_meson_install() {
-  ninja -C $MESON_DIR install
+  hf_meson_cd_build
+  ninja install
 }
 
 # ---------------------------------------
 # cmake
 # ---------------------------------------
 
-CMAKE_DIR="_build"
-CMAKE_DIR_FULLNAME="_build-Debug-$WSL_DISTRO_NAME$OS"
+CMAKE_DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
+CMAKE_DIR_RELEASE="_build-Release-$WSL_DISTRO_NAME$OS"
 CMAKE_CONFIG_ARGS="
   -DCMAKE_RULE_MESSAGES=OFF 
   -DCMAKE_TARGET_MESSAGES=OFF 
@@ -1328,49 +1336,62 @@ function hf_cmake_show_configure_args() {
 }
 
 function hf_cmake_configure() {
-  if test "$(basename $CWD)" == "$CMAKE_DIR"; then
-    cmake .. -G Ninja $CMAKE_CONFIG_ARGS $@
-  else
-    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS $@
-  fi
+  cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
+}
+
+function hf_cmake_reconfigure() {
+  cmake .. -G Ninja $CMAKE_CONFIG_ARGS $@
 }
 
 function hf_cmake_configure_release() {
-  if test "$(basename $CWD)" == "$CMAKE_DIR"; then
-    cmake .. -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
-  else
-    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
+  cmake -B $CMAKE_DIR_RELEASE -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Release $@
+}
+
+function hf_cmake_cd_build() {
+  if test -d $CMAKE_DIR; then
+    cd $CMAKE_DIR
   fi
 }
 
-function hf_cmake_configure_os_named_dir() {
-  cmake -B $CMAKE_DIR_FULLNAME -G Ninja $CMAKE_CONFIG_ARGS
-}
-
 function hf_cmake_build() {
+  hf_cmake_cd_build
   cmake --build . --target all
 }
 
 function hf_cmake_clean() {
+  hf_cmake_cd_build
   cmake --build . --target clean
 }
 
+function hf_cmake_clean_retain_objs() {
+  hf_cmake_cd_build
+  if test -d CMakeFiles; then
+    bash -c "rm -r !(CMakeFiles)"
+  else
+    hf_log_error "there is no CMakeFiles folder"
+  fi
+}
+
 function hf_cmake_build_target() {
+  hf_cmake_cd_build
   cmake --build . --target $1
 }
 
 function hf_cmake_check() {
+  hf_cmake_cd_build
   cmake --build . --target check
 }
 
 function hf_cmake_install() {
+  hf_cmake_cd_build
   if test -n "$IS_WINDOWS_MSYS"; then
-    gsudo cmake --install .
+    gsudo cmake --install . "$@"
   fi
-  sudo cmake --install .
+  sudo cmake --install . "$@"
 }
 
 function hf_cmake_uninstall() {
+  hf_cmake_cd_build
   MANIFEST="install_manifest.txt"
   if test -f $MANIFEST; then
     cat $MANIFEST | while read -r i; do
@@ -2547,7 +2568,8 @@ function hf_apt_ppa_list() {
 function hf_apt_fixes() {
   hf_log_func
   sudo dpkg --configure -a
-  sudo apt install -f
+  sudo apt install -f --fix-broken
+  sudo apt-get update --fix-missing
   sudo apt dist-upgrade
 }
 
