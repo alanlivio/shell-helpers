@@ -785,15 +785,10 @@ function hf_explorer_restart() {
 }
 
 $CLEAN_SHORTCUTS = @(
-  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Chrome Apps\"
   "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Access.lnk"
   "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Chocolatey Cleaner.lnk"
-  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneNote.lnk"
-  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Outlook.lnk"
   "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Publisher.lnk"
-  "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Foxit Reader\Uninstall Foxit Reader.lnk"
   "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Office Tools\"
-  "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\\Chrome Apps\"
 )
 
 function hf_explorer_clean_unused_shortcuts() {
@@ -1002,8 +997,8 @@ function hf_winupdate_update() {
 # ---------------------------------------
 
 function hf_msys_add_to_path() {
-  hf_env_path_add "$MSYS_HOME\mingw64\bin"
   hf_env_path_add "$MSYS_HOME\usr\bin"
+  hf_env_path_add "$MSYS_HOME\mingw64\bin"
 }
 
 # ---------------------------------------
@@ -1147,6 +1142,7 @@ function hf_install_msys() {
     # msysbash -c "sed -i 's|db_home: cygwin desc|db_home: windows|g' /etc/nsswitch.conf"
     msysbash -c ' echo db_home: windows >> /etc/nsswitch.conf'
     hf_env_add "LANG" "en_US.UTF-8"
+    hf_msys_add_to_path
   }
 }
 

@@ -189,8 +189,6 @@ if test -n "$IS_WINDOWS"; then
     hf_python_install_packages $PKGS_PYTHON
     # vscode
     hf_vscode_install_packages $PKGS_VSCODE
-    # cleanup
-    hf_home_clean_unused_dirs
   }
 
   function hf_update_clean_windows() {
@@ -230,6 +228,7 @@ function hf_update_clean() {
   # mingw
   elif test -n "$IS_WINDOWS_MSYS"; then
     hf_update_clean_msys
+    hf_update_clean_windows
   # mac
   elif test -n "$IS_MAC"; then
     hf_update_clean_mac
@@ -1282,17 +1281,6 @@ function hf_latex_build_pdflatex() {
 }
 
 # ---------------------------------------
-# cpp
-# ---------------------------------------
-
-function hf_cpp_clean() {
-  # autootools
-  find . -name "Makefile" -o -name ".libs" -o -name "*.a" -o -name "*.o" -name "*.lo" -o -name "*.so" -o -name "*.Plo" -o -name "*.la" -o -name "autom4te.cache" -o -name "aclocal.m4" -o -name "libtool" -o -name "config.log" -o -name "configure" -o -name "config.status" | xargs -r rm -r
-  # cmake
-  find . -name "CMakeCache.txt" -o -name "CMakeFiles" -o -name "cmake-build-debug" -o -name "Testing" -o -name "cmake-install.cmake" -o -name "CPack*" -o -name "CTest*" -o -name "*.cbp" -o -name "_build" | xargs -r rm -r
-}
-
-# ---------------------------------------
 # meson
 # ---------------------------------------
 MESON_DIR="_build"
@@ -1326,64 +1314,47 @@ CMAKE_DIR_RELEASE="_build-Release-$WSL_DISTRO_NAME$OS"
 CMAKE_CONFIG_ARGS="
   -DCMAKE_RULE_MESSAGES=OFF 
   -DCMAKE_TARGET_MESSAGES=OFF 
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
   -DSTATIC_LINKING=OFF 
   -DBUILD_SHARED_LIBS=ON 
-  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
   "
-
-function hf_cmake_show_configure_args() {
+function hf_cmake_show_config_args() {
   echo $CMAKE_CONFIG_ARGS
 }
 
 function hf_cmake_configure() {
-  cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
-}
-
-function hf_cmake_reconfigure() {
-  cmake .. -G Ninja $CMAKE_CONFIG_ARGS $@
+  if test -f CMakeLists.txt; then
+    cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
+  else
+    cmake .. -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
+  fi
 }
 
 function hf_cmake_configure_release() {
-  cmake -B $CMAKE_DIR_RELEASE -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Release $@
-}
-
-function hf_cmake_cd_build() {
-  if test -d $CMAKE_DIR; then
-    cd $CMAKE_DIR
+  if test -f CMakeLists.txt; then
+    cmake -B $CMAKE_DIR_RELEASE -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Release $@
+  else
+    cmake .. -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Release $@
   fi
 }
 
 function hf_cmake_build() {
-  hf_cmake_cd_build
   cmake --build . --target all
 }
 
 function hf_cmake_clean() {
-  hf_cmake_cd_build
   cmake --build . --target clean
 }
 
-function hf_cmake_clean_retain_objs() {
-  hf_cmake_cd_build
-  if test -d CMakeFiles; then
-    bash -c "rm -r !(CMakeFiles)"
-  else
-    hf_log_error "there is no CMakeFiles folder"
-  fi
-}
-
 function hf_cmake_build_target() {
-  hf_cmake_cd_build
   cmake --build . --target $1
 }
 
 function hf_cmake_check() {
-  hf_cmake_cd_build
   cmake --build . --target check
 }
 
 function hf_cmake_install() {
-  hf_cmake_cd_build
   if test -n "$IS_WINDOWS_MSYS"; then
     gsudo cmake --install . "$@"
   fi
@@ -1391,7 +1362,6 @@ function hf_cmake_install() {
 }
 
 function hf_cmake_uninstall() {
-  hf_cmake_cd_build
   MANIFEST="install_manifest.txt"
   if test -f $MANIFEST; then
     cat $MANIFEST | while read -r i; do
@@ -1399,6 +1369,14 @@ function hf_cmake_uninstall() {
     done
   else
     hf_log_error "$MANIFEST does not exist"
+  fi
+}
+
+function hf_cmake_clean_retain_objs() {
+  if test -d CMakeFiles; then
+    find -maxdepth 1 -not -name CMakeFiles -delete
+  else
+    hf_log_error "there is no CMakeFiles folder"
   fi
 }
 
