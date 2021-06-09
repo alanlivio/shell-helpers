@@ -1356,9 +1356,9 @@ function hf_cmake_check() {
 
 function hf_cmake_install() {
   if test -n "$IS_WINDOWS_MSYS"; then
-    gsudo cmake --install . "$@"
+    cmake --install . --prefix /mingw64
   fi
-  sudo cmake --install . "$@"
+  sudo cmake --install .
 }
 
 function hf_cmake_uninstall() {
@@ -1374,7 +1374,7 @@ function hf_cmake_uninstall() {
 
 function hf_cmake_clean_retain_objs() {
   if test -d CMakeFiles; then
-    find -maxdepth 1 -not -name CMakeFiles -delete
+    find . -maxdepth 1 -not -name CMakeFiles -delete
   else
     hf_log_error "there is no CMakeFiles folder"
   fi
