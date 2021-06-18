@@ -179,6 +179,8 @@ if test -n "$IS_WINDOWS"; then
     hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
     # cleanup
     hf_home_clean_unused_dirs
+    hf_ps_call hf_home_hide_dotfiles
+    hf_ps_call hf_explorer_clean_unused_shortcuts
   }
 
   function hf_update_clean_msys() {
@@ -189,6 +191,10 @@ if test -n "$IS_WINDOWS"; then
     hf_python_install_packages $PKGS_PYTHON
     # vscode
     hf_vscode_install_packages $PKGS_VSCODE
+    # cleanup
+    hf_home_clean_unused_dirs
+    hf_ps_call hf_home_hide_dotfiles
+    hf_ps_call hf_explorer_clean_unused_shortcuts
   }
 
   function hf_update_clean_windows() {
@@ -200,7 +206,7 @@ if test -n "$IS_WINDOWS"; then
     hf_ps_call_admin "hf_choco_upgrade"
     hf_ps_call_admin "hf_choco_clean"
     # cleanup
-    hf_ps_call hf_home_clean_unused_dirs
+    hf_home_clean_unused_dirs
     hf_ps_call hf_home_hide_dotfiles
     hf_ps_call hf_explorer_clean_unused_shortcuts
   }
@@ -2826,6 +2832,7 @@ HF_CLEAN_DIRS=(
   "Movies"
   "Public"
   "Templates"
+  "Tracing"
   "Videos"
 )
 
