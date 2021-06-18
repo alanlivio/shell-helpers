@@ -1667,7 +1667,11 @@ function hf_user_permissions_opt() {
   newgrp root
 }
 
-function hf_user_permissions_ssh() {
+# ---------------------------------------
+# ssh
+# ---------------------------------------
+
+function hf_ssh_fix_permissions() {
   sudo chmod 700 $HOME/.ssh/
   if test -f $HOME/.ssh/id_rsa; then
     sudo chmod 600 $HOME/.ssh/id_rsa
@@ -1675,9 +1679,14 @@ function hf_user_permissions_ssh() {
   fi
 }
 
-function hf_user_send_ssh_keys() {
-  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
-  ssh "$1" 'cat - >> $HOME/.ssh/authorized_keys' <$HOME/.ssh/id_rsa.pubssh-rsa
+function hf_ssh_send_keys_to_server() {
+  : ${1?"Usage: ${FUNCNAME[0]} <user@server>"}
+   ssh-copy-id -i ~/.ssh/id_rsa.pub $1
+}
+
+function hf_ssh_send_keys_to_server_old() {
+  : ${1?"Usage: ${FUNCNAME[0]} <user@server>"}
+  ssh "$1" sh -c 'cat - >> $HOME/.ssh/authorized_keys' <$HOME/.ssh/id_rsa.pub
 }
 
 # ---------------------------------------
