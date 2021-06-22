@@ -341,6 +341,15 @@ if test -n "$IS_WINDOWS_WSL"; then
     cmd.exe /c "taskkill /IM pulseaudio.exe /F"
     cmd.exe /c "taskkill /IM vcxsrv.exe /F"
   }
+
+  function hf_wsl_fix_snap_lxc() {
+    # https://www.youtube.com/watch?v=SLDrvGUksv0
+    sudo apt install lxd snap
+    sudo apt-get install -yqq daemonize dbus-user-session fontconfig
+    sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
+    sudo nsenter -t $(pidof systemd) -a su - $LOGNAME
+    sudo snap install lxd
+  }
 fi
 
 # ---------------------------------------
@@ -1324,8 +1333,12 @@ CMAKE_CONFIG_ARGS="
   -DSTATIC_LINKING=OFF 
   -DBUILD_SHARED_LIBS=ON 
   "
-function hf_cmake_show_config_args() {
+function hf_cmake_args_default() {
   echo $CMAKE_CONFIG_ARGS
+}
+
+function hf_cmake_args_install_usr() {
+  echo "-DCMAKE_INSTALL_PREFIX=/usr"
 }
 
 function hf_cmake_configure() {
@@ -1655,7 +1668,7 @@ function hf_user_permissions_sudo() {
 }
 
 function hf_user_passwd_disable_len_restriction() {
-  sudo sed 's/sha512/minlen=1 sha512/g' /etc/pam.d/common-password
+  sudo sed -i 's/sha512/minlen=1 sha512/g' /etc/pam.d/common-password
 }
 
 function hf_user_permissions_opt() {
@@ -1681,7 +1694,7 @@ function hf_ssh_fix_permissions() {
 
 function hf_ssh_send_keys_to_server() {
   : ${1?"Usage: ${FUNCNAME[0]} <user@server>"}
-   ssh-copy-id -i ~/.ssh/id_rsa.pub $1
+  ssh-copy-id -i ~/.ssh/id_rsa.pub $1
 }
 
 function hf_ssh_send_keys_to_server_old() {
