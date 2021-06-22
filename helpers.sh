@@ -240,6 +240,7 @@ function hf_update_clean() {
     hf_update_clean_mac
   fi
 }
+
 # ---------------------------------------
 # alias path
 # ---------------------------------------
@@ -492,11 +493,11 @@ function hf_profile_reload() {
   fi
 }
 
-# ---------------------------------------
-# msys
-# ---------------------------------------
-
 if test -n "$IS_WINDOWS_MSYS"; then
+
+  # ---------------------------------------
+  # msys
+  # ---------------------------------------
 
   function hf_msys_admin_bash() {
     hf_log_func
@@ -553,13 +554,24 @@ if test -n "$IS_WINDOWS_MSYS"; then
     echo -e "/c /mnt/c none bind" | tee -a /etc/fstab
   }
 
+  # ---------------------------------------
+  # install_msys
+  # ---------------------------------------
+
+  function hf_install_msys_latexindent() {
+    hf_log_func
+    if ! type latexindent.exe &>/dev/null; then
+      wget https://github.com/cmhughes/latexindent.pl/releases/download/V3.10/latexindent.exe -P /mnt/c/tools/
+      wget https://raw.githubusercontent.com/cmhughes/latexindent.pl/main/defaultSettings.yaml -P /mnt/c/tools/
+    fi
+  }
 fi
 
-# ---------------------------------------
-# macos-only functions
-# ---------------------------------------
-
 if test -n "$IS_MAC"; then
+  # ---------------------------------------
+  # macos-only functions
+  # ---------------------------------------
+
   function hf_mac_install_brew() {
     hf_log_func
     sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -573,42 +585,43 @@ if test -n "$IS_MAC"; then
     sudo brew update
     sudo brew upgrade
   }
+
+  # ---------------------------------------
+  # ubuntu-on-mac
+  # ---------------------------------------
+
+  function hf_mac_ubuntu_keyboard_fixes() {
+    hf_log_func
+
+    # enable fn keys
+    echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
+
+    # configure layout
+    # alternative: setxkbmap -layout us -variant intl
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
+
+    grep -q cedilla /etc/environment
+    if test $? != 0; then
+      # fix cedilla
+      echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+      echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
+      # enable fnmode
+      echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
+      sudo update-setupramfs -u
+    fi
+  }
+
+  function hf_mac_ubuntu_enable_wifi() {
+    hf_log_func
+    dpkg --status bcmwl-kernel-source &>/dev/null
+    if test $? != 0; then
+      sudo apt install -y bcmwl-kernel-source
+      sudo modprobe -r b43 ssb wl brcmfmac brcmsmac bcma
+      sudo modprobe wl
+    fi
+  }
+
 fi
-
-# ---------------------------------------
-# ubuntu-on-mac
-# ---------------------------------------
-
-function hf_mac_ubuntu_keyboard_fixes() {
-  hf_log_func
-
-  # enable fn keys
-  echo -e 2 | sudo tee -a /sys/module/hid_apple/parameters/fnmode
-
-  # configure layout
-  # alternative: setxkbmap -layout us -variant intl
-  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+intl')]"
-
-  grep -q cedilla /etc/environment
-  if test $? != 0; then
-    # fix cedilla
-    echo -e "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-    echo -e "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment
-    # enable fnmode
-    echo -e "options hid_apple fnmode=2" | sudo tee -a /etc/modprobe.d/hid_apple.conf
-    sudo update-setupramfs -u
-  fi
-}
-
-function hf_mac_ubuntu_enable_wifi() {
-  hf_log_func
-  dpkg --status bcmwl-kernel-source &>/dev/null
-  if test $? != 0; then
-    sudo apt install -y bcmwl-kernel-source
-    sudo modprobe -r b43 ssb wl brcmfmac brcmsmac bcma
-    sudo modprobe wl
-  fi
-}
 
 # ---------------------------------------
 # audio
