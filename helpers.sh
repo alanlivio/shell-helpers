@@ -1286,6 +1286,20 @@ function hf_folder_files_sizes() {
 # latex
 # ---------------------------------------
 
+if test -n "$IS_WINDOWS"; then
+  function hf_install_latex_win() {
+    gsudo choco install texlive
+  }
+
+  function hf_latex_win_texlive_list_installed() {
+    tlmgr.bat list --only-installed
+  }
+
+  function hf_latex_win_texlive_gui_tlmgr() {
+    tlshell.exe
+  }
+fi
+
 function hf_latex_clean() {
   rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.lof ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls ./*.bcf
 }
@@ -1350,10 +1364,6 @@ function hf_cmake_args_default() {
   echo $CMAKE_CONFIG_ARGS
 }
 
-function hf_cmake_args_install_usr() {
-  echo "-DCMAKE_INSTALL_PREFIX=/usr"
-}
-
 function hf_cmake_configure() {
   if test -f CMakeLists.txt; then
     cmake -B $CMAKE_DIR -G Ninja $CMAKE_CONFIG_ARGS -DCMAKE_BUILD_TYPE=Debug $@
@@ -1389,6 +1399,8 @@ function hf_cmake_check() {
 function hf_cmake_install() {
   if test -n "$IS_WINDOWS_MSYS"; then
     cmake --install . --prefix /mingw64
+  elif test -n "$IS_LINUX"; then
+    sudo cmake --install . --prefix /usr
   fi
   sudo cmake --install .
 }
