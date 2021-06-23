@@ -2875,22 +2875,22 @@ function hf_x11_properties_of_window() {
 # ---------------------------------------
 
 HF_CLEAN_DIRS=(
-  "Images"
-  "Movies"
-  "Public"
-  "Templates"
-  "Tracing"
-  "Videos"
+  'Images'
+  'Movies'
+  'Public'
+  'Templates'
+  'Tracing'
+  'Videos'
 )
 
 if test -n "$IS_LINUX"; then
   HF_CLEAN_DIRS+=(
-    "Documents" # sensible data in Windows
-    "Pictures"
-    ".android"
-    ".gimp-*"
-    ".gradle"
-    ".java"
+    'Documents' # sensible data in Windows
+    'Pictures'
+    '.android'
+    '.gimp-*'
+    '.gradle'
+    '.java'
   )
 fi
 
@@ -2898,12 +2898,12 @@ if test -n "$IS_WINDOWS"; then
   HF_CLEAN_DIRS+=(
     'Application Data'
     'Cookies'
+    'Pictures'
     'Local Settings'
     'Start Menu'
     '3D Objects'
     'Contacts'
     'Cookies'
-    'Favorites'
     'Favorites'
     'Intel'
     'IntelGraphicsProfiles'
@@ -2921,7 +2921,6 @@ fi
 
 function hf_home_clean_unused_dirs() {
   hf_log_func
-
   for i in "${HF_CLEAN_DIRS[@]}"; do
     if test -d "$HOME/$i"; then
       if test -n "$IS_MAC"; then
