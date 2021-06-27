@@ -1873,35 +1873,34 @@ function hf_ubuntu_bluetooth_reinstall() {
 # service
 # ---------------------------------------
 
-function hf_service_status_all() {
-  sudo service --status-all
+function hf_services_initd_list() {
+  service --status-all
 }
 
-function hf_service_rcd_enable() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}$1
+function hf_services_initd_enable() {
+  : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
   sudo update-rc.d $1 enable
 }
 
-function hf_service_rcd_disable() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}$1
+function hf_services_initd_disable() {
+  : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
   sudo service $1 stop
   sudo update-rc.d -f $1 disable
 }
 
-function hf_service_add_script() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
-  echo "creating /etc/setup.d/$1"
-  sudo touch /etc/setup.d/$1
-  sudo chmod 755 /etc/setup.d/$1
-  sudo update-rc.d $1 defaults
+function hf_services_systemd_list() {
+  systemctl --type=service
 }
 
-function hf_service_create_startup_script() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_name>"}
-  echo "creating /etc/setup.d/$1"
-  echo -e "[Unit]\\nDescription={service name}\\nAfter={service to start after, eg. xdk-daemon.service}\\n\\n[Service]\\nExecStart={/path/to/yourscript.sh}\\nRestart=always\\nRestartSec=10s\\nEnvironment=NODE_ENV=production\\n\\n[Install]\\nWantedBy=multi-user.target" | sudo tee /lib/systemd/system/$1
+function hf_services_systemd_status_service() {
+  : ${1?"Usage: ${FUNCNAME[0]} <service_name>"}
+  systemctl status $1
+}
+
+function hf_services_systemd_add_script() {
+  : ${1?"Usage: ${FUNCNAME[0]} <service_file>"}
   systemctl daemon-reload
-  systemctl enable yourservice.service
+  systemctl enable $1
 }
 
 # ---------------------------------------
