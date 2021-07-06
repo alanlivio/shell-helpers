@@ -1289,8 +1289,20 @@ if test -n "$IS_WINDOWS"; then
     gsudo choco install texlive
   }
 
+  function hf_latex_win_texlive_install() {
+    gsudo tlmgr.bat install $@
+  }
+
+  function hf_latex_win_texlive_search_file() {
+    gsudo tlmgr.bat search -file $1
+  }
+  
   function hf_latex_win_texlive_list_installed() {
     tlmgr.bat list --only-installed
+  }
+
+  function hf_latex_win_texlive_save_list_installed() {
+    tlmgr.bat list --only-installed > $BKP_DOTFILES_DIR/texlive_installed_packages.txt
   }
 
   function hf_latex_win_texlive_gui_tlmgr() {
@@ -2814,6 +2826,7 @@ function hf_zotero_sanity() {
   echo 'user_pref("extensions.zotero.automaticSnapshots", false);' >>$prefs
   echo 'user_pref("extensions.zotero.recursiveCollections", true);' >>$prefs
   echo 'user_pref("extensions.zotero.firstRun.skipFirefoxProfileAccessCheck", true);' >>$prefs
+  echo 'user_pref("extensions.zotero.attachmentRenameFormatString", "{%t{80}");' >>$prefs
   echo 'user_pref("extensions.zoteroWinWordIntegration.installed", false);' >>$prefs
 }
 
