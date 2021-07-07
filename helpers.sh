@@ -74,7 +74,7 @@ if test $IS_LINUX; then
   function hf_setup_gnome() {
     hf_log_func
     # sudo nopasswd
-    hf_user_permissions_sudo
+    hf_user_permissions_sudo_nopasswd
     # shell configure
     hf_gnome_dark
     hf_gnome_sanity
@@ -98,7 +98,7 @@ fi
 if test -n "$IS_WINDOWS"; then
   function hf_setup_wsl() {
     # sudo nopasswd
-    hf_user_permissions_sudo
+    hf_user_permissions_sudo_nopasswd
     # vim/git/essentials
     PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
     # python
@@ -109,20 +109,24 @@ if test -n "$IS_WINDOWS"; then
   }
 
   function hf_setup_msys() {
-    hf_user_permissions_sudo
+    hf_user_permissions_sudo_nopasswd
     # update runtime and bash
     PKGS="pacman pacman-mirrors msys2-runtime bash "
     # essentials
-    PKGS+="vim git diffutils curl wget zip patch "
-    # python
-    PKGS+="mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip "
+    PKGS+="vim diffutils curl wget zip patch "
     hf_msys_install $PKGS
-    # python3 is already default in msys
+    WINGET_PKGS="git "
+    # python
+    WINGET_PKGS+="python "
+    hf_ps_call_admin "hf_winget_install $WINGET_PKGS"
   }
 
   function hf_setup_windows() {
     # windows
     hf_ps_call_admin "hf_setup_windows "
+    # python
+    WINGET_PKGS="python "
+    hf_ps_call_admin "hf_winget_install $WINGET_PKGS"
   }
 
 fi
@@ -130,7 +134,7 @@ fi
 if test -n "$IS_MAC"; then
   function hf_setup_mac() {
     hf_log_func
-    hf_user_permissions_sudo
+    hf_user_permissions_sudo_nopasswd
     hf_mac_install_brew
     hf_brew_upgrade
     # essentials
@@ -1296,13 +1300,13 @@ if test -n "$IS_WINDOWS"; then
   function hf_latex_win_texlive_search_file() {
     gsudo tlmgr.bat search -file $1
   }
-  
+
   function hf_latex_win_texlive_list_installed() {
     tlmgr.bat list --only-installed
   }
 
   function hf_latex_win_texlive_save_list_installed() {
-    tlmgr.bat list --only-installed > $BKP_DOTFILES_DIR/texlive_installed_packages.txt
+    tlmgr.bat list --only-installed >$BKP_DOTFILES_DIR/texlive_installed_packages.txt
   }
 
   function hf_latex_win_texlive_gui_tlmgr() {
