@@ -20,9 +20,7 @@ if (Test-Path $SCRIPT_CFG) {
 # alias
 # ---------------------------------------
 Set-Alias -Name grep -Value Select-String
-Set-Alias -Name msysbash -Value C:\tools\msys64\usr\bin\bash.exe # TODO: replace by $MSYS_BASH 
-Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
-Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
+Set-Alias -Name msysbash -Value C:\msys64\usr\bin\bash.exe # TODO: replace by $MSYS_BASH 
 Set-Alias -Name env -Value hf_env
 Set-Alias -Name path -Value hf_env_path_show
 Set-Alias -Name trash -Value hf_explorer_open_trash
@@ -1145,7 +1143,7 @@ function hf_install_vscode() {
 function hf_install_msys() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path $MSYS_BASH)) {
-    choco install msys2 --params "/NoUpdate" --force
+    hf_winget_install msys2
     hf_msys_sanity
   }
 }
