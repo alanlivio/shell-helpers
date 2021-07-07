@@ -24,7 +24,7 @@ Set-Alias -Name msysbash -Value C:\tools\msys64\usr\bin\bash.exe # TODO: replace
 Set-Alias -Name choco -Value C:\ProgramData\chocolatey\bin\choco.exe
 Set-Alias -Name gsudo -Value C:\ProgramData\chocolatey\lib\gsudo\bin\gsudo.exe
 Set-Alias -Name env -Value hf_env
-Set-Alias -Name path -Value hf_path_print
+Set-Alias -Name path -Value hf_env_path_show
 Set-Alias -Name trash -Value hf_explorer_open_trash
 
 # ---------------------------------------
@@ -239,7 +239,7 @@ function hf_env_path_add($addPath) {
   }
 }
 
-function hf_env_path_print($addPath) {
+function hf_env_path_show($addPath) {
   $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
   Write-Output $path
 }
