@@ -9,7 +9,7 @@ $SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
 $DOTFILES_WT = "$SCRIPT_DIR\dotfiles\windowsterminal"
 $DOTFILES_VSCODE = "$SCRIPT_DIR\dotfiles\vscode"
-$MSYS_HOME = "$env:ChocolateyToolsLocation\msys64"
+$MSYS_HOME = "C:\msys64"
 $MSYS_BASH = "$MSYS_HOME\usr\bin\bash.exe"
 
 if (Test-Path $SCRIPT_CFG) {
@@ -91,14 +91,6 @@ function hf_ps_essentials() {
     Install-Module PSWindowsUpdate -Force -WarningAction Ignore
     Write-Output "Import-Module PSWindowsUpdate" >> $Profile.AllUsersAllHosts
   }
-  # if (!(Get-Module Get-ChildItemColor)) {
-  #   hf_choco_install get-childitemcolor
-  #   Import-Module Get-ChildItemColor -WarningAction Ignore
-  #   Write-Output "Import-Module Get-ChildItemColor" >> $Profile.AllUsersAllHosts
-  # }
-  # https://github.com/joonro/Get-ChildItemColor/issues/36
-  # possible fix
-  # $Global:GetChildItemColorVerticalSpace = 0
 }
 
 function hf_ps_core_enable_appx() {
@@ -798,6 +790,17 @@ function hf_explorer_clean_unused_shortcuts() {
 # winget
 # ---------------------------------------
 
+function hf_winget_list_installed() {
+  winget list
+}
+function hf_winget_settings() {
+  winget settings
+}
+
+function hf_winget_upgrade() {
+  winget upgrade --all
+}
+
 function hf_winget_install() {
   Invoke-Expression $hf_log_func
   foreach ($name in $args) {
@@ -1051,8 +1054,8 @@ function hf_install_choco() {
 function hf_install_gsudo() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'gsudo.exe' -ea 0)) {
-    hf_choco_install gsudo
-    hf_env_path_add 'C:\ProgramData\chocolatey\lib\gsudo\bin'
+    hf_winget_install gsudo
+    hf_env_path_add 'C:\Program Files (x86)\gsudo'
   }
 }
 
@@ -1065,7 +1068,7 @@ function hf_install_winget() {
 
 function hf_install_battle_steam() {
   Invoke-Expression $hf_log_func
-  hf_choco_install battle.net steam
+  hf_winget_install battle.net steam
 }
 
 function hf_install_onedrive() {
@@ -1180,7 +1183,7 @@ function hf_setup_windows_sanity() {
 function hf_setup_windows_common_user() {
   Invoke-Expression $hf_log_func
   hf_setup_windows_sanity
-  hf_choco_install googlechrome vlc 7zip ccleaner foxitreader
+  hf_winget_install googlechrome vlc 7zip ccleaner foxitreader
 }
 
 function hf_setup_windows() {
