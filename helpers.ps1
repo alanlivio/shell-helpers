@@ -1132,14 +1132,14 @@ function hf_install_wsl_ubuntu() {
 function hf_install_git() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'git.exe' -ea 0)) {
-    choco install git --params "/NoShellIntegration /NoGuiHereIntegration /NoShellHereIntegration"
+    winget install git
   }
 }
 
 function hf_install_vscode() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'code.exe' -ea 0)) {
-    choco install vscode --params "/NoDesktopIcon /NoQuicklaunchIcon /NoContextMenuFiles /NoContextMenuFolders "
+    winget install vscode
   }
 }
 
