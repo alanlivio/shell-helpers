@@ -275,8 +275,8 @@ elif test -n "$IS_WINDOWS"; then
   alias grep='grep --color=auto'
   alias start="cmd.exe /c start"
   alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
-  alias gsudo='$(unixpath "c:\\ProgramData\\chocolatey\\lib\gsudo\\bin\\gsudo.exe")'
-  alias choco='$(unixpath "c:\\ProgramData\\chocolatey\\bin\\choco.exe")'
+  alias gsudo='/mnt/c/Program\ Files\ \(x86\)/gsudo/gsudo.exe'
+  alias choco='/mnt/c/ProgramData/chocolatey/bin/choco.exe'
 fi
 
 # ---------------------------------------
@@ -1692,12 +1692,7 @@ function hf_user_logout() {
   sudo skill -KILL -u $1
 }
 
-function hf_user_enable_sudo() {
-  : ${1?"Usage: ${FUNCNAME[0]} <user_name>"}
-  sudo usermod -aG sudo "$1"
-}
-
-function hf_user_permissions_sudo() {
+function hf_user_permissions_sudo_nopasswd() {
   if ! test -d /etc/sudoers.d/; then mkdir /etc/sudoers.d/; fi
   SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/sudoers-user"
 }
