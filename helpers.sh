@@ -583,6 +583,13 @@ if test -n "$IS_WINDOWS_MSYS"; then
     winget upgrade --all
   }
 
+  # ---------------------------------------
+  # wt
+  # ---------------------------------------
+  function hf_wt_open_settings() {
+    code $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
+  }
+
 fi
 
 if test -n "$IS_MAC"; then

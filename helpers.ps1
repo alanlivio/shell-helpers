@@ -7,7 +7,7 @@
 $SCRIPT_DIR = $PSScriptRoot
 $SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
 $SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
-$DOTFILES_WT = "$SCRIPT_DIR\dotfiles\windowsterminal"
+$DOTFILES_WT = "$SCRIPT_DIR\dotfiles\wt"
 $DOTFILES_VSCODE = "$SCRIPT_DIR\dotfiles\vscode"
 $MSYS_HOME = "C:\msys64"
 $MSYS_BASH = "$MSYS_HOME\usr\bin\bash.exe"
@@ -952,11 +952,15 @@ function hf_keyboard_disable_shortcut_altgr() {
 }
 
 # ---------------------------------------
-# windowsterminal
+# wt
 # ---------------------------------------
 
-function hf_windowsterminal_install_stgs($path) {
+function hf_wt_install_settings($path) {
   Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+}
+
+function hf_wt_open_settings($path) {
+  Start-Process $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 # ---------------------------------------
@@ -1085,7 +1089,7 @@ function hf_install_wt() {
   if (!(Get-Command 'wt.exe' -ea 0)) {
     winget install Microsoft.WindowsTerminal
     if (Test-Path $DOTFILES_WT) {
-      hf_windowsterminal_install_stgs $DOTFILES_WT\settings.json
+      hf_wt_install_settings $DOTFILES_WT\settings.json
     }
   }
 }
