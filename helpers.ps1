@@ -606,6 +606,15 @@ function hf_optimize_appx() {
 }
 
 # ---------------------------------------
+# office
+# ---------------------------------------
+
+function hf_office_sanity(){
+  # disable hyperlink warning
+  Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Security" -Name "DisableHyperlinkWarning" -Value 1
+}
+
+# ---------------------------------------
 # network
 # ---------------------------------------
 
