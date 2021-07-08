@@ -563,6 +563,26 @@ if test -n "$IS_WINDOWS_MSYS"; then
       wget https://raw.githubusercontent.com/cmhughes/latexindent.pl/main/defaultSettings.yaml -P /mnt/c/tools/
     fi
   }
+
+  # ---------------------------------------
+  # winget
+  # ---------------------------------------
+
+  function hf_winget_list_not_ms() {
+    winget list | grep -v -e Driver -e Microsoft
+  }
+
+  function hf_winget_list_installed() {
+    winget list
+  }
+  function hf_winget_settings() {
+    winget settings
+  }
+
+  function hf_winget_upgrade() {
+    winget upgrade --all
+  }
+
 fi
 
 if test -n "$IS_MAC"; then
