@@ -1330,7 +1330,7 @@ function hf_latex_gitignore() {
 }
 
 function hf_latex_build_pdflatex() {
-  # : ${1?"Usage: ${FUNCNAME[0]} <main-tex-file>"}
+  : ${1?"Usage: ${FUNCNAME[0]} <main-tex-file>"}
   pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1 \
     && find . -maxdepth 1 -name "*.aux" -exec echo -e "\n-- bibtex" {} \; -exec bibtex {} \; \
     && pdflatex --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error $1
@@ -1438,15 +1438,11 @@ function hf_cmake_clean_retain_objs() {
   fi
 }
 
-# ---------------------------------------
-# ctest
-# ---------------------------------------
-
-function hf_ctest_all() {
+function hf_cmake_test_all() {
   ctest
 }
 
-function hf_ctest_target() {
+function hf_cmake_test_target() {
   cmake --build . --target $1
   ctest -R $1
 }
@@ -2829,6 +2825,15 @@ function hf_zotero_sanity() {
   echo 'user_pref("extensions.zoteroWinWordIntegration.installed", false);' >>$prefs
 }
 
+function hf_zotero_onedrive() {
+  if test -n "$IS_LINUX"; then
+    prefs="$HOME/.zotero/zotero/*.default/prefs.js"
+  elif test -n "$IS_WINDOWS"; then
+    prefs="$HOME/AppData/Roaming/Zotero/Zotero/Profiles/*.default/prefs.js"
+  fi
+  echo 'user_pref("extensions.zotero.dataDir", "C:\\Users\\alan\\OneDrive\\Zotero");' >>$prefs
+}
+
 # ---------------------------------------
 # list
 # ---------------------------------------
@@ -2864,16 +2869,12 @@ HF_CLEAN_DIRS=(
   'Templates'
   'Tracing'
   'Videos'
+  'Pictures'
 )
 
 if test -n "$IS_LINUX"; then
   HF_CLEAN_DIRS+=(
     'Documents' # sensible data in Windows
-    'Pictures'
-    '.android'
-    '.gimp-*'
-    '.gradle'
-    '.java'
   )
 fi
 
@@ -2881,12 +2882,11 @@ if test -n "$IS_WINDOWS"; then
   HF_CLEAN_DIRS+=(
     'Application Data'
     'Cookies'
-    'Pictures'
+    'OpenVPN'
     'Local Settings'
     'Start Menu'
     '3D Objects'
     'Contacts'
-    'Cookies'
     'Favorites'
     'Intel'
     'IntelGraphicsProfiles'
