@@ -58,7 +58,7 @@ function hf_profile_load($path) {
 # ---------------------------------------
 # if $HELPERS_CFG not defined use from same dir
 if (-not ($HELPERS_INSTALL_OPT)) {
-  $HELPERS_INSTALL_OPT = "$env:userprofile\opt\win"
+  $HELPERS_INSTALL_OPT = "${env:userprofile}\opt\win"
   if ( -not (Test-Path $HELPERS_INSTALL_OPT)) {
     New-Item -ItemType Directory -Path $HELPERS_INSTALL_OPT
   }
@@ -70,27 +70,6 @@ if (-not ($HELPERS_INSTALL_OPT)) {
 
 function hf_ps_ver() {
   Write-Output "$($PSVersionTable.PSEdition.ToString()) $($PSVersionTable.PSVersion.ToString())"
-}
-
-function hf_ps_essentials() {
-  Invoke-Expression $hf_log_func
-  hf_profile_install
-  if (!(Get-Module PsReadLine)) {
-    Install-Module PsReadLine -AcceptLicense -WarningAction Ignore
-  }
-  if (!(Get-Module PowerShellGet)) {
-    Set-PSRepository 'PSGallery' -InstallationPolicy Trusted
-    Install-Module -Name PowerShellGet -Force
-    Write-Output "Import-Module PowerShellGet" >> $Profile.AllUsersAllHosts
-  }
-  if (!(Get-Module PackageManagement)) {
-    Install-Module -Name PackageManagement -Force -WarningAction Ignore
-    Write-Output "Import-Module PackageManagement" >> $Profile.AllUsersAllHosts
-  }
-  if (!(Get-Module -Name PSWindowsUpdate)) {
-    Install-Module PSWindowsUpdate -Force -WarningAction Ignore
-    Write-Output "Import-Module PSWindowsUpdate" >> $Profile.AllUsersAllHosts
-  }
 }
 
 function hf_ps_core_enable_appx() {
@@ -738,9 +717,19 @@ function hf_appx_install_essentials() {
 # home
 # ---------------------------------------
 
+
+function hf_explorer_restore_desktop() {
+  if (Test-Path "${env:userprofile}\Desktop"){
+    mkdir "${env:userprofile}\Desktop"
+  }
+  reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Desktop" /t REG_SZ /d "C:\Users\${env:username}\Desktop" /f
+  reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v "Desktop" /t REG_EXPAND_SZ /d "${env:userprofile}\Desktop" /f
+  attrib +r -s -h "${env:userprofile}\Desktop"
+}
+
 function hf_home_hide_dotfiles() {
   Invoke-Expression $hf_log_func
-  Get-ChildItem "$env:userprofile\.*" | ForEach-Object { $_.Attributes += "Hidden" }
+  Get-ChildItem "${env:userprofile}\.*" | ForEach-Object { $_.Attributes += "Hidden" }
 }
 
 $HF_CLEAN_DIRS = @(
@@ -751,7 +740,6 @@ $HF_CLEAN_DIRS = @(
   '3D Objects'
   'Contacts'
   'Cookies'
-  'Favorites'
   'Favorites'
   'Intel'
   'IntelGraphicsProfiles'
@@ -965,11 +953,11 @@ function hf_keyboard_disable_shortcut_altgr() {
 # ---------------------------------------
 
 function hf_wt_install_settings($path) {
-  Copy-Item $path $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+  Copy-Item $path ${env:userprofile}\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 function hf_wt_open_settings($path) {
-  Start-Process $env:userprofile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+  Start-Process ${env:userprofile}\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 
 # ---------------------------------------
@@ -978,8 +966,8 @@ function hf_wt_open_settings($path) {
 
 function hf_vscode_install_config_files() {
   if (Test-Path $DOTFILES_VSCODE) {
-    Copy-Item $DOTFILES_VSCODE\settings.json $env:userprofile\AppData\Roaming\Code\User\
-    Copy-Item $DOTFILES_VSCODE\keybindings.json $env:userprofile\AppData\Roaming\Code\User\
+    Copy-Item $DOTFILES_VSCODE\settings.json ${env:userprofile}\AppData\Roaming\Code\User\
+    Copy-Item $DOTFILES_VSCODE\keybindings.json ${env:userprofile}\AppData\Roaming\Code\User\
   }
 }
 

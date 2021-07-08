@@ -75,15 +75,9 @@ bash references:
 
 powershell references:
 
-* https://github.com/yiskang/PowerShellRc
-* https://github.com/matt-beamish/Oh-My-Powershell
-* https://gitlab.com/sgur/powershellrc/
-* optimize services/explorer
-  + https://gist.github.com/chadr/e17308cad6c472e05de3796599d4e142
-  + https://github.com/adolfintel/Windows10-Privacy
-  + https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
-  + https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
-  + https://github.com/madbomb122/Win10Script/blob/master/Win10-Menu.ps1
-  + https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
-  + https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
-  + https://github.com/Disassembler0/Win10-setupial-Setup-Script/blob/master/Win10.psm1
++ https://github.com/adolfintel/Windows10-Privacy
++ https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
++ https://github.com/RanzigeButter/fyWin10/blob/master/fyWin10.ps1
++ https://github.com/madbomb122/Win10Script/blob/master/Win10-Menu.ps1
++ https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10Debloater.ps1
++ https://github.com/W4RH4WK/Debloat-Windows-10/tree/master/scripts
