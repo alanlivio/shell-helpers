@@ -102,7 +102,7 @@ if test -n "$IS_WINDOWS"; then
     # vim/git/essentials
     PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
     # python
-    PKGS+="python3 python3-pip "
+    PKGS+="python3-pip "
     hf_apt_install_packages $PKGS
     # set python3 as default
     hf_python_set_python3_default
@@ -117,16 +117,12 @@ if test -n "$IS_WINDOWS"; then
     hf_msys_install $PKGS
     WINGET_PKGS="git "
     # python
-    WINGET_PKGS+="python "
-    hf_ps_call_admin "hf_winget_install $WINGET_PKGS"
+    hf_msys_install "mingw-w64-x86_64-python-pip "
   }
 
   function hf_setup_windows() {
     # windows
     hf_ps_call_admin "hf_setup_windows "
-    # python
-    WINGET_PKGS="python "
-    hf_ps_call_admin "hf_winget_install $WINGET_PKGS"
   }
 
 fi
