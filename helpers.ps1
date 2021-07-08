@@ -30,10 +30,10 @@ Set-Alias -Name trash -Value hf_explorer_open_trash
 # ---------------------------------------
 $hf_log_func = 'Write-Host -ForegroundColor DarkYellow "--" $MyInvocation.MyCommand.ToString()'
 
-function hf_log() {
+function hf_log_msg() {
   Write-Host -ForegroundColor DarkYellow "--" ($args -join " ")
 }
-function hf_log_l2() {
+function hf_log_msg_2nd () {
   Write-Host -ForegroundColor DarkYellow "-- " ($args -join " ")
 }
 
@@ -246,7 +246,7 @@ function hf_optimize_services() {
   Invoke-Expression $hf_log_func
 
   # Visual to performace
-  hf_log "Visuals to performace"
+  hf_log_msg "Visuals to performace"
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name 'VisualFXSetting' -Value 2
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name 'EnableTransparency' -Value 0
   Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Value 0
@@ -260,58 +260,58 @@ function hf_optimize_services() {
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value 0
 
   # Enable dark mode
-  hf_log "Enable dark mode "
+  hf_log_msg "Enable dark mode "
   Set-ItemProperty -Path HKCU:\AppEvents\Schemes -Name "(Default)" -Value ".None"
   Invoke-Expression $hf_log_func
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v "AppsUseLightTheme" /t REG_DWORD /d 00000000 /f | Out-Null
 
   # Disable system sounds
-  hf_log "Disable system sounds "
+  hf_log_msg "Disable system sounds "
   Set-ItemProperty -Path HKCU:\AppEvents\Schemes -Name "(Default)" -Value ".None"
 
   # Fax
-  hf_log "Remove Fax "
+  hf_log_msg "Remove Fax "
   Remove-Printer -Name "Fax" -ea 0
 
   # Remove Lock screen
-  hf_log "Remove Lockscreen "
+  hf_log_msg "Remove Lockscreen "
   hf_reg_new_path "HKLM:\Software\Policies\Microsoft\Windows\Personalization"
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Value 1
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "DisableLogonBackgroundImage" -Value 1
 
   # Disable drives Autoplay
-  hf_log "Disable new drives Autoplay"
+  hf_log_msg "Disable new drives Autoplay"
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Value 1
 
   # Disable offering of Malicious Software Removal Tool through Windows Update
-  hf_log "Disable Malicious Software Removal Tool offering"
+  hf_log_msg "Disable Malicious Software Removal Tool offering"
   New-Item -Path "HKLM:\Software\Policies\Microsoft\MRT" -ea 0
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Value 1
 
   # Disable Remote Assistance
-  hf_log "Disable Remote Assistance"
+  hf_log_msg "Disable Remote Assistance"
   Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Value 0
 
   # Disable AutoRotation Hotkeys
-  hf_log "Disable AutoRotation Hotkeys"
+  hf_log_msg "Disable AutoRotation Hotkeys"
   reg add "HKCU\Software\INTEL\DISPLAY\IGFXCUI\HotKeys" /v "Enable" /t REG_DWORD /d 0 /f | Out-Null
 
   # Disable Autorun for all drives
-  hf_log "Disable Autorun for all drives"
+  hf_log_msg "Disable Autorun for all drives"
   hf_reg_new_path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
   Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Value 255
 
   # Disable error reporting
-  hf_log "Disable error reporting "
+  hf_log_msg "Disable error reporting "
   reg add "HKLM\Software\Policies\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKLM\Software\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f | Out-Null
 
   # Disable license checking
-  hf_log "Disable license checking "
+  hf_log_msg "Disable license checking "
   reg add "HKLM\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" /v NoGenTicket /t REG_DWORD /d 1 /f | Out-Null
 
   # Disable tips
-  hf_log "Disable tips "
+  hf_log_msg "Disable tips "
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableSoftLanding /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightFeatures /t REG_DWORD /d 1 /f | Out-Null
   reg add "HKCU\Software\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsConsumerFeatures /t REG_DWORD /d 1 /f | Out-Null
@@ -319,18 +319,18 @@ function hf_optimize_services() {
   reg add "HKCU\Software\Policies\Microsoft\WindowsInkWorkspace" /v AllowSuggestedAppsInWindowsInkWorkspace /t REG_DWORD /d 0 /f | Out-Null
 
   # 'Disable Accessibility Keys Prompts
-  hf_log 'Disable Accessibility Keys Prompts '
+  hf_log_msg 'Disable Accessibility Keys Prompts '
   $path = 'HKCU:\Control Panel\Accessibility\'
   Set-ItemProperty -Path "$path\StickyKeys" -Name 'Flags' -Type String -Value '506'
   Set-ItemProperty -Path "$path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
   Set-ItemProperty -Path "$path\Keyboard Response" -Name 'Flags' -Type String -Value '122'
 
   # "Disable Windows Timeline
-  hf_log "Disable Windows Timeline "
+  hf_log_msg "Disable Windows Timeline "
   Set-ItemProperty -Path 'HKLM:\Software\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Value 0
 
   # Disable unused services
-  hf_log "Disable unused services "
+  hf_log_msg "Disable unused services "
   $services = @("*diagnosticshub.standardcollector.service*" # Diagnostics Hub
     "*diagsvc*" # Diagnostic Execution Service
     "*dmwappushservice*" # Device Management WAP Push message Routing Service
@@ -350,15 +350,15 @@ function hf_optimize_services() {
   hf_service_disable $services
 
   # XPS Services
-  hf_log "Disable XPS "
+  hf_log_msg "Disable XPS "
   dism.exe /online /quiet /disable-feature /featurename:Printing-XPSServices-Features /norestart
 
   # Work Folders
-  hf_log "Disable Work Folders "
+  hf_log_msg "Disable Work Folders "
   dism.exe /online /quiet /disable-feature /featurename:WorkFolders-Client /norestart
   
   # Disable scheduled tasks
-  hf_log "Disable scheduled tasks "
+  hf_log_msg "Disable scheduled tasks "
   $tasks = @(
     'CCleaner Update'
     'CCleanerSkipUAC'
@@ -371,43 +371,43 @@ function hf_optimize_explorer() {
   hf_reg_drives
 
   # Use small icons
-  hf_log "Use small icons "
+  hf_log_msg "Use small icons "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarSmallIcons -Value 1
 
   # Hide search button
-  hf_log "Hide search button "
+  hf_log_msg "Hide search button "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -Value 0
 
   # Hide task view button
-  hf_log "Hide taskview button "
+  hf_log_msg "Hide taskview button "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -Value 0
 
   # Hide taskbar people icon
-  hf_log "Hide people button "
+  hf_log_msg "Hide people button "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Value 0
 
   hf_reg_new_path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
   hf_reg_new_path "HKLM:\Software\Policies\Microsoft\Windows\Explorer"
   
   # Disable file delete confirmation dialog
-  hf_log "Disable file delete confirmation dialog"
+  hf_log_msg "Disable file delete confirmation dialog"
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -Value 0
 
   # Disable action center
-  hf_log "Hide action center button "
+  hf_log_msg "Hide action center button "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "DisableNotificationCenter" -Value 1
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Value 1
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Value 0
 
   # Disable Bing
-  hf_log "Disable Bing search "
+  hf_log_msg "Disable Bing search "
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v BingSearchEnabled /d "0" /t REG_DWORD /f  | Out-null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v AllowSearchToUseLocation /d "0" /t REG_DWORD /f | Out-null
   reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v CortanaConsent /d "0" /t REG_DWORD /f | Out-null
   reg add "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Search" /v ConnectedSearchUseWeb /d "0" /t REG_DWORD /f | Out-null
 
   # Disable Cortana
-  hf_log "Disable Cortana"
+  hf_log_msg "Disable Cortana"
 
   hf_reg_new_path "HKCU:\Software\Microsoft\Personalization\Settings"
   hf_reg_new_path "HKCU:\Software\Microsoft\InputPersonalization"
@@ -421,41 +421,41 @@ function hf_optimize_explorer() {
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Value 0
 
   # Hide icons in desktop
-  hf_log "Hide icons in desktop "
+  hf_log_msg "Hide icons in desktop "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
 
   # Hide recently explorer shortcut
-  hf_log "Hide recently explorer shortcut "
+  hf_log_msg "Hide recently explorer shortcut "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 0
 
   # Set explorer to open to 'This PC'
-  hf_log "Set explorer to open to 'This PC "
+  hf_log_msg "Set explorer to open to 'This PC "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -Value 1
 
   # Disable show frequent in Quick acess
-  hf_log "Disable show frequent in Quick acess "
+  hf_log_msg "Disable show frequent in Quick acess "
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name 'ShowFrequent' -Value 0
 
   # Set explorer how file extensions
-  hf_log "Set explorer show file extensions"
+  hf_log_msg "Set explorer show file extensions"
   Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name HideFileExt -Value 0
 
   # Disable store search for unknown extensions
-  hf_log "Disable store search unknown extensions"
+  hf_log_msg "Disable store search unknown extensions"
   hf_reg_new_path "HKLM:\Software\Policies\Microsoft\Windows\Explorer"
   Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Value 1
 
   # 'Hide Most used Apps in Start Menu'
-  hf_log 'Hide Most used Apps in Start Menu'
+  hf_log_msg 'Hide Most used Apps in Start Menu'
   Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_TrackProgs' -Value 0
 
   # 'Hide Recently used Apps in Start Menu'
-  hf_log 'Hide Recently used Apps in Start Menu'
+  hf_log_msg 'Hide Recently used Apps in Start Menu'
   Set-ItemProperty -Path 'HKLM:\Software\Policies\Microsoft\Windows\Explorer' -Name 'HideRecentlyAddedApps' -Value 1
 
   # Remove * from This PC
   # ----------------------------------------
-  hf_log "Remove user folders under This PC "
+  hf_log_msg "Remove user folders under This PC "
   # Remove Desktop from This PC
   Remove-Item "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0
   Remove-Item "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}" -ea 0
@@ -490,9 +490,9 @@ function hf_optimize_explorer() {
 
   # Remove unused context menus
   # ----------------------------------------
-  hf_log "Remove unused context menu"
+  hf_log_msg "Remove unused context menu"
   # 'Restore to previous versions'
-  hf_log_l2 "Restore to previous version"
+  hf_log_msg_2nd "Restore to previous version"
   Remove-Item "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
   Remove-Item "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
   Remove-Item "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -ea 0
@@ -500,39 +500,39 @@ function hf_optimize_explorer() {
 
   # 'Share with'
   # ----------------------------------------
-  hf_log_l2 "Share with"
+  hf_log_msg_2nd "Share with"
   Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -ea 0
   Remove-Item -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -ea 0
   Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -ea 0
   Remove-Item -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -ea 0
   # for gitg
-  hf_log_l2 "gitg"
+  hf_log_msg_2nd "gitg"
   Remove-Item "HKCR:\Directory\shell\gitg" -Recurse -ea 0
   # for add/play with vlc
-  hf_log_l2 "Add/play with vlc"
+  hf_log_msg_2nd "Add/play with vlc"
   Remove-Item "HKCR:\Directory\shell\AddToPlaylistVLC" -Recurse -ea 0
   Remove-Item "HKCR:\Directory\shell\PlayWithVLC" -Recurse -ea 0
   # for git bash
-  hf_log_l2 "Git bash"
+  hf_log_msg_2nd "Git bash"
   Remove-Item "HKCR:\Directory\shell\git_gui" -Recurse -ea 0
   Remove-Item "HKCR:\Directory\shell\git_shell" -Recurse -ea 0
   # "Open With"
-  hf_log_l2 "Open With "
+  hf_log_msg_2nd "Open With "
   Remove-Item -LiteralPath 'HKCR:\*\shellex\OpenWithList' -ea 0
   # Pin To Start
-  hf_log_l2 "Pin To Start "
+  hf_log_msg_2nd "Pin To Start "
   Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}' -ea 0
   Remove-Item -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}' -ea 0
   Remove-Item 'HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen' -ea 0
   # 'Include in library'
-  hf_log_l2 "Include in library"
+  hf_log_msg_2nd "Include in library"
   Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0
   Remove-Item "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ea 0
   # 'Send to'
-  hf_log_l2 "Send to"
+  hf_log_msg_2nd "Send to"
   Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Recurse -ea 0
   # Disable Windows Defender'
-  hf_log_l2 "Windows Defender "
+  hf_log_msg_2nd "Windows Defender "
   Set-Item "HKCR:\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" -ea 0
 
   # restart explorer
@@ -706,7 +706,7 @@ function hf_appx_uninstall() {
   Invoke-Expression $hf_log_func" "$args
   foreach ($name in $args) {
     if (Get-AppxPackage -Name $name) {
-      hf_log "uninstall $name"
+      hf_log_msg "uninstall $name"
       Get-AppxPackage -allusers $name | Remove-AppxPackage
     }
   }
@@ -929,7 +929,7 @@ function hf_wsl_fix_home_user() {
   wsl -u root ln -s /mnt/c/Users/$env:UserName /home/$env:UserName
 
   # changing file permissions
-  hf_log "Changing file permissions "
+  hf_log_msg "Changing file permissions "
   wsl -u root chown $env:UserName:$env:UserName /mnt/c/Users/$env:UserName/*
 }
 
@@ -1096,21 +1096,21 @@ function hf_install_wsl_ubuntu() {
 
   # enable wsl feature (require restart)
   if (!(Get-Command 'wsl.exe' -ea 0)) {
-    hf_log "INFO: Windows features for WSL not enabled, enabling..."
+    hf_log_msg "INFO: Windows features for WSL not enabled, enabling..."
     dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
     dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-    hf_log "INFO: restart windows and run hf_setup_ubuntu again"
+    hf_log_msg "INFO: restart windows and run hf_setup_ubuntu again"
     return
   }
   # install ubuntu
   if (!(Get-Command "ubuntu*.exe" -ea 0)) {
-    hf_log "INFO: Ubuntu is not installed, installing..."
+    hf_log_msg "INFO: Ubuntu is not installed, installing..."
     winget install Canonical.Ubuntu
   } 
   # configure ubuntu distro
   wsl -l | Out-null
   if ($LastExitCode -eq -1) {
-    hf_log "INFO: Ubuntu is not configured, running..."
+    hf_log_msg "INFO: Ubuntu is not configured, running..."
     Invoke-Expression (Get-Command "ubuntu*.exe").Source
   }
   # enable wsl 2
