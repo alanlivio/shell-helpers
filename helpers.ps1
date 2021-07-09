@@ -549,7 +549,6 @@ function hf_optimize_appx() {
     'Microsoft.Wallet'
     'Microsoft.WindowsAlarms'
     'Microsoft.windowscommunicationsapps'
-    'Microsoft.WindowsFeedbackHub'
     'Microsoft.WindowsMaps'
     'Microsoft.WindowsPhone'
     'Microsoft.Xbox.TCUI'
@@ -588,7 +587,7 @@ function hf_optimize_appx() {
 # office
 # ---------------------------------------
 
-function hf_office_sanity(){
+function hf_office_sanity() {
   # disable hyperlink warning
   Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Office\16.0\Common\Security" -Name "DisableHyperlinkWarning" -Value 1
 }
@@ -719,7 +718,7 @@ function hf_appx_install_essentials() {
 
 
 function hf_explorer_restore_desktop() {
-  if (Test-Path "${env:userprofile}\Desktop"){
+  if (Test-Path "${env:userprofile}\Desktop") {
     mkdir "${env:userprofile}\Desktop"
   }
   reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Desktop" /t REG_SZ /d "C:\Users\${env:username}\Desktop" /f
@@ -795,21 +794,26 @@ function hf_winget_settings() {
 }
 
 function hf_winget_upgrade() {
-  winget upgrade --all
+  winget upgrade --all --silent
 }
 
 function hf_winget_install() {
   Invoke-Expression $hf_log_func
+  $pkgs_to_install = ""
+  # get installed pkgs
+  $tmpfile = New-TemporaryFile
+  winget export $tmpfile | Out-null
+  $pkgs = ((Get-Content $tmpfile | ConvertFrom-Json).Sources.Packages | ForEach-Object { Write-Output $_.PackageIdentifier }) -join " "
+  # select to install
   foreach ($name in $args) {
-    $pkgs_to_install = ""
-    $pkgs = winget list
-    if (!($pkgs -Match "$name")) {
+    if (-not ([string]::IsNullOrEmpty($name)) -and ($pkgs -notmatch "$name" )) {
       $pkgs_to_install = "$pkgs_to_install $name"
-      winget install $name
     }
-    if ($pkgs_to_install) {
-      Invoke-Expression $hf_log_func" "$pkgs_to_install
-      winget install ($pkgs_to_install -join ";")
+  }
+  hf_log_msg "PKGS_TO_INSTALL=$pkgs_to_install"
+  foreach ($pkg in $pkgs_to_install) {
+    if ($pkg) {
+      Invoke-Expression "winget install --silent $pkg"
     }
   }
 }
@@ -1069,7 +1073,8 @@ function hf_install_winget() {
 
 function hf_install_battle_steam() {
   Invoke-Expression $hf_log_func
-  hf_winget_install battle.net steam
+  hf_winget_install Blizzard.BattleNet
+  hf_winget_install Valve.Steam
 }
 
 function hf_install_onedrive() {
@@ -1084,7 +1089,7 @@ function hf_install_onedrive() {
 function hf_install_wt() {
   hf_install_winget
   if (!(Get-Command 'wt.exe' -ea 0)) {
-    winget install Microsoft.WindowsTerminal
+    hf_winget_install Microsoft.WindowsTerminal
     if (Test-Path $DOTFILES_WT) {
       hf_wt_install_settings $DOTFILES_WT\settings.json
     }
@@ -1095,6 +1100,11 @@ function hf_install_wsl_ubuntu() {
   # this helper automate the process describred in https://docs.microsoft.com/en-us/windows/wsl/wsl2-install
   Invoke-Expression $hf_log_func
 
+  # install winget
+  if (!(Get-Command "winget.exe" -ea 0)) {
+    hf_log_msg "INFO: winget is not installed, installing..."
+    hf_install_winget
+  } 
   # enable wsl feature (require restart)
   if (!(Get-Command 'wsl.exe' -ea 0)) {
     hf_log_msg "INFO: Windows features for WSL not enabled, enabling..."
@@ -1106,7 +1116,7 @@ function hf_install_wsl_ubuntu() {
   # install ubuntu
   if (!(Get-Command "ubuntu*.exe" -ea 0)) {
     hf_log_msg "INFO: Ubuntu is not installed, installing..."
-    winget install Canonical.Ubuntu
+    hf_winget_install Canonical.Ubuntu
   } 
   # configure ubuntu distro
   wsl -l | Out-null
@@ -1133,21 +1143,21 @@ function hf_install_wsl_ubuntu() {
 function hf_install_git() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'git.exe' -ea 0)) {
-    winget install git
+    hf_winget_install Git.Git
   }
 }
 
 function hf_install_vscode() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'code.exe' -ea 0)) {
-    winget install vscode
+    hf_winget_install Microsoft.VisualStudioCode
   }
 }
 
 function hf_install_msys() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path $MSYS_BASH)) {
-    hf_winget_install msys2
+    hf_winget_install msys2.msys2
     hf_msys_sanity
   }
 }
@@ -1184,7 +1194,7 @@ function hf_setup_windows_sanity() {
 function hf_setup_windows_common_user() {
   Invoke-Expression $hf_log_func
   hf_setup_windows_sanity
-  hf_winget_install googlechrome vlc 7zip ccleaner foxitreader
+  hf_winget_install Google.Chrome VideoLAN.VLC 7zip.7zip Piriform.CCleaner
 }
 
 function hf_setup_windows() {

@@ -568,7 +568,15 @@ if test -n "$IS_WINDOWS_MSYS"; then
   # winget
   # ---------------------------------------
 
-  function hf_winget_list_not_ms() {
+  function hf_winget_install() {
+    hf_ps_call_admin "hf_winget_install $*"
+  }
+  
+  function hf_winget_list_installed_only_ms() {
+    winget list | grep Microsoft
+  }
+
+  function hf_winget_list_installed_not_ms() {
     winget list | grep -v -e Driver -e Microsoft
   }
 
