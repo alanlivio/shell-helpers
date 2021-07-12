@@ -1075,8 +1075,7 @@ function hf_install_winget() {
 
 function hf_install_battle_steam() {
   Invoke-Expression $hf_log_func
-  hf_winget_install Blizzard.BattleNet
-  hf_winget_install Valve.Steam
+  hf_winget_install Blizzard.BattleNet Valve.Steam
 }
 
 function hf_install_onedrive() {
@@ -1095,6 +1094,11 @@ function hf_install_wt() {
     if (Test-Path $DOTFILES_WT) {
       hf_wt_install_settings $DOTFILES_WT\settings.json
     }
+
+function hf_install_python() {
+  hf_install_winget
+  if (!(Test-Path "C:\Python*")) {
+    gsudo choco install python
   }
 }
 
@@ -1212,9 +1216,9 @@ function hf_setup_windows() {
   hf_install_choco
   hf_install_gsudo
   hf_install_winget
-  # install git, bash, wt, vscode
+  # install git, git-bash, wt, vscode
   hf_install_git
-  hf_install_msys
+  hf_install_python
   hf_install_wt
   hf_install_vscode
   hf_vscode_install_config_files

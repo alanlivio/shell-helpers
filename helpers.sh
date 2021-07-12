@@ -113,11 +113,10 @@ if test -n "$IS_WINDOWS"; then
     # update runtime and bash
     PKGS="pacman pacman-mirrors msys2-runtime bash "
     # essentials
-    PKGS+="vim diffutils curl wget zip patch "
-    hf_msys_install $PKGS
-    WINGET_PKGS="git "
+    PKGS+="vim git diffutils curl wget zip patch "
     # python
-    hf_msys_install "mingw-w64-x86_64-python-pip "
+    PKGS+="python-pip "
+    hf_msys_install $PKGS
   }
 
   function hf_setup_windows() {
@@ -262,7 +261,7 @@ elif test -n "$IS_WINDOWS_MSYS"; then
 fi
 
 # ---------------------------------------
-# alias ls/grep/start/wsl
+# alias
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
@@ -274,9 +273,9 @@ elif test -n "$IS_WINDOWS"; then
   alias ls='ls --color=auto --hide=ntuser* --hide=NTUSER* --hide=AppData --hide=IntelGraphicsProfiles* --hide=MicrosoftEdgeBackups'
   alias grep='grep --color=auto'
   alias start="cmd.exe /c start"
-  alias chrome="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe"
-  alias gsudo='/mnt/c/Program\ Files\ \(x86\)/gsudo/gsudo.exe'
-  alias choco='/mnt/c/ProgramData/chocolatey/bin/choco.exe'
+  alias chrome="/c/Program\ Files/Google/Chrome/Application/chrome.exe"
+  alias gsudo='/c/Program\ Files\ \(x86\)/gsudo/gsudo.exe'
+  alias choco='/c/ProgramData/chocolatey/bin/choco.exe'
 fi
 
 # ---------------------------------------
