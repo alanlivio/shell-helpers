@@ -534,6 +534,8 @@ if test -n "$IS_WINDOWS_MSYS"; then
     hf_ps_call_admin "hf_msys_sanity"
   }
 
+elif test -n "$IS_WINDOWS"; then
+
   # ---------------------------------------
   # install_msys
   # ---------------------------------------
@@ -1659,7 +1661,7 @@ function hf_network_domain_info() {
 }
 
 function hf_network_ip() {
-  if test -n "$IS_WINDOWS_MSYS"; then
+  if test -n "$IS_WINDOWS"; then
     ipconfig | grep "IPv4 Address" | awk 'NR==1{print $NF}'
   else
     echo "$(hostname -I | cut -d' ' -f1)"
