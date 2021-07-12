@@ -664,7 +664,7 @@ function hf_winpackage_list_enabled() {
 }
 
 function hf_winpackage_disable_like() {
-  Invoke-Expression $hf_log_func" "$args
+  Invoke-Expression $hf_log_func
   foreach ($name in $args) {
     $pkgs = Get-WindowsPackage -Online | Where-Object PackageState -like Installed | Where-Object PackageName -like $name
     if ($pkgs) {
@@ -684,16 +684,23 @@ function hf_appx_list_installed() {
 }
 
 function hf_appx_install() {
-  Invoke-Expression $hf_log_func" "$args
+  Invoke-Expression $hf_log_func
+  $pkgs_to_install = ""
   foreach ($name in $args) {
     if ( !(Get-AppxPackage -Name $name)) {
-      Get-AppxPackage -allusers $name | ForEach-Object { Add-AppxPackage -ea 0 -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
+      $pkgs_to_install = "$pkgs_to_install $name"
+    }
+  }
+  if ($pkgs_to_install) {
+    hf_log_msg "pkgs_to_install=$pkgs_to_install"
+    foreach ($pkg in $pkgs_to_install) {
+      Get-AppxPackage -allusers $pkg | ForEach-Object { Add-AppxPackage -ea 0 -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } | Out-null
     }
   }
 }
 
 function hf_appx_uninstall() {
-  Invoke-Expression $hf_log_func" "$args
+  Invoke-Expression $hf_log_func
   foreach ($name in $args) {
     if (Get-AppxPackage -Name $name) {
       hf_log_msg "uninstall $name"
@@ -813,9 +820,9 @@ function hf_winget_install() {
       $pkgs_to_install = "$pkgs_to_install $name"
     }
   }
-  hf_log_msg "PKGS_TO_INSTALL=$pkgs_to_install"
-  foreach ($pkg in $pkgs_to_install) {
-    if ($pkg) {
+  if ($pkgs_to_install){
+    hf_log_msg "pkgs_to_install=$pkgs_to_install"
+    foreach ($pkg in $pkgs_to_install) {
       Invoke-Expression "winget install --silent $pkg"
     }
   }
@@ -837,15 +844,15 @@ function hf_choco_install() {
       $pkgs_to_install = "$pkgs_to_install $name"
       gsudo choco install -y --acceptlicense $name
     }
-    if ($pkgs_to_install) {
-      Invoke-Expression $hf_log_func" "$pkgs_to_install
-      gsudo choco install -y --acceptlicense ($pkgs_to_install -join ";")
-    }
+  }
+  if ($pkgs_to_install) {
+    hf_log_msg "pkgs_to_install=$pkgs_to_install"
+    gsudo choco install -y --acceptlicense ($pkgs_to_install -join ";")
   }
 }
 
 function hf_choco_uninstall() {
-  Invoke-Expression $hf_log_func" "$args
+  Invoke-Expression $hf_log_func
   choco uninstall -y --acceptlicense ($args -join ";")
 }
 
