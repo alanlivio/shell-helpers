@@ -2882,6 +2882,7 @@ HF_CLEAN_DIRS=(
   'Templates'
   'Tracing'
   'Videos'
+  'Music'
   'Pictures'
 )
 
