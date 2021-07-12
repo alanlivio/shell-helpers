@@ -809,7 +809,7 @@ function hf_winget_install() {
   $pkgs = ((Get-Content $tmpfile | ConvertFrom-Json).Sources.Packages | ForEach-Object { Write-Output $_.PackageIdentifier }) -join " "
   # select to install
   foreach ($name in $args) {
-    if (-not ([string]::IsNullOrEmpty($name)) -and ($pkgs -notmatch "$name" )) {
+    if (-not ([string]::IsNullOrEmpty("$name")) -and ($pkgs -notmatch "$name" )) {
       $pkgs_to_install = "$pkgs_to_install $name"
     }
   }

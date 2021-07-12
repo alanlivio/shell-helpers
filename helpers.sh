@@ -9,13 +9,16 @@ Darwin) IS_MAC=1 ;;
 Linux) IS_LINUX=1 ;;
 CYGWIN* | MINGW* | MSYS*)
   IS_WINDOWS=1
-  IS_WINDOWS_MSYS=1
+  if type pacman &>/dev/null; then
+    IS_WINDOWS_MSYS=1
+  else
+    IS_WINDOWS_GITBASH=1
+  fi
   ;;
 esac
 if test $IS_LINUX; then
   case "$(uname -r)" in
   *icrosoft*) # (M/m)icrosoft
-    IS_LINUX=""
     IS_WINDOWS=1
     IS_WINDOWS_WSL=1
     ;;
@@ -171,41 +174,33 @@ if test $IS_LINUX; then
     hf_home_clean_unused_dirs
   }
 elif test -n "$IS_WINDOWS"; then
-  function hf_update_clean_wsl() {
-    # apt
-    hf_apt_upgrade
-    hf_apt_install_packages $PKGS_APT
-    hf_apt_autoremove
-    hf_apt_remove_packages $PKGS_REMOVE_APT
-    hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
-    # cleanup
-    hf_home_clean_unused_dirs
-    hf_ps_call hf_home_hide_dotfiles
-    hf_ps_call hf_explorer_clean_unused_shortcuts
-  }
-
-  function hf_update_clean_msys() {
-    # msys
-    hf_msys_upgrade
-    hf_msys_install $PKGS_MSYS
-    # python
-    hf_python_install_packages $PKGS_PYTHON
-    # vscode
-    hf_vscode_install_packages $PKGS_VSCODE
-    # cleanup
-    hf_home_clean_unused_dirs
-    hf_ps_call hf_home_hide_dotfiles
-    hf_ps_call hf_explorer_clean_unused_shortcuts
-  }
-
   function hf_update_clean_windows() {
     # windows
     hf_ps_call_admin "hf_winupdate_update"
-    hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
     hf_ps_call_admin "hf_winget_install $PKGS_WINGET"
     hf_ps_call_admin "hf_appx_install $PKGS_APPX"
+    hf_ps_call_admin "hf_choco_install $PKGS_CHOCO"
     hf_ps_call_admin "hf_choco_upgrade"
     hf_ps_call_admin "hf_choco_clean"
+    # if WSL
+    if test -n "$IS_WINDOWS_WSL"; then
+      # apt
+      hf_apt_upgrade
+      hf_apt_install_packages $PKGS_APT
+      hf_apt_autoremove
+      hf_apt_remove_packages $PKGS_REMOVE_APT
+      hf_apt_remove_orphan_packages $PKGS_APT_ORPHAN_EXPECTIONS
+    fi
+    # python
+    # python pkgs in msys require be builded from msys
+    # python pkgs in gitbash not
+    if test -n "$IS_WINDOWS_MSYS"; then
+      hf_msys_install $PKGS_PYTHON_MSYS
+    elif test -n "$IS_WINDOWS_GITBASH"; then
+      hf_python_install_packages $PKGS_PYTHON
+    fi
+    # vscode
+    hf_vscode_install_packages $PKGS_VSCODE
     # cleanup
     hf_home_clean_unused_dirs
     hf_ps_call hf_home_hide_dotfiles
@@ -224,17 +219,10 @@ elif test -n "$IS_MAC"; then
 fi
 
 function hf_update_clean() {
-  # Ubuntu
   if test -n "$IS_LINUX"; then
     hf_update_clean_gnome
-  # Ubuntu WSL
-  elif test -n "$IS_WINDOWS_WSL"; then
-    hf_update_clean_wsl
-  # mingw
-  elif test -n "$IS_WINDOWS_MSYS"; then
-    hf_update_clean_msys
+  elif test -n "$IS_WINDOWS"; then
     hf_update_clean_windows
-  # mac
   elif test -n "$IS_MAC"; then
     hf_update_clean_mac
   fi
@@ -251,7 +239,7 @@ if test -n "$IS_WINDOWS_WSL"; then
   fi
   alias unixpath='wslpath'
   alias winpath='wslpath -w'
-elif test -n "$IS_WINDOWS_MSYS"; then
+elif test -n "$IS_WINDOWS"; then
   alias unixpath='cygpath'
   alias winpath='cygpath -w'
   alias sudo=''
@@ -565,7 +553,7 @@ if test -n "$IS_WINDOWS_MSYS"; then
   function hf_winget_install() {
     hf_ps_call_admin "hf_winget_install $*"
   }
-  
+
   function hf_winget_list_installed_only_ms() {
     winget list | grep Microsoft
   }
