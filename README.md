@@ -1,6 +1,6 @@
 <h1 align="center">shell-helpers</h1>
 
-This project offers bash and powershell helper functions to support: configure OS (themes, optimization), install software, git, utilities, etc.
+This project offers bash and powershell helper functions to support: configure OS (e.g., disable unused services/features/apps, dark mode), install software (e.g.,  git, python, vscode) and utilities (e.g., helpers for install software, git, pdf, compression).
 
 # How to install
 
@@ -26,37 +26,38 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## setup Gnome-based Ubuntu
 
-1. bash `hf_setup_gnome`: configure Gnome (e.g., disable unused services/features, dark mode) and install essential software (e.g., git, curl, python, pip, vscode).
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
+1. at bash, run `hf_setup_gnome`: configure Gnome (e.g., disable unused services/features/apps, dark mode) and install essential software (e.g., git, curl, python, vscode).
+2. at bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## setup macOS
 
-1. bash `hf_setup_mac`: install essential software (brew, bash last version, python, pip, vscode)
-2. bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
+1. at bash, run `hf_setup_mac`: install essential software (brew, bash last version, python, vscode)
+2. at bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_BREW) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## setup Windows for common (non-dev) users
 
-1. powershell `hf_setup_windows_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
-2. powershell `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
+1. at powershell, run `hf_setup_windows_common_user`: install common user software (i.e., googlechrome, vlc, 7zip, ccleaner, FoxitReader).
+2. at powershell, run `hf_install_battle_steam`(optional for gamers): install Battle.net and Steam
 
-## setup Windows
+## setup Windows with git_bash
 
-1. powershell `hf_setup_windows`: configure Windows (e.g., disable unused services/features, configure explorer, remove unused appx, dark mode) and install essential software (e.g., choco, gsudo, winget, git, msys2, WindowsTerminal, vscode).
+1. at powershell, run `hf_setup_windows`: configure Windows (e.g., disable unused services/features/apps, dark mode) and install essential software (e.g., choco, gsudo, winget, git (and git bash), python, WindowsTerminal, vscode).
+2. at git bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g. PKGS_PYTHON) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## setup WSL in Windows
+## setup WSL (after setup Windows)
 
-1. powershell `hf_install_wsl_ubuntu`: install WSL/Ubuntu (version 2, fixed home). This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
+1. at powershell, run `hf_install_wsl_ubuntu`: install WSL/Ubuntu (version 2, fixed home). This helper automate the process describred in [Microsoft WSL Tutorial](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install)  
   1.1. After run, it requeres restart windows and run it again.  
   1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
-2. wsl bash `hf_setup_wsl`: install essential software (e.g., git, curl, python, pip).
-3. wsl bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
+2. at wsl bash, run `hf_setup_wsl`: install essential software (e.g., git, curl, python).
+3. at wsl bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g., PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
-## setup msys in Windows
+## setup msys2 (after setup Windows)
 
-1. powershell `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
-2. msys bash `hf_setup_msys`: install essential software (e.g., git, curl, python, pip).
-3. msys bash `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_MSYS) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
+1. at powershell, run `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
+2. at msys bash, run `hf_setup_msys`: install essential software (e.g., git, curl, python).
+3. at msys bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g., PKGS_MSYS, PKGS_PYTHON) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## Other helpers
 
