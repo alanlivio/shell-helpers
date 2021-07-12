@@ -116,7 +116,7 @@ if test -n "$IS_WINDOWS"; then
     # update runtime and bash
     PKGS="pacman pacman-mirrors msys2-runtime bash "
     # essentials
-    PKGS+="vim git diffutils curl wget zip patch "
+    PKGS+="vim diffutils curl wget zip patch "
     # python
     PKGS+="python-pip "
     hf_msys_install $PKGS

@@ -26,7 +26,7 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
 
 ## setup Gnome-based Ubuntu
 
-1. at bash, run `hf_setup_gnome`: configure Gnome (e.g., disable unused services/features/apps, dark mode) and install essential software (e.g., git, curl, python, vscode).
+1. at bash, run `hf_setup_gnome`: configure Gnome (e.g., disable unused services/features/apps, dark mode) and install essential software (e.g., git, wget, curl, python, vscode).
 2. at bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (PKGS_APT, PKGS_PYTHON, PKGS_SNAP, PKGS_SNAP_CLASSIC, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## setup macOS
@@ -50,14 +50,14 @@ To enable helpers in powershell (Windows), the shell-helpers can be used as a [P
   1.1. After run, it requeres restart windows and run it again.  
   1.2. It aso require run Ubuntu app and configure your username/password.  
   1.1. Then run it again.
-2. at wsl bash, run `hf_setup_wsl`: install essential software (e.g., git, curl, python).
+2. at wsl bash, run `hf_setup_wsl`: install essential software (e.g., git, wget, curl, python).
 3. at wsl bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g., PKGS_APT, PKGS_PYTHON, PKGS_REMOVE_APT) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## setup msys2 (after setup Windows)
 
 1. at powershell, run `hf_install_msys`: install msys (Cygwin-based) with bash to build GNU-based win32 applications
-2. at msys bash, run `hf_setup_msys`: install essential software (e.g., git, curl, python).
-3. at msys bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g., PKGS_MSYS, PKGS_PYTHON) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
+2. at msys bash, run `hf_setup_msys`: install essential software (e.g., wget, curl, python).
+3. at msys bash, run `hf_update_clean` (run routinely): configure/upgrade packges using variables (e.g., PKGS_MSYS, PKGS_PYTHON_MSYS) in ~/.bashrc or ~/.helpers-cfg.sh, and cleanup.
 
 ## Other helpers
 
