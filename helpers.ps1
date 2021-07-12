@@ -864,7 +864,13 @@ function hf_choco_list_installed() {
 
 function hf_choco_clean() {
   Invoke-Expression $hf_log_func
-  Invoke-Expression "$env:ChocolateyToolsLocation\BCURRAN3\choco-cleaner.ps1" | Out-Null
+  gsudo Invoke-Expression "$env:ChocolateyToolsLocation\BCURRAN3\choco-cleaner.ps1" | Out-Null
+}
+
+function hf_choco_delete_local_lib() {
+  Invoke-Expression $hf_log_func
+  gsduo rm -Recurse -Force "'C:\ProgramData\chocolatey\lib"
+  gsduo rm -Recurse -Force "'C:\ProgramData\chocolatey\lib-bkp"
 }
 
 # ---------------------------------------
