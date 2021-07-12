@@ -192,7 +192,7 @@ function hf_env_refresh() {
 }
 
 function hf_env_add($name, $value) {
-  [Environment]::SetEnvironmentVariable($name, $value, 'Machine')
+  gsudo [Environment]::SetEnvironmentVariable($name, $value, 'Machine')
 }
 
 function hf_env_path_add($addPath) {
@@ -824,16 +824,19 @@ function hf_winget_install() {
 
 function hf_choco_install() {
   Invoke-Expression $hf_log_func
+  if (!(Get-Command 'gsudo.exe' -ea 0)) {
+    hf_install_gsudo
+  }
   foreach ($name in $args) {
     $pkgs_to_install = ""
     $pkgs = choco list -l
     if (!($pkgs -Match "$name")) {
       $pkgs_to_install = "$pkgs_to_install $name"
-      choco install -y --acceptlicense $name
+      gsudo choco install -y --acceptlicense $name
     }
     if ($pkgs_to_install) {
       Invoke-Expression $hf_log_func" "$pkgs_to_install
-      choco install -y --acceptlicense ($pkgs_to_install -join ";")
+      gsudo choco install -y --acceptlicense ($pkgs_to_install -join ";")
     }
   }
 }
