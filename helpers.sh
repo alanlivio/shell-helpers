@@ -1078,7 +1078,7 @@ function hf_git_dev_folder_tree() {
     hf_log_msg "creating $DEV_DIR"
     mkdir $DEV_DIR
   fi
-  CWD=$(pwd)
+  local cwd=$(pwd)
 
   declare -a repos_array
   repos_array=($REPOS)
@@ -1102,7 +1102,7 @@ function hf_git_dev_folder_tree() {
       git pull
     fi
   done
-  cd $CWD
+  cd $cwd
 }
 
 # log
@@ -1124,41 +1124,41 @@ function hf_git_diff_last_commit() {
 # subfolders
 
 function hf_git_subfolders_push() {
-  CWD=$(pwd)
-  FOLDER=$(pwd $0)
-  cd $FOLDER
+  local cwd=$(pwd)
+  local folder=$(pwd $0)
+  cd $folder
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
-    cd "$FOLDER/$i"
+    cd "$folder/$i"
     if test -d .git; then
       hf_log_msg "push on $i"
       git push
     fi
     cd ..
   done
-  cd $CWD
+  cd $cwd
 }
 
 function hf_git_subfolders_pull() {
-  CWD=$(pwd)
-  FOLDER=$(pwd $0)
-  cd $FOLDER
+  local cwd=$(pwd)
+  local folder=$(pwd $0)
+  cd $folder
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
-    cd "$FOLDER/$i"
+    cd "$folder/$i"
     if test -d .git; then
       hf_log_msg "pull on $i"
       git pull
     fi
     cd ..
   done
-  cd $CWD
+  cd $cwd
 }
 
 function hf_git_subfolders_reset_clean() {
-  CWD=$(pwd)
-  FOLDER=$(pwd $1)
-  cd $FOLDER
+  local cwd=$(pwd)
+  local folder=$(pwd $1)
+  cd $folder
   for i in $(find . -type d -iname .git | sed 's/\.git//g'); do
-    cd "$FOLDER/$i"
+    cd "$folder/$i"
     if test -d .git; then
       hf_log_msg "reset and clean on $i"
       git reset --hard
@@ -1166,7 +1166,7 @@ function hf_git_subfolders_reset_clean() {
     fi
     cd ..
   done
-  cd $CWD
+  cd $cwd
 }
 
 # ---------------------------------------
@@ -1283,11 +1283,11 @@ function hf_folder_remove() {
 }
 
 function hf_folder_info() {
-  EXTENSIONS=$(for f in *.*; do printf "%s\n" "${f##*.}"; done | sort -u)
+  local extensions=$(for f in *.*; do printf "%s\n" "${f##*.}"; done | sort -u)
   echo "size="$(du -sh | awk '{print $1;exit}')
   echo "dirs="$(find . -mindepth 1 -maxdepth 1 -type d | wc -l)
   echo -n "files="$(find . -mindepth 1 -maxdepth 1 -type f | wc -l)"("
-  for i in $EXTENSIONS; do
+  for i in $extensions; do
     echo -n ".$i="$(find . -mindepth 1 -maxdepth 1 -type f -iname \*\.$i | wc -l)","
   done
   echo ")"
@@ -1332,8 +1332,8 @@ function hf_latex_clean() {
 }
 
 function hf_latex_apt_essentials() {
-  local PKGS_TO_INSTALL+="texlive-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-extra-utils texlive-fonts-extra texlive-xetex texlive-lang-english"
-  hf_apt_install_pkgs $PKGS_TO_INSTALL
+  local pkgs_to_install+="texlive-base texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-extra-utils texlive-fonts-extra texlive-xetex texlive-lang-english"
+  hf_apt_install_pkgs $pkgs_to_install
 }
 
 function hf_latex_gitignore() {
@@ -1433,13 +1433,13 @@ function hf_cmake_install() {
 }
 
 function hf_cmake_uninstall() {
-  MANIFEST="install_manifest.txt"
-  if test -f $MANIFEST; then
-    cat $MANIFEST | while read -r i; do
+  local manifest="install_manifest.txt"
+  if test -f $manifest; then
+    cat $manifest | while read -r i; do
       if test -f $i; then sudo rm -f $i; fi
     done
   else
-    hf_log_error "$MANIFEST does not exist"
+    hf_log_error "$manifest does not exist"
   fi
 }
 
@@ -1753,17 +1753,17 @@ function hf_snap_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
 
-  INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-  PKGS_TO_INSTALL=""
+  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+  local pkgs_to_install=""
   for i in "$@"; do
-    echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
+    echo "$pkgs_installed" | grep "^$i" &>/dev/null
     if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+      pkgs_to_install="$pkgs_to_install $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
-  if test -n "$PKGS_TO_INSTALL"; then
-    for i in $PKGS_TO_INSTALL; do
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    for i in $pkgs_to_install; do
       sudo snap install "$i"
     done
   fi
@@ -1773,17 +1773,17 @@ function hf_snap_install_pkgs_classic() {
   hf_log_func
   hf_test_noargs_then_return
 
-  INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-  PKGS_TO_INSTALL=""
+  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+  local pkgs_to_install=""
   for i in "$@"; do
-    echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
+    echo "$pkgs_installed" | grep "^$i" &>/dev/null
     if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+      pkgs_to_install="$pkgs_to_install $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
-  if test -n "$PKGS_TO_INSTALL"; then
-    for i in $PKGS_TO_INSTALL; do
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    for i in $pkgs_to_install; do
       sudo snap install --classic "$i"
     done
   fi
@@ -1793,17 +1793,17 @@ function hf_snap_install_pkgs_edge() {
   hf_log_func
   hf_test_noargs_then_return
 
-  INSTALLED_LIST="$(snap list | awk 'NR>1 {print $1}')"
-  PKGS_TO_INSTALL=""
+  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+  local pkgs_to_install=""
   for i in "$@"; do
-    echo "$INSTALLED_LIST" | grep "^$i" &>/dev/null
+    echo "$pkgs_installed" | grep "^$i" &>/dev/null
     if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+      pkgs_to_install="$pkgs_to_install $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"; fi
-  if test -n "$PKGS_TO_INSTALL"; then
-    for i in $PKGS_TO_INSTALL; do
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    for i in $pkgs_to_install; do
       sudo snap install --edge "$i"
     done
   fi
@@ -1855,20 +1855,20 @@ function hf_vscode_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
   hf_test_command code || return
-  CODETMP=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
-  PKGS_TO_INSTALL=""
-  INSTALLED_LIST_TMP_FILE="/tmp/code-list-extensions"
-  $CODETMP --list-extensions >$INSTALLED_LIST_TMP_FILE
+  local codetmp=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
+  local pkgs_to_install=""
+  local pkgs_installed_tmp_file="/tmp/code-list-extensions"
+  $codetmp --list-extensions >$pkgs_installed_tmp_file
   for i in "$@"; do
-    grep -i "^$i" &>/dev/null <$INSTALLED_LIST_TMP_FILE
+    grep -i "^$i" &>/dev/null <$pkgs_installed_tmp_file
     if test $? != 0; then
-      PKGS_TO_INSTALL="$i $PKGS_TO_INSTALL"
+      pkgs_to_install="$i $pkgs_to_install"
     fi
   done
-  if ! test -z $PKGS_TO_INSTALL; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
-    for i in $PKGS_TO_INSTALL; do
-      $CODETMP --install-extension $i
+  if ! test -z $pkgs_to_install; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    for i in $pkgs_to_install; do
+      $codetmp --install-extension $i
     done
   fi
 }
@@ -2070,9 +2070,9 @@ if test $IS_LINUX; then
 
   function hf_gnome_settings_diff_actual_and_file() {
     : ${2?"Usage: ${FUNCNAME[0]} <dconf-dir> <file_name>"}
-    TMP_FILE=/tmp/gnome_settings_diff
-    hf_gnome_settings_save_to_file $1 $TMP_FILE
-    diff $TMP_FILE $2
+    local tmp_file=/tmp/gnome_settings_diff
+    hf_gnome_settings_save_to_file $1 $tmp_file
+    diff $tmp_file $2
   }
 fi
 
@@ -2112,26 +2112,27 @@ function hf_npm_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
 
-  PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
+  local pkgs_to_install=""
+  local pkgs_installed=$(npm ls -g --depth 0 2>/dev/null | grep -v UNMET | cut -d' ' -f2 -s | cut -d'@' -f1 | tr '\n' ' ')
+  local found
   for i in "$@"; do
-    FOUND=false
-    for j in $PKGS_INSTALLED; do
+    found=false
+    for j in $pkgs_installed; do
       if test $i == $j; then
-        FOUND=true
+        found=true
         break
       fi
     done
-    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
+    if ! $found; then pkgs_to_install="$pkgs_to_install $i"; fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
     if test -f pakcage.json; then cd /tmp/; fi
     if test $IS_WINDOWS; then
-      npm install -g $PKGS_TO_INSTALL
+      npm install -g $pkgs_to_install
       npm update
     else
-      sudo npm install -g $PKGS_TO_INSTALL
+      sudo npm install -g $pkgs_to_install
       sudo npm update
     fi
     if test "$(pwd)" == "/tmp"; then cd - >/dev/null; fi
@@ -2146,21 +2147,21 @@ function hf_ruby_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
 
-  PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
+  local pkgs_to_install=""
+  local pkgs_installed=$(gem list | cut -d' ' -f1 -s | tr '\n' ' ')
   for i in "$@"; do
-    FOUND=false
-    for j in $PKGS_INSTALLED; do
+    found=false
+    for j in $pkgs_installed; do
       if test $i == $j; then
-        FOUND=true
+        found=true
         break
       fi
     done
-    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
+    if ! $found; then pkgs_to_install="$pkgs_to_install $i"; fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
-    sudo gem install $PKGS_TO_INSTALL
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    sudo gem install $pkgs_to_install
     if test "$(pwd)" == "/tmp"; then cd - >/dev/null; fi
   fi
 }
@@ -2191,21 +2192,21 @@ function hf_python_install_pkgs() {
   hf_test_noargs_then_return
   hf_test_command pip || return
 
-  PKGS_TO_INSTALL=""
-  PKGS_INSTALLED=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
+  local pkgs_to_install=""
+  local pkgs_installed=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
   for i in "$@"; do
-    FOUND=false
-    for j in $PKGS_INSTALLED; do
+    found=false
+    for j in $pkgs_installed; do
       if test $i == $j; then
-        FOUND=true
+        found=true
         break
       fi
     done
-    if ! $FOUND; then PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"; fi
+    if ! $found; then pkgs_to_install="$pkgs_to_install $i"; fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
-    sudo pip install --no-cache-dir --disable-pip-version-check $PKGS_TO_INSTALL
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
+    sudo pip install --no-cache-dir --disable-pip-version-check $pkgs_to_install
   fi
   sudo pip install -U "$@" &>/dev/null
 }
@@ -2304,14 +2305,14 @@ function hf_install_linux_python35() {
   hf_log_func
   if ! type python3.5 &>/dev/null; then
     sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-    CWD=$(pwd)
+    local cwd=$(pwd)
     cd /tmp
     hf_compression_extract_from_url https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
     cd /tmp/Python-3.5.7
     sudo ./configure --enable-optimizations
     make
     sudo make altinstall
-    cd $CWD
+    cd $cwd
   fi
 }
 
@@ -2599,28 +2600,28 @@ function hf_apt_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
 
-  PKGS_TO_INSTALL=""
+  local pkgs_to_install=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
     if test $? != 0; then
-      PKGS_TO_INSTALL="$PKGS_TO_INSTALL $i"
+      pkgs_to_install="$pkgs_to_install $i"
     fi
   done
-  if test ! -z "$PKGS_TO_INSTALL"; then
-    echo "PKGS_TO_INSTALL=$PKGS_TO_INSTALL"
+  if test ! -z "$pkgs_to_install"; then
+    echo "pkgs_to_install=$pkgs_to_install"
   fi
-  if test -n "$PKGS_TO_INSTALL"; then
-    sudo apt install -y $PKGS_TO_INSTALL
+  if test -n "$pkgs_to_install"; then
+    sudo apt install -y $pkgs_to_install
   fi
 }
 
-function hf_apt_lastest_pkgs_names() {
-  local PKGS_NAMES=""
+function hf_apt_lastest_pkgs() {
+  local pkgs=""
   for i in "$@"; do
-    PKGS_NAMES+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
-    PKGS_NAMES+=" "
+    pkgs+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
+    pkgs+=" "
   done
-  echo $PKGS_NAMES
+  echo $pkgs
 }
 
 function hf_apt_autoremove() {
@@ -2633,50 +2634,50 @@ function hf_apt_autoremove() {
 function hf_apt_remove_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
-  PKGS_TO_REMOVE=""
+  local pkgs_to_remove=""
   for i in "$@"; do
     dpkg --status "$i" &>/dev/null
     if test $? -eq 0; then
-      PKGS_TO_REMOVE="$PKGS_TO_REMOVE $i"
+      pkgs_to_remove="$pkgs_to_remove $i"
     fi
   done
-  if test -n "$PKGS_TO_REMOVE"; then
-    echo "PKGS_TO_REMOVE=$PKGS_TO_REMOVE"
-    sudo apt remove -y --purge $PKGS_TO_REMOVE
+  if test -n "$pkgs_to_remove"; then
+    echo "pkgs_to_remove=$pkgs_to_remove"
+    sudo apt remove -y --purge $pkgs_to_remove
   fi
 }
 
 function hf_apt_remove_orphan_pkgs() {
-  PKGS_ORPHAN_TO_REMOVE=""
+  local pkgs_orphan_to_remove=""
   while [ "$(deborphan | wc -l)" -gt 0 ]; do
     for i in $(deborphan); do
-      FOUND_EXCEPTION=false
+      found_exception=false
       for j in "$@"; do
         if test "$i" = "$j"; then
-          FOUND_EXCEPTION=true
+          found_exception=true
           return
         fi
       done
-      if ! $FOUND_EXCEPTION; then
-        PKGS_ORPHAN_TO_REMOVE="$PKGS_ORPHAN_TO_REMOVE $i"
+      if ! $found_exception; then
+        pkgs_orphan_to_remove="$pkgs_orphan_to_remove $i"
       fi
     done
-    echo "PKGS_ORPHAN_TO_REMOVE=$PKGS_ORPHAN_TO_REMOVE"
-    if test -n "$PKGS_ORPHAN_TO_REMOVE"; then
-      sudo apt remove -y --purge $PKGS_ORPHAN_TO_REMOVE
+    echo "pkgs_orphan_to_remove=$pkgs_orphan_to_remove"
+    if test -n "$pkgs_orphan_to_remove"; then
+      sudo apt remove -y --purge $pkgs_orphan_to_remove
     fi
   done
 }
 
 function hf_apt_fetch_install() {
   : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-  apt_NAME=$(basename $1)
-  if test ! -f /tmp/$apt_NAME; then
+  local apt_name=$(basename $1)
+  if test ! -f /tmp/$apt_name; then
     wget --continue $1 -P /tmp/
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
 
   fi
-  sudo dpkg -i /tmp/$apt_NAME
+  sudo dpkg -i /tmp/$apt_name
 }
 
 # ---------------------------------------
@@ -2778,17 +2779,17 @@ function hf_compression_extract() {
 
 function hf_compression_extract_from_url() {
   : ${2?"Usage: ${FUNCNAME[0]} <URL> <folder>"}
-  FILE_NAME="/tmp/$(basename $1)"
+  local file_name="/tmp/$(basename $1)"
 
-  if test ! -f $FILE_NAME; then
-    echo "fetching $FILE_NAME"
+  if test ! -f $file_name; then
+    echo "fetching $file_name"
     cd /tmp/
     wget --continue $1
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
     cd -
   fi
-  echo "extracting $FILE_NAME to $2"
-  hf_compression_extract $FILE_NAME $2
+  echo "extracting $file_name to $2"
+  hf_compression_extract $file_name $2
 }
 
 # ---------------------------------------
@@ -2826,6 +2827,7 @@ function hf_youtubedl_audio_best_from_txt() {
 # ---------------------------------------
 
 function hf_zotero_sanity() {
+  local prefs
   if test -n "$IS_LINUX"; then
     prefs="$HOME/.zotero/zotero/*.default/prefs.js"
   elif test -n "$IS_WINDOWS"; then
@@ -2839,6 +2841,7 @@ function hf_zotero_sanity() {
 }
 
 function hf_zotero_onedrive() {
+  local prefs
   if test -n "$IS_LINUX"; then
     prefs="$HOME/.zotero/zotero/*.default/prefs.js"
   elif test -n "$IS_WINDOWS"; then
