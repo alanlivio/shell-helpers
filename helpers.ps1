@@ -904,7 +904,7 @@ function hf_wsl_set_version2() {
   wsl --set-version (hf_wsl_get_default) 2
 }
 
-function hf_wsl_fix_home_user() {
+function hf_wsl_fix_home() {
   Invoke-Expression $hf_log_func
   # fix file metadata
   # https://docs.microsoft.com/en-us/windows/wsl/wsl-config
@@ -1022,7 +1022,6 @@ function hf_msys_sanity() {
   # msysbash -c "sed -i 's|db_home: cygwin desc|db_home: windows|g' /etc/nsswitch.conf"
   msysbash -c ' echo db_home: windows >> /etc/nsswitch.conf'
   hf_env_add "LANG" "en_US.UTF-8"
-  hf_msys_add_to_path
 }
 
 # ---------------------------------------
@@ -1139,7 +1138,7 @@ function hf_install_wsl_ubuntu() {
   }
   # fix home user to \Users
   if (!(wsl echo '$HOME').Contains("Users")) {
-    hf_wsl_fix_home_user
+    hf_wsl_fix_home
   }
 }
 
