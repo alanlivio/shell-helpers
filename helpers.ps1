@@ -641,12 +641,15 @@ function hf_scheduledtask_disable() {
 function hf_service_list_running() {
   Get-Service | Where-Object { $_.Status -eq "Running" }
 }
+
 function hf_service_list_enabled() {
   Get-Service | Where-Object { $_.StartType -eq "Automatic" }
 }
+
 function hf_service_list_disabled() {
   Get-Service | Where-Object { $_.StartType -eq "Disabled" }
 }
+
 function hf_service_disable($name) {
   foreach ($name in $args) {
     Invoke-Expression $hf_log_func" "$name
@@ -799,6 +802,7 @@ function hf_explorer_clean_unused_shortcuts() {
 function hf_winget_list_installed() {
   winget list
 }
+
 function hf_winget_settings() {
   winget settings
 }
@@ -820,7 +824,7 @@ function hf_winget_install() {
       $pkgs_to_install = "$pkgs_to_install $name"
     }
   }
-  if ($pkgs_to_install){
+  if ($pkgs_to_install) {
     hf_log_msg "pkgs_to_install=$pkgs_to_install"
     foreach ($pkg in $pkgs_to_install) {
       Invoke-Expression "winget install --silent $pkg"

@@ -164,10 +164,7 @@ if test -n "$IS_WINDOWS"; then
     hf_msys_install $PKGS
   }
 
-  function hf_setup_windows() {
-    # windows
-    hf_ps_call_admin "hf_setup_windows "
-  }
+  hf_ps_def_func_admin hf_setup_windows
 
 fi
 
@@ -193,7 +190,7 @@ fi
 # The following funcs requeres variables with PKGS_ prefix.
 # Such variables can be configured in .bashrc or helpers-cfg.sh.
 
-if test $IS_LINUX; then
+if test -n "$IS_LINUX"; then
   function hf_update_clean_gnome() {
     # snap
     hf_snap_install_pkgs $PKGS_SNAP
@@ -322,17 +319,41 @@ elif test -n "$IS_MAC"; then
 fi
 
 # ---------------------------------------
-# helper.ps1
+# helpers.ps1
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
+
   SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
+
   function hf_ps_call() {
     powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
   }
+
   function hf_ps_call_admin() {
     gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
   }
+
+  function hf_ps_def_func() {
+    eval "function $1() { hf_ps_call $*; }"
+  }
+
+  function hf_ps_def_func_admin() {
+    eval "function $1() { hf_ps_call_admin $*; }"
+  }
+
+  # winget funcs from helpers.ps1
+  hf_ps_def_func_admin hf_choco_install
+  hf_ps_def_func_admin hf_choco_uninstall
+  hf_ps_def_func_admin hf_choco_list_installed
+
+  # winget funcs from helpers.ps1
+  hf_ps_def_func_admin hf_winget_install
+  hf_ps_def_func_admin hf_winget_upgrade
+  hf_ps_def_func hf_winget_settings
+
+  # wt funcs from helpers.ps1
+  hf_ps_def_func hf_wt_open_settings
 fi
 
 # ---------------------------------------
@@ -482,12 +503,11 @@ function hf_profile_reload() {
   fi
 }
 
+# ---------------------------------------
+# msys
+# ---------------------------------------
+
 if test -n "$IS_WINDOWS_MSYS"; then
-
-  # ---------------------------------------
-  # msys
-  # ---------------------------------------
-
   function hf_msys_admin_bash() {
     hf_log_func
     MSYS_CMD="C:\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path -here"
@@ -539,58 +559,10 @@ if test -n "$IS_WINDOWS_MSYS"; then
     hf_ps_call_admin "hf_msys_sanity"
   }
 
-elif test -n "$IS_WINDOWS"; then
-
-  # ---------------------------------------
-  # install_msys
-  # ---------------------------------------
-
-  function hf_install_msys_latexindent() {
-    hf_log_func
-    if ! type latexindent.exe &>/dev/null; then
-      wget https://github.com/cmhughes/latexindent.pl/releases/download/V3.10/latexindent.exe -P /mnt/c/tools/
-      wget https://raw.githubusercontent.com/cmhughes/latexindent.pl/main/defaultSettings.yaml -P /mnt/c/tools/
-    fi
-  }
-
-  # ---------------------------------------
-  # winget
-  # ---------------------------------------
-
-  function hf_winget_install() {
-    hf_ps_call_admin "hf_winget_install $*"
-  }
-
-  function hf_winget_list_installed_only_ms() {
-    winget list | grep Microsoft
-  }
-
-  function hf_winget_list_installed_not_ms() {
-    winget list | grep -v -e Driver -e Microsoft
-  }
-
-  function hf_winget_list_installed() {
-    winget list
-  }
-  function hf_winget_settings() {
-    winget settings
-  }
-
-  function hf_winget_upgrade() {
-    winget upgrade --all
-  }
-
-  # ---------------------------------------
-  # wt
-  # ---------------------------------------
-
-  function hf_wt_settings() {
-    code $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
-  }
-
 fi
 
 if test -n "$IS_MAC"; then
+
   # ---------------------------------------
   # macos-only functions
   # ---------------------------------------
@@ -2390,10 +2362,26 @@ function hf_install_windows_android_flutter() {
 }
 
 # ---------------------------------------
+# install_windows
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS"; then
+
+  function hf_install_windows_latexindent() {
+    hf_log_func
+    if ! type latexindent.exe &>/dev/null; then
+      wget https://github.com/cmhughes/latexindent.pl/releases/download/V3.10/latexindent.exe -P /c/tools/
+      wget https://raw.githubusercontent.com/cmhughes/latexindent.pl/main/defaultSettings.yaml -P /c/tools/
+    fi
+  }
+
+fi
+
+# ---------------------------------------
 # install_gnome
 # ---------------------------------------
 
-if test $IS_LINUX; then
+if test -n "$IS_LINUX"; then
   function hf_install_gnome_bb_warsaw() {
     hf_log_func
     if ! type warsaw &>/dev/null; then
