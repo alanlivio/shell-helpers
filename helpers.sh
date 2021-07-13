@@ -95,6 +95,26 @@ function hf_log_try() {
 }
 
 # ---------------------------------------
+# alias path
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS_WSL"; then
+  # fix writting permissions
+  if [[ "$(umask)" = "0000" ]]; then
+    umask 0022
+  fi
+  alias unixpath='wslpath'
+  alias winpath='wslpath -w'
+elif test -n "$IS_WINDOWS"; then
+  alias unixpath='cygpath'
+  alias winpath='cygpath -w'
+  alias sudo=''
+  # fix mingw tmp
+  unset temp
+  unset tmp
+fi
+
+# ---------------------------------------
 # test functions
 # ---------------------------------------
 
@@ -108,6 +128,44 @@ function hf_test_command() {
     return 0
   fi
 }
+
+# ---------------------------------------
+# ps funcs
+# ---------------------------------------
+
+if test -n "$IS_WINDOWS"; then
+
+  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
+
+  function hf_ps_call() {
+    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
+  }
+
+  function hf_ps_call_admin() {
+    gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
+  }
+
+  function hf_ps_def_func() {
+    eval "function $1() { hf_ps_call $*; }"
+  }
+
+  function hf_ps_def_func_admin() {
+    eval "function $1() { hf_ps_call_admin $*; }"
+  }
+
+  # winget funcs from helpers.ps1
+  hf_ps_def_func_admin hf_choco_install
+  hf_ps_def_func_admin hf_choco_uninstall
+  hf_ps_def_func_admin hf_choco_list_installed
+
+  # winget funcs from helpers.ps1
+  hf_ps_def_func_admin hf_winget_install
+  hf_ps_def_func_admin hf_winget_upgrade
+  hf_ps_def_func hf_winget_settings
+
+  # wt funcs from helpers.ps1
+  hf_ps_def_func hf_wt_open_settings
+fi
 
 # ---------------------------------------
 # setup functions
@@ -265,26 +323,6 @@ function hf_update_clean() {
 }
 
 # ---------------------------------------
-# alias path
-# ---------------------------------------
-
-if test -n "$IS_WINDOWS_WSL"; then
-  # fix writting permissions
-  if [[ "$(umask)" = "0000" ]]; then
-    umask 0022
-  fi
-  alias unixpath='wslpath'
-  alias winpath='wslpath -w'
-elif test -n "$IS_WINDOWS"; then
-  alias unixpath='cygpath'
-  alias winpath='cygpath -w'
-  alias sudo=''
-  # fix mingw tmp
-  unset temp
-  unset tmp
-fi
-
-# ---------------------------------------
 # alias
 # ---------------------------------------
 
@@ -316,44 +354,6 @@ if test -n "$IS_WINDOWS_WSL"; then
   }
 elif test -n "$IS_MAC"; then
   alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
-fi
-
-# ---------------------------------------
-# helpers.ps1
-# ---------------------------------------
-
-if test -n "$IS_WINDOWS"; then
-
-  SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
-
-  function hf_ps_call() {
-    powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
-  }
-
-  function hf_ps_call_admin() {
-    gsudo powershell.exe -command "& { . $SCRIPT_PS_WPATH;  $* }"
-  }
-
-  function hf_ps_def_func() {
-    eval "function $1() { hf_ps_call $*; }"
-  }
-
-  function hf_ps_def_func_admin() {
-    eval "function $1() { hf_ps_call_admin $*; }"
-  }
-
-  # winget funcs from helpers.ps1
-  hf_ps_def_func_admin hf_choco_install
-  hf_ps_def_func_admin hf_choco_uninstall
-  hf_ps_def_func_admin hf_choco_list_installed
-
-  # winget funcs from helpers.ps1
-  hf_ps_def_func_admin hf_winget_install
-  hf_ps_def_func_admin hf_winget_upgrade
-  hf_ps_def_func hf_winget_settings
-
-  # wt funcs from helpers.ps1
-  hf_ps_def_func hf_wt_open_settings
 fi
 
 # ---------------------------------------
