@@ -9,7 +9,12 @@ Darwin)
   IS_MAC=1
   ;;
 Linux)
-  IS_LINUX=1
+  if [[ $(uname -r) == *"icrosoft"* ]]; then
+    IS_WINDOWS=1
+    IS_WINDOWS_WSL=1
+  else
+    IS_LINUX=1
+  fi
   ;;
 CYGWIN* | MINGW* | MSYS*)
   IS_WINDOWS=1
@@ -20,15 +25,6 @@ CYGWIN* | MINGW* | MSYS*)
   fi
   ;;
 esac
-
-if test $IS_LINUX; then
-  case "$(uname -r)" in
-  *icrosoft*) # (M/m)icrosoft
-    IS_WINDOWS=1
-    IS_WINDOWS_WSL=1
-    ;;
-  esac
-fi
 
 # ---------------------------------------
 # path variables
@@ -42,7 +38,7 @@ DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
 # load helpers-cfg
 # ---------------------------------------
 
-# if not "$HOME/.helpers-cfg.sh" load sample
+# if not "$HOME/.helpers-cfg.sh" load skel
 if test -f "$HOME/.helpers-cfg.sh"; then
   HELPERS_CFG="$HOME/.helpers-cfg.sh"
 else
@@ -52,12 +48,12 @@ if test -f $HELPERS_CFG; then
   source $HELPERS_CFG
 fi
 
-# if $HELPERS_CFG not defined use ~/opt
+# if $HELPERS_CFG not defined use $HOME/opt
 if test -z "$HELPERS_OPT"; then
   HELPERS_OPT="$HOME/opt"
 fi
 
-# if $HELPERS_DEV not defined use ~/opt
+# if $HELPERS_DEV not defined use $HOME/dev
 if test -z "$HELPERS_DEV"; then
   HELPERS_DEV="$HOME/dev"
 fi
@@ -116,6 +112,7 @@ function hf_test_command() {
 # ---------------------------------------
 # setup functions
 # ---------------------------------------
+
 PKGS_ESSENTIALS="vim diffutils curl wget "
 
 if test $IS_LINUX; then
