@@ -5,8 +5,12 @@
 # ---------------------------------------
 
 case "$(uname -s)" in
-Darwin) IS_MAC=1 ;;
-Linux) IS_LINUX=1 ;;
+Darwin)
+  IS_MAC=1
+  ;;
+Linux)
+  IS_LINUX=1
+  ;;
 CYGWIN* | MINGW* | MSYS*)
   IS_WINDOWS=1
   if type pacman &>/dev/null; then
@@ -16,6 +20,7 @@ CYGWIN* | MINGW* | MSYS*)
   fi
   ;;
 esac
+
 if test $IS_LINUX; then
   case "$(uname -r)" in
   *icrosoft*) # (M/m)icrosoft
@@ -25,11 +30,9 @@ if test $IS_LINUX; then
   esac
 fi
 
-alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
-MSYS_CMD="C:\\tools\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path -here"
 
 # ---------------------------------------
 # load helpers-cfg
@@ -56,11 +59,48 @@ if test -z "$HF_GIT_GUI"; then
 fi
 
 # ---------------------------------------
+# log funcs
+# ---------------------------------------
+
+alias hf_log_func='hf_log_msg "${FUNCNAME[0]}"'
+alias hf_log_not_implemented_return="hf_log_error 'Not implemented'; return;"
+
+function hf_log_wrap() {
+  echo -e "$1" | fold -w100 -s
+}
+
+function hf_log_error() {
+  hf_log_wrap "\033[00;31m-- $* \033[00m"
+}
+
+function hf_log_msg() {
+  hf_log_wrap "\033[00;33m-- $* \033[00m"
+}
+
+function hf_log_msg_2nd() {
+  hf_log_wrap "\033[00;33m-- > $* \033[00m"
+}
+
+function hf_log_done() {
+  hf_log_wrap "\033[00;32m-- done\033[00m"
+}
+
+function hf_log_ok() {
+  hf_log_wrap "\033[00;32m-- ok\033[00m"
+}
+
+function hf_log_try() {
+  "$@"
+  if test $? -ne 0; then hf_log_error "$1" && exit 1; fi
+}
+
+# ---------------------------------------
 # test functions
 # ---------------------------------------
 
 alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
 alias hf_test_arg1_then_return='if test -z "$1"; then return; fi'
+
 function hf_test_command() {
   if ! type "$1" &>/dev/null; then
     return 1
@@ -371,41 +411,6 @@ if test -n "$IS_WINDOWS_WSL"; then
 fi
 
 # ---------------------------------------
-# log
-# ---------------------------------------
-
-function hf_log_wrap() {
-  echo -e "$1" | fold -w100 -s
-}
-
-function hf_log_error() {
-  hf_log_wrap "\033[00;31m-- $* \033[00m"
-}
-
-function hf_log_msg() {
-  hf_log_wrap "\033[00;33m-- $* \033[00m"
-}
-
-function hf_log_msg_2nd() {
-  hf_log_wrap "\033[00;33m-- > $* \033[00m"
-}
-
-function hf_log_done() {
-  hf_log_wrap "\033[00;32m-- done\033[00m"
-}
-
-function hf_log_ok() {
-  hf_log_wrap "\033[00;32m-- ok\033[00m"
-}
-
-function hf_log_try() {
-  "$@"
-  if test $? -ne 0; then hf_log_error "$1" && exit 1; fi
-}
-
-alias hf_log_not_implemented_return="hf_log_error 'Not implemented'; return;"
-
-# ---------------------------------------
 # config
 # ---------------------------------------
 
@@ -484,6 +489,7 @@ if test -n "$IS_WINDOWS_MSYS"; then
 
   function hf_msys_admin_bash() {
     hf_log_func
+    MSYS_CMD="C:\\msys64\\msys2_shell.cmd -defterm -mingw64 -no-start -use-full-path -here"
     gsudo $MSYS_CMD
   }
 
