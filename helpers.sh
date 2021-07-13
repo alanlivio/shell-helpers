@@ -1852,52 +1852,42 @@ function hf_vscode_install_pkgs() {
 }
 
 # ---------------------------------------
-# ubuntu
-# ---------------------------------------
-
-function hf_ubuntu_upgrade() {
-  sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
-  sudo apt update && sudo apt dist-upgrade
-  do-release-upgrade
-}
-
-function hf_ubuntu_bluetooth_reinstall() {
-  sudo apt reinstall pulseaudio pulseaudio-utils pavucontrol pulseaudio-module-bluetooth rtbth-dkms
-}
-
-# ---------------------------------------
 # service
 # ---------------------------------------
 
-function hf_services_initd_list() {
-  service --status-all
-}
+if test -n "$IS_LINUX"; then
 
-function hf_services_initd_enable() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
-  sudo update-rc.d $1 enable
-}
+  function hf_services_initd_list() {
+    service --status-all
+  }
 
-function hf_services_initd_disable() {
-  : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
-  sudo service $1 stop
-  sudo update-rc.d -f $1 disable
-}
+  function hf_services_initd_enable() {
+    : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
+    sudo update-rc.d $1 enable
+  }
 
-function hf_services_systemd_list() {
-  systemctl --type=service
-}
+  function hf_services_initd_disable() {
+    : ${1?"Usage: ${FUNCNAME[0]} <script_file>"}$1
+    sudo service $1 stop
+    sudo update-rc.d -f $1 disable
+  }
 
-function hf_services_systemd_status_service() {
-  : ${1?"Usage: ${FUNCNAME[0]} <service_name>"}
-  systemctl status $1
-}
+  function hf_services_systemd_list() {
+    systemctl --type=service
+  }
 
-function hf_services_systemd_add_script() {
-  : ${1?"Usage: ${FUNCNAME[0]} <service_file>"}
-  systemctl daemon-reload
-  systemctl enable $1
-}
+  function hf_services_systemd_status_service() {
+    : ${1?"Usage: ${FUNCNAME[0]} <service_name>"}
+    systemctl status $1
+  }
+
+  function hf_services_systemd_add_script() {
+    : ${1?"Usage: ${FUNCNAME[0]} <service_file>"}
+    systemctl daemon-reload
+    systemctl enable $1
+  }
+
+fi
 
 # ---------------------------------------
 # mount
@@ -1911,7 +1901,8 @@ function hf_mount_list() {
 # gnome
 # ---------------------------------------
 
-if test $IS_LINUX; then
+if test -n "$IS_LINUX"; then
+
   function hf_gnome_execute_desktop_file() {
     awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' $1
   }
@@ -2200,172 +2191,140 @@ function hf_python_remove_home_pkgs() {
   hf_folder_remove $HOME/.local/lib/python3.7/
 }
 
-# ---------------------------------------
-# venv
-# ---------------------------------------
-
-function hf_venv_create() {
+function hf_python_venv_create() {
   deactivate
   if test -d ./venv/bin/; then rm -r ./venv; fi
   python3 -m venv venv
   if test requirements.txt; then pip install -r requirements.txt; fi
 }
 
-function hf_venv_load() {
+function hf_python_venv_load() {
   deactivate
   source venv/bin/activate
   if test requirements.txt; then pip install -r requirements.txt; fi
 }
 
-# ---------------------------------------
-# jupyter
-# ---------------------------------------
-
-function hf_jupyter_notebook() {
+function hf_python_jupyter_notebook() {
   jupyter notebook
 }
 
-function hf_jupyter_configure_git_diff() {
+function hf_python_jupyter_configure_git_diff() {
   sudo python install nbdime
   nbdime config-git --enable --global
   sed -i "s/git-nbdiffdriver diff$/git-nbdiffdriver diff -s/g" $HOME/.gitconfig
 }
 
-function hf_jupyter_dark_theme() {
+function hf_python_jupyter_dark_theme() {
   pip install jupyterthemes
   jt -t monokai
-}
-
-# ---------------------------------------
-# eclipse
-# ---------------------------------------
-
-function hf_eclipse_install_pkgs() {
-  hf_log_func
-  hf_test_noargs_then_return
-
-  # usage: hf_eclipse_install_pkgs org.eclipse.ldt.feature.group, org.eclipse.dltk.sh.feature.group
-  eclipse -consolelog -noSplash -profile SDKProfile-repository download.eclipse.org/releases/neon, https://dl.google.com/eclipse/plugin/4.6, pydev.org/updates -application org.eclipse.equinox.p2.director -installIU "$@"
-}
-
-function hf_eclipse_uninstall_pkgs() {
-  # usage: hf_eclipse_install_pkgs org.eclipse.egit.feature.group, \
-  #   org.eclipse.mylyn.ide_feature.feature.group, \
-  #   org.eclipse.mylyn_feature.feature.group, \
-  #   org.eclipse.help.feature.group, \
-  #   org.eclipse.tm.terminal.feature.feature.group, \
-  #   org.eclipse.wst.server_adapters.feature.feature.group
-  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -uninstallIU "$@"
-  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.garbagecollector.application
 }
 
 # ---------------------------------------
 # install_linux
 # ---------------------------------------
 
-function hf_install_linux_node() {
-  hf_log_funch
-  curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-  sudo apt install -y nodejs
-}
+if test -n "$IS_LINUX"; then
 
-function hf_install_linux_luarocks() {
-  hf_log_func
-  if ! type luarocks &>/dev/null; then
-    wget https://luarocks.org/releases/luarocks-3.3.0.tar.gz
-    tar zxpf luarocks-3.3.0.tar.gz
-    cd luarocks-3.3.0
-    ./configure && make && sudo make install
-  fi
-}
+  function hf_install_linux_node() {
+    hf_log_funch
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    sudo apt install -y nodejs
+  }
 
-function hf_install_linux_python35() {
-  hf_log_func
-  if ! type python3.5 &>/dev/null; then
-    sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-    local cwd=$(pwd)
-    cd /tmp
-    hf_compression_extract_from_url https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
-    cd /tmp/Python-3.5.7
-    sudo ./configure --enable-optimizations
-    make
-    sudo make altinstall
-    cd $cwd
-  fi
-}
+  function hf_install_linux_luarocks() {
+    hf_log_func
+    if ! type luarocks &>/dev/null; then
+      wget https://luarocks.org/releases/luarocks-3.3.0.tar.gz
+      tar zxpf luarocks-3.3.0.tar.gz
+      cd luarocks-3.3.0
+      ./configure && make && sudo make install
+    fi
+  }
 
-function hf_install_linux_android_flutter() {
-  hf_log_func
-  OPT_DST="$HELPERS_OPT/linux"
+  function hf_install_linux_python35() {
+    hf_log_func
+    if ! type python3.5 &>/dev/null; then
+      sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+      local cwd=$(pwd)
+      cd /tmp
+      hf_compression_extract_from_url https://www.python.org/ftp/python/3.5.7/Python-3.5.7.tgz /tmp
+      cd /tmp/Python-3.5.7
+      sudo ./configure --enable-optimizations
+      make
+      sudo make altinstall
+      cd $cwd
+    fi
+  }
 
-  # android cmd and sdk
-  ANDROID_SDK_DIR="$OPT_DST/android"
-  ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
-  ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
-  if ! test -d $ANDROID_CMD_DIR; then
-    hf_folder_create_if_not_exist $ANDROID_CMD_DIR
-    hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
-    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    hf_env_path_add $ANDROID_CMD_DIR/bin/
-  fi
-  if ! test -d $ANDROID_SDK_DIR/platforms; then
-    $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
-    yes | $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --licenses
-    hf_env_add ANDROID_HOME $ANDROID_SDK_DIR
-    hf_env_add ANDROID_SDK_ROOT $ANDROID_SDK_DIR
-    hf_env_path_add $ANDROID_SDK_DIR/platform-tools
-  fi
+  function hf_install_linux_android_flutter() {
+    hf_log_func
+    OPT_DST="$HELPERS_OPT/linux"
 
-  # flutter
-  FLUTTER_SDK_DIR="$OPT_DST/flutter"
-  FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
-  if ! test -d $FLUTTER_SDK_DIR; then
-    hf_compression_extract_from_url $FLUTTER_SDK_URL $OPT_DST
-    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    hf_env_path_add $FLUTTER_SDK_DIR/bin
-  fi
-}
+    # android cmd and sdk
+    ANDROID_SDK_DIR="$OPT_DST/android"
+    ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
+    ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
+    if ! test -d $ANDROID_CMD_DIR; then
+      hf_folder_create_if_not_exist $ANDROID_CMD_DIR
+      hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
+      if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+      hf_env_path_add $ANDROID_CMD_DIR/bin/
+    fi
+    if ! test -d $ANDROID_SDK_DIR/platforms; then
+      $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
+      yes | $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --licenses
+      hf_env_add ANDROID_HOME $ANDROID_SDK_DIR
+      hf_env_add ANDROID_SDK_ROOT $ANDROID_SDK_DIR
+      hf_env_path_add $ANDROID_SDK_DIR/platform-tools
+    fi
 
-# ---------------------------------------
-# install_windows
-# ---------------------------------------
-
-function hf_install_windows_android_flutter() {
-  hf_log_func
-  OPT_DST="$HELPERS_OPT/win/"
-
-  # android cmd and sdk
-  ANDROID_SDK_DIR="$OPT_DST/android"
-  ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
-  ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip"
-  if ! test -d $ANDROID_CMD_DIR; then
-    hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
-    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_CMD_DIR/bin)"
-  fi
-  if ! test -d $ANDROID_SDK_DIR/platforms; then
-    $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
-    yes | $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --licenses
-    hf_ps_call_admin "hf_env_add ANDROID_HOME $(winpath $ANDROID_SDK_DIR)"
-    hf_ps_call_admin "hf_env_add ANDROID_SDK_ROOT $(winpath $ANDROID_SDK_DIR)"
-    hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_SDK_DIR/platform-tools)"
-  fi
-
-  # flutter
-  FLUTTER_SDK_DIR="$OPT_DST/flutter"
-  FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
-  if ! test -d $FLUTTER_SDK_DIR; then
-    hf_compression_extract_from_url $FLUTTER_SDK_URL $HELPERS_OPT
-    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-    hf_ps_call_admin "hf_env_path_add $(winpath $FLUTTER_SDK_DIR/bin)"
-  fi
-}
+    # flutter
+    FLUTTER_SDK_DIR="$OPT_DST/flutter"
+    FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
+    if ! test -d $FLUTTER_SDK_DIR; then
+      hf_compression_extract_from_url $FLUTTER_SDK_URL $OPT_DST
+      if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+      hf_env_path_add $FLUTTER_SDK_DIR/bin
+    fi
+  }
+fi
 
 # ---------------------------------------
 # install_windows
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
+
+  function hf_install_windows_android_flutter() {
+    hf_log_func
+    OPT_DST="$HELPERS_OPT/win/"
+
+    # android cmd and sdk
+    ANDROID_SDK_DIR="$OPT_DST/android"
+    ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
+    ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip"
+    if ! test -d $ANDROID_CMD_DIR; then
+      hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
+      if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+      hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_CMD_DIR/bin)"
+    fi
+    if ! test -d $ANDROID_SDK_DIR/platforms; then
+      $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
+      yes | $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --licenses
+      hf_ps_call_admin "hf_env_add ANDROID_HOME $(winpath $ANDROID_SDK_DIR)"
+      hf_ps_call_admin "hf_env_add ANDROID_SDK_ROOT $(winpath $ANDROID_SDK_DIR)"
+      hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_SDK_DIR/platform-tools)"
+    fi
+
+    # flutter
+    FLUTTER_SDK_DIR="$OPT_DST/flutter"
+    FLUTTER_SDK_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.22.6-stable.tar.xz"
+    if ! test -d $FLUTTER_SDK_DIR; then
+      hf_compression_extract_from_url $FLUTTER_SDK_URL $HELPERS_OPT
+      if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+      hf_ps_call_admin "hf_env_path_add $(winpath $FLUTTER_SDK_DIR/bin)"
+    fi
+  }
 
   function hf_install_windows_latexindent() {
     hf_log_func
@@ -2382,6 +2341,17 @@ fi
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
+
+  function hf_ubuntu_upgrade() {
+    sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
+    sudo apt update && sudo apt dist-upgrade
+    do-release-upgrade
+  }
+
+  function hf_install_gnome_bluetooth_audio() {
+    sudo apt nstall pulseaudio pulseaudio-utils pavucontrol pulseaudio-module-bluetooth rtbth-dkms
+  }
+
   function hf_install_gnome_bb_warsaw() {
     hf_log_func
     if ! type warsaw &>/dev/null; then
@@ -2559,121 +2529,123 @@ function hf_env_path_add() {
 # apt
 # ---------------------------------------
 
-function hf_apt_upgrade() {
-  hf_log_func
-  sudo apt -y update
-  if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
-    sudo apt -y upgrade
-  fi
-}
+if type apt &>/dev/null; then
 
-function hf_apt_update() {
-  hf_log_func
-  sudo apt -y update
-}
-
-function hf_apt_ppa_remove() {
-  hf_log_func
-  sudo add-apt-repository --remove $1
-}
-
-function hf_apt_ppa_list() {
-  hf_log_func
-  apt policy
-}
-
-function hf_apt_fixes() {
-  hf_log_func
-  sudo dpkg --configure -a
-  sudo apt install -f --fix-broken
-  sudo apt-get update --fix-missing
-  sudo apt dist-upgrade
-}
-
-function hf_apt_install_pkgs() {
-  hf_log_func
-  hf_test_noargs_then_return
-
-  local pkgs_to_install=""
-  for i in "$@"; do
-    dpkg --status "$i" &>/dev/null
-    if test $? != 0; then
-      pkgs_to_install="$pkgs_to_install $i"
+  function hf_apt_upgrade() {
+    hf_log_func
+    sudo apt -y update
+    if [ "$(apt list --upgradable 2>/dev/null | wc -l)" -gt 1 ]; then
+      sudo apt -y upgrade
     fi
-  done
-  if test ! -z "$pkgs_to_install"; then
-    echo "pkgs_to_install=$pkgs_to_install"
-  fi
-  if test -n "$pkgs_to_install"; then
-    sudo apt install -y $pkgs_to_install
-  fi
-}
+  }
 
-function hf_apt_lastest_pkgs() {
-  local pkgs=""
-  for i in "$@"; do
-    pkgs+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
-    pkgs+=" "
-  done
-  echo $pkgs
-}
+  function hf_apt_update() {
+    hf_log_func
+    sudo apt -y update
+  }
 
-function hf_apt_autoremove() {
-  hf_log_func
-  if [ "$(apt --dry-run autoremove 2>/dev/null | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
-    sudo apt -y autoremove
-  fi
-}
+  function hf_apt_ppa_remove() {
+    hf_log_func
+    sudo add-apt-repository --remove $1
+  }
 
-function hf_apt_remove_pkgs() {
-  hf_log_func
-  hf_test_noargs_then_return
-  local pkgs_to_remove=""
-  for i in "$@"; do
-    dpkg --status "$i" &>/dev/null
-    if test $? -eq 0; then
-      pkgs_to_remove="$pkgs_to_remove $i"
-    fi
-  done
-  if test -n "$pkgs_to_remove"; then
-    echo "pkgs_to_remove=$pkgs_to_remove"
-    sudo apt remove -y --purge $pkgs_to_remove
-  fi
-}
+  function hf_apt_ppa_list() {
+    hf_log_func
+    apt policy
+  }
 
-function hf_apt_remove_orphan_pkgs() {
-  local pkgs_orphan_to_remove=""
-  while [ "$(deborphan | wc -l)" -gt 0 ]; do
-    for i in $(deborphan); do
-      found_exception=false
-      for j in "$@"; do
-        if test "$i" = "$j"; then
-          found_exception=true
-          return
-        fi
-      done
-      if ! $found_exception; then
-        pkgs_orphan_to_remove="$pkgs_orphan_to_remove $i"
+  function hf_apt_fixes() {
+    hf_log_func
+    sudo dpkg --configure -a
+    sudo apt install -f --fix-broken
+    sudo apt-get update --fix-missing
+    sudo apt dist-upgrade
+  }
+
+  function hf_apt_install_pkgs() {
+    hf_log_func
+    hf_test_noargs_then_return
+
+    local pkgs_to_install=""
+    for i in "$@"; do
+      dpkg --status "$i" &>/dev/null
+      if test $? != 0; then
+        pkgs_to_install="$pkgs_to_install $i"
       fi
     done
-    echo "pkgs_orphan_to_remove=$pkgs_orphan_to_remove"
-    if test -n "$pkgs_orphan_to_remove"; then
-      sudo apt remove -y --purge $pkgs_orphan_to_remove
+    if test ! -z "$pkgs_to_install"; then
+      echo "pkgs_to_install=$pkgs_to_install"
     fi
-  done
-}
+    if test -n "$pkgs_to_install"; then
+      sudo apt install -y $pkgs_to_install
+    fi
+  }
 
-function hf_apt_fetch_install() {
-  : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
-  local apt_name=$(basename $1)
-  if test ! -f /tmp/$apt_name; then
-    wget --continue $1 -P /tmp/
-    if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+  function hf_apt_lastest_pkgs() {
+    local pkgs=""
+    for i in "$@"; do
+      pkgs+=$(apt search $i 2>/dev/null | grep -E -o "^$i([0-9.]+)/" | cut -d/ -f1)
+      pkgs+=" "
+    done
+    echo $pkgs
+  }
 
-  fi
-  sudo dpkg -i /tmp/$apt_name
-}
+  function hf_apt_autoremove() {
+    hf_log_func
+    if [ "$(apt --dry-run autoremove 2>/dev/null | grep -c -Po 'Remv \K[^ ]+')" -gt 0 ]; then
+      sudo apt -y autoremove
+    fi
+  }
 
+  function hf_apt_remove_pkgs() {
+    hf_log_func
+    hf_test_noargs_then_return
+    local pkgs_to_remove=""
+    for i in "$@"; do
+      dpkg --status "$i" &>/dev/null
+      if test $? -eq 0; then
+        pkgs_to_remove="$pkgs_to_remove $i"
+      fi
+    done
+    if test -n "$pkgs_to_remove"; then
+      echo "pkgs_to_remove=$pkgs_to_remove"
+      sudo apt remove -y --purge $pkgs_to_remove
+    fi
+  }
+
+  function hf_apt_remove_orphan_pkgs() {
+    local pkgs_orphan_to_remove=""
+    while [ "$(deborphan | wc -l)" -gt 0 ]; do
+      for i in $(deborphan); do
+        found_exception=false
+        for j in "$@"; do
+          if test "$i" = "$j"; then
+            found_exception=true
+            return
+          fi
+        done
+        if ! $found_exception; then
+          pkgs_orphan_to_remove="$pkgs_orphan_to_remove $i"
+        fi
+      done
+      echo "pkgs_orphan_to_remove=$pkgs_orphan_to_remove"
+      if test -n "$pkgs_orphan_to_remove"; then
+        sudo apt remove -y --purge $pkgs_orphan_to_remove
+      fi
+    done
+  }
+
+  function hf_apt_fetch_install() {
+    : ${1?"Usage: ${FUNCNAME[0]} <URL>"}
+    local apt_name=$(basename $1)
+    if test ! -f /tmp/$apt_name; then
+      wget --continue $1 -P /tmp/
+      if test $? != 0; then hf_log_error "wget failed." && return 1; fi
+
+    fi
+    sudo dpkg -i /tmp/$apt_name
+  }
+fi
 # ---------------------------------------
 # curl
 # ---------------------------------------
@@ -2711,7 +2683,7 @@ function hf_wget_continue() {
 }
 
 # ---------------------------------------
-# compress
+# compression
 # ---------------------------------------
 
 function hf_compression_zip_files() {
@@ -2790,32 +2762,35 @@ function hf_compression_extract_from_url() {
 # youtubedl
 # ---------------------------------------
 
-YOUTUBEDL_PARAMS="--download-archive .downloaded.txt --no-warnings --no-post-overwrites --ignore-errors"
-function hf_youtubedl_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" --download-archive .downloaded.txt $YOUTUBEDL_PARAMS
-}
+if youtube-dl apt &>/dev/null; then
 
-function hf_youtubedl_video480() {
-  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
-}
+  YOUTUBEDL_PARAMS="--download-archive .downloaded.txt --no-warnings --no-post-overwrites --ignore-errors"
+  function hf_youtubedl_from_txt() {
+    : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+    youtube-dl -a "$1" --download-archive .downloaded.txt $YOUTUBEDL_PARAMS
+  }
 
-function hf_youtubedl_video480_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
-}
+  function hf_youtubedl_video480() {
+    : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+    youtube-dl "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
+  }
 
-function hf_youtubedl_audio() {
-  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
-}
+  function hf_youtubedl_video480_from_txt() {
+    : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+    youtube-dl -a "$1" -f 'best[height<=480]' $YOUTUBEDL_PARAMS
+  }
 
-function hf_youtubedl_audio_best_from_txt() {
-  : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
-  youtube-dl -a "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
-}
+  function hf_youtubedl_audio() {
+    : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+    youtube-dl "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+  }
 
+  function hf_youtubedl_audio_best_from_txt() {
+    : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
+    youtube-dl -a "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
+  }
+
+fi
 # ---------------------------------------
 # zotero
 # ---------------------------------------
