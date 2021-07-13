@@ -30,6 +30,10 @@ if test $IS_LINUX; then
   esac
 fi
 
+# ---------------------------------------
+# path variables
+# ---------------------------------------
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
@@ -37,6 +41,7 @@ DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
 # ---------------------------------------
 # load helpers-cfg
 # ---------------------------------------
+
 # if not "$HOME/.helpers-cfg.sh" load sample
 if test -f "$HOME/.helpers-cfg.sh"; then
   HELPERS_CFG="$HOME/.helpers-cfg.sh"
@@ -47,15 +52,14 @@ if test -f $HELPERS_CFG; then
   source $HELPERS_CFG
 fi
 
-# if $HELPERS_CFG not defined use from same dir
+# if $HELPERS_CFG not defined use ~/opt
 if test -z "$HELPERS_OPT"; then
   HELPERS_OPT="$HOME/opt"
-  mkdir -p $HELPERS_OPT
 fi
 
-# if $HF_GIT_GUI not defined use gitg
-if test -z "$HF_GIT_GUI"; then
-  HF_GIT_GUI=gitg
+# if $HELPERS_DEV not defined use ~/opt
+if test -z "$HELPERS_DEV"; then
+  HELPERS_DEV="$HOME/dev"
 fi
 
 # ---------------------------------------
@@ -457,7 +461,7 @@ function hf_file_md5_compare() {
 function hf_file_test_or_touch() {
   : ${1?"Usage: ${FUNCNAME[0]} [file]"}
   if ! test -f "$1"; then
-    mkdir -p $(dirname $1)
+    hf_folder_create_if_not_exist $(dirname $1)
     touch "$1"
   fi
 }
@@ -582,6 +586,7 @@ elif test -n "$IS_WINDOWS"; then
   # ---------------------------------------
   # wt
   # ---------------------------------------
+
   function hf_wt_settings() {
     code $HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json
   }
@@ -790,17 +795,6 @@ function hf_gdb_run_bt_all_threads() {
 # git
 # ---------------------------------------
 
-# gui
-
-function hf_git_gui() {
-  hf_test_command $HF_GIT_GUI || return
-  if ! test -d .git; then
-    hf_log_error "There is no git repo in current folder"
-    return
-  fi
-  $HF_GIT_GUI 2>>/dev/null &
-}
-
 # count
 
 function hf_git_count() {
@@ -1008,12 +1002,6 @@ function hf_git_edit_remove_file_from_tree() {
   git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch $1' --prune-empty --tag-name-filter cat -- --all
 }
 
-# commit
-
-function hf_git_ammend_all() {
-  git commit -a --amend --no-edit
-}
-
 # push
 
 function hf_git_push_force() {
@@ -1054,12 +1042,6 @@ function hf_git_gitignore_create_cpp() {
   hf_git_gitignore_create c,c++,qt,autotools,make,ninja,cmake
 }
 
-# large files
-
-function hf_git_large_files_list() {
-  git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
-}
-
 # formated_patch
 
 function hf_git_formated_patch_last_commit() {
@@ -1080,24 +1062,21 @@ function hf_git_dev_folder_tree() {
   hf_log_func
 
   # create dev dir
-  if test ! -d $DEV_DIR; then
-    hf_log_msg "creating $DEV_DIR"
-    mkdir $DEV_DIR
-  fi
+  hf_folder_create_if_not_exist $HELPERS_DEV
   local cwd=$(pwd)
 
   declare -a repos_array
   repos_array=($REPOS)
   for ((i = 0; i < ${#repos_array[@]}; i = i + 2)); do
-    parent=$DEV_DIR/${repos_array[$i]}
-    repo=${repos_array[$((i + 1))]}
+    local parent=$HELPERS_DEV/${repos_array[$i]}
+    local repo=${repos_array[$((i + 1))]}
     # create parent
     if ! test -d $parent; then
-      mkdir -p $parent
+      hf_folder_create_if_not_exist $parent
     fi
     # clone/pull repo
-    repo_basename="$(basename -s .git $repo)"
-    dst_folder="$parent/$repo_basename"
+    local repo_basename="$(basename -s .git $repo)"
+    local dst_folder="$parent/$repo_basename"
     if ! test -d "$dst_folder"; then
       hf_log_msg_2nd "clone $dst_folder"
       cd $parent
@@ -1109,12 +1088,6 @@ function hf_git_dev_folder_tree() {
     fi
   done
   cd $cwd
-}
-
-# log
-
-function hf_git_log_history_file() {
-  git log --follow -p --all --first-parent --remotes --reflog --author-date-order -- $1
 }
 
 # diff
@@ -1173,6 +1146,29 @@ function hf_git_subfolders_reset_clean() {
     cd ..
   done
   cd $cwd
+}
+
+# others
+
+function hf_git_ammend_all() {
+  git commit -a --amend --no-edit
+}
+
+function hf_git_gitg() {
+  hf_test_command $HF_GIT_GUI || return
+  if ! test -d .git; then
+    hf_log_error "There is no git repo in current folder"
+    return
+  fi
+  gitg 2>>/dev/null &
+}
+
+function hf_git_log_history_file() {
+  git log --follow -p --all --first-parent --remotes --reflog --author-date-order -- $1
+}
+
+function hf_git_large_files_list() {
+  git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -3
 }
 
 # ---------------------------------------
@@ -1273,10 +1269,17 @@ function hf_flutter_scanfoold() {
 }
 
 # ---------------------------------------
-# http
+# folder
 # ---------------------------------------
 
-function hf_http_host_folder() {
+function hf_folder_create_if_not_exist() {
+  if test ! -d $1; then
+    hf_log_msg "creating $1"
+    mkdir -p $1
+  fi
+}
+
+function hf_folder_host_http() {
   sudo python3 -m http.server 80
 }
 
@@ -1712,7 +1715,7 @@ function hf_user_logout() {
 }
 
 function hf_user_permissions_sudo_nopasswd() {
-  if ! test -d /etc/sudoers.d/; then mkdir /etc/sudoers.d/; fi
+  if ! test -d /etc/sudoers.d/; then hf_folder_create_if_not_exist /etc/sudoers.d/; fi
   SET_USER=$USER && sudo sh -c "echo $SET_USER 'ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/sudoers-user"
 }
 
@@ -2331,7 +2334,7 @@ function hf_install_linux_android_flutter() {
   ANDROID_CMD_DIR="$ANDROID_SDK_DIR/cmdline-tools"
   ANDROID_CMD_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
   if ! test -d $ANDROID_CMD_DIR; then
-    mkdir -p $ANDROID_CMD_DIR
+    hf_folder_create_if_not_exist $ANDROID_CMD_DIR
     hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
     if test $? != 0; then hf_log_error "wget failed." && return 1; fi
     hf_env_path_add $ANDROID_CMD_DIR/bin/
