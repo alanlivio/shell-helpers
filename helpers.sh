@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ---------------------------------------
-# detect OS
+# OS vars
 # ---------------------------------------
 
 case "$(uname -s)" in
@@ -27,7 +27,7 @@ CYGWIN* | MINGW* | MSYS*)
 esac
 
 # ---------------------------------------
-# path variables
+# path vars
 # ---------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,7 +35,7 @@ SCRIPT_NAME="$SCRIPT_DIR/helpers.sh"
 DOTFILES_VSCODE="$SCRIPT_DIR/skel/vscode"
 
 # ---------------------------------------
-# load helpers-cfg
+# load helpers-cfg vars
 # ---------------------------------------
 
 # if not "$HOME/.helpers-cfg.sh" load skel
@@ -95,7 +95,7 @@ function hf_log_try() {
 }
 
 # ---------------------------------------
-# alias path
+# path alias
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS_WSL"; then
@@ -115,7 +115,7 @@ elif test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# test functions
+# test funcs
 # ---------------------------------------
 
 alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
@@ -168,7 +168,7 @@ if test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# setup functions
+# setup funcs
 # ---------------------------------------
 
 PKGS_ESSENTIALS="vim diffutils curl wget "
@@ -468,7 +468,7 @@ alias hf_config_backup="hf_config_func backup"
 alias hf_config_diff="hf_config_func diff"
 
 # ---------------------------------------
-# file
+# file funcs
 # ---------------------------------------
 
 function hf_file_md5_compare() {
@@ -485,7 +485,7 @@ function hf_file_test_or_touch() {
 }
 
 # ---------------------------------------
-# profile
+# profile funcs
 # ---------------------------------------
 
 function hf_profile_install() {
@@ -504,7 +504,7 @@ function hf_profile_reload() {
 }
 
 # ---------------------------------------
-# msys
+# msys funcs
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS_MSYS"; then
@@ -564,7 +564,7 @@ fi
 if test -n "$IS_MAC"; then
 
   # ---------------------------------------
-  # macos-only functions
+  # macos-only funcs
   # ---------------------------------------
 
   function hf_mac_install_brew() {
@@ -582,7 +582,7 @@ if test -n "$IS_MAC"; then
   }
 
   # ---------------------------------------
-  # ubuntu-on-mac
+  # ubuntu-on-mac funcs
   # ---------------------------------------
 
   function hf_mac_ubuntu_keyboard_fixes() {
@@ -619,7 +619,7 @@ if test -n "$IS_MAC"; then
 fi
 
 # ---------------------------------------
-# audio
+# audio funcs
 # ---------------------------------------
 
 function hf_audio_create_empty() {
@@ -635,7 +635,7 @@ function hf_audio_compress() {
 }
 
 # ---------------------------------------
-# video
+# video funcs
 # ---------------------------------------
 
 function hf_video_add_srt_track() {
@@ -663,105 +663,121 @@ function hf_video_cut_mp4() {
 }
 
 # ---------------------------------------
-# gst
+# gst funcs
+# ---------------------------------------
+if type gst-launch-1.0 &>/dev/null; then
+
+  function hf_gst_side_by_side_test() {
+    hf_log_func
+    gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
+  }
+
+  function hf_gst_side_by_side_args() {
+    : ${2?"Usage: ${FUNCNAME[0]} <video1 <video2>"}
+    hf_log_func
+    gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
+  }
+
+fi
+
+# ---------------------------------------
+# deb funcs
 # ---------------------------------------
 
-function hf_gst_side_by_side_test() {
-  hf_log_func
-  gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
-}
+if type dpkg &>/dev/null; then
 
-function hf_gst_side_by_side_args() {
-  : ${2?"Usage: ${FUNCNAME[0]} <video1 <video2>"}
-  hf_log_func
-  gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
-}
+  function hf_deb_install() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    sudo dpkg -i $1
+  }
 
-# ---------------------------------------
-# deb
-# ---------------------------------------
+  function hf_deb_install_force_depends() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    sudo dpkg -i --force-depends $1
+  }
 
-function hf_deb_install() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  sudo dpkg -i $1
-}
+  function hf_deb_info() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    dpkg-deb --info $1
+  }
 
-function hf_deb_install_force_depends() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  sudo dpkg -i --force-depends $1
-}
+  function hf_deb_contents() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    dpkg-deb --show $1
+  }
 
-function hf_deb_info() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  dpkg-deb --info $1
-}
-
-function hf_deb_contents() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  dpkg-deb --show $1
-}
+fi
 
 # ---------------------------------------
 # pkg-config
 # ---------------------------------------
 
-function hf_pkg_config_search() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  pkg-config --list-all | grep --color=auto $1
-}
+if type pkg-config &>/dev/null; then
 
-function hf_pkg_config_show() {
-  : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
-  PKG=$(pkg-config --list-all | grep -w $1 | awk '{print $1;exit}')
-  echo 'version:    '"$(pkg-config --modversion $PKG)"
-  echo 'provides:   '"$(pkg-config --print-provides $PKG)"
-  echo 'requireds:  '"$(pkg-config --print-requires $PKG | awk '{print}' ORS=' ')"
-}
+  function hf_pkg_config_search() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    pkg-config --list-all | grep --color=auto $1
+  }
+
+  function hf_pkg_config_show() {
+    : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
+    PKG=$(pkg-config --list-all | grep -w $1 | awk '{print $1;exit}')
+    echo 'version:    '"$(pkg-config --modversion $PKG)"
+    echo 'provides:   '"$(pkg-config --print-provides $PKG)"
+    echo 'requireds:  '"$(pkg-config --print-requires $PKG | awk '{print}' ORS=' ')"
+  }
+
+fi
 
 # ---------------------------------------
 # pygmentize
 # ---------------------------------------
+if type pygmentize &>/dev/null; then
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
-  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
-  find . -maxdepth 1 -name "*.xml" | while read -r i; do
-    pygmentize -f jpeg -l xml -o $i.jpg $i
-  done
-}
+  function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
+    : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
+    find . -maxdepth 1 -name "*.xml" | while read -r i; do
+      pygmentize -f jpeg -l xml -o $i.jpg $i
+    done
+  }
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
-  : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
+  function hf_pygmentize_folder_xml_files_by_extensions_to_rtf() {
+    : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
 
-  find . -maxdepth 1 -name "*.xml" | while read -r i; do
-    pygmentize -f jpeg -l xml -o $i.jpg $i
-    pygmentize -P fontsize=16 -P fontface=consolas -l xml -o $i.rtf $i
-  done
-}
+    find . -maxdepth 1 -name "*.xml" | while read -r i; do
+      pygmentize -f jpeg -l xml -o $i.jpg $i
+      pygmentize -P fontsize=16 -P fontface=consolas -l xml -o $i.rtf $i
+    done
+  }
 
-function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
-  : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
-  hf_test_command pygmentize || return
-  find . -maxdepth 1 -name "*.xml" | while read -r i; do
-    pygmentize -O full,style=default -f html -l xml -o $i.html $i
-  done
-}
+  function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
+    : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
+    hf_test_command pygmentize || return
+    find . -maxdepth 1 -name "*.xml" | while read -r i; do
+      pygmentize -O full,style=default -f html -l xml -o $i.html $i
+    done
+  }
+fi
+# ---------------------------------------
+# gdb funcs
+# ---------------------------------------
+
+if type gdb &>/dev/null; then
+
+  function hf_gdb_run_bt() {
+    : ${1?"Usage: ${FUNCNAME[0]} <program>"}
+    gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
+  }
+
+  function hf_gdb_run_bt_all_threads() {
+    : ${1?"Usage: ${FUNCNAME[0]} <program>"}
+    gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
+  }
+
+fi
 
 # ---------------------------------------
-# gdb
-# ---------------------------------------
-
-function hf_gdb_run_bt() {
-  : ${1?"Usage: ${FUNCNAME[0]} <program>"}
-  gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
-}
-
-function hf_gdb_run_bt_all_threads() {
-  : ${1?"Usage: ${FUNCNAME[0]} <program>"}
-  gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
-}
-
-# ---------------------------------------
-# git
+# git funcs
 # ---------------------------------------
 
 # count
@@ -1141,14 +1157,6 @@ function hf_git_large_files_list() {
 }
 
 # ---------------------------------------
-# eclipse
-# ---------------------------------------
-
-function hf_eclipse_list_installed() {
-  eclipse -consolelog -noSplash -application org.eclipse.equinox.p2.director -listInstalledRoots
-}
-
-# ---------------------------------------
 # grub
 # ---------------------------------------
 
@@ -1163,79 +1171,86 @@ function hf_grub_splash_boot() {
 }
 
 # ---------------------------------------
-# android
+# android funcs
 # ---------------------------------------
 
-function hf_android_start_activity() {
-  #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
-  #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
-  : ${1?"Usage: ${FUNCNAME[0]} <activity>"}
+if type adb &>/dev/null; then
 
-  adb shell am start -a android.intent.action.MAIN -n "$1"
-}
+  function hf_android_start_activity() {
+    #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
+    #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
+    : ${1?"Usage: ${FUNCNAME[0]} <activity>"}
 
-function hf_android_restart_adb() {
-  sudo adb kill-server && sudo adb start-server
-}
+    adb shell am start -a android.intent.action.MAIN -n "$1"
+  }
 
-function hf_android_get_ip() {
-  adb shell netcfg
-  adb shell ifconfig wlan0
-}
+  function hf_android_restart_adb() {
+    sudo adb kill-server && sudo adb start-server
+  }
 
-function hf_android_enable_stdout_stderr_output() {
-  adb shell stop
-  adb shell setprop log.redirect-stdio true
-  adb shell start
-}
+  function hf_android_get_ip() {
+    adb shell netcfg
+    adb shell ifconfig wlan0
+  }
 
-function hf_android_get_printscreen() {
-  adb shell /system/bin/screencap -p /sdcard/screenshot.png
-  adb pull /sdcard/screenshot.png screenshot.png
-  adb pull /sdcard/screenshot.png screenshot.png
-}
+  function hf_android_enable_stdout_stderr_output() {
+    adb shell stop
+    adb shell setprop log.redirect-stdio true
+    adb shell start
+  }
 
-function hf_android_installed_package() {
-  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
-  adb shell pm list packages | grep $1
-}
+  function hf_android_get_printscreen() {
+    adb shell /system/bin/screencap -p /sdcard/screenshot.png
+    adb pull /sdcard/screenshot.png screenshot.png
+    adb pull /sdcard/screenshot.png screenshot.png
+  }
 
-function hf_android_uninstall_package() {
-  : ${1?"Usage: ${FUNCNAME[0]} <package_in_format_XXX.YYY.ZZZ>"}
-  adb uninstall $1
-}
-function hf_android_install_package() {
-  : ${1?"Usage: ${FUNCNAME[0]} <package>"}
-  adb install $1
-}
+  function hf_android_installed_package() {
+    : ${1?"Usage: ${FUNCNAME[0]} <package>"}
+    adb shell pm list packages | grep $1
+  }
+
+  function hf_android_uninstall_package() {
+    : ${1?"Usage: ${FUNCNAME[0]} <package_in_format_XXX.YYY.ZZZ>"}
+    adb uninstall $1
+  }
+  function hf_android_install_package() {
+    : ${1?"Usage: ${FUNCNAME[0]} <package>"}
+    adb install $1
+  }
+fi
 
 # ---------------------------------------
-# flutter
+# flutter funcs
 # ---------------------------------------
 
-function hf_flutter_pkgs_get() {
-  flutter pub get
-}
+if flutter gdb &>/dev/null; then
 
-function hf_flutter_pkgs_upgrade() {
-  flutter packages pub upgrade
-}
+  function hf_flutter_pkgs_get() {
+    flutter pub get
+  }
 
-function hf_flutter_doctor() {
-  flutter doctor -v
-}
+  function hf_flutter_pkgs_upgrade() {
+    flutter packages pub upgrade
+  }
 
-function hf_flutter_run() {
-  flutter run
-}
+  function hf_flutter_doctor() {
+    flutter doctor -v
+  }
 
-function hf_flutter_clean() {
-  flutter clean
-}
+  function hf_flutter_run() {
+    flutter run
+  }
 
-function hf_flutter_scanfoold() {
-  flutter create --sample=material.Scaffold.2 mysample
-}
+  function hf_flutter_clean() {
+    flutter clean
+  }
+
+  function hf_flutter_scanfoold() {
+    flutter create --sample=material.Scaffold.2 mysample
+  }
+
+fi
 
 # ---------------------------------------
 # folder
@@ -1276,10 +1291,11 @@ function hf_folder_files_sizes() {
 }
 
 # ---------------------------------------
-# latex
+# latex_win funcs
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
+
   function hf_install_latex_win() {
     gsudo choco install texlive
   }
@@ -1305,6 +1321,10 @@ if test -n "$IS_WINDOWS"; then
   }
 fi
 
+# ---------------------------------------
+# latex funcs
+# ---------------------------------------
+
 function hf_latex_clean() {
   rm -rf ./*.aux ./*.dvi ./*.log ./*.lox ./*.out ./*.lol ./*.pdf ./*.synctex.gz ./_minted-* ./*.bbl ./*.blg ./*.lot ./*.lof ./*.toc ./*.lol ./*.fdb_latexmk ./*.fls ./*.bcf
 }
@@ -1328,7 +1348,7 @@ function hf_latex_build_pdflatex() {
 }
 
 # ---------------------------------------
-# meson
+# meson funcs
 # ---------------------------------------
 MESON_DIR="_build"
 
@@ -1353,7 +1373,7 @@ function hf_meson_install() {
 }
 
 # ---------------------------------------
-# cmake
+# cmake funcs
 # ---------------------------------------
 
 CMAKE_DIR="_build-Debug-$WSL_DISTRO_NAME$OS"
@@ -1439,7 +1459,7 @@ function hf_cmake_test_target() {
 }
 
 # ---------------------------------------
-# image
+# image funcs
 # ---------------------------------------
 
 function hf_image_size_get() {
@@ -1484,7 +1504,7 @@ function hf_imagem_compress_hard() {
 }
 
 # ---------------------------------------
-# pdf
+# pdf funcs
 # ---------------------------------------
 
 function hf_pdf_concat() {
@@ -1549,7 +1569,7 @@ function hf_pdf_to_images() {
 }
 
 # ---------------------------------------
-# convert
+# convert funcs
 # ---------------------------------------
 
 function hf_convert_to_markdown() {
@@ -1565,7 +1585,7 @@ function hf_convert_to_pdf() {
 }
 
 # ---------------------------------------
-# rename
+# rename funcs
 # ---------------------------------------
 
 function hf_rename_to_lowercase_with_underscore() {
@@ -1587,15 +1607,19 @@ function hf_rename_to_lowercase_with_dash() {
 }
 
 # ---------------------------------------
-# partitions
+# partitions funcs
 # ---------------------------------------
 
 function hf_partitions_list() {
   df -h
 }
 
+function hf_partitions_mounted_list() {
+  sudo lsblk -f
+}
+
 # ---------------------------------------
-# network
+# network funcs
 # ---------------------------------------
 
 function hf_network_wait_for_conectivity() {
@@ -1656,21 +1680,25 @@ function hf_network_arp_scan_for_interface() {
 }
 
 # ---------------------------------------
-# virtualbox
+# virtualbox funcs
 # ---------------------------------------
 
-function hf_virtualbox_compact() {
-  : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
-  VBoxManage modifyhd "$1" compact
-}
+if type VBoxManage &>/dev/null; then
 
-function hf_virtualbox_resize_to_2gb() {
-  : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
-  VBoxManage modifyhd "$1" --resize 200000
-}
+  function hf_virtualbox_compact() {
+    : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
+    VBoxManage modifyhd "$1" compact
+  }
+
+  function hf_virtualbox_resize_to_2gb() {
+    : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
+    VBoxManage modifyhd "$1" --resize 200000
+  }
+
+fi
 
 # ---------------------------------------
-# user
+# user funcs
 # ---------------------------------------
 
 function hf_user_create_new() {
@@ -1726,75 +1754,78 @@ function hf_ssh_send_keys_to_server_old() {
 # ---------------------------------------
 # snap
 # ---------------------------------------
+if type snap &>/dev/null; then
 
-function hf_snap_install_pkgs() {
-  hf_log_func
-  hf_test_noargs_then_return
+  function hf_snap_install_pkgs() {
+    hf_log_func
+    hf_test_noargs_then_return
 
-  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
-  local pkgs_to_install=""
-  for i in "$@"; do
-    echo "$pkgs_installed" | grep "^$i" &>/dev/null
-    if test $? != 0; then
-      pkgs_to_install="$pkgs_to_install $i"
-    fi
-  done
-  if test ! -z "$pkgs_to_install"; then
-    echo "pkgs_to_install=$pkgs_to_install"
-    for i in $pkgs_to_install; do
-      sudo snap install "$i"
+    local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+    local pkgs_to_install=""
+    for i in "$@"; do
+      echo "$pkgs_installed" | grep "^$i" &>/dev/null
+      if test $? != 0; then
+        pkgs_to_install="$pkgs_to_install $i"
+      fi
     done
-  fi
-}
-
-function hf_snap_install_pkgs_classic() {
-  hf_log_func
-  hf_test_noargs_then_return
-
-  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
-  local pkgs_to_install=""
-  for i in "$@"; do
-    echo "$pkgs_installed" | grep "^$i" &>/dev/null
-    if test $? != 0; then
-      pkgs_to_install="$pkgs_to_install $i"
+    if test ! -z "$pkgs_to_install"; then
+      echo "pkgs_to_install=$pkgs_to_install"
+      for i in $pkgs_to_install; do
+        sudo snap install "$i"
+      done
     fi
-  done
-  if test ! -z "$pkgs_to_install"; then
-    echo "pkgs_to_install=$pkgs_to_install"
-    for i in $pkgs_to_install; do
-      sudo snap install --classic "$i"
+  }
+
+  function hf_snap_install_pkgs_classic() {
+    hf_log_func
+    hf_test_noargs_then_return
+
+    local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+    local pkgs_to_install=""
+    for i in "$@"; do
+      echo "$pkgs_installed" | grep "^$i" &>/dev/null
+      if test $? != 0; then
+        pkgs_to_install="$pkgs_to_install $i"
+      fi
     done
-  fi
-}
-
-function hf_snap_install_pkgs_edge() {
-  hf_log_func
-  hf_test_noargs_then_return
-
-  local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
-  local pkgs_to_install=""
-  for i in "$@"; do
-    echo "$pkgs_installed" | grep "^$i" &>/dev/null
-    if test $? != 0; then
-      pkgs_to_install="$pkgs_to_install $i"
+    if test ! -z "$pkgs_to_install"; then
+      echo "pkgs_to_install=$pkgs_to_install"
+      for i in $pkgs_to_install; do
+        sudo snap install --classic "$i"
+      done
     fi
-  done
-  if test ! -z "$pkgs_to_install"; then
-    echo "pkgs_to_install=$pkgs_to_install"
-    for i in $pkgs_to_install; do
-      sudo snap install --edge "$i"
+  }
+
+  function hf_snap_install_pkgs_edge() {
+    hf_log_func
+    hf_test_noargs_then_return
+
+    local pkgs_installed="$(snap list | awk 'NR>1 {print $1}')"
+    local pkgs_to_install=""
+    for i in "$@"; do
+      echo "$pkgs_installed" | grep "^$i" &>/dev/null
+      if test $? != 0; then
+        pkgs_to_install="$pkgs_to_install $i"
+      fi
     done
-  fi
-}
+    if test ! -z "$pkgs_to_install"; then
+      echo "pkgs_to_install=$pkgs_to_install"
+      for i in $pkgs_to_install; do
+        sudo snap install --edge "$i"
+      done
+    fi
+  }
 
-function hf_snap_upgrade() {
-  hf_log_func
-  sudo snap refresh 2>/dev/null
-}
+  function hf_snap_upgrade() {
+    hf_log_func
+    sudo snap refresh 2>/dev/null
+  }
 
-function hf_snap_hide_home_folder() {
-  echo snap >>$HOME/.hidden
-}
+  function hf_snap_hide_home_folder() {
+    echo snap >>$HOME/.hidden
+  }
+
+fi
 
 # ---------------------------------------
 # diff
@@ -1888,14 +1919,6 @@ if test -n "$IS_LINUX"; then
   }
 
 fi
-
-# ---------------------------------------
-# mount
-# ---------------------------------------
-
-function hf_mount_list() {
-  sudo lsblk -f
-}
 
 # ---------------------------------------
 # gnome
