@@ -72,6 +72,7 @@ function hf_test_command() {
 # ---------------------------------------
 # setup functions
 # ---------------------------------------
+PKGS_ESSENTIALS="vim diffutils curl wget "
 
 if test $IS_LINUX; then
   function hf_setup_gnome() {
@@ -86,7 +87,7 @@ if test $IS_LINUX; then
     # cleanup
     hf_home_clean_unused_dirs
     # vim/git/essentials
-    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
+    PKGS="git deborphan apt-file $PKGS_ESSENTIALS "
     # python
     PKGS+="python3 python3-pip "
     hf_apt_install_pkgs $PKGS
@@ -102,8 +103,8 @@ if test -n "$IS_WINDOWS"; then
   function hf_setup_wsl() {
     # sudo nopasswd
     hf_user_permissions_sudo_nopasswd
-    # vim/git/essentials
-    PKGS="vim git diffutils curl wget bash deborphan apt-file net-tools zip "
+    # essentials
+    PKGS="git deborphan apt-file $PKGS_ESSENTIALS "
     # python
     PKGS+="python3-pip "
     hf_apt_install_pkgs $PKGS
@@ -113,10 +114,10 @@ if test -n "$IS_WINDOWS"; then
 
   function hf_setup_msys() {
     hf_user_permissions_sudo_nopasswd
-    # update runtime and bash
-    PKGS="pacman pacman-mirrors msys2-runtime bash "
+    # update runtime
+    PKGS="pacman pacman-mirrors msys2-runtime "
     # essentials
-    PKGS+="vim diffutils curl wget zip patch "
+    PKGS+="$PKGS_ESSENTIALS "
     # python
     PKGS+="python-pip "
     hf_msys_install $PKGS
@@ -136,13 +137,10 @@ if test -n "$IS_MAC"; then
     hf_mac_install_brew
     hf_brew_upgrade
     # essentials
-    PKGS="vim git diffutils curl wget bash jq"
+    PKGS="git bash $PKGS_ESSENTIALS "
     # python
     PKGS+="python python-pip "
     hf_brew_install $PKGS
-    # set python3 as default
-    alias python='/usr/local/Cellar/python@3.8/3.8.5/bin/python3'
-    alias pip='/usr/local/Cellar/python@3.8/3.8.5/libexec/bin/pip'
     # install vscode
     sudo brew install --cask visual-studio-code
   }
