@@ -7,19 +7,20 @@ This project offers bash and powershell helper functions to support: configure O
 To enable helpers in bash (Ubuntu, macOS, or WSL), the shell-helpers can be used as a [Bash Startup File](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html). To do that, run the followings commands for fetch helpers.sh and load at `~/.bashrc` :
 
 ``` bash
-  mkdir ~/.helpers/
-  wget -O ~/.helpers/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
-  echo "source ~/.helpers/helpers.sh" >> ~/.bashrc &&\
-  source ~/.bashrc
+  mkdir -p ~/.helpers/ &&\
+    wget -O ~/.helpers/helpers.sh https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.sh &&\
+    echo "source ~/.helpers/helpers.sh" >> ~/.bashrc &&\
+    source ~/.bashrc
   ```
 
 To enable helpers in powershell (Windows), the shell-helpers can be used as a [PowerShell Profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7). To do that, run the followings commands for fetch helpers.ps1 and import it as powershell module:
 
 ``` powershell
-  mkdir ~/.helpers/;`
-  Invoke-WebRequest -O ~/.helpers/helpers.ps1 https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1;`
-  Set-ExecutionPolicy unrestricted -force;`
-  Write-Output "Import-Module -Force -Global ~/.helpers/helpers.ps1" > $Profile.AllUsersAllHosts
+  mkdir -p ~/.helpers/ -ea 0;`
+    Invoke-WebRequest -O ~/.helpers/helpers.ps1 https://raw.githubusercontent.com/alanlivio/shell-helpers/master/helpers.ps1;`
+    Set-ExecutionPolicy unrestricted -force;`
+    Write-Output "Import-Module -Force -Global ~/.helpers/helpers.ps1" > $Profile.AllUsersAllHosts;`
+    powershell -nologo
   ```
 
 # Usage
