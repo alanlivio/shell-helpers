@@ -95,6 +95,13 @@ function hf_log_try() {
 }
 
 # ---------------------------------------
+# test funcs
+# ---------------------------------------
+
+alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
+alias hf_test_arg1_then_return='if test -z "$1"; then return; fi'
+
+# ---------------------------------------
 # path alias
 # ---------------------------------------
 
@@ -115,28 +122,11 @@ elif test -n "$IS_WINDOWS"; then
 fi
 
 # ---------------------------------------
-# test funcs
-# ---------------------------------------
-
-alias hf_test_noargs_then_return='if test $# -eq 0; then return; fi'
-alias hf_test_arg1_then_return='if test -z "$1"; then return; fi'
-
-function hf_test_command() {
-  if ! type "$1" &>/dev/null; then
-    return 1
-  else
-    return 0
-  fi
-}
-
-# ---------------------------------------
 # ps funcs
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-
   SCRIPT_PS_WPATH=$(unixpath -w "$SCRIPT_DIR/helpers.ps1")
-
   function hf_ps_call() {
     powershell.exe -command "& { . $SCRIPT_PS_WPATH; $* }"
   }
@@ -150,7 +140,7 @@ if test -n "$IS_WINDOWS"; then
   }
 
   function hf_ps_def_func_admin() {
-    eval "function $1() { hf_ps_call_admin $*; }"
+    eval "function $1()"'{ echo $*; hf_ps_call_admin '"$1"' $*; }'
   }
 
   # winget funcs from helpers.ps1
@@ -223,7 +213,6 @@ if test -n "$IS_WINDOWS"; then
   }
 
   hf_ps_def_func_admin hf_setup_windows
-
 fi
 
 if test -n "$IS_MAC"; then
@@ -558,15 +547,13 @@ if test -n "$IS_WINDOWS_MSYS"; then
   function hf_msys_sanity() {
     hf_ps_call_admin "hf_msys_sanity"
   }
-
 fi
 
+# ---------------------------------------
+# macos-only funcs
+# ---------------------------------------
+
 if test -n "$IS_MAC"; then
-
-  # ---------------------------------------
-  # macos-only funcs
-  # ---------------------------------------
-
   function hf_mac_install_brew() {
     hf_log_func
     sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -615,7 +602,6 @@ if test -n "$IS_MAC"; then
       sudo modprobe wl
     fi
   }
-
 fi
 
 # ---------------------------------------
@@ -635,38 +621,46 @@ function hf_audio_compress() {
 }
 
 # ---------------------------------------
-# video funcs
+# ffmpeg funcs
 # ---------------------------------------
 
-function hf_video_add_srt_track() {
-  : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
-  hf_log_func
-  ffmpeg -i $1 -i $2 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 $3
-}
+if type ffmpeg &>/dev/null; then
+  function hf_ffmpeg_show_motion_vectors() {
+    : ${1?"Usage: ${FUNCNAME[0]} <video>"}
+    hf_log_func
+    ffplay -flags2 +export_mvs -vf codecview=mv=pf+bf+bb $1
+  }
 
-function hf_video_add_srt_in_picutre() {
-  : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
-  hf_log_func
-  ffmpeg -i $1 -filter:v subtitles=$2 $3
-}
+  function hf_ffmpeg_add_srt_track() {
+    : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
+    hf_log_func
+    ffmpeg -i $1 -i $2 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 $3
+  }
 
-function hf_video_create_by_image() {
-  : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_log_func
-  ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
-}
+  function hf_ffmpeg_add_srt_in_picutre() {
+    : ${3?"Usage: ${FUNCNAME[0]} <video> <srt> <output>"}
+    hf_log_func
+    ffmpeg -i $1 -filter:v subtitles=$2 $3
+  }
 
-function hf_video_cut_mp4() {
-  : ${3?"Usage: ${FUNCNAME[0]} <video> <begin_time_in_format_00:00:00> <end_time_in_format_00:00:00>"}
-  hf_log_func
-  ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
-}
+  function hf_ffmpeg_create_by_image() {
+    : ${1?"Usage: ${FUNCNAME[0]} <image>"}
+    hf_log_func
+    ffmpeg -loop_input -i "$1".png -t 5 "$1".mp4
+  }
+
+  function hf_ffmpeg_cut_mp4() {
+    : ${3?"Usage: ${FUNCNAME[0]} <video> <begin_time_in_format_00:00:00> <end_time_in_format_00:00:00>"}
+    hf_log_func
+    ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -t $3 -f mp4 cuted-$1
+  }
+fi
 
 # ---------------------------------------
 # gst funcs
 # ---------------------------------------
-if type gst-launch-1.0 &>/dev/null; then
 
+if type gst-launch-1.0 &>/dev/null; then
   function hf_gst_side_by_side_test() {
     hf_log_func
     gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! videoconvert ! ximagesink videotestsrc pattern=snow ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! timeoverlay ! queue2 ! comp. videotestsrc pattern=smpte ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! timeoverlay ! queue2 ! comp.
@@ -677,7 +671,6 @@ if type gst-launch-1.0 &>/dev/null; then
     hf_log_func
     gst-launch-1.0 compositor name=comp sink_1::xpos=640 ! ximagesink filesrc location=$1 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)30/1" ! decodebin ! videoconvert ! comp. filesrc location=$2 ! "video/x-raw,format=AYUV,width=640,height=480,framerate=(fraction)10/1" ! decodebin ! videoconvert ! comp.
   }
-
 fi
 
 # ---------------------------------------
@@ -685,7 +678,6 @@ fi
 # ---------------------------------------
 
 if type dpkg &>/dev/null; then
-
   function hf_deb_install() {
     : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
     sudo dpkg -i $1
@@ -705,7 +697,6 @@ if type dpkg &>/dev/null; then
     : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
     dpkg-deb --show $1
   }
-
 fi
 
 # ---------------------------------------
@@ -713,7 +704,6 @@ fi
 # ---------------------------------------
 
 if type pkg-config &>/dev/null; then
-
   function hf_pkg_config_search() {
     : ${1?"Usage: ${FUNCNAME[0]} <pkg_name>"}
     pkg-config --list-all | grep --color=auto $1
@@ -726,14 +716,12 @@ if type pkg-config &>/dev/null; then
     echo 'provides:   '"$(pkg-config --print-provides $PKG)"
     echo 'requireds:  '"$(pkg-config --print-requires $PKG | awk '{print}' ORS=' ')"
   }
-
 fi
 
 # ---------------------------------------
 # pygmentize
 # ---------------------------------------
 if type pygmentize &>/dev/null; then
-
   function hf_pygmentize_folder_xml_files_by_extensions_to_jpeg() {
     : ${1?"Usage: ${FUNCNAME[0]} <folder>"}
     find . -maxdepth 1 -name "*.xml" | while read -r i; do
@@ -752,7 +740,6 @@ if type pygmentize &>/dev/null; then
 
   function hf_pygmentize_folder_xml_files_by_extensions_to_html() {
     : ${1?"Usage: ${FUNCNAME[0]} ARGUMENT"}
-    hf_test_command pygmentize || return
     find . -maxdepth 1 -name "*.xml" | while read -r i; do
       pygmentize -O full,style=default -f html -l xml -o $i.html $i
     done
@@ -763,7 +750,6 @@ fi
 # ---------------------------------------
 
 if type gdb &>/dev/null; then
-
   function hf_gdb_run_bt() {
     : ${1?"Usage: ${FUNCNAME[0]} <program>"}
     gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt --args "$@"
@@ -773,7 +759,6 @@ if type gdb &>/dev/null; then
     : ${1?"Usage: ${FUNCNAME[0]} <program>"}
     gdb -ex="set confirm off" -ex="set pagination off" -ex=r -ex=bt -ex="thread apply all bt" --args "$@"
   }
-
 fi
 
 # ---------------------------------------
@@ -1140,7 +1125,6 @@ function hf_git_ammend_all() {
 }
 
 function hf_git_gitg() {
-  hf_test_command $HF_GIT_GUI || return
   if ! test -d .git; then
     hf_log_error "There is no git repo in current folder"
     return
@@ -1175,7 +1159,6 @@ function hf_grub_splash_boot() {
 # ---------------------------------------
 
 if type adb &>/dev/null; then
-
   function hf_android_start_activity() {
     #adb shell am start -a android.intent.action.MAIN -n com.android.browser/.BrowserActivity
     #adb shell am start -a android.intent.action.MAIN -n org.libsdl.app/org.libsdl.app.SDLActivity
@@ -1225,7 +1208,6 @@ fi
 # ---------------------------------------
 
 if flutter gdb &>/dev/null; then
-
   function hf_flutter_pkgs_get() {
     flutter pub get
   }
@@ -1249,7 +1231,6 @@ if flutter gdb &>/dev/null; then
   function hf_flutter_scanfoold() {
     flutter create --sample=material.Scaffold.2 mysample
   }
-
 fi
 
 # ---------------------------------------
@@ -1295,7 +1276,6 @@ function hf_folder_files_sizes() {
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-
   function hf_install_latex_win() {
     gsudo choco install texlive
   }
@@ -1474,31 +1454,26 @@ function hf_image_resize() {
 
 function hf_image_reconize_text_en() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command tesseract || return
   tesseract -l eng "$1" "$1.txt"
 }
 
 function hf_image_reconize_text_pt() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command tesseract || return
   tesseract -l por "$1" "$1.txt"
 }
 
 function hf_image_reconize_stdout() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command tesseract || return
   tesseract "$1" stdout
 }
 
 function hf_imagem_compress() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command pngquant || return
   pngquant "$1" --force --quality=70-80 -o "compressed-$1"
 }
 
 function hf_imagem_compress_hard() {
   : ${1?"Usage: ${FUNCNAME[0]} <image>"}
-  hf_test_command jpegoptim || return
 
   jpegoptim -d . $1.jpeg
 }
@@ -1518,26 +1493,22 @@ function hf_pdf_find_duplicates() {
 
 function hf_pdf_remove_annotations() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command rewritepdf || return
   rewritepdf "$1" "-no-annotations-$1"
 }
 
 function hf_pdf_search_pattern() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command pdfgrep || return
   pdfgrep -rin "$1" | while read -r i; do basename "${i%%:*}"; done | sort -u
 }
 
 function hf_pdf_remove_password() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command qpdf || return
 
   qpdf --decrypt "$1" "unlocked-$1"
 }
 
 function hf_pdf_remove_watermark() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command pdftk || return
   sed -e "s/THISISTHEWATERMARK/ /g" <"$1" >nowatermark.pdf
   pdftk nowatermark.pdf output repaired.pdf
   mv repaired.pdf nowatermark.pdf
@@ -1574,13 +1545,11 @@ function hf_pdf_to_images() {
 
 function hf_convert_to_markdown() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command pandoc || return
   pandoc -s $1 -t markdown -o ${1%.*}.md
 }
 
 function hf_convert_to_pdf() {
   : ${1?"Usage: ${FUNCNAME[0]} <pdf>"}
-  hf_test_command pandoc || return
   soffice --headless --convert-to pdf ${1%.*}.pdf
 }
 
@@ -1590,7 +1559,6 @@ function hf_convert_to_pdf() {
 
 function hf_rename_to_lowercase_with_underscore() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command rename || return || return
   echo "rename to lowercase with underscore"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1599,7 +1567,6 @@ function hf_rename_to_lowercase_with_underscore() {
 
 function hf_rename_to_lowercase_with_dash() {
   : ${1?"Usage: ${FUNCNAME[0]} <file_name>"}
-  hf_test_command rename || return || return
   echo "rename to lowercase with dash"
   rename 'y/A-Z/a-z/' "$@"
   echo "replace '.', ' ', and '-' by '_''"
@@ -1669,13 +1636,11 @@ function hf_network_ip() {
 }
 
 function hf_network_arp_scan() {
-  hf_test_command arp-scan || return
   sudo arp-scan --localnet
 }
 
 function hf_network_arp_scan_for_interface() {
   : ${1?"Usage: ${FUNCNAME[0]} <network_interface>"}
-  hf_test_command arp-scan || return
   sudo arp-scan --localnet --interface=$1
 }
 
@@ -1684,7 +1649,6 @@ function hf_network_arp_scan_for_interface() {
 # ---------------------------------------
 
 if type VBoxManage &>/dev/null; then
-
   function hf_virtualbox_compact() {
     : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
     VBoxManage modifyhd "$1" compact
@@ -1694,7 +1658,6 @@ if type VBoxManage &>/dev/null; then
     : ${1?"Usage: ${FUNCNAME[0]} <vdi_file>"}
     VBoxManage modifyhd "$1" --resize 200000
   }
-
 fi
 
 # ---------------------------------------
@@ -1755,7 +1718,6 @@ function hf_ssh_send_keys_to_server_old() {
 # snap
 # ---------------------------------------
 if type snap &>/dev/null; then
-
   function hf_snap_install_pkgs() {
     hf_log_func
     hf_test_noargs_then_return
@@ -1824,7 +1786,6 @@ if type snap &>/dev/null; then
   function hf_snap_hide_home_folder() {
     echo snap >>$HOME/.hidden
   }
-
 fi
 
 # ---------------------------------------
@@ -1863,7 +1824,6 @@ function hf_vscode_diff() {
 function hf_vscode_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
-  hf_test_command code || return
   local codetmp=$(if test -n "$IS_WINDOWS_WSL"; then echo "codewin"; else echo "code"; fi)
   local pkgs_to_install=""
   local pkgs_installed_tmp_file="/tmp/code-list-extensions"
@@ -1887,7 +1847,6 @@ function hf_vscode_install_pkgs() {
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
-
   function hf_services_initd_list() {
     service --status-all
   }
@@ -1917,7 +1876,6 @@ if test -n "$IS_LINUX"; then
     systemctl daemon-reload
     systemctl enable $1
   }
-
 fi
 
 # ---------------------------------------
@@ -1925,7 +1883,6 @@ fi
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
-
   function hf_gnome_execute_desktop_file() {
     awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' $1
   }
@@ -2182,7 +2139,6 @@ function hf_python_list_installed() {
 function hf_python_install_pkgs() {
   hf_log_func
   hf_test_noargs_then_return
-  hf_test_command pip || return
 
   local pkgs_to_install=""
   local pkgs_installed=$(pip list --format=columns | cut -d' ' -f1 | grep -v Package | sed '1d' | tr '\n' ' ')
@@ -2247,7 +2203,6 @@ function hf_python_jupyter_dark_theme() {
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
-
   function hf_install_linux_node() {
     hf_log_funch
     curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
@@ -2317,7 +2272,6 @@ fi
 # ---------------------------------------
 
 if test -n "$IS_WINDOWS"; then
-
   function hf_install_windows_android_flutter() {
     hf_log_func
     OPT_DST="$HELPERS_OPT/win/"
@@ -2356,7 +2310,6 @@ if test -n "$IS_WINDOWS"; then
       wget https://raw.githubusercontent.com/cmhughes/latexindent.pl/main/defaultSettings.yaml -P /c/tools/
     fi
   }
-
 fi
 
 # ---------------------------------------
@@ -2364,7 +2317,6 @@ fi
 # ---------------------------------------
 
 if test -n "$IS_LINUX"; then
-
   function hf_ubuntu_upgrade() {
     sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
     sudo apt update && sudo apt dist-upgrade
@@ -2553,7 +2505,6 @@ function hf_env_path_add() {
 # ---------------------------------------
 
 if type apt &>/dev/null; then
-
   function hf_apt_upgrade() {
     hf_log_func
     sudo apt -y update
@@ -2786,7 +2737,6 @@ function hf_compression_extract_from_url() {
 # ---------------------------------------
 
 if youtube-dl apt &>/dev/null; then
-
   YOUTUBEDL_PARAMS="--download-archive .downloaded.txt --no-warnings --no-post-overwrites --ignore-errors"
   function hf_youtubedl_from_txt() {
     : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
@@ -2812,7 +2762,6 @@ if youtube-dl apt &>/dev/null; then
     : ${1?"Usage: ${FUNCNAME[0]} <txt_file>"}
     youtube-dl -a "$1" $YOUTUBEDL_PARAMS -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --ignore-errors --embed-thumbnail --output "%(title)s.%(ext)s" --metadata-from-title "%(artist)s - %(title)s" --add-metadata
   }
-
 fi
 # ---------------------------------------
 # zotero
