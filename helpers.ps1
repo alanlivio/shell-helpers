@@ -6,7 +6,6 @@
 
 $SCRIPT_DIR = $PSScriptRoot
 $SCRIPT_NAME = "$PSScriptRoot\helpers.ps1"
-$SCRIPT_CFG = "$SCRIPT_DIR\helpers-cfg.ps1"
 $SKEL_WT = "$SCRIPT_DIR\skel\wt"
 $SKEL_VSCODE = "$SCRIPT_DIR\skel\vscode"
 $MSYS_HOME = "C:\msys64"
@@ -14,10 +13,6 @@ $MSYS_BASH = "$MSYS_HOME\usr\bin\bash.exe"
 $WT_SETTINGS = "${env:userprofile}\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 $VSCODE_SETTINGS = "${env:userprofile}\AppData\Roaming\Code\User\settings.json"
 $VSCODE_KEYS = "${env:userprofile}\AppData\Roaming\Code\User\keybindings.json"
-
-if (Test-Path $SCRIPT_CFG) {
-  Import-Module -Force -Global $SCRIPT_CFG
-}
 
 # ---------------------------------------
 # alias
@@ -75,9 +70,15 @@ function hf_ps_ver() {
   Write-Output "$($PSVersionTable.PSEdition.ToString()) $($PSVersionTable.PSVersion.ToString())"
 }
 
-function hf_ps_core_enable_appx() {
-  if (!(Get-Module Appx)) {
-    Import-Module -Name Appx -UseWIndowsPowershell -WarningAction Ignore
+function hf_ps_enable_appx_if_core() {
+  if ( $PSVersionTable.PSEdition -eq "Core") {
+    Import-Module -Name Appx -UseWindowsPowershell -WarningAction Ignore
+  }
+}
+
+function hf_ps_enable_scheduledtask_if_core() {
+  if ( $PSVersionTable.PSEdition -eq "Core") {
+    Import-Module -Name Appx ScheduledTasks  -WarningAction Ignore
   }
 }
 
@@ -620,16 +621,19 @@ function hf_link_create($desntination, $source) {
 # ---------------------------------------
 
 function hf_scheduledtask_list_enabled() {
+  hf_ps_enable_scheduledtask_if_core
   Get-ScheduledTask | Where-Object { $_.State -eq "Ready" }
 }
 
 function hf_scheduledtask_list_enabled() {
+  hf_ps_enable_scheduledtask_if_core
   Get-ScheduledTask | Where-Object { $_.State -eq "Disabled" }
 }
 
 function hf_scheduledtask_disable() {
   foreach ($name in $args) {
     Invoke-Expression $hf_log_func" "$name
+    hf_ps_enable_scheduledtask_if_core
     Disable-ScheduledTask -TaskName $name | Out-null
   }
 }
@@ -683,11 +687,13 @@ function hf_winpackage_disable_like() {
 
 function hf_appx_list_installed() {
   Invoke-Expression $hf_log_func
+  hf_ps_enable_appx_if_core
   Get-AppxPackage -AllUsers | Select-Object Name, PackageFullName
 }
 
 function hf_appx_install() {
   Invoke-Expression $hf_log_func
+  hf_ps_enable_appx_if_core
   $pkgs_to_install = ""
   foreach ($name in $args) {
     if ( !(Get-AppxPackage -Name $name)) {
@@ -704,6 +710,7 @@ function hf_appx_install() {
 
 function hf_appx_uninstall() {
   Invoke-Expression $hf_log_func
+  hf_ps_enable_appx_if_core
   foreach ($name in $args) {
     if (Get-AppxPackage -Name $name) {
       hf_log_msg "uninstall $name"
@@ -714,6 +721,7 @@ function hf_appx_uninstall() {
 
 function hf_appx_install_essentials() {
   Invoke-Expression $hf_log_func
+  hf_ps_enable_appx_if_core
   $pkgs = @(
     'Microsoft.WindowsStore'
     'Microsoft.WindowsCalculator'
