@@ -200,9 +200,9 @@ function hf_env_add($name, $value) {
 
 function hf_env_path_add($addPath) {
   if (Test-Path $addPath) {
-    $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
+    $currentpath = [Environment]::GetEnvironmentVariable('path', 'Machine')
     $regexAddPath = [regex]::Escape($addPath)
-    $arrPath = $path -split ';' | Where-Object { $_ -notMatch "^$regexAddPath\\?" }
+    $arrPath = $currentpath -split ';' | Where-Object { $_ -notMatch "^$regexAddPath\\?" }
     $newpath = ($arrPath + $addPath) -join ';'
     [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
   }
@@ -1181,6 +1181,15 @@ function hf_install_vscode() {
   }
 }
 
+function hf_install_wget() {
+  Invoke-Expression $hf_log_func
+  $wget_path = "C:\Program Files (x86)\GnuWin32\bin\"
+  if (!(Test-Path $wget_path)) {
+    hf_winget_install GnuWin32.Wget
+    hf_env_path_add "$wget_path"
+  }
+}
+
 function hf_install_msys() {
   Invoke-Expression $hf_log_func
   if (!(Test-Path $MSYS_BASH)) {
@@ -1239,6 +1248,7 @@ function hf_setup_windows() {
   hf_install_winget
   # install git, git-bash, wt, vscode
   hf_install_git
+  hf_install_wget
   hf_install_python
   hf_install_wt
   hf_wt_copy_skel_if_no_bash
