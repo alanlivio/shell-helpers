@@ -1008,7 +1008,7 @@ function hf_wt_copy_skel_if_no_bash($path) {
   }
 }
 
-function hf_wt_open_settings($path) {
+function hf_wt_settings($path) {
   Start-Process ${env:userprofile}\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 }
 

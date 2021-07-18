@@ -154,7 +154,7 @@ if test -n "$IS_WINDOWS"; then
   hf_ps_def_func hf_winget_settings
 
   # wt funcs from helpers.ps1
-  hf_ps_def_func hf_wt_open_settings
+  hf_ps_def_func hf_wt_settings
 fi
 
 # ---------------------------------------
