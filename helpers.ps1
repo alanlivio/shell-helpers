@@ -26,7 +26,6 @@ $ProgressPreference = "SilentlyContinue"
 Set-Alias -Name grep -Value Select-String
 Set-Alias -Name msysbash -Value C:\msys64\usr\bin\bash.exe # TODO: replace by $MSYS_BASH 
 Set-Alias -Name env -Value hf_env
-Set-Alias -Name path -Value hf_env_path_show
 Set-Alias -Name trash -Value hf_explorer_open_trash
 
 # ---------------------------------------
@@ -201,8 +200,12 @@ function hf_system_disable_beep() {
 }
 
 # ---------------------------------------
-# path
+# env
 # ---------------------------------------
+
+function hf_env() {
+  [Environment]::GetEnvironmentVariables()
+}
 
 function hf_env_refresh() {
   refreshenv 
@@ -212,26 +215,27 @@ function hf_env_add($name, $value) {
   gsudo [Environment]::SetEnvironmentVariable($name, $value, 'Machine')
 }
 
-function hf_env_path_add($addPath) {
+# ---------------------------------------
+# path
+# ---------------------------------------
+
+function hf_path() {
+  $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
+  Write-Output $path
+}
+
+function hf_path_add($addPath) {
   if (Test-Path $addPath) {
     $currentpath = [Environment]::GetEnvironmentVariable('path', 'Machine')
     $regexAddPath = [regex]::Escape($addPath)
     $arrPath = $currentpath -split ';' | Where-Object { $_ -notMatch "^$regexAddPath\\?" }
     $newpath = ($arrPath + $addPath) -join ';'
     [Environment]::SetEnvironmentVariable("path", $newpath, 'Machine')
+    hf_env_refresh
   }
   else {
     Throw "$addPath' is not a valid path."
   }
-}
-
-function hf_env_path_show($addPath) {
-  $path = [Environment]::GetEnvironmentVariable('path', 'Machine')
-  Write-Output $path
-}
-
-function hf_env() {
-  [Environment]::GetEnvironmentVariables()
 }
 
 # ---------------------------------------
@@ -1051,8 +1055,8 @@ function hf_winupdate_update() {
 # ---------------------------------------
 
 function hf_msys_add_to_path() {
-  hf_env_path_add "$MSYS_HOME\usr\bin"
-  hf_env_path_add "$MSYS_HOME\mingw64\bin"
+  hf_path_add "$MSYS_HOME\usr\bin"
+  hf_path_add "$MSYS_HOME\mingw64\bin"
 }
 
 function hf_msys_sanity() {
@@ -1078,10 +1082,10 @@ function hf_install_choco() {
   if (!(Get-Command 'choco.exe' -ea 0)) {
     hf_elevate_if_not_admin
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    hf_env_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
+    hf_path_add "%ALLUSERSPROFILE%\chocolatey\bin"
     cmd /c 'setx ChocolateyToolsLocation C:\opt\'
     $chocotools = [Environment]::GetEnvironmentVariable('ChocolateyToolsLocation')
-    hf_env_path_add $chocotools
+    hf_path_add $chocotools
 
     choco feature disable -n checksumFiles
     choco feature disable -n showDownloadProgress
@@ -1104,11 +1108,19 @@ function hf_install_choco() {
   }
 }
 
+function hf_install_tesseract() {
+  Invoke-Expression $hf_log_func
+  if (!(Get-Command 'tesseract.exe' -ea 0)) {
+    hf_winget_install tesseract
+    hf_path_add 'C:\Program Files\Tesseract-OCR'
+  }
+}
+
 function hf_install_gsudo() {
   Invoke-Expression $hf_log_func
   if (!(Get-Command 'gsudo.exe' -ea 0)) {
     hf_winget_install gsudo
-    hf_env_path_add 'C:\Program Files (x86)\gsudo'
+    hf_path_add 'C:\Program Files (x86)\gsudo'
   }
 }
 
@@ -1210,7 +1222,7 @@ function hf_install_wget() {
   $wget_path = "C:\Program Files (x86)\GnuWin32\bin\"
   if (!(Test-Path $wget_path)) {
     hf_winget_install GnuWin32.Wget
-    hf_env_path_add "$wget_path"
+    hf_path_add "$wget_path"
   }
 }
 

@@ -2246,14 +2246,14 @@ if test -n "$IS_LINUX"; then
       hf_folder_create_if_not_exist $ANDROID_CMD_DIR
       hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
       if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-      hf_env_path_add $ANDROID_CMD_DIR/bin/
+      hf_path_add $ANDROID_CMD_DIR/bin/
     fi
     if ! test -d $ANDROID_SDK_DIR/platforms; then
       $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
       yes | $ANDROID_CMD_DIR/bin/sdkmanager --sdk_root="$ANDROID_SDK_DIR" --licenses
       hf_env_add ANDROID_HOME $ANDROID_SDK_DIR
       hf_env_add ANDROID_SDK_ROOT $ANDROID_SDK_DIR
-      hf_env_path_add $ANDROID_SDK_DIR/platform-tools
+      hf_path_add $ANDROID_SDK_DIR/platform-tools
     fi
 
     # flutter
@@ -2262,7 +2262,7 @@ if test -n "$IS_LINUX"; then
     if ! test -d $FLUTTER_SDK_DIR; then
       hf_compression_extract_from_url $FLUTTER_SDK_URL $OPT_DST
       if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-      hf_env_path_add $FLUTTER_SDK_DIR/bin
+      hf_path_add $FLUTTER_SDK_DIR/bin
     fi
   }
 fi
@@ -2283,14 +2283,14 @@ if test -n "$IS_WINDOWS"; then
     if ! test -d $ANDROID_CMD_DIR; then
       hf_compression_extract_from_url $ANDROID_CMD_URL $ANDROID_SDK_DIR
       if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-      hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_CMD_DIR/bin)"
+      hf_ps_call_admin "hf_path_add $(winpath $ANDROID_CMD_DIR/bin)"
     fi
     if ! test -d $ANDROID_SDK_DIR/platforms; then
       $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --install 'platform-tools' 'platforms;android-29'
       yes | $ANDROID_CMD_DIR/bin/sdkmanager.bat --sdk_root="$ANDROID_SDK_DIR" --licenses
       hf_ps_call_admin "hf_env_add ANDROID_HOME $(winpath $ANDROID_SDK_DIR)"
       hf_ps_call_admin "hf_env_add ANDROID_SDK_ROOT $(winpath $ANDROID_SDK_DIR)"
-      hf_ps_call_admin "hf_env_path_add $(winpath $ANDROID_SDK_DIR/platform-tools)"
+      hf_ps_call_admin "hf_path_add $(winpath $ANDROID_SDK_DIR/platform-tools)"
     fi
 
     # flutter
@@ -2299,7 +2299,7 @@ if test -n "$IS_WINDOWS"; then
     if ! test -d $FLUTTER_SDK_DIR; then
       hf_compression_extract_from_url $FLUTTER_SDK_URL $HELPERS_OPT
       if test $? != 0; then hf_log_error "wget failed." && return 1; fi
-      hf_ps_call_admin "hf_env_path_add $(winpath $FLUTTER_SDK_DIR/bin)"
+      hf_ps_call_admin "hf_path_add $(winpath $FLUTTER_SDK_DIR/bin)"
     fi
   }
 
@@ -2494,7 +2494,15 @@ function hf_env_add() {
   fi
 }
 
-function hf_env_path_add() {
+# ---------------------------------------
+# path
+# ---------------------------------------
+
+function hf_path() {
+  echo "$PATH"
+}
+
+function hf_path_add() {
   if [[ ! "$PATH" =~ (^|:)"$1"(|/)(:|$) ]]; then
     echo "export PATH=\$PATH:$1" >>$HOME/.bashrc
   fi
